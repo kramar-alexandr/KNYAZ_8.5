@@ -1312,7 +1312,7 @@ begin
       ty = 120;
     end;
     if (WindowsMode==0) then begin //Edit***************************Sasha2,10:43 16.03.2017
-      ty = 200;
+      ty = 250;
     end;
     if (GuiType==kGuiAndroid) then begin
       wn = CurWindow;
