@@ -2387,7 +2387,7 @@ begin
 end;
 
 window POLClass:2
-  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","*")
+  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
   Integer pos,rn;
 
@@ -3363,7 +3363,7 @@ begin
 end;
 
 window AmendLineNPTSSClass:1
-  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","*")
+  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
   real h,h2,h3,h4,hm,l,v,v3,vm,vs,v4,v5,v6;
   real fieldh,fieldh2,keypadh,keypadh2,keypadv,fntsize;
@@ -3548,7 +3548,7 @@ begin
 end; //Edit***************************Sasha2,10:44 14.09.2016 }
 
 window AmendLineNPTSSClass:1
-  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer,iPad")
+  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
 
   PopulateAmendLine("AmendLineNPTSSClass");
@@ -3557,7 +3557,7 @@ begin
 end;
 
 window AmendLineNPTSRestrictedSClass:1 //Edit***************************Sasha2,10:46 14.09.2016
-  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer,iPad")
+  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
 
   PopulateAmendLine("AmendLineNPTSRestrictedSClass");
