@@ -1,0 +1,568 @@
+external function val AbsoluteVal(val);
+
+procedure CreateFiscalFile(area filedata)				//Edit----------------------Dima  11.06.2015
+begin
+	record FiscalSetLocalBlock Fiskalblock;
+	longint tick;
+	string 30 fileName;
+	area emptyArea;
+	
+	BlockLoad(Fiskalblock);
+	fileName = "forFP_FM_to_C"; //Setting of FP_ConstrolService  (FPRoutes.txt);
+	
+	tick = GetCurTick;
+	//if (nonblank(Fiskalblock.StoragePath)) then begin
+		WriteAreaToFile(filedata,Fiskalblock.StoragePath & "\\" & fileName & tick & ".txt",0);
+		if (FileExists(Fiskalblock.StoragePath & "\\" & fileName & tick & ".txt")==false) then begin
+		  MessageBox(50003,"");
+		end else begin
+		  WriteAreaToFile(emptyArea,Fiskalblock.StoragePath & "\\" & "FMCommandFlag.txt",0);
+		end;
+	//end;
+end;
+
+
+function val GetRemainingVoucherSum(longint sernr)
+Begin
+val balance;
+record GCSVc GCSr;
+
+	balance = 0;
+	GCSr.SerNr = sernr;
+	ReadFirstMain(GCSr,1,true);
+	balance = GCSr.Balance;
+	
+GetRemainingVoucherSum = balance;
+return;
+end;
+
+
+function string 10 FormatFiscalDate(date d)
+begin
+	integer i;
+	string 10 res;
+	
+	
+	i = GetDay(d);
+	res = i;
+	if (i<10) then begin 
+		res = "0" & i;
+	end;	
+	i = GetMonth(d);
+	if (i<10) then begin 
+		res = res & "0" & i;
+	end else begin	
+		res = res & i;
+	end;
+	i = GetYear(d);
+	res = res & i;
+
+FormatFiscalDate = res;
+return;
+end;
+
+
+
+
+global
+function boolean MakeFiscalReceipt(record IVCashVc IVCashr)	//Edit----------------------Dima  11.06.2015
+begin
+	row IVCashVc IVCashrw;
+	record INVc INr;
+	record ITVc ITr;
+	area filedata;
+	integer i,rwcnt,tempInt;
+	string 5 d,nalogGroup,curNalogGroup;
+	string 255 rowStr,name;
+	string 10 articul,saleCommand,payCommand,refundCommand,command,rebateCommand,commentCommand;
+	integer printStatus,paymentStatus,discountType;
+	longint rowSum,totalRebate,cashSum,cardSum,giftSum,quant,giftBalance,prepaymentSum,totSum;
+	array longint VoucherNumbers;
+	array longint VoucherSum;
+	boolean res;
+	
+  d = "!===!"; 	//divider
+
+  saleCommand = "SaleEx";
+  payCommand = "Payment";
+  rebateCommand = "Discount";
+  refundCommand  = "PayMoney";
+  commentCommand = "Comment";  
+  nalogGroup = "0";
+  discountType = 0; //absolute value of discount
+  totalRebate= 0 ;
+  giftSum = 0;
+  cardSum = 0;
+  prepaymentSum = 0;
+	rwcnt = MatRowCnt(IVCashr);
+	res = true;
+	
+	for(i=0;i<rwcnt;i=i+1) begin
+		MatRowGet(IVCashr,i,IVCashrw);
+		printStatus = 0;
+		if (IVCashrw.stp == kInvoiceRowTypeNormal and nonblank(IVCashrw.ArtCode)) then begin
+		  curNalogGroup = nalogGroup;
+		  INr.Code = IVCashrw.ArtCode;
+		  if (ReadFirstMain(INr,1,true)) then begin
+		    if (NonBlank(INr.Group)) then begin
+		      ITr.Code = INr.Group;
+		      if (ReadFirstMain(ITr,1,true) and NonBlank(ITr.VATCodeDom)) then begin
+		        curNalogGroup = ITr.VATCodeDom;
+		      end;
+		    end;
+		  end;
+		  	
+			if (IVCashrw.Quant>0) then begin
+				command = saleCommand;
+				rowSum = IVCashrw.Price * 100;
+			end else begin	
+				command = refundCommand;	
+				rowSum = (IVCashrw.Sum * 100) / IVCashrw.Quant;	
+			end;
+			
+			tempInt = IVCashrw.Quant;
+			if (tempInt!=IVCashrw.Quant) then begin
+			  quant = AbsoluteVal(IVCashrw.Quant)*1000;
+			  printStatus = 3;
+			end else begin
+			  quant = AbsoluteVal(IVCashrw.Quant);
+			end;
+			
+			articul = IVCashr.SerNr & i;
+			rowStr = command & d & quant & d & printStatus  & d &  "false" & d &  rowSum & d & curNalogGroup & d &  "false" & d & IVCashrw.Spec & d & articul & d; 
+			AddTextToArea(rowStr,filedata);	
+				
+			if (nonblank(IVCashrw.vRebate) and IVCashrw.Quant>0) then begin
+				rowSum = (AbsoluteVal(IVCashrw.Quant)*IVCashrw.Price - (AbsoluteVal(IVCashrw.Sum)))*100;
+				rowStr = rebateCommand & d & discountType & d & rowSum  & d &  USetStr(31067)  & d;
+				AddTextToArea(rowStr,filedata);
+			end;
+						
+		end;
+		
+		if (IVCashrw.stp==kInvoiceRowTypeCreditCardPayment and IVCashrw.PayMode=="GC" and IVCashr.Sum4<0 ) then begin //Edit----------------------Dima  08.09.2015
+				res = false;
+				goto LMakeFiscalReceipt;
+		end;	
+		
+		
+		if (IVCashrw.stp == kInvoiceRowTypeGiftVoucherSold) then begin
+			rowSum = IVCashrw.Sum * 100;
+			quant = 1;
+			name = USetStr(31068) & IVCashrw.GCNr & "  " & IVCashrw.Spec;
+			articul = IVCashr.SerNr & i;
+			//if (blank(name)) then begin name = USetStr(31064); end;
+			rowStr = saleCommand & d & quant & d & printStatus  & d &  "false" & d &  rowSum & d & nalogGroup & d &  "false" & d & name & d & articul & d; 
+			AddTextToArea(rowStr,filedata);
+		end;		
+		
+		if (IVCashrw.stp==kInvoiceRowTypeCashPayment) then begin
+			paymentStatus = 3;
+			cashSum = AbsoluteVal(IVCashrw.Sum) * 100;
+		end;
+		if (IVCashrw.stp==kInvoiceRowTypeCreditCardPayment and IVCashrw.PayMode!="GC") then begin //Edit***************************Sasha2,15:02 27.07.2015
+			paymentStatus = 0;
+			cardSum = cardSum + AbsoluteVal(IVCashrw.Sum) * 100;
+		end;
+		
+		if (IVCashrw.stp==kInvoiceRowTypeGiftVoucherPayment or (IVCashrw.PayMode=="GC" and IVCashrw.stp!=kInvoiceRowTypeGiftVoucherSold)) then begin //Edit***************************Sasha2,15:02 27.07.2015
+			if (IVCashrw.GCNr>0) then begin
+			  VoucherNumbers[VoucherNumbers.length] = IVCashrw.GCNr;
+			end else begin
+			  VoucherNumbers[VoucherNumbers.length] = 0;
+			end;
+			VoucherSum[VoucherSum.length] =  AbsoluteVal(IVCashrw.Sum) * 100;
+		end;
+		
+		if (IVCashrw.stp==kInvoiceRowTypePrepayment) then begin
+			prepaymentSum =prepaymentSum + AbsoluteVal(IVCashrw.Sum) * 100;
+		end;						
+		
+	end;
+	
+	
+	
+	//Gift voucher payment---------------------------
+	if (VoucherSum.length>0) then begin
+			discountType = 4; //discount on the total sum
+			for(i=0;i<VoucherSum.length;i=i+1) begin							
+				rowStr = rebateCommand & d & discountType & d & VoucherSum[i]  & d &  USetStr(31066) & d; 
+				giftSum = giftSum + VoucherSum[i];
+				AddTextToArea(rowStr,filedata);	//Gift voucher
+				rowStr = commentCommand & d & USetStr(31072)  & VoucherNumbers[i] & d & "false" &  d ;
+				AddTextToArea(rowStr,filedata);	//was used
+				giftBalance = GetRemainingVoucherSum(VoucherNumbers[i]);
+				if (giftBalance>0) then begin
+						rowStr = commentCommand & d & USetStr(31069)  & giftBalance & d & "false" &  d ;
+						AddTextToArea(rowStr,filedata);
+				end;
+			end;
+	end;
+	
+	//prepayment---------------------------
+	if(prepaymentSum>0) then begin
+		discountType = 4;
+		rowStr = rebateCommand & d & discountType & d & prepaymentSum  & d &  USetStr(31071) & d;
+		AddTextToArea(rowStr,filedata);		 
+	end;
+	
+	//payment by card and cash---------------------------
+	if (cardSum>0 and cashSum>0) then begin	
+		paymentStatus = 3;
+		rowStr = payCommand & d & paymentStatus & d & cashSum & "???" & cardSum & d &  "false" & d & "true" & d ;
+		AddTextToArea(rowStr,filedata); 
+	end else begin	
+		if (cashSum>0) then begin
+				paymentStatus = 3;
+				rowStr = payCommand & d & paymentStatus & d & cashSum & d &  "false" & d & "true" & d ;
+				AddTextToArea(rowStr,filedata);
+		end;	
+		if (cardSum>0) then begin
+				paymentStatus = 0;
+				rowStr = payCommand & d & paymentStatus & d & cardSum & d &  "true" & d & "true" & d ;
+				AddTextToArea(rowStr,filedata);
+		end;
+				
+	end;
+	
+	totSum = IVCashr.Sum4*100;
+	if (totSum>0  and  ((giftSum >= totSum) or (prepaymentSum >= totSum))) then begin	//for closing of receipt
+				paymentStatus = 3;
+				rowStr = payCommand & d & paymentStatus & d & "0" & d &  "false" & d & "true" & d ;
+				AddTextToArea(rowStr,filedata);
+	end;	
+	
+
+	AddTextToArea(chr(13) & "<END>",filedata);
+	CreateFiscalFile(filedata);
+	
+	LMakeFiscalReceipt:;
+	MakeFiscalReceipt = res;
+return;	
+end;
+
+
+
+global procedure MakeXReport()
+begin
+	string 255 command,password,d;
+	area filedata;
+	
+	d = "!===!"; 	//divider	
+	command = "DayReport";
+	
+	AddTextToArea(command & d,filedata);
+	AddTextToArea(chr(13) & "<END>",filedata);
+	CreateFiscalFile(filedata);
+return;
+end;
+
+
+
+global procedure MakeZReport()
+begin
+	string 255 command,password,d,cashOutFlag;
+	area filedata;
+	integer wn;
+	record RcVc RepSpec;
+	
+	wn = CurWindow;
+	DeselectWindow(wn,false);	
+	GetWindowRecord(wn,RepSpec);	
+	
+	if (RepSpec.flags[1]>0) then begin
+		cashOutFlag = "true";
+	end else begin
+		cashOutFlag = "false";
+	end;
+		
+	d = "!===!"; 	//divider	
+	command = "DayClrReport";
+	password = "";
+	
+	AddTextToArea(command & d & cashOutFlag & d,filedata);
+	AddTextToArea(chr(13) & "<END>",filedata);
+	CreateFiscalFile(filedata);
+return;
+end;
+
+
+global procedure MakePeriodicReport()
+begin
+	string 255 command,password,d;
+	area filedata;
+	string 10 sdate,edate,temp;
+	integer wn;
+	record RcVc RepSpec;
+	
+	wn = CurWindow;
+	DeselectWindow(wn,false);	
+	GetWindowRecord(wn,RepSpec);
+
+	sdate = FormatFiscalDate(RepSpec.sStartDate);
+	edate = FormatFiscalDate(RepSpec.sEndDate);
+	
+	d = "!===!"; 	//divider	
+	command = "periodreport";
+
+	AddTextToArea(command & d & sdate & d & edate,filedata);
+	AddTextToArea(chr(13) & "<END>",filedata);
+	CreateFiscalFile(filedata);
+	
+
+return;
+end;
+
+
+
+
+global procedure MakePeriodicShortReport()
+begin
+	string 255 command,d;
+	area filedata;
+	string 10 sdate,edate,temp;
+	integer wn;
+	record RcVc RepSpec;
+	
+	wn = CurWindow;
+	DeselectWindow(wn,false);	
+	GetWindowRecord(wn,RepSpec);
+
+	sdate = FormatFiscalDate(RepSpec.sStartDate);
+	edate = FormatFiscalDate(RepSpec.sEndDate);
+	
+	d = "!===!"; 	//divider	
+	command = "periodreportshort";
+
+	AddTextToArea(command & d & sdate & d & edate,filedata);
+	AddTextToArea(chr(13) & "<END>",filedata);
+	CreateFiscalFile(filedata);	
+
+return;
+end;
+
+
+global procedure MakeResetOrder()
+begin
+	string 255 command,d;
+	area filedata;
+	
+	d = "!===!"; 	//divider	
+	command = "ResetOrder";
+	
+	AddTextToArea(command & d,filedata);
+	AddTextToArea(chr(13) & "<END>",filedata);
+	CreateFiscalFile(filedata);
+return;
+end;
+
+
+global procedure MakeNullCheck()
+begin
+	string 255 command,d;
+	area filedata;
+	
+	d = "!===!"; 	//divider	
+	command = "NullCheck";
+	
+	AddTextToArea(command & d,filedata);
+	AddTextToArea(chr(13) & "<END>",filedata);
+	CreateFiscalFile(filedata);
+return;
+end;
+
+global procedure MakeLastCheck()
+begin
+	string 255 command,d;
+	area filedata;	
+	
+	d = "!===!"; 	//divider	
+	command = "CopyLastCheck";
+	
+	AddTextToArea(command & d,filedata);
+	AddTextToArea(chr(13) & "<END>",filedata);
+	CreateFiscalFile(filedata);	
+	
+return;
+end;
+
+
+
+global procedure MakeCashIn()
+begin
+	string 255 command,avans,d;
+	area filedata;
+	integer wn;
+	longint sum;
+	record RcVc RepSpec;
+	
+	wn = CurWindow;
+	DeselectWindow(wn,false);	
+	GetWindowRecord(wn,RepSpec);	
+	
+	d = "!===!"; 	//divider	
+	command = "InToCash";
+	sum = RepSpec.vals1 * 100;
+	avans = sum;
+	
+	AddTextToArea(command & d & avans & d,filedata);
+	AddTextToArea(chr(13) & "<END>",filedata);
+	CreateFiscalFile(filedata);
+return;
+end;
+
+
+global procedure MakeCashOut()
+begin
+	string 255 command,money,d;
+	area filedata;
+	integer wn;
+	record RcVc RepSpec;
+	longint sum;
+	
+	wn = CurWindow;
+	DeselectWindow(wn,false);	
+	GetWindowRecord(wn,RepSpec);	
+	
+	d = "!===!"; 	//divider	
+	command = "OutOfCash";
+	sum = RepSpec.vals1 * 100;
+	money = sum;
+	
+	AddTextToArea(command & d & money & d,filedata);
+	AddTextToArea(chr(13) & "<END>",filedata);
+	CreateFiscalFile(filedata);
+return;
+end;
+
+
+global procedure MakeDateSetting()
+begin
+	string 255 command,d;
+	string 10 newdate,newtime;
+	area filedata;
+	integer wn;
+	record RcVc RepSpec;
+	
+	wn = CurWindow;
+	DeselectWindow(wn,false);	
+	GetWindowRecord(wn,RepSpec);	
+	
+	d = "!===!"; 	//divider	
+	command = "setdatetime";
+	newdate = RepSpec.f1;
+	newtime = RepSpec.f2;
+	
+	//newdate = RepSpec.f1;
+	//newtime = RepSpec.f2;
+	
+	newdate = DateToString(CurrentDate,"DD.MM.YYYY");;
+	newtime = CurrentTime;
+	
+	if (blank(newdate)) then begin newdate="0"; end;
+	if (blank(newtime)) then begin newtime="0"; end;
+	
+	AddTextToArea(command & d & newdate & d & newtime & d,filedata);
+	AddTextToArea(chr(13) & "<END>",filedata);
+	CreateFiscalFile(filedata);
+return;
+end;
+
+
+
+global
+function Boolean FiscalPrintingTClassOnOpenWindow(Integer wn)//Edit----------------------Dima  15.06.2015
+begin
+  record RcVc RepSpec;
+  date d;
+  string 10 sd;
+  
+  sd = DateToString(CurrentDate,"DD/MM/YYYY");
+  GetWindowRecord(wn,RepSpec);
+	RepSpec.sStartDate = sd;
+	RepSpec.sEndDate = sd;
+	RepSpec.flags[1] = 1;
+	sd = DateToString(CurrentDate,"DD.MM.YYYY");
+	RepSpec.f1 = sd;
+	RepSpec.f2 = CurrentTime;
+  PutWindowRecord(wn,RepSpec); 
+  
+  FiscalPrintingTClassOnOpenWindow = false;
+  return;
+end;
+
+
+
+global procedure OpenCashBox()	//Edit----------------------Dima  07.07.2015
+begin
+	string 255 command,d;
+	area filedata;	
+	
+	d = "!===!"; 	//divider	
+	command = "OpenBox";
+	
+	AddTextToArea(command & d,filedata);
+	AddTextToArea(chr(13) & "<END>",filedata);
+	CreateFiscalFile(filedata);	
+	
+return;
+end;
+
+
+
+
+/*
+global
+ function LongInt FiscalSettingsBlockRecordUpdateClient(var record FiscalSettingsBlock FSb,record FiscalSettingsBlock FS2b,LongInt stat,LongInt long4)
+begin
+	area checkarea;
+	LongInt res;
+			//if (FileExists(Fiskalblock.StoragePath & "\\checkconnect.txt")) then begin
+			//AddTextToArea(chr(13) & "<END>",filedata);
+			//WriteAreaToFile(filedata,Fiskalblock.StoragePath & "\\" & Fiskalblock.FileName & tick & ".txt",0);
+FiscalSettingsBlockRecordUpdateClient = res;  
+  return;
+end;
+
+
+global
+ function LongInt FiscalSettingsBlockRecordSaveClient(var record FiscalSettingsBlock FSb,record FiscalSettingsBlock FS2b,LongInt stat,LongInt long4)
+begin
+  LongInt res;
+	integer wn,mwn;
+	
+	wn = CurWindow;
+	mwn = MotherWindow(wn);
+	UpdateSHVcFromPackList(PackListr,mwn);
+  PackListVcRecordSaveClient = res; 
+  
+  return;
+end;
+
+global
+function LongInt FiscalSettingsBlockRecordCheck(var record FiscalSettingsBlock FSb,record FiscalSettingsBlock FS2b,LongInt stat,LongInt long4)
+BEGIN
+longint res;
+res = 0;
+LogText(0,"FiscalSettingsBlockRecordCheck");
+
+
+	FiscalSettingsBlockRecordCheck = res;
+return;
+end;
+
+global
+function LongInt FiscalSettingsBlockRecordCheckClient(LongInt wn,record FiscalSettingsBlock FSb,record FiscalSettingsBlock FS2b,LongInt stat,LongInt long4)
+BEGIN
+longint res;
+res = 0;
+
+MessageBox(0,"FiscalSettingsBlockRecordCheckClient");
+
+
+	FiscalSettingsBlockRecordCheckClient = res;
+return;
+end;
+
+
+*/

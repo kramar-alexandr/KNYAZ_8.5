@@ -1,0 +1,251 @@
+external procedure PUVc_PasteTransDate(var record PUVc,var Boolean,var Boolean,var Boolean);
+external procedure PUSumUp(var record PUVc);
+external function Boolean PUVc_PasteArtCode(var record PUVc,Integer,var string,var string);
+external function string 255 StrReplace(string,string,string);
+external procedure ExtractObjWithSeparator(string,string,Boolean,var Integer,var string);
+external function Integer PUVc_PasteQuant(var record PUVc,Integer);
+external procedure PUVc_PasteCostPrice(var record PUVc,Integer);
+
+global updating procedure INImportFromFMFormatIn()	//Edit***************************Sasha2,14:18 19.08.2016
+begin
+	record INVc INr;
+	record DIVc DIr;
+	record ITVc ITr;
+	record BarcodeVc Barcoder;
+	string 255 artcode,name,utext,itemGroup,code2,code3,code4,code5,code6,code7,code8,code9,code10;
+	val cost,price;
+	integer itemStocked;
+
+	//SetImportCodepage("CP1251");
+
+	while (TestEOF()==false) begin
+		artcode = ImportField;
+		name = ImportField;
+		cost = StringToVal(ImportField,M4Val);
+		price = StringToVal(ImportField,M4Val);
+		itemStocked = StringToInt(ImportField);
+		utext = ImportField;
+		itemGroup = ImportField;
+		code2 = ImportField;
+		code3 = ImportField;
+		code4 = ImportField;
+		code5 = ImportField;
+		code6 = ImportField;
+		code7 = ImportField;
+		code8 = ImportField;
+		code9 = ImportField;
+		code10 = ImportField;
+
+		if (nonblank(artcode)) then begin
+		  INr.Code = artcode;
+		  if (ReadFirstMain(INr,1,true)) then begin
+		  end else begin
+		    RecordNew(INr);
+		    INr.Code = artcode;
+		  end;	
+			
+			INr.Name = name;
+			if (itemStocked==0) then begin
+			  INr.ItemType = kItemTypePlain;
+			end else begin
+			  INr.ItemType = kItemTypeStocked;
+			end;
+			INr.InPrice = cost;
+			INr.UPrice1 = price;
+			INr.Unittext = utext;
+			
+			if (nonblank(itemGroup)) then begin
+				ITr.Code = itemGroup;
+				if (ReadFirstMain(ITr,1,true)) then begin
+					INr.Group = ITr.Code;
+				end else begin
+					ITr.Comment = itemGroup;
+					if (ReadFirstKey("Comment",ITr,1,true)) then begin
+					  INr.Group = ITr.Code;
+					end;
+				end;
+		  end;
+		  
+		  RecordStore(INr,true);
+		  
+		  if (NonBlank(code2)) then begin
+		    Barcoder.Barcode = code2;
+		    if (ReadFirstMain(Barcoder,1,true)==false) then begin
+		      RECORDNEW(Barcoder);
+		      Barcoder.Barcode = code2;
+		      Barcoder.Itemcode = artcode;
+		      Barcoder.Comment = name;
+		      RECORDSTORE(Barcoder,true);
+		    end;
+		  end;
+		  if (NonBlank(code3)) then begin
+		    Barcoder.Barcode = code3;
+		    if (ReadFirstMain(Barcoder,1,true)==false) then begin
+		      RECORDNEW(Barcoder);
+		      Barcoder.Barcode = code3;
+		      Barcoder.Itemcode = artcode;
+		      Barcoder.Comment = name;
+		      RECORDSTORE(Barcoder,true);
+		    end;
+		  end;
+		  if (NonBlank(code4)) then begin
+		    Barcoder.Barcode = code4;
+		    if (ReadFirstMain(Barcoder,1,true)==false) then begin
+		      RECORDNEW(Barcoder);
+		      Barcoder.Barcode = code4;
+		      Barcoder.Itemcode = artcode;
+		      Barcoder.Comment = name;
+		      RECORDSTORE(Barcoder,true);
+		    end;
+		  end;
+		  if (NonBlank(code5)) then begin
+		    Barcoder.Barcode = code5;
+		    if (ReadFirstMain(Barcoder,1,true)==false) then begin
+		      RECORDNEW(Barcoder);
+		      Barcoder.Barcode = code5;
+		      Barcoder.Itemcode = artcode;
+		      Barcoder.Comment = name;
+		      RECORDSTORE(Barcoder,true);
+		    end;
+		  end;
+		  if (NonBlank(code6)) then begin
+		    Barcoder.Barcode = code6;
+		    if (ReadFirstMain(Barcoder,1,true)==false) then begin
+		      RECORDNEW(Barcoder);
+		      Barcoder.Barcode = code6;
+		      Barcoder.Itemcode = artcode;
+		      Barcoder.Comment = name;
+		      RECORDSTORE(Barcoder,true);
+		    end;
+		  end;
+		  if (NonBlank(code7)) then begin
+		    Barcoder.Barcode = code7;
+		    if (ReadFirstMain(Barcoder,1,true)==false) then begin
+		      RECORDNEW(Barcoder);
+		      Barcoder.Barcode = code7;
+		      Barcoder.Itemcode = artcode;
+		      Barcoder.Comment = name;
+		      RECORDSTORE(Barcoder,true);
+		    end;
+		  end;
+		  if (NonBlank(code8)) then begin
+		    Barcoder.Barcode = code8;
+		    if (ReadFirstMain(Barcoder,1,true)==false) then begin
+		      RECORDNEW(Barcoder);
+		      Barcoder.Barcode = code8;
+		      Barcoder.Itemcode = artcode;
+		      Barcoder.Comment = name;
+		      RECORDSTORE(Barcoder,true);
+		    end;
+		  end;
+		  if (NonBlank(code9)) then begin
+		    Barcoder.Barcode = code9;
+		    if (ReadFirstMain(Barcoder,1,true)==false) then begin
+		      RECORDNEW(Barcoder);
+		      Barcoder.Barcode = code9;
+		      Barcoder.Itemcode = artcode;
+		      Barcoder.Comment = name;
+		      RECORDSTORE(Barcoder,true);
+		    end;
+		  end;
+		  if (NonBlank(code10)) then begin
+		    Barcoder.Barcode = code10;
+		    if (ReadFirstMain(Barcoder,1,true)==false) then begin
+		      RECORDNEW(Barcoder);
+		      Barcoder.Barcode = code10;
+		      Barcoder.Itemcode = artcode;
+		      Barcoder.Comment = name;
+		      RECORDSTORE(Barcoder,true);
+		    end;
+		  end;
+			
+		end;
+
+		NextImportLine(true);
+	end;
+  
+end;
+
+//Edit-------------------Vitalii 16:44 19.07.2016 
+//Edit***************************Sasha2,9:39 09.11.2016
+global updating procedure ImportStockRemains2In()
+begin
+	record PUVc PUr;
+	row PUVc PUrw;
+	string 100 location;
+	string 255 code, var1,var2,collection;
+	Boolean datewarnf,warnoldrecordsf,warnfutdatef;
+	string 255 warning,inwarn;
+	integer rownr,i,l;
+	val cost,qty;
+	string 1 c;
+	
+	var1 = ImportField;
+	NextImportLine(true);
+	
+	if (blank(var1)) then begin
+		goto LImportStockRemains2In;
+	end;
+	
+	l = len(var1);  
+  for (i=0;i<l;i=i+1) begin
+    c = Mid(var1,i,1);
+    if (asc(c)>=32) then begin
+      location = location & c;
+    end;
+  end;
+	
+	RecordNew(PUr);
+	PUr.SerNr = NextSerNr("PUVc",PUr.TransDate,-1,false,"");
+	PUr.TransDate = CurrentDate;
+	PUr.Location = location;
+	PUVc_PasteTransDate(PUr,datewarnf,warnoldrecordsf,warnfutdatef);
+	rownr = 0;
+	
+	while (TestEOF()==false) begin
+		code = ImportField;
+		qty = StringToVal(ImportField,M45Val);
+		cost = StringToVal(ImportField,M45Val);
+
+
+		if (nonblank(code)) then begin
+			PUrw.ArtCode = code;
+			MatRowPut(PUr,rownr,PUrw);
+			PUVc_PasteArtCode(PUr,rownr,warning,inwarn);
+			MatRowGet(PUr,rownr,PUrw);
+			PUrw.Quant = qty;
+			MatRowPut(PUr,rownr,PUrw);
+      PUVc_PasteQuant(PUr,rownr);
+      MatRowGet(PUr,rownr,PUrw);
+      if (cost>0) then begin
+        //PUrw.UPrice = cost;
+      	PUrw.CostPrice = cost;
+      	MatRowPut(PUr,rownr,PUrw);
+      	PUVc_PasteCostPrice(PUr,rownr);
+      	MatRowGet(PUr,rownr,PUrw);
+      	//PUrw.Sum = cost*qty;	
+      end;
+			PUrw.Location = location;
+      MatRowPut(PUr,rownr,PUrw);
+			rownr = rownr + 1;
+			if(rownr>998)then begin
+				PUSumUp(PUr);
+				RecordInsert(PUr,true);
+				logtext(0,"PU Imported " & PUr.SerNr);
+				RecordNew(PUr);
+				PUr.SerNr = NextSerNr("PUVc",PUr.TransDate,-1,false,"");
+				PUr.TransDate = CurrentDate;
+				PUr.Location = location;
+				PUVc_PasteTransDate(PUr,datewarnf,warnoldrecordsf,warnfutdatef);
+				rownr = 0;
+			end;
+		end;
+
+		NextImportLine(true);
+	end;
+	PUSumUp(PUr);
+	RecordInsert(PUr,true);
+	
+  
+  LImportStockRemains2In:;
+end;

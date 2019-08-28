@@ -1,0 +1,226 @@
+SourceFile("halcust\\halpatch",0);
+SourceFile("halcust\\Import",0);
+SourceFile("halcust\\Report",0);
+SourceFile("halcust\\RemoteWA",0);
+SourceFile("halcust\\Windows",0);
+SourceFile("halcust\\WAction",0);
+SourceFile("halcust\\RAction",0);
+SourceFile("halcust\\Web",0);
+
+
+begin
+
+  RecordAddBegin(IVCashVc,"Cust_ivcash2");
+		RecordField(MakeFiscalReceiptF,M4Mark,0,0); //Edit***************************Sasha2,11:55 22.09.2016
+		RecordField(SalesGroup,M4Code,5,SalesGroupVc); //Edit***************************Sasha2,11:55 22.09.2016
+		FieldIsGroup(SalesGroup); //Edit***************************Sasha2,11:55 22.09.2016
+		RecordField(PrintFlagCounter,M4Int,0,0);//Edit***************************Sasha2,10:24 30.09.2016
+		RecordField(InvDateText,M4Str,20,0); //Edit***************************Sasha2,16:28 14.12.2016
+		RecordField(Sum4Text,M4Str,20,0); //Edit***************************Sasha2,16:28 14.12.2016
+		RecordField(DaySessionCashiers,M4Str,255,0); //Edit***************************Sasha2,11:11 07.03.2017
+		RecordField(DaySessionStartTime,M4Time,0,0); //Edit***************************Sasha2,11:11 07.03.2017
+		RecordField(DaySessionEndTime,M4Time,0,0); //Edit***************************Sasha2,11:11 07.03.2017
+		
+		SubsetKeyBegin2(KSerNr); //Edit***************************Sasha2,11:56 22.09.2016
+		StoreInBaseKey; //Edit***************************Sasha2,11:56 22.09.2016
+		AppendFieldToKeyName(SalesMan); //Edit***************************Sasha2,11:56 22.09.2016
+		AppendFieldToKeyName(SalesGroup); //Edit***************************Sasha2,11:56 22.09.2016
+		KeySegment(SerNr); 
+		SubsetKeyBegin2(KExportedFlag);
+		KeySegment(ExportedFlag);
+		KeySegment(SerNr);
+		SubsetKeyBegin2(KCustCode);
+		StoreInBaseKey; //Edit***************************Sasha2,11:56 22.09.2016
+		AppendFieldToKeyName(SalesMan); //Edit***************************Sasha2,11:56 22.09.2016
+		AppendFieldToKeyName(SalesGroup); //Edit***************************Sasha2,11:56 22.09.2016
+		KeySegment(CustCode);
+		KeySegment(SerNr);
+		SubsetKeyBegin2(KOKFlag);
+		StoreInBaseKey; //Edit***************************Sasha2,11:56 22.09.2016
+		AppendFieldToKeyName(SalesMan); //Edit***************************Sasha2,11:56 22.09.2016
+		AppendFieldToKeyName(SalesGroup); //Edit***************************Sasha2,11:56 22.09.2016
+		KeySegment(OKFlag);
+		KeySegment(SerNr);
+		SubsetKeyBegin2(KInvDate);
+		StoreInBaseKey; //Edit***************************Sasha2,11:56 22.09.2016
+		AppendFieldToKeyName(SalesMan); //Edit***************************Sasha2,11:56 22.09.2016
+		AppendFieldToKeyName(SalesGroup); //Edit***************************Sasha2,11:56 22.09.2016
+		KeySegment(InvDate);
+		KeySegment(SerNr);
+		SubsetKeyBegin2(KName);
+		StoreInBaseKey; //Edit***************************Sasha2,11:56 22.09.2016
+		AppendFieldToKeyName(SalesMan); //Edit***************************Sasha2,11:56 22.09.2016
+		AppendFieldToKeyName(SalesGroup); //Edit***************************Sasha2,11:56 22.09.2016
+		KeySegment(Addr0);
+		KeySegment(SerNr);
+		SubsetKeyBegin2(KTransDate);
+		StoreInBaseKey; //Edit***************************Sasha2,11:56 22.09.2016
+		AppendFieldToKeyName(SalesMan); //Edit***************************Sasha2,11:56 22.09.2016
+		AppendFieldToKeyName(SalesGroup); //Edit***************************Sasha2,11:56 22.09.2016
+		KeySegment(TransDate);
+		KeySegment(SerNr);
+		SubsetKeyBegin2(KSum4);
+		StoreInBaseKey; //Edit***************************Sasha2,11:56 22.09.2016
+		AppendFieldToKeyName(SalesMan); //Edit***************************Sasha2,11:56 22.09.2016
+		AppendFieldToKeyName(SalesGroup); //Edit***************************Sasha2,11:56 22.09.2016
+		KeySegment(Sum4);
+		KeySegment(SerNr);
+		SubsetKeyBegin2(KNLFlag);
+		StoreInBaseKey; //Edit***************************Sasha2,11:56 22.09.2016
+		AppendFieldToKeyName(SalesMan); //Edit***************************Sasha2,11:56 22.09.2016
+		AppendFieldToKeyName(SalesGroup); //Edit***************************Sasha2,11:56 22.09.2016
+		KeySegment(NLFlag);
+		KeySegment(SerNr);
+		
+  EndRecordAdd;
+
+
+RecordAddBegin(POVc,"PoVc_Custom");
+  RecordField(SumQty,M4Val,0,0);
+  RecordField(MidRebate,M4Val,0,0);
+  RecordField(TaxFlag,M4Mark,0,0);
+  RecordField(TransDateText,M4Str,20,0); //Edit***************************Sasha2,16:28 14.12.2016
+  RecordField(Sum4Text,M4Str,20,0); //Edit***************************Sasha2,16:29 14.12.2016
+  ArrayField(SellPrice,M45Val,0,0);
+  ArrayField(rowGP,M4Val,0,0);
+  ArrayField(newrowGP,M4Val,0,0);
+  ArrayField(ItemGroup,M4Code,20,ITVc);
+  ArrayField(PriceNoVAT,M45Val,0,0);
+EndRecordAdd;
+
+RecordAddBegin(PUVc,"PUVc_Custom");
+  RecordField(TotSellPrice,M4Val,0,0);
+  RecordField(TransDateText,M4Str,20,0); //Edit***************************Sasha2,16:29 14.12.2016
+  ArrayField(SellPrice,M45Val,0,0);
+  ArrayField(ItemGroup,M4Code,20,ITVc);
+  ArrayField(SumSellPrice,M45Val,0,0);
+  ArrayField(rowGP,M4Val,0,0);
+  ArrayField(IVCashNr,M4Long,0,0);
+  ArrayField(IVCashRowNr,M4Long,0,0);
+  ArrayField(IVCashDisplayRowNr,M4Long,0,0);
+EndRecordAdd;
+
+RecordAddBegin(SDVc,"SDVc_Custom");
+  ArrayField(IVCashNr,M4Long,0,0);
+  ArrayField(IVCashRowNr,M4Long,0,0);
+  ArrayField(IVCashDisplayRowNr,M4Long,0,0);
+EndRecordAdd;
+
+RecordAddBegin(ITVc,"ITVc_Custom");
+  RecordField(ChangePrice,M4Int,0,0);
+EndRecordAdd;
+
+RecordAddBegin(UserDefRepLinesVc,"Custom_USDr");
+  RecordField(CustType,M4Int,0,0); //Edit***************************Sasha2,15:41 29.09.2016
+EndRecordAdd;
+
+BlockBegin(FiscalSetLocalBlock,-,"");
+  BlockForAllCompanies;
+  RecordField(StoragePath,M4Str,255,0);
+  RecordField(FileName,M4Str,255,0);
+EndBlock;
+
+RecordAddBegin(ORVc,"ORVc_Custom");
+  ArrayField(TotOrdQuant,M4Val,0,0);
+EndRecordAdd;
+
+RecordAddBegin(VIVc,"VIVc_Custom");
+  RecordField(PaidFlag,M4Mark,0,0);
+  RecordField(InvDateText,M4Str,20,0); //Edit***************************Sasha2,16:28 14.12.2016
+  RecordField(PayValText,M4Str,20,0); //Edit***************************Sasha2,16:28 14.12.2016
+EndRecordAdd;
+
+BlockBegin(LocMachDrawerBlock,-,"");
+  RecordField(Math,M4Matrix,0,0);
+  ArrayBegin(Math,-,1);
+  ArrayField(MachineCode,M4Str,20,0);
+  ArrayField(DrawerCode,M4Str,20,0);
+  EndArray;
+EndBlock;
+
+RecordAddBegin(RetPUVc,"RetPUVc_Custom");
+  RecordField(TotSellPrice,M4Val,0,0);
+  ArrayField(SellPrice,M45Val,0,0);
+  ArrayField(SumSellPrice,M45Val,0,0);
+EndRecordAdd;
+
+RecordAddBegin(OPVc,"OPVc_Custom");
+  RecordField(PayDateText,M4Str,20,0); //Edit***************************Sasha2,16:29 14.12.2016
+  RecordField(CurPayValText,M4Str,20,0); //Edit***************************Sasha2,16:29 14.12.2016
+EndRecordAdd;
+
+RecordAddBegin(CLInVc,"CLInVc_Custom");
+  RecordField(TransDateText,M4Str,20,0); //Edit***************************Sasha2,16:29 14.12.2016
+  RecordField(TotalText,M4Str,20,0); //Edit***************************Sasha2,16:29 14.12.2016
+EndRecordAdd;
+
+RecordAddBegin(CLOutVc,"CLOutVc_Custom");
+  RecordField(TransDateText,M4Str,20,0); //Edit***************************Sasha2,16:29 14.12.2016
+  RecordField(TotalText,M4Str,20,0); //Edit***************************Sasha2,16:29 14.12.2016
+EndRecordAdd;
+
+RecordAddBegin(IVVc,"IVVc_Custom");
+  RecordField(DaySessionCashiers,M4Str,255,0); //Edit***************************Sasha2,11:11 07.03.2017
+  RecordField(DaySessionStartTime,M4Time,0,0); //Edit***************************Sasha2,11:11 07.03.2017
+  RecordField(DaySessionEndTime,M4Time,0,0); //Edit***************************Sasha2,11:11 07.03.2017
+EndRecordAdd;
+
+// do not use _DefBlock unless it is a defblock
+  BlockBegin(CashierDefBlock,-,"CashierDefBlock3");
+  NewAutosyncBlock(kSyncDirectionToClient);
+  RecordField(DefCustCode,M4Code,20,CUVc);
+  RecordField(POSNr,M4Long,0,0);
+  RecordField(CredAcc,M4Code,10,AccVc);
+  RecordField(WriteOffAcc,M4Code,10,AccVc);
+  RecordField(StartFromLastPOSBal,M4Int,0,0);
+  RecordField(PrintDetNLTrans,M4Int,0,0);
+  RecordField(Printer,M4Set,56,0);
+  RecordField(TipPMCode,M4Code,2,0);
+  RecordField(InclTipInCashup,M4Int,0,0);
+  RecordField(InclOpenInvCashup,M4Int,0,0);
+  RecordField(RequireOpenSession,M4Int,0,0);
+  RecordField(DefInvoiceField,M4Int,0,0);
+  RecordField(UpdStockMaint,M4Int,0,0);
+  RecordField(UpdStockMaintTime,M4Time,0,0);
+  RecordField(CashSalesToFiscalControlUnit,M4Int,0,0);
+  RecordField(MultipleSessionsPerLocalMachine,M4Int,0,0);
+  RecordField(DiscountItem,M4Code,20,INVc);
+  RecordField(NoChangesPOSOnLiveSyncClient,M4Int,0,0);
+  RecordField(CashupMaint,M4Int,0,0);
+  RecordField(CashupMaintInterval,M4Time,0,0);
+  RecordField(RestAccBookedDiscount,M4Int,0,0);
+  RecordField(RestAccDiscountAcc,M4Code,10,AccVc);
+  RecordField(RestAccServiceChargeItem,M4Code,20,INVc);
+  RecordField(RestAccARAcc,M4Code,10,AccVc);
+  RecordField(RequireReturnReason,M4Int,0,0);
+  RecordField(RequireReturnCustomer,M4Int,0,0);
+  RecordField(RestUpdStockMaint,M4Int,0,0);
+  RecordField(RestUpdStockMaintTime,M4Time,0,0);
+  RecordField(RestOKSD,M4Int,0,0);
+  RecordField(RestBasePriceInclVAT,M4Int,0,0);
+  RecordField(POSOKSD,M4Int,0,0);
+  RecordField(ItemPictureCashier,M4Int,0,0);
+  RecordField(ItemPictureCustomer,M4Int,0,0);
+  RecordField(NoZeroQty,M4Int,0,0);
+  RecordField(CheckVATNo,M4Int,0,0);
+  RecordField(NoZeroSum,M4Int,0,0);
+  RecordField(PrintZReportatCashup,M4Int,0,0);
+  RecordField(CashWithdrawalAcc,M4Code,10,AccVc);
+  RecordField(InvalIVCashOnPrtErr,M4Int,0,0);
+  RecordField(DaySessionStartTime,M4Time,0,0); //Edit***************************Sasha2,11:11 07.03.2017
+  RecordField(DaySessionEndTime,M4Time,0,0); //Edit***************************Sasha2,11:11 07.03.2017
+  RecordField(DaySessionPMs,M4Str,100,0); //Edit***************************Sasha2,11:11 07.03.2017
+  RecordField(ForbiddenDaySessionCodes,M4Str,255,0); //Edit***************************Sasha2,11:41 16.03.2017
+  EndBlock;
+  
+  BlockBegin(DaySessionBlock,-,"DaySessionBlock");
+    BlockForAllCompanies;
+    RecordField(TransDate,M4Date,0,0);
+    RecordField(DaySessionCashiers,M4Str,255,0);
+    RecordField(DaySessionStartTime,M4Time,0,0);
+    RecordField(DaySessionEndTime,M4Time,0,0);
+  EndBlock;
+
+return;
+end;
+

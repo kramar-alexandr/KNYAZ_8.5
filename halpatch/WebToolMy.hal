@@ -1,0 +1,111 @@
+external procedure MySendAsyncWebRequest(string,string,boolean,string,string,string,string,area,string,integer);
+external function string 255 StrReplace(string,string,string);// Edit ************************** Tuesday, 3 October 2017 17:25:37
+external procedure FindAndStoreINVcImgLink(record INVc,integer,var string,var string);
+external procedure MessageBoxToUser(string,integer,string,string);
+external function Boolean LoggedInTest();
+external procedure FindAndStoreINVcImgLink(record INVc,integer,var string,var string);
+external procedure ExtractObj(string,var Integer,var string);
+
+SetLangMode(LangRussian,"RUS",0);
+
+webpublic global updating procedure WebSTALSKOGO()
+begin
+  area replyarea;
+  json js;
+  integer company;
+  LongInt ordsernr;
+  string 255 user,path,type,filename,fullpath;
+  record ORVc ORr;
+  record RcVc RepSpec;
+  
+  SetCompany(1,false);
+  SetDocumentFilename("webcust/IVJSTALSKOGORaport.pdf");
+  SetMedia(mtPdf);
+  ReportDefaults(RepSpec,"IVJRClass");
+  RepSpec.f2 = "NONAM1";
+  RepSpec.ArtMode = 0;
+  RepSpec.flags[1] = 0;
+  RepSpec.flags[2] = 1;
+  RepSpec.flags[3] = 1;
+  RepSpec.flags[4] = 1;
+  RepSpec.flags[5] = 1;
+  RepSpec.flags[6] = 1;
+  RepSpec.sStartDate = currentdate;
+  RepSpec.sEndDate = currentdate;
+  RepSpec.Media = mtPdf;
+  RepSpec.repname = "InvoiceRn";
+  RunReport(RepSpec,0);
+  SetDocumentFilename("");
+  WebOutString("<p><a href=\"http://37.57.199.13:1080/IVJSTALSKOGORaport.pdf\">Абсолютная ссылка</a></p>");
+ return;
+end;
+
+
+webpublic global updating procedure WebPEROVA()
+begin
+  area replyarea;
+  json js;
+  integer company;
+  LongInt ordsernr;
+  string 255 user,path,type,filename,fullpath;
+  record ORVc ORr;
+  record RcVc RepSpec;
+  
+  SetCompany(3,false);
+  SetDocumentFilename("webcust/IVJPEROVARaport.pdf");
+  SetMedia(mtPdf);
+  ReportDefaults(RepSpec,"IVJRClass");
+  RepSpec.f2 = "NONAM2";
+  RepSpec.ArtMode = 0;
+  RepSpec.flags[1] = 0;
+  RepSpec.flags[2] = 1;
+  RepSpec.flags[3] = 1;
+  RepSpec.flags[4] = 1;
+  RepSpec.flags[5] = 1;
+  RepSpec.flags[6] = 1;
+  RepSpec.sStartDate = currentdate;
+  RepSpec.sEndDate = currentdate;
+  RepSpec.Media = mtPdf;
+  RepSpec.repname = "InvoiceRn";
+  RunReport(RepSpec,0);
+  SetDocumentFilename("");
+  WebOutString("<p><a href=\"http://37.57.199.13:1080/IVJPEROVARaport.pdf\">Абсолютная ссылка</a></p>");
+ return;
+end;
+
+
+global webpublic updating procedure WebDeleteRHistr()
+begin
+record RHistVc RHistr;
+	record UserVc USr;
+	string 200 rstr;
+	boolean TrHs;
+	integer cnt;
+
+	setcompany(1,false);
+	logtext(0,"WebDeleteRHistr begin");
+	
+	TrHs = true;
+	RHistr.TransDate = stringtodate("1/1/2011");
+	while(loopkey("RecidStr",RHistr,1,TrHs)) begin
+		if(RHistr.TransDate>stringtodate("31/12/2019"))then begin TrHs = false; end;
+		if(fileexists("stop"))then begin
+			TrHs = false;
+		end;
+		
+		
+		if(TrHs)then begin
+			recorddelete(RHistr);
+			stepback(RHistr);
+			cnt = cnt + 1;
+			if(cnt>100)then begin
+				cnt = 0;
+				logtext(0,"WebDeleteRHistr");
+			end;
+		end;
+	end;
+
+	logtext(0,"WebDeleteRHistr end");
+
+return;
+end;

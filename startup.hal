@@ -1,0 +1,50 @@
+event startup
+begin
+  SetLangMode(LangRussian,"RUS",0);
+  
+  Setting("Перепечатать чек",ReprintingFiscalReceiptTClass,modPOS);
+  Setting("Печать на фискальном принтере",FiscalPrintingTClass,modPOS);
+  Setting("Локальные настройки фискального принтера",FiscalSetLocalTClass,modPOS);
+  Setting("Локальная машина - ящик",LocMachDrawerTCLass,modPOS);
+  Setting("Резквизиты операционного дня",DaySessionlTClass,modPOS);
+  //Setting("Локальная машина - ящик_vc",LocMachDrawerLClass,modPOS);
+  
+  Report("HAL Primitives",HalSpecRClass,HalSpecRn,0,modSY);
+  Report("Отчет по кассе по дням",IVCashSummaryRClass,IVCashSummaryRn,0,modPOS);
+  Report("Отчет по наценкам",MarkUpRClass,MarkUpRn,0,modSL);
+  
+  Import("Импортировать товары",INImportFromFMFormatIClass,INImportFromFMFormatIn,modIN);
+  Import("Импорт остатков",ImportStockRemains2IClass,ImportStockRemains2In,modIN);
+  
+  Register("Платежи пост.","Платежи пост.",OPVc,modPL);
+  
+  Maintenance("Удалить все записи",CustomRegisterRemoveVClass,CustomRegisterRemoveMn,modDBMain);
+  Maintenance("Удалить все записи по POS",POSRegistersRemoveVClass,POSRegistersRemoveMn,modDBMain);
+  Maintenance("Удалить записи выборочно",RegistersRemoveOptionallyVClass,RegistersRemoveOptionallyMn,modDBMain);
+  Maintenance("Прописать ед.измерения в товаре, где её нет",SetUnitTextInItemIfNeededVClass,SetUnitTextInItemIfNeededMn,modIN);
+  Maintenance("Обновить текст. поля для быстрого поиска",UpdateTextFieldsForQuickSearchVClass,UpdateTextFieldsForQuickSearchMn,modDBMain); //Edit***************************Sasha2,16:53 14.12.2016
+  Maintenance("Пересчитать наценку в Поступлениях",RecalcMarkUpsInPUVClass,RecalcMarkUpsInPUMn,modDBMain);
+  Maintenance("Насчитать зарплату за дату",MakeSalaryTransactionVClass,MakeSalaryTransactionMn,modNL); //Edit***************************Sasha2,10:18 14.03.2017
+	Maintenance("Удалить старые записи RHist",CustomRegisterRemoveVClass,RHistRemoveMn,modDBMain);
+
+  SString(50000,"Укажите цену закупки"); 
+  SString(50001,"Укажите себестоимость");
+  SString(50002,"Укажите розничную цену");
+  SString(50003,"Указанная, в настройках фискального принтера, папка недоступна");
+  SString(50004,"Фискальный чек не будет напечатан для текущей счет-фактуры");
+  SString(50005,"Розничная цена");
+  SString(50006,"Должна стоять галочка ok");
+  SString(50007,"или");
+  SString(50008,"Розн.цена");
+  SString(50009,"Сумма розн.ц.");
+  SString(50010,"Это старая незакрытая сч/ф. ПРОВЕРЬТЕ!");
+  SString(50011,"Заказ для этого клиента на сегодня уже создан");
+  SString(50012,"Введите пароль");
+  SString(50013,"Пустые даты начала операционного дня");
+  SString(50014,"Кассиров в этот день: ");
+  SString(50015,"Отметьте себя в этот операционный день");
+  SString(50016,"Зарплата сотрудникам");
+  SString(50017,"Достигнуто максимально допустимое количество аутентифицированных кассиров");
+  SString(50018,"Использовать этот пароль запрещено");
+	return;
+end;
