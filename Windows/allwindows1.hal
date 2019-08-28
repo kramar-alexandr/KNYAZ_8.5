@@ -3525,7 +3525,7 @@ end;
 
 
 window CCPayTouchScreenDClass:1
-  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer,iPad")
+  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
   real fieldh,fieldh2,keypadh,keypadh2,keypadv,v,vs,fntsize,h,h2,h3;
   record LocalMachineBlock LMb;
@@ -3594,7 +3594,7 @@ begin
 end;
 
 window CCPayTouchScreenSelfDClass:1
-  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer,iPad")
+  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
   real h,h2,v;
 
@@ -3635,7 +3635,7 @@ begin
 end;
 
 window NPTSCashPaymentTClass:1
-  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer,iPad")
+  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
   array boolean achangecrncyf;
   array string 255 acrncy;
