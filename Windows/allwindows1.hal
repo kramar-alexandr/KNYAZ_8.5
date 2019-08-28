@@ -3403,6 +3403,13 @@ begin
     end;
     EndFrame;
   end;
+  
+  EditField(h2+140,v+=vs,70,"Время начала операц.дня",Normal,DaySessionStartTime,false,PasteCurTime); //Edit***************************Sasha2,11:18 07.03.2017
+  EditField(h2+140,v+=vs,70,"Время конца операц.дня",Normal,DaySessionEndTime,false,PasteCurTime); //Edit***************************Sasha2,11:18 07.03.2017
+  EditField(h2+140,v+=vs,70,"Способы оплаты выторга",Normal,DaySessionPMs,false,PMSClass); //Edit***************************Sasha2,12:43 16.03.2017
+  EditField(h2+140,v+=vs,150,"Запрещённые пароли аутент-ции",Normal,ForbiddenDaySessionCodes,false,LoyaltyCardSClass); //Edit***************************Sasha2,12:43 16.03.2017
+
+  
   EndWindow;
 end;
 
