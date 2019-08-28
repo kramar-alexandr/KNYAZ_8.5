@@ -1325,7 +1325,7 @@ begin
   end;
   if (LMb.POSButtonHeight>0) then begin height = LMb.POSButtonHeight; end;
   if (LMb.POSButtonWidth>0) then begin width = LMb.POSButtonWidth; end;
-  ty = 400;
+  ty = 200;
   DataList(tx,ty,bx,by,"receipt");
   
   switch (GuiType) begin
