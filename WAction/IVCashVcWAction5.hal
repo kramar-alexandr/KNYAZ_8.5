@@ -227,30 +227,34 @@ begin
   boolean res;
   
   wn = CurWindow;
-  oldwn = wn;
-  if (GetWindowFileName(oldwn)!="IVCashVc") then begin
-    oldwn = MotherWindow(wn);
-    CloseWindow(wn);
-  end;
-  if (GetWindowFileName(oldwn)=="IVCashVc") then begin
-    SelectWindow(oldwn);
-    GetWindowRecord(oldwn,IVCashr);
-    
-    res = MakeFiscalReceipt(IVCashr);  
-    
-    if (res==false) then begin
-  		MessageBox(50004,"");
-  	end;
-    if (res) then begin
-      if (IVCashr.FiscalFlag < 1) then begin
-        IVCashr.FiscalFlag = 1;
-      end;
-      IVCashr.PrintFlagCounter = IVCashr.PrintFlagCounter + 1;
-      RECORDSTORE(IVCashr,true);
-      PutWindowRecord(oldwn,IVCashr);
-      WindowDoOK(oldwn,0);
-    end;
+  if(windowstate(wn)==Rs_normal)then begin
+		oldwn = wn;
+		if (GetWindowFileName(oldwn)!="IVCashVc") then begin
+			oldwn = MotherWindow(wn);
+			CloseWindow(wn);
+		end;
+		if (GetWindowFileName(oldwn)=="IVCashVc") then begin
+			SelectWindow(oldwn);
+			GetWindowRecord(oldwn,IVCashr);
+		
+			res = MakeFiscalReceipt(IVCashr);  
+		
+			if (res==false) then begin
+				MessageBox(50004,"");
+			end;
+			if (res) then begin
+				if (IVCashr.FiscalFlag < 1) then begin
+					IVCashr.FiscalFlag = 1;
+				end;
+				IVCashr.PrintFlagCounter = IVCashr.PrintFlagCounter + 1;
+				RECORDSTORE(IVCashr,true);
+				PutWindowRecord(oldwn,IVCashr);
+				WindowDoOK(oldwn,0);
+			end;
 
+		end;
+  end else begin
+  	MessageBox(1356,"");
   end;
 
 LProceedMakingFiscalCheckTClass:;
