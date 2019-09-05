@@ -2652,7 +2652,9 @@ begin
   record CashierDefBlock CDb;
   record LocalMachineBlock LMb;
   string 255 errMessage; //Edit***************************Sasha2,14:00 14.09.2016
-
+	
+	messagebox(0,"NPTSIVCashDClassivcashcommandOnEnterKey");
+	
   suspended = StringToInt(GetWindowString(wn,"Suspended"));
   input = GetWindowString(wn,"ivcashcommand");
   ReturnModef = GetWindowString(wn,"ReturnMode")=="true";
