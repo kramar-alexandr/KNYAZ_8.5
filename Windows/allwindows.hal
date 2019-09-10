@@ -3251,8 +3251,8 @@ begin
     fntsz2 = LMb.IVCashPOSDisplayFontSize2;
     if (fntsz2<=0) then begin fntsz2 = 30; end;
 
-    SoftEditFieldTLX(420,6,h4,"",M4Str,ViewOnly,100,fntsz1*fntszfct,patM4black,"CustomerDisplayData_Line1",true,0);
-    SoftEditFieldTLX(420,(fntsz1+16)*fntszfct,h4,"",M4Str,ViewOnly,100,fntsz2*fntszfct,patM4black,"CustomerDisplayData_Line2",true,0); 
+      SoftEditFieldTLX(520-310,6+40,h4,"",M4Str,ViewOnly,100,30-10,patM4black,"CustomerDisplayData_Line1",true,0);//Edit***************************Sasha2,10:09 08.09.2016
+      SoftEditFieldTLX(520-310,46+40,h4,"",M4Str,ViewOnly,100,50-20,patM4black,"CustomerDisplayData_Line2",true,0); //Edit***************************Sasha2,10:09 08.09.2016
     end else begin
       if (IVCashr.OKFlag==0) then begin //Edit***************************Sasha2,13:00 07.12.2016 {
         SoftEditFieldTLX(-15,8,h4,"‘ч/ф открыта",M4Str,ViewOnly,0,30,patM4green,"DisplayIVCashOpenState",false,0);
