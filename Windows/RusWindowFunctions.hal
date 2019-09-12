@@ -1383,7 +1383,7 @@ begin
       DataListColumn(3,324,360,AdjLeft,"s","",M4Str); 
     otherwise
 		if (LMb.HideArtCode==0) then begin
-			DataListColumn(1,6,170,AdjLeft,"artcode","Код",M4Code);//// Edit ************************** BPI Ukraine - KramarAlexandr - 04, 12 09 2019 y. at 8:53:27 PM
+			DataListColumn(1,6,145,AdjLeft,"artcode","Код",M4Code);//// Edit ************************** BPI Ukraine - KramarAlexandr - 04, 12 09 2019 y. at 8:53:27 PM
 		end;
     if (HasJewelleryInterface) then begin
       /*if (POSBr.WindowClass=="IVDClass") then begin//in 71 should be in for SL and POS Invoice
@@ -1400,7 +1400,7 @@ begin
       DataListColumn(1,-145,-21,AdjRight,"rowsum","Сумма",M4Val);*/
     end else begin
         if (LMb.HideArtCode==0) then begin
-      		DataListColumn(1,170,-215,AdjLeft,"spec","Наименов.",M4Str);
+      		DataListColumn(1,150,-215,AdjLeft,"spec","Наименов.",M4Str);
         end else begin
           DataListColumn(1,6,-215,AdjLeft,"spec","Наименование",M4Str); 
         end;
