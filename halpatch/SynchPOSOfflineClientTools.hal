@@ -352,6 +352,8 @@ BEGIN
   record RoundBlock Rb;
   Boolean setupsf;
   record ShareVcSetBlock ShsreBlock;// Edit ************************** BPI Ukraine - KramarAlexandr - 04, 12 09 2019 y. at 4:20:36 PM
+  row ShareVcSetBlock ShsreBlockrw;
+  integer i,mtrw;
   transaction Boolean gSynchServToOfflineSettingsm;
   
   offlinecomp = GetPOSOffLineCompNo;
@@ -373,6 +375,14 @@ BEGIN
 
 //when SynchroniseBlock working coment out
 	BlockLoad(ShsreBlock);// Edit ************************** BPI Ukraine - KramarAlexandr - 04, 12 09 2019 y. at 4:21:08 PM
+	logtext(0,"Check ShsreBlock on server");
+	mtrw = matrowcnt(ShsreBlock);
+	for(i=0;i<mtrw;i=i+1)begin
+		matrowget(ShsreBlock,i,ShsreBlockrw);
+		logtext(0,ShsreBlockrw.VcName & " " & ShsreBlockrw.ForCompanies);
+	end;
+	logtext(0,"Check ShsreBlock");
+	
   BlockLoad(VATCodeRec);
   BlockLoad(CYRec);  
   BlockLoad(LangRec);
@@ -404,6 +414,13 @@ BEGIN
 
   SetServerCompany(offlinecomp);
   BlockStore(ShsreBlock);// Edit ************************** BPI Ukraine - KramarAlexandr - 04, 12 09 2019 y. at 4:21:01 PM
+  logtext(0,"Check ShsreBlock on client");
+	mtrw = matrowcnt(ShsreBlock);
+	for(i=0;i<mtrw;i=i+1)begin
+		matrowget(ShsreBlock,i,ShsreBlockrw);
+		logtext(0,ShsreBlockrw.VcName & " " & ShsreBlockrw.ForCompanies);
+	end;
+	logtext(0,"Check ShsreBlock");
   BlockStore(VATCodeRec);
   BlockStore(MainStockRec);
 
