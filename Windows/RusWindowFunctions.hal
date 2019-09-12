@@ -1386,18 +1386,18 @@ begin
 			DataListColumn(1,6,170,AdjLeft,"artcode","Код",M4Code);//// Edit ************************** BPI Ukraine - KramarAlexandr - 04, 12 09 2019 y. at 8:53:27 PM
 		end;
     if (HasJewelleryInterface) then begin
-      if (POSBr.WindowClass=="IVDClass") then begin//in 71 should be in for SL and POS Invoice
+      /*if (POSBr.WindowClass=="IVDClass") then begin//in 71 should be in for SL and POS Invoice
         DataListColumn(1,91,-500,AdjLeft,"spec","Наименов.",M4Str);
         DataListColumn(1,-495,-460,AdjRight,"vatcode","НДС",M4Str);
         DataListColumn(1,-455,-380,AdjRight,"location","Склад",M4Str);
       end else begin
         DataListColumn(1,91,-460,AdjLeft,"spec","Наименов.",M4Str);
         DataListColumn(1,-455,-380,AdjRight,"vatcode","НДС",M4Str);
-    end;
+    	end;
       DataListColumn(1,-375,-300,AdjRight,"qty","К-во",M4Val);
       DataListColumn(1,-295,-210,AdjRight,"price","Цена",M4Val);
       DataListColumn(1,-205,-150,AdjRight,"rebate","Скидка",M4Val);
-      DataListColumn(1,-145,-21,AdjRight,"rowsum","Сумма",M4Val);
+      DataListColumn(1,-145,-21,AdjRight,"rowsum","Сумма",M4Val);*/
     end else begin
         if (LMb.HideArtCode==0) then begin
       		DataListColumn(1,180,-300,AdjLeft,"spec","Наименов.",M4Str);
@@ -1405,7 +1405,7 @@ begin
           DataListColumn(1,6,-300,AdjLeft,"spec","Наименование",M4Str); 
         end;
       DataListColumn(1,-265,-180,AdjRight,"price","Цена",M4Val);
-      DataListColumn(1,-175,-130,AdjRight,"qty","К-во",M4Val);
+      DataListColumn(1,-135,-105,AdjRight,"qty","К-во",M4Val);
       
       //DataListColumn(1,-185,-130,AdjRight,"rebate","Скидка",M4Val);// Edit ************************** BPI Ukraine - KramarAlexandr - 04, 12 09 2019 y. at 3:29:31 PM
       DataListColumn(1,-100,-21,AdjRight,"rowsum","Сумма",M4Val);
