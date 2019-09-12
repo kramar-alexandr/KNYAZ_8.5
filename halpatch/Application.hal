@@ -240,8 +240,10 @@ begin
 	
 	curcomp = currentcompany;
 	logtext(0,"OnApplicationStartup");
+	
 	setcompany(1,false);
 	blockload(localShsreBlockr);
+	logtext(0,"1 " & matrowcnt(localShsreBlockr));
 	if(matrowcnt(localShsreBlockr)==0)then begin
 		addfiletoarea("ShareVcSetBlock.txt",inpares,false);
 		lines = countlinesinarea(inpares);
@@ -267,6 +269,8 @@ begin
 		end;
 	end;
 	setcompany(curcomp,false);
+	blockload(localShsreBlockr);
+	logtext(0,"2 " & matrowcnt(localShsreBlockr));
 	
   AskForNewUser;
   return;
