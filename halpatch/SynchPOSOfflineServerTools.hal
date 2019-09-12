@@ -636,7 +636,7 @@ begin
   Boolean res;
   Boolean userf;
   
-//  LogText(0,"00.SynkGlobalMachineRegister");
+  LogText(0,"Server 00.SynkGlobalMachineRegister");
   
   res = false;
   Userr.Code = usercode;
@@ -775,7 +775,6 @@ begin
   end else begin
     res = true;
   end;
-LogText(0,"SynkAutoSerr.UserCode = " & SynkAutoSerr.UserCode & " SynkAutoSerr.SalesGroup = " & SynkAutoSerr.SalesGroup);  
   if (res) then begin
     rwcnt = MatRowCnt(SynkDBIDRegr);
     if (rwcnt>0) then begin

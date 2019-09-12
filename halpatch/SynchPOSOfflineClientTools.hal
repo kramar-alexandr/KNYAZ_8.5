@@ -65,7 +65,8 @@ begin
   record SynkDBIDRegVc oldSynkDBIDRegr;
   Integer oldprogmode;
   
-  oldprogmode = SetCompanyProgramMode(kProgramModeLiveSync);
+  oldprogmode = CompanyDefaultProgramMode;
+  SetCompanyProgramMode(kProgramModeLiveSync);
   
   oldSynkDBIDRegr.DBIDCode = SynkDBIDRegr.DBIDCode;
   if (ReadFirstMain(oldSynkDBIDRegr,1,true)) then begin
@@ -78,7 +79,7 @@ begin
   
   UpdateSyncNumberSeries(SynkDBIDRegr); // primitive can handle both
   
-  ResetCompanyProgramMode(oldprogmode);
+  SetCompanyProgramMode(oldprogmode);
   return;
 end;
 
@@ -87,8 +88,11 @@ begin
   record SynkGlobalDBIDRegVc oldSynkGlobalDBIDRegr;
   Integer oldprogmode;
   
-  oldprogmode = SetCompanyProgramMode(kProgramModeLiveSync);
-
+  LogText(0,"Client SetupGlobalSynkMachine");
+  
+  oldprogmode = CompanyDefaultProgramMode;
+  SetCompanyProgramMode(kProgramModeLiveSync);
+  
   oldSynkGlobalDBIDRegr.DBIDCode = SynkGlobalDBIDRegr.DBIDCode;
   if (ReadFirstMain(oldSynkGlobalDBIDRegr,1,true)) then begin
     if (RecordUpdate(oldSynkGlobalDBIDRegr,SynkGlobalDBIDRegr,false)==0) then begin
@@ -100,7 +104,7 @@ begin
   
   UpdateSyncNumberSeries(SynkGlobalDBIDRegr); // primitive can handle both
   
-  ResetCompanyProgramMode(oldprogmode);
+  SetCompanyProgramMode(oldprogmode);
   return;
 end;
 
@@ -249,7 +253,6 @@ begin
     LMb.MailboxPasteSpecial = LMSr.MailboxPasteSpecial;
     LMb.GMTOffset = LMSr.GMTOffset;
     LMb.AccClassPasteSpecial = LMSr.AccClassPasteSpecial;
-
     LMb.TouchScreenLook2 = LMSr.TouchScreenLook2;
     LMb.TouchScreenLookPicture = LMSr.TouchScreenLookPicture;
     LMb.TabletScaleFactor = LMSr.TabletScaleFactor;
@@ -814,10 +817,8 @@ begin
   record SerialPortDeviceVc SPDr;
   row LocalMachineLoginVc LMLrw;
   record LocalLoginBlock LLb;
-  record LocalLoginBlock curLLb;
   row LocalLoginBlock LLbrw;
   Integer i,rwcnt;
-  record LocalMachineBlock curLMb;
 
   if (nonblank(LMSr.LocalMachine)) then begin
     LMb.LocalMachineCode = LMSr.LocalMachine;
@@ -871,11 +872,9 @@ begin
     end;
     LMb.DefaulBaggerSupervisor = LMSr.DefaulBaggerSupervisor;
     LMb.HideQty = LMSr.HideQty;
-    LMb.HideArtCode = LMSr.HideArtCode;
     LMb.CCRequireAuthCode = LMSr.CCRequireAuthCode;
     LMb.ShowBaggerSupervisor = LMSr.ShowBaggerSupervisor;
     LMb.UseCustomerDisplay = LMSr.UseCustomerDisplay;
-
     LMb.FiscalPrinterEJournalPath = LMSr.FiscalPrinterEJournalPath;
     LMb.FiscalPrinterEJournalPath2 = LMSr.FiscalPrinterEJournalPath2;
     LMb.MailboxPasteSpecial = LMSr.MailboxPasteSpecial;
@@ -920,10 +919,11 @@ begin
     LMb.BackgroundOrderSync = LMSr.BackgroundOrderSync;
     LMb.DarkMode = LMSr.DarkMode;
 
-    BlockLoad(curLMb);
+    /*BlockLoad(curLMb);
     if (ComparePosts(curLMb,LMb)==false) then begin
       BlockStore(LMb);
-    end;
+    end;*/
+    BlockStore(LMb);
   end;
   
   rwcnt = MatRowCnt(LMLr);
@@ -936,10 +936,7 @@ begin
     MatRowPut(LLb,i,LLbrw);
   end;
   if (rwcnt>0) then begin
-    BlockLoad(curLLb);
-    if (ComparePosts(curLLb,LLb)==false) then begin
-      BlockStore(LLb);
-    end;
+    BlockStore(LLb);
   end;
   return;
 end;
@@ -967,8 +964,10 @@ begin
   record LocalMachineLoginVc LMLr;
   record LocalMachineBlock LMb;
   
-  oldprogmode = SetCompanyProgramMode(kProgramModeLiveSync);
-
+  oldprogmode = CompanyDefaultProgramMode;
+  SetCompanyProgramMode(kProgramModeLiveSync);
+  LogText(0,"Client AutosyncUpdateSerialNumbers");
+  
   BlockLoad(LMb);
   SynkDBIDRegr.DBIDCode = DatabaseID;
   if (ReadFirstMain(SynkDBIDRegr,1,true)==false) then begin
@@ -990,7 +989,7 @@ begin
   asyncremote.SynkGlobalMachineRegister(CurrentUser,SynkGlobalDBIDRegr,LMb.LocalMachineCode);
   asyncremote.GetCustomBlocksFromServer(CurrentUser); //Edit***************************Sasha2,16:29 26.10.2016
   
-  ResetCompanyProgramMode(oldprogmode);
+  SetCompanyProgramMode(oldprogmode);
   
   //AutosyncUpdateSerialNumbers = res;
   return;
