@@ -1408,9 +1408,9 @@ begin
       DataListColumn(1,-175,-130,AdjRight,"qty","К-во",M4Val);
       
       //DataListColumn(1,-185,-130,AdjRight,"rebate","Скидка",M4Val);// Edit ************************** BPI Ukraine - KramarAlexandr - 04, 12 09 2019 y. at 3:29:31 PM
-      DataListColumn(1,-125,-21,AdjRight,"rowsum","Сумма",M4Val);
+      DataListColumn(1,-100,-21,AdjRight,"rowsum","Сумма",M4Val);
     end;
-    DataListColumn(1,-20,-6,AdjRight,"","",M4Str); // Added to provide some extra space for scroll bar.
+    //DataListColumn(1,-20,-6,AdjRight,"","",M4Str); // Added to provide some extra space for scroll bar.
     
     DataListColumn(2,6,-6,AdjLeft,"spec","",M4Str);
     
