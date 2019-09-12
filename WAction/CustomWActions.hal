@@ -219,6 +219,9 @@ updating procedure ClearUpSalesmanForAllPosInvoices()
 begin
   record IVCashVc IVCashr,IVCashCurr;
   Boolean TrHs,testf;
+  integer wn;
+  
+  wn = curwindow;
   
     IVcashr.TransDate = CurrentDate;
     IVcashr.SalesMan = "ZZZZZZZZZ";
@@ -239,6 +242,7 @@ begin
       end;
     end;
     LogText(0,"ClearUpSalesmanForAllPosInvoices");
+    closewindow(wn);
     MessageBox(0,"Готово");
   return;
 end; //Edit***************************Sasha2,14:39 03.10.2016 }
