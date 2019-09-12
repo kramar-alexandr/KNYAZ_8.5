@@ -1045,7 +1045,9 @@ global updating
 procedure SynkShsreBlockCallback(Boolean setupsf,record ShareVcSetBlock ShsreBlockr)
 begin
 	record ShareVcSetBlock localShsreBlockr;
+	row ShareVcSetBlock localShsreBlockrw;
 	area ablock;
+	integer i,mtrw;
 
 	logtext(0,"SynkShsreBlockCallback");
 	logtext(0,"matrowcnt from server " & matrowcnt(ShsreBlockr));
@@ -1055,12 +1057,18 @@ begin
     blockstore(localShsreBlockr);
   end;
   CreateFile("ShareVcSetBlock.txt");
-  BlockExport("ShareVcSetBlock");
-  ExportBlock(localShsreBlockr);
+  //BlockExport("ShareVcSetBlock");
+  //ExportBlock(localShsreBlockr);
+  //ExportBlock(ShareVcSetBlock);
   closefile;
+  mtrw = matrowcnt(localShsreBlockr);
+  for(i=0;i<mtrw;i=i+1)begin
+  	matrowget(localShsreBlockr,i,localShsreBlockrw);
+  	addtexttoarea(localShsreBlockrw.VcName & chr(9) & localShsreBlockrw.Typ & chr(9) & localShsreBlockrw.ForCompanies & chr(9) & localShsreBlockrw.InCompany & chr(13) & chr(10),ablock);
+  end;
   //AddRecordToArea(localShsreBlockr,"ShareVcSetBlock",ablock);
   //logtext(0,"Area Length " & getarealength(ablock));
-  //writeareatofile(ablock,"ShareVcSetBlock",0);
+  writeareatofile(ablock,"ShareVcSetBlock",0);
 
   logtext(0,"matrowcnt on client server " & matrowcnt(localShsreBlockr));
 return;
