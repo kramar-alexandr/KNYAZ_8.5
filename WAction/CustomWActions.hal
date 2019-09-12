@@ -221,11 +221,16 @@ begin
   Boolean TrHs,testf;
   
     IVcashr.TransDate = CurrentDate;
+    IVcashr.SalesMan = "ZZZZZZZZZ";
     TrHs = true;
-    while (LoopBackKey("TransDate",IVcashr,1,TrHs)) begin
+    while (LoopBackKey("SalesMan",IVcashr,1,TrHs)) begin
       testf = true;
       if (Blank(IVcashr.SalesMan)) then begin
+      	TrHs = false;
         testf = false; 
+      end;
+      if(IVcashr.TransDate<addday(CurrentDate,-7))then begin
+      	//TrHs = false;
       end;
       if (testf) then begin
         IVcashr.InvComment = IVcashr.InvComment & " SalesMan:" & IVcashr.SalesMan & ".HDALL";

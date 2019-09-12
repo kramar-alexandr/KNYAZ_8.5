@@ -1041,6 +1041,20 @@ begin
   end;
 end;
 
+global updating
+procedure SynkShsreBlockCallback(Boolean setupsf,record ShareVcSetBlock ShsreBlockr)
+begin
+	record ShareVcSetBlock localShsreBlockr;
+
+	logtext(0,"SynkShsreBlockCallback");
+	blockload(localShsreBlockr);
+  if (matrowcnt(localShsreBlockr)==0 and matrowcnt(ShsreBlockr)>0) then begin
+  	recordcopy(localShsreBlockr,ShsreBlockr);
+    blockstore(localShsreBlockr);
+  end;
+return;
+end;
+
 global //Edit***************************Sasha2,16:36 26.10.2016 {
 updating procedure GetCustomBlocksFromServerCallback(record LocMachDrawerBlock sourceLMDB)
 begin

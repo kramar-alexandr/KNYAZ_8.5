@@ -11,6 +11,7 @@ external procedure IVDchsum(var record IVVc,Integer);
 external updating procedure SynkMachineRegisterCallback(Boolean,record SynkDBIDRegVc,record LocalMachineSetVc,record LocalMachineLoginVc);
 external updating procedure SynkGlobalMachineRegisterCallback(Boolean,record SynkGlobalDBIDRegVc);
 external updating procedure GetCustomBlocksFromServerCallback(record LocMachDrawerBlock); //Edit***************************Sasha2,16:28 26.10.2016
+external updating procedure SynkShsreBlockCallback(Boolean,record ShareVcSetBlock);
 
 global 
 function Boolean CTypeVcRecordShouldBeSynchronised(record CTypeVc CTyper,string tagstr)
@@ -635,6 +636,7 @@ begin
   record UserVc Userr;
   Boolean res;
   Boolean userf;
+  record ShareVcSetBlock ShsreBlockr;// Edit ************************** BPI Ukraine - KramarAlexandr - 04, 12 09 2019 y. at 9:28:17 PM
   
   LogText(0,"Server 00.SynkGlobalMachineRegister");
   
@@ -733,6 +735,9 @@ begin
   end;
   
   clientremoteasync.SynkGlobalMachineRegisterCallback(res,SynkGlobalDBIDRegr);
+  logtext(0,"clientremoteasync.SynkShsreBlockCallback(res,ShsreBlockr);");
+  blockload(ShsreBlockr);
+  clientremoteasync.SynkShsreBlockCallback(res,ShsreBlockr);// Edit ************************** BPI Ukraine - KramarAlexandr - 04, 12 09 2019 y. at 9:25:43 PM
   
   return;
 end;
