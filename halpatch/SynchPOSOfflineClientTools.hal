@@ -1056,9 +1056,10 @@ begin
   end;
   CreateFile("ShareVcSetBlock.txt");
   BlockExport("ShareVcSetBlock");
+  ExportBlock(localShsreBlockr);
   closefile;
-  AddRecordToArea(localShsreBlockr,"ShareVcSetBlock",ablock);
-  logtext(0,"Area Length " & getarealength(ablock));
+  //AddRecordToArea(localShsreBlockr,"ShareVcSetBlock",ablock);
+  //logtext(0,"Area Length " & getarealength(ablock));
   //writeareatofile(ablock,"ShareVcSetBlock",0);
 
   logtext(0,"matrowcnt on client server " & matrowcnt(localShsreBlockr));
