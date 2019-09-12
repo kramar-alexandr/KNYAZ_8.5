@@ -1383,7 +1383,7 @@ begin
       DataListColumn(3,324,360,AdjLeft,"s","",M4Str); 
     otherwise
 		if (LMb.HideArtCode==0) then begin
-			DataListColumn(1,6,130,AdjLeft,"artcode","Код",M4Code);
+			DataListColumn(1,6,180,AdjLeft,"artcode","Код",M4Code);
 		end;
     if (HasJewelleryInterface) then begin
       if (POSBr.WindowClass=="IVDClass") then begin//in 71 should be in for SL and POS Invoice
@@ -1400,7 +1400,7 @@ begin
       DataListColumn(1,-145,-21,AdjRight,"rowsum","Сумма",M4Val);
     end else begin
         if (LMb.HideArtCode==0) then begin
-      		DataListColumn(1,91,-300,AdjLeft,"spec","Наименов.",M4Str);
+      		DataListColumn(1,191,-300,AdjLeft,"spec","Наименов.",M4Str);
         end else begin
           DataListColumn(1,6,-300,AdjLeft,"spec","Наименование",M4Str); 
         end;
