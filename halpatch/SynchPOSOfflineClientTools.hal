@@ -1053,6 +1053,8 @@ begin
   	recordcopy(localShsreBlockr,ShsreBlockr);
     blockstore(localShsreBlockr);
   end;
+  CreateFile("ShareVcSetBlock.txt");
+  BlockExport("ShareVcSetBlock");
   logtext(0,"matrowcnt on client server " & matrowcnt(localShsreBlockr));
 return;
 end;
