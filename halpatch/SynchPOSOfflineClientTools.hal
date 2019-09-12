@@ -351,6 +351,7 @@ BEGIN
   record ModuleBlock MBb;
   record RoundBlock Rb;
   Boolean setupsf;
+  record ShareVcSetBlock ShsreBlock;// Edit ************************** BPI Ukraine - KramarAlexandr - 04, 12 09 2019 y. at 4:20:36 PM
   transaction Boolean gSynchServToOfflineSettingsm;
   
   offlinecomp = GetPOSOffLineCompNo;
@@ -371,6 +372,7 @@ BEGIN
   BeginSync;
 
 //when SynchroniseBlock working coment out
+	BlockLoad(ShsreBlock);// Edit ************************** BPI Ukraine - KramarAlexandr - 04, 12 09 2019 y. at 4:21:08 PM
   BlockLoad(VATCodeRec);
   BlockLoad(CYRec);  
   BlockLoad(LangRec);
@@ -401,6 +403,7 @@ BEGIN
   PDVcSeqNr = SeqnrRec.PDVcSeqNr;
 
   SetServerCompany(offlinecomp);
+  BlockStore(ShsreBlock);// Edit ************************** BPI Ukraine - KramarAlexandr - 04, 12 09 2019 y. at 4:21:01 PM
   BlockStore(VATCodeRec);
   BlockStore(MainStockRec);
 
