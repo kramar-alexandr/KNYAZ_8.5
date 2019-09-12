@@ -1055,6 +1055,7 @@ begin
   end;
   CreateFile("ShareVcSetBlock.txt");
   BlockExport("ShareVcSetBlock");
+  closefile;
   logtext(0,"matrowcnt on client server " & matrowcnt(localShsreBlockr));
 return;
 end;
