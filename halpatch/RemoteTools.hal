@@ -11,3 +11,8 @@ begin
 return;
 end;
 
+global procedure CallRegisterAtPresenceServer()
+begin		
+
+return;
+end;
