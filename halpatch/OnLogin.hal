@@ -805,7 +805,7 @@ begin
     if (OpenToDoWasSUCCESSFUL==false) then begin
       SETOpenToDoSUCCESSFUL(true);
       if (GuiType!=kGuiiPhone and GuiType!=kGuiAndroid) then begin
-        asyncremote.OpenToDoIfNeededOnLogin;
+        //asyncremote.OpenToDoIfNeededOnLogin;
       end;
     end;
   end;
@@ -848,12 +848,12 @@ begin
       userstr = CurrentUser;
     end;
     if (UserActive) and ((SingleUserMode) or (ClientMode)) then begin
-      asyncremote.RegisterAtPresenceServer(user,0,1,DeviceOperatingSystem,false);
+      //asyncremote.RegisterAtPresenceServer(user,0,1,DeviceOperatingSystem,false);
     end;
   end;
   res = OnLogoutRemote(user);
   if (ClientMode) then begin
-    asyncremote.LogoutHansaWorldID;
+    //asyncremote.LogoutHansaWorldID;
   end;
   LogCashDrawerAction(CurrentUser,LMb.LocalMachineCode,"",LMb.TerminalID,kPOSActionLogout);
   

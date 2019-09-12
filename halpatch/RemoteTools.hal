@@ -4,3 +4,10 @@ global function integer EmailValidationStatusWithStdID()
 begin		
 	EmailValidationStatusWithStdID = 2;
 end;
+
+global procedure UpdateDatabaseRestrictions()
+begin		
+
+return;
+end;
+
