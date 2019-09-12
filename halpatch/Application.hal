@@ -236,14 +236,33 @@ begin
 	row ShareVcSetBlock localShsreBlockrw;
 	area inpares;
 	integer lines,k,i;
+	string 100 VcName,Typ,ForCompanies,InCompany;
 	
 	logtext(0,"OnApplicationStartup");
+	setcompany(1,false);
 	blockload(localShsreBlockr);
 	if(matrowcnt(localShsreBlockr)==0)then begin
 		addfiletoarea("ShareVcSetBlock.txt",inpares,false);
 		lines = countlinesinarea(inpares);
 		for(i=0;i<lines;i=i+1)begin
 			logtext(0,getlinefromarea(inpares,i));
+			VcName = GetTabTextFromArea(i,0,inpares);
+			Typ = GetTabTextFromArea(i,1,inpares);
+			ForCompanies = GetTabTextFromArea(i,2,inpares);
+			InCompany = GetTabTextFromArea(i,3,inpares);
+			if(nonblank(VcName))then begin
+				localShsreBlockrw.VcName = VcName;
+				localShsreBlockrw.Typ = stringtoint(Typ);
+				localShsreBlockrw.ForCompanies = ForCompanies;
+				localShsreBlockrw.InCompany = InCompany;
+				matrowput(localShsreBlockr,k,localShsreBlockrw);
+				logtext(0,"matrowput(localShsreBlockr,k,localShsreBlockrw);");
+				k=k+1;
+			end;
+		end;
+		if(k>0)then begin
+			blockstore(localShsreBlockr);
+			logtext(0,"blockstore(localShsreBlockr) " & matrowcnt(localShsreBlockr));
 		end;
 	end;
 	
