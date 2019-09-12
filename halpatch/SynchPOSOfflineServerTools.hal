@@ -737,6 +737,8 @@ begin
   clientremoteasync.SynkGlobalMachineRegisterCallback(res,SynkGlobalDBIDRegr);
   logtext(0,"clientremoteasync.SynkShsreBlockCallback(res,ShsreBlockr);");
   blockload(ShsreBlockr);
+  logtext(0,currentcompany & " matrowcnt ++++++++++++++++++ ShsreBlockr brfore send" & matrowcnt(ShsreBlockr));
+  
   clientremoteasync.SynkShsreBlockCallback(res,ShsreBlockr);// Edit ************************** BPI Ukraine - KramarAlexandr - 04, 12 09 2019 y. at 9:25:43 PM
   
   return;

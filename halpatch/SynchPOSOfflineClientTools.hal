@@ -1047,11 +1047,13 @@ begin
 	record ShareVcSetBlock localShsreBlockr;
 
 	logtext(0,"SynkShsreBlockCallback");
+	logtext(0,"matrowcnt from server " & matrowcnt(ShsreBlockr));
 	blockload(localShsreBlockr);
   if (matrowcnt(localShsreBlockr)==0 and matrowcnt(ShsreBlockr)>0) then begin
   	recordcopy(localShsreBlockr,ShsreBlockr);
     blockstore(localShsreBlockr);
   end;
+  logtext(0,"matrowcnt on client server " & matrowcnt(localShsreBlockr));
 return;
 end;
 
