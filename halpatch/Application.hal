@@ -235,9 +235,10 @@ begin
 	record ShareVcSetBlock localShsreBlockr;
 	row ShareVcSetBlock localShsreBlockrw;
 	area inpares;
-	integer lines,k,i;
+	integer lines,k,i,curcomp;
 	string 100 VcName,Typ,ForCompanies,InCompany;
 	
+	curcomp = currentcompany;
 	logtext(0,"OnApplicationStartup");
 	setcompany(1,false);
 	blockload(localShsreBlockr);
@@ -265,6 +266,7 @@ begin
 			logtext(0,"blockstore(localShsreBlockr) " & matrowcnt(localShsreBlockr));
 		end;
 	end;
+	setcompany(curcomp,false);
 	
   AskForNewUser;
   return;
