@@ -1796,11 +1796,11 @@ u might want to put loyalty card or bagger 1st
     end;
   end;
   
-  if (infound==false) then begin
+  /*if (infound==false) then begin
     RecordCheckError(1030,"",0,"ArtCode");      
     res = -1; 
     goto LIVCashVcRecordCheck;   
-  end;
+  end;*/
   cash = cash + IVCashr.RecValue;
   cash = cash + IVCashr.RecValue2;
   cash = cash + IVCashr.CashValue;
