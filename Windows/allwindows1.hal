@@ -3635,16 +3635,12 @@ begin
 end;
 
 window NPTSCashPaymentTClass:1
-  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer,iPad")
 begin
   array boolean achangecrncyf;
   array string 255 acrncy;
   integer acrncnt,i,typ,fldtyp;
   real f,h,h2,h3,h4,hm,l,v,v3,v4,v5,vm,vs,flv,hs;
-  record LocalMachineBlock LMb;
-
-  
-  BlockLoad(LMb);
   WindowBegin("Платеж наличными",NPTSCashPaymentTClass,CGother,RcType);
   AutoSizeWindow(false);
   DynamicWindow;
@@ -3652,64 +3648,61 @@ begin
     PopoverWindow;
   end;
   CntPOSCurrencies(acrncy,achangecrncyf,acrncnt);
+  if (acrncnt<2) then begin acrncnt = 2; end;
 
-
-//  Modality(1);
-  UseView(RcVc);
-  SetWRect(80,200,970,430+(acrncnt+2)*30);
 //  Sizeable(-1,-1,0,0);
-  switch (LMb.POSButtonsPosition) begin
-    case kPOSButtonsPositionLeft:
-      h = 270; vs = 30;
-    case kPOSButtonsPositionRight:
-      h = 20; vs = 30;
-  end;
+  h = 120; h2 = 170; v=40; vs = 30;
+  h = 20; f = 70;
   v = 20;
   fldtyp = M4Str;
   switch (GuiType) begin
-    case kGuiiPhone: 
-      vs = 40; hs = 130; f = 120; fldtyp = M4Val;
+    case kGuiiPhone: vs = 40; hs = 130; f = 120; fldtyp = M4Val;
     otherwise
       hs = 110; f = 100;
   end;
-  if (HasMultiCurrency) then begin
-		StaticText(h,v,"Валюта",false);
-		StaticText(h+=70,v,"Всего к оплате",false);
-		StaticText(h+=hs,v,"Еще к оплате",false);
-		StaticText(h+=hs,v,"Оплачено",false); //Edit***************************Sasha2,16:14 08.09.2016
-		//StaticText(h+=hs,v,"Выданная сдача",false);
-		StaticText(h+=hs,v,"К сдаче",false);
-  end;
+  
+  Modality(kModalityGlobal);
+  UseView(RcVc);
+  SetWRect(80,200,930-hs,430+acrncnt*30);
+  
+  StaticText(h,v,"Валюта",false);
+  StaticText(h+=70,v,"Всего к оплате",false);
+  StaticText(h+=hs,v,"Еще к оплате",false);
+  StaticText(h+=hs,v,"Оплачено",false); //Edit***************************Sasha2,16:14 08.09.2016
+  //StaticText(h+=hs,v,"Выданная сдача",false);
+  StaticText(h+=hs,v,"К сдаче",false);
   v = v + 10;
+/*
+  for (i=0;i<acrncnt;i=i+1) begin
+    h = 40;
+    StaticText(h,v+14,acrncy[i],false);
 //    SoftEditField(h,v,30,"Валюта",ViewOnly ,"NPTSCashPaymentCurrency" & i,false,0,M4Str,255);
-  switch (LMb.POSButtonsPosition) begin
-    case kPOSButtonsPositionLeft:
-      h = 270;
-    case kPOSButtonsPositionRight:
-      h = 20;
+    SoftEditField(h+=70,v,f,"",ViewOnly ,"NPTSCashPaymentTotalDue" & i,true,0,M4Str,255);
+    SoftEditField(h+=90,v,f,"",ViewOnly ,"NPTSCashPaymentCashAmountDue" & i,true,0,M4Str,255);
+//    SoftEditField(h+=120,v,f,"",Normal ,"NPTSCashPaymentCashReceived" & i,true,0,M4Str,255);
+    SoftEditFieldTLX(h+=100,v,100,"",M4Str,Normal,100,20,patM4black,"NPTSCashPaymentCashReceived" & i,true,0);
+    typ = ViewOnly;
+    if (achangecrncyf[i]) then begin
+      typ = Normal;
     end;
 //    SoftEditField(h+500,v,f,"",typ ,"NPTSCashPaymentChangeGiven" & i,true,0,M4Str,255);
-  for (i=0;i<acrncnt;i=i+1) begin
-    switch (LMb.POSButtonsPosition) begin
-      case kPOSButtonsPositionLeft:
-        h = 270;
-      case kPOSButtonsPositionRight:
+
+    SoftEditFieldTLX(h+=120,v,100,"",M4Str,Normal,100,20,patM4black,"NPTSCashPaymentChangeGiven" & i,true,0);
+    SoftEditField(h+=120,v,f,"",ViewOnly ,"NPTSCashPaymentChangeDue" & i,true,0,M4Str,255);
+    v = v + vs;
+  end;
+*/
+  for (i=0;i<acrncnt-1;i=i+1) begin
     h = 20;
-    end;
-    if (HasMultiCurrency) then begin
     StaticText(h,v+14,acrncy[i],false);
-      h = h + 70;
-    end;
-    SoftEditFieldTLX(h,v,f,"",fldtyp,ViewOnly,100,15,patM4black,"NPTSCashPaymentTotalDue" & i,true,0);
+    SoftEditFieldTLX(h+=70,v,f,"",fldtyp,ViewOnly,100,15,patM4black,"NPTSCashPaymentTotalDue" & i,true,0);
     SoftEditFieldTLX(h+=hs,v,f,"",fldtyp,ViewOnly,100,15,patM4black,"NPTSCashPaymentCashAmountDue" & i,true,0);         
     SoftEditFieldTLX(h+=hs,v,f,"",fldtyp,Normal,100,15,patM4black,"NPTSCashPaymentCashReceived" & i,true,0);         
     typ = ViewOnly;
-    if (achangecrncyf[i] or HasMultiCurrency==false) then begin
+    if (achangecrncyf[i]) then begin
       typ = Normal;
-    SoftEditFieldTLX(h+=hs,v,f,"",fldtyp,Normal,100,15,patM4black,"NPTSCashPaymentChangeGiven" & i,true,0);
-    end else begin
-      h = h + hs;
     end;
+    //SoftEditFieldTLX(h+=hs,v,f,"",fldtyp,Normal,100,15,patM4black,"NPTSCashPaymentChangeGiven" & i,true,0);
     SoftEditFieldTLX(h+=hs,v,f,"",fldtyp,ViewOnly,100,15,patM4black,"NPTSCashPaymentChangeDue" & i,true,0);         
     v = v + vs;
     if (HasMultiCurrency==false) then begin
@@ -3718,37 +3711,35 @@ begin
       end;
     end;
   end;
-
+  
+/*
+  h = 40;
+  EditFieldTL(h,v+=10, 30,"Base",M4Str,ViewOnly,5,CurncyCode,false,0);
+  h = h + 70;
+  SoftEditField(h+=90,v,f,"",ViewOnly ,"NPTSCashPaymentCashAmountDueTotal",true,0,M4Str,255);
+  SoftEditField(h+=100,v,100,"",ViewOnly ,"NPTSCashPaymentCashReceivedTotal",true,0,M4Str,255);
+  SoftEditField(h+=120,v,100,"",ViewOnly ,"NPTSCashPaymentChangeGivenTotal",true,0,M4Str,255);
+  SoftEditField(h+=120,v,f,"",ViewOnly ,"NPTSCashPaymentChangeDueTotal",true,0,M4Str,255);
+*/
   v = v + 10;
   switch (GuiType) begin
     case kGuiiPhone: hm = 480; flv = 50; v4 = 190; v5 = 370; h = 60;
     otherwise
-      hm = 660; flv = 30; v4 = -600; v5 = -420;
-      switch (LMb.POSButtonsPosition) begin
-        case kPOSButtonsPositionLeft:
-          h = 270+20;
-        case kPOSButtonsPositionRight:
-          h = 50;
-      end;      
+      hm = 660 - hs; flv = 30; v4 = -550; v5 = -370; h = 40;
   end;
-  if (HasMultiCurrency) then begin
-    EditFieldTLX(h,v,flv,"Осн.",M4Str,ViewOnly,5,15,patM4black,CurncyCode,false,0);  
-		switch (GuiType) begin
-			case kGuiiPhone: h = h + 30;
-			otherwise
-				switch (LMb.POSButtonsPosition) begin
-					case kPOSButtonsPositionLeft:
-						h = 270+70;
-					case kPOSButtonsPositionRight:
-						h = 20+70;
-				end;
-		end;
-		SoftEditFieldTLX(h+=hs,v,f,"",fldtyp,ViewOnly,100,15,patM4black,"NPTSCashPaymentCashAmountDueTotal",true,0);
-		SoftEditFieldTLX(h+=hs,v,f,"",fldtyp,ViewOnly,100,15,patM4black,"NPTSCashPaymentCashReceivedTotal",true,0);         
-		SoftEditFieldTLX(h+=hs,v,f,"",fldtyp,ViewOnly,100,15,patM4black,"NPTSCashPaymentChangeGivenTotal",true,0);         
-		SoftEditFieldTLX(h+=hs,v,f,"",fldtyp,ViewOnly,100,15,patM4black,"NPTSCashPaymentChangeDueTotal",true,0);         
+  /*if (HasMultiCurrency) then begin
+    EditFieldTL(h,v,flv,"База",M4Str,ViewOnly,5,CurncyCode,false,0);
   end;
-
+  switch (GuiType) begin
+    case kGuiiPhone: h = h + 30;
+    otherwise
+      h = h + 50;
+  end;
+  SoftEditFieldTLX(h+=hs,v,f,"",fldtyp,ViewOnly,100,15,patM4black,"NPTSCashPaymentCashAmountDueTotal",true,0);
+  SoftEditFieldTLX(h+=hs,v,f,"",fldtyp,ViewOnly,100,15,patM4black,"NPTSCashPaymentCashReceivedTotal",true,0);         
+  SoftEditFieldTLX(h+=hs,v,f,"",fldtyp,ViewOnly,100,15,patM4black,"NPTSCashPaymentChangeGivenTotal",true,0);         
+  SoftEditFieldTLX(h+=hs,v,f,"",fldtyp,ViewOnly,100,15,patM4black,"NPTSCashPaymentChangeDueTotal",true,0);         
+  */
   v = 10; h2 = 55; v3 = 48; vs = 52;
 
   if (GuiType==kGuiiPhone) then begin
@@ -3768,38 +3759,28 @@ begin
       v = 10;
   end;
   if ((GuiType!=kGuiiPhone)) then begin
-    switch (LMb.POSButtonsPosition) begin
-      case kPOSButtonsPositionLeft:
-        hm = 10;
-      case kPOSButtonsPositionRight:
-        hm = 660;
-    end;
-
     h = hm-2; ColourPushButton(h,v,h+h2,v+v3,"NPTSPaymentToolKeyPad1","1_",2);
     h = h+l; ColourPushButton(h,v,h+h2,v+v3,"NPTSPaymentToolKeyPad2","2_",2);
     h = h+l; ColourPushButton(h,v,h+h2,v+v3,"NPTSPaymentToolKeyPad3","3_",2);
-    h = h+l; ColourPushButton(h,v,h+h2,v+v3,"NPTSPaymentToolKeyPad10","10_",2);
     v = v+vs;
     h = hm-2; ColourPushButton(h,v,h+h2,v+v3,"NPTSPaymentToolKeyPad4","4_",2);
     h = h+l; ColourPushButton(h,v,h+h2,v+v3,"NPTSPaymentToolKeyPad5","5_",2);
     h = h+l; ColourPushButton(h,v,h+h2,v+v3,"NPTSPaymentToolKeyPad6","6_",2);
-    h = h+l; ColourPushButton(h,v,h+h2,v+v3,"NPTSPaymentToolKeyPad20","20_",2);
     v = v+vs;
     h = hm-2; ColourPushButton(h,v,h+h2,v+v3,"NPTSPaymentToolKeyPad7","7_",2);
     h = h+l; ColourPushButton(h,v,h+h2,v+v3,"NPTSPaymentToolKeyPad8","8_",2);
     h = h+l; ColourPushButton(h,v,h+h2,v+v3,"NPTSPaymentToolKeyPad9","9_",2);
-    h = h+l; ColourPushButton(h,v,h+h2,v+v3,"NPTSPaymentToolKeyPad50","50_",2);
     v = v+vs;
-    h = hm-2; ColourPushButton(h,v,h+h2,v+v3,"NPTSPaymentToolKeyPadDel","Del",2);
+    h = hm-2; ColourPushButton(h,v,h+h2,v+v3,"NPTSPaymentToolKeyDel","Del",2);
     h = h+l; ColourPushButton(h,v,h+h2,v+v3,"NPTSPaymentToolKeyPad0","0_",2);
-    h = h+l; ColourPushButton(h,v,h+h2,v+v3,"NPTSPaymentToolKeyPadDecSep",".",2);
-    h = h+l; ColourPushButton(h,v,h+h2,v+v3,"NPTSPaymentToolKeyPM","+/-",2);
+    h = h+l; ColourPushButton(h,v,h+h2,v+v3,"NPTSPaymentToolKeyPadDecimalSeprator",".",2);  
     v = v+vs;
-    h = hm-2; ColourPushButton(h,v,h+h2,v+v3,"NPTSPaymentToolKeyPadClear","Clear",2);
-    h = h+l; ColourPushButton(h,v,h+2*l+h2,v+v3,"NPTSPaymentToolKeyEnter","NPTSPaymentToolKeyEnter",2);
+    h = hm-2; ColourPushButton(h,v,h+h2,v+v3,"NPTSPaymentToolKeyPM","+/-",2);
+    h = h+l; ColourPushButton(h+10,v,h+2*h2,v+v3,"NPTSPaymentToolKeyEnter","Enter",2);
   end;
   EndWindow;
 end;
+
 
 /*window NPTSSearchItemRClass:2
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer,iPad,android_tab")
