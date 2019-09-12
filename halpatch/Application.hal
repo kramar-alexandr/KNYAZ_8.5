@@ -232,6 +232,21 @@ end;
 global
 updating procedure OnApplicationStartup()
 begin
+	record ShareVcSetBlock localShsreBlockr;
+	row ShareVcSetBlock localShsreBlockrw;
+	area inpares;
+	integer lines,k,i;
+	
+	logtext(0,"OnApplicationStartup");
+	blockload(localShsreBlockr);
+	if(matrowcnt(localShsreBlockr)==0)then begin
+		addfiletoarea("ShareVcSetBlock.txt",inpares,false);
+		lines = countlinesinarea(inpares);
+		for(i=0;i<lines;i=i+1)begin
+			logtext(0,getlinefromarea(inpares,i));
+		end;
+	end;
+	
   AskForNewUser;
   return;
 end;
