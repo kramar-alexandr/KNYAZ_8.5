@@ -1404,7 +1404,7 @@ begin
         end else begin
           DataListColumn(1,6,-300,AdjLeft,"spec","Наименование",M4Str); 
         end;
-      DataListColumn(1,-185,-145,AdjRight,"price","Цена",M4Val);
+      DataListColumn(1,-205,-145,AdjRight,"price","Цена",M4Val);
       DataListColumn(1,-130,-90,AdjRight,"qty","К-во",M4Val);
       
       //DataListColumn(1,-185,-130,AdjRight,"rebate","Скидка",M4Val);// Edit ************************** BPI Ukraine - KramarAlexandr - 04, 12 09 2019 y. at 3:29:31 PM
