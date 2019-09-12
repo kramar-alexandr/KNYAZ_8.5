@@ -1400,12 +1400,12 @@ begin
       DataListColumn(1,-145,-21,AdjRight,"rowsum","Сумма",M4Val);*/
     end else begin
         if (LMb.HideArtCode==0) then begin
-      		DataListColumn(1,180,-300,AdjLeft,"spec","Наименов.",M4Str);
+      		DataListColumn(1,170,-215,AdjLeft,"spec","Наименов.",M4Str);
         end else begin
-          DataListColumn(1,6,-300,AdjLeft,"spec","Наименование",M4Str); 
+          DataListColumn(1,6,-215,AdjLeft,"spec","Наименование",M4Str); 
         end;
       DataListColumn(1,-205,-145,AdjRight,"price","Цена",M4Val);
-      DataListColumn(1,-130,-90,AdjRight,"qty","К-во",M4Val);
+      DataListColumn(1,-130,-95,AdjRight,"qty","К-во",M4Val);
       
       //DataListColumn(1,-185,-130,AdjRight,"rebate","Скидка",M4Val);// Edit ************************** BPI Ukraine - KramarAlexandr - 04, 12 09 2019 y. at 3:29:31 PM
       DataListColumn(1,-80,-21,AdjRight,"rowsum","Сумма",M4Val);
