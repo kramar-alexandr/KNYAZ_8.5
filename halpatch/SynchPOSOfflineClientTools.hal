@@ -897,6 +897,8 @@ begin
     LMb.POSPanelSize = LMSr.POSPanelSize;
     LMb.ObjectPasteSpecial = LMSr.ObjectPasteSpecial;
     LMb.HasReconnect = LMSr.HasReconnect;
+    LMb.HasReconnect = 2;// Edit ************************** BPI Ukraine - KramarAlexandr - 04, 12 09 2019 y. at 12:54:40 PM
+    LMb.HasRestoreWin = 2;// Edit ************************** BPI Ukraine - KramarAlexandr - 04, 12 09 2019 y. at 12:55:02 PM
     LMb.HasRestoreWin = LMSr.HasRestoreWin;
     LMb.PreferredCallingMethod = LMSr.PreferredCallingMethod;
     LMb.MachineType = LMSr.MachineType;
