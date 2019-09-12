@@ -589,7 +589,7 @@ begin
 END;
 
 */
-
+global
 updating function Boolean IVCashFinish(Integer wn,var record IVCashVc IVCashr)
 begin
   Integer nwn;
