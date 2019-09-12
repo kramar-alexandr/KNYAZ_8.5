@@ -3180,7 +3180,7 @@ begin
   if (blank(lmc)) then begin lmc = LMb.LocalMachineCode; end;
   sm = IVCashr.SalesMan;
   if (blank(sm)) then begin sm = CurrentUser; end;
-BrowseButtons(false);
+	BrowseButtons(false);
   ReadNPTSWindowData("NPTSIVCashDClass",LMb.POSButtonGroup,page,IVCashr.LocalMachineCode,IVCashr.DrawerCode,CurrentDate,CurrentTime,sessionopenedf,bc1,bc2,compname,POSBr);
 //  ReadPOSButtons("",LMb.POSButtonGroup,page,bc1,bc2,compname,POSBr,acnt);    
     SetWRect(lt,tp,rt,bm); //    SetWRect(0,100,860,760);
