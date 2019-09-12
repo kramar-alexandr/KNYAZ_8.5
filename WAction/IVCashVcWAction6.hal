@@ -1850,7 +1850,7 @@ begin
   row IVCashVc IVCashrw;
   Array string 255 acrncy;
   Array Boolean achangecrncyf;
-  Integer i,acrncnt;
+  Integer i,acrncnt,rwcnt;
   string 255 crncy;
   val fr,to1,to2,br1,br2,sum4;
   record RestAccVc prevRestAccr;
@@ -1859,6 +1859,7 @@ begin
   record IVVc prevIVr;
   record IVVc IVr;
   row IVVc IVrw;
+  val paidSum,ivSum; //Edit***************************Sasha2,15:05 30.09.2016
   
   wn = CurWindow;
   DeselectWindow(wn,true);
@@ -1903,19 +1904,14 @@ begin
           IVCashrw.Sum = StringToVal(GetWindowString(wn,"NPTSCashPaymentCashReceived" & i),M4Val);
           IVCashrw.BasePrice = StringToVal(GetWindowString(wn,"NPTSCashPaymentChangeGiven" & i),M4Val);
           if (IVCashrw.Sum!=0 or IVCashrw.BasePrice!=0) then begin
-            crncy = "";
-            if (HasMultiCurrency) then begin
-              crncy = GetWindowString(wn,"NPTSCashPaymentCurrency" & i);
-            end;
+            crncy = GetWindowString(wn,"NPTSCashPaymentCurrency" & i);
             IVCashrw.PayMode = LocalMachinePaymentMode(RepSpec.AccStr,kInvoiceRowTypeCashPayment,crncy,IVCashr.LocalMachineCode,IVCashr.DrawerCode);
             if (blank(IVCashrw.PayMode)) then begin
               IVCashrw.PayMode = RepSpec.AccStr;
             end;
             IVCashrw.Spec = RepSpec.f6;
-            if (HasMultiCurrency) then begin
-              if (GetFullCurncyPurchaseRate(crncy,CurrentDate,fr,to1,to2,br1,br2)==false) then begin
-                GetFullCurncyRate(crncy,CurrentDate,fr,to1,to2,br1,br2);
-              end;
+            if (GetFullCurncyPurchaseRate(crncy,CurrentDate,fr,to1,to2,br1,br2)==false) then begin
+              GetFullCurncyRate(crncy,CurrentDate,fr,to1,to2,br1,br2);
             end;
             IVCashrw.CurncyCode = crncy;
             IVCashrw.FrRate = fr;
@@ -1924,24 +1920,12 @@ begin
             IVCashrw.BaseRate1 = br1;
             IVCashrw.BaseRate2 = br2;  
             MatRowPut(IVCashr,MatRowCnt(IVCashr),IVCashrw);
-            POSAudit_LogIVCashVcRow(IVCashr,IVCashrw,kPOSEventTypeAddRow);
           end;
         end;
+        IVCashr.MakeFiscalReceiptF = RepSpec.flags[0]; //Edit***************************Sasha2,15:24 13.09.2016
         IVCashSumup(IVCashr,true);
-        if (IVCashr.InvType==kPOSInvoiceTypeCredit) then begin
-          if (IVCashr.RetValue!=0) then begin
-            MessageBox(20878,"");
-            WindowFieldGoto(wn,RepSpec,-1,"NPTSCashPaymentCashReceived0",true);
-            goto LProceedCashPayTouchScreenDClass;
-          end;
-        end;
-        if (HasLocalization("HRV")==false) then begin  //DoXMLExport_IVCashVc
-          if (IVCashr.RetValue>=0) then begin
-            IVCashr.OKFlag = 1;            
-          end;
-        end;
         PutWindowRecord(mwn,IVCashr);
-        WindowFieldGotoForTouchScreen(mwn,-1,"ivcashcommand",true);
+        WindowFieldGotoForTouchScreen(wn,-1,"ivcashcommand",true);
       case "IVVc":
         sum4 = IVr.Sum4;
         DeselectWindow(mwn,false);
@@ -1995,8 +1979,7 @@ begin
         end;
         IVSumup(IVr,true);
         PutWindowRecord(mwn,IVr);
-        WindowFieldGotoForTouchScreen(mwn,-1,"ivcashcommand",true);
-        IVCashDClass_RefreshStringList(mwn,IVCashr);
+        WindowFieldGotoForTouchScreen(wn,-1,"ivcashcommand",true);
       case "RestAccVc":
         DeselectWindow(mwn,false);
         GetWindowRecord(mwn,RestAccr);
@@ -2039,7 +2022,6 @@ begin
         end;        
         RestAccSumup(RestAccr,"");
         PutWindowRecord(mwn,RestAccr);
-        RestAccDClass_RefreshStringList(mwn,RestAccr);
     end;
     if (WindowDoOK(mwn,0)) then begin
       DeselectWindow(wn,false);
@@ -2054,11 +2036,37 @@ begin
         case "IVCashVc":
           GetWindowRecord(mwn,IVCashr);
           IVCashDClass_RefreshStringList(mwn,IVCashr);
-          SetPOSWindowDisplay_PaymentRow(IVCashrw.Spec,IVCashr.RetValue);
-          OpenCashDrawer_IVCashVc(IVCashr);
-          if (IVCashr.OKFlag!=0) then begin
-            OpenNewIVCash(mwn);
-          end;
+          //SetPOSWindowDisplay_PaymentRow(IVCashrw.Spec,IVCashr.RetValue);
+          //OpenCashDrawer_IVCashVc(IVCashr);
+          
+          rwcnt = matrowcnt(IVCashr);	//Edit***************************Sasha2,15:08 30.09.2016
+          for (i=0;i<rwcnt;i=i+1) begin
+						MatRowGet(IVCashr,i,IVCashrw);
+						if (IVCashrw.stp==kInvoiceRowTypeCashPayment)then begin
+							paidSum = paidSum + IVCashrw.Sum;				
+						end; 
+						
+						if (IVCashrw.stp==kInvoiceRowTypeGiftVoucherPayment)then begin
+							paidSum = paidSum + IVCashrw.Sum;				
+						end; 
+						
+						if (IVCashrw.stp==kInvoiceRowTypeCreditCardPayment)then begin
+							paidSum = paidSum + IVCashrw.Sum;							
+						end; 
+					end;
+					
+					ivSum = IVCashr.Sum4;
+					if (paidSum<0 and IVCashr.Sum4<0) then begin
+					  paidSum = AbsoluteVal(paidSum);
+					  ivSum = AbsoluteVal(IVCashr.Sum4);
+					end;
+					
+          if (paidSum>=ivSum and paidSum>=0 and ivSum>=0) then begin
+	        	if (IVCashr.Invalid==0 and IVCashr.OKFlag==0) then begin
+	        	  IVCashFinish(mwn,IVCashr);
+	        	end;
+						goto LProceedCashPayTouchScreenDClass1;
+					end;//Edit***************************Sasha2,15:08 30.09.2016 }
         case "RestAccVc":
           GetWindowRecord(mwn,RestAccr);
           RestAccDClass_RefreshStringList(mwn,RestAccr);
@@ -2066,13 +2074,6 @@ begin
           OpenCashDrawer;
       end;
     end else begin
-      switch (GetWindowFileName(mwn)) begin
-        case "IVCashVc":
-          if (IVCashr.OKFlag!=0) then begin
-            IVCashr.OKFlag = 0;
-            PutWindowRecord(mwn,IVCashr);
-          end;
-      end;
       CloseWindow(wn);
       SelectHWStoreWClass;
     end;
@@ -2080,6 +2081,7 @@ begin
 LProceedCashPayTouchScreenDClass:;  
   //WindowFieldGoto(mwn,RepSpec,-1,"ivcashcommand",true);
   WindowFieldGotoForTouchScreen(mwn,-1,"ivcashcommand",true); 
+LProceedCashPayTouchScreenDClass1:;  
   return;
 end;
 
