@@ -684,9 +684,9 @@ LOtherwise01:;
     if (nonblank(CurrentUser)) then begin
       BlockLoad(LLOb);
       LLOb.LastUserLoggedIn = CurrentUser;
-      if (DoGetCurUser(Userr)) then begin
-        LLOb.LastEmailUserLoggedIn = Userr.LoginEmailAddr;
-      end;
+     // if (DoGetCurUser(Userr)) then begin// Edit ************************** BPI Ukraine - KramarAlexandr - 01, 16 09 2019 y. at 2:26:46 PM
+     //   LLOb.LastEmailUserLoggedIn = Userr.LoginEmailAddr;
+     // end;
       BlockStore(LLOb);
     end;
   end;
