@@ -2053,9 +2053,9 @@ begin
 //  MatCol(1,84,"Var",0,VARList,true,VARSClass);
 //  MatCol(1,144,"Qty",0,Quant,true,0);
   if (HasVarieties) then begin
-    MatCol(1,94,"К-во",0,Quant,true,MATVARINSClass);
+    MatCol(1,150,"К-во",0,Quant,true,MATVARINSClass);
   end else begin
-    MatCol(1,94,"К-во",0,Quant,true,0);
+    MatCol(1,150,"К-во",0,Quant,true,0);
   end;
   EnterSkip(ArtCode);
 //  MatCol(1,194,"Описание",0,Spec,false,0);
