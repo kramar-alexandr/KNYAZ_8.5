@@ -1,4 +1,4 @@
-
+/*
 
 global function integer EmailValidationStatusWithStdID()
 begin		
@@ -28,3 +28,4 @@ begin
 
 return;
 end;
+*/
