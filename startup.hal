@@ -9,6 +9,10 @@ begin
   Setting("Резквизиты операционного дня",DaySessionlTClass,modPOS);
   //Setting("Локальная машина - ящик_vc",LocMachDrawerLClass,modPOS);
   
+  Setting("Предоплаты AP",APLClass,modDBMain);
+  Setting("Предоплаты AR",ARLClass,modDBMain);
+  Setting("Открытые предоплаты AR",ARPayLClass,modDBMain); 
+  
   Report("HAL Primitives",HalSpecRClass,HalSpecRn,0,modSY);
   Report("Отчет по кассе по дням",IVCashSummaryRClass,IVCashSummaryRn,0,modPOS);
   Report("Отчет по наценкам",MarkUpRClass,MarkUpRn,0,modSL);
