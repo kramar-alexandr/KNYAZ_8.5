@@ -1,0 +1,132 @@
+external procedure HT2Per(Date,Date,var string);
+external procedure HTITs(string,string,var string);
+external procedure ExtractObjWithSeparator(string,string,Boolean,var Integer,var string);
+
+SetLangMode(LangRussian,"RUS",0); 
+
+
+global
+procedure MarkUpRn(record RcVc RepSpec)
+begin
+  record INVc INr;
+  record ItemStatusVc ISr;
+  record ItemHistVc IHr;
+  record PUVc PUr;
+  row PUVc PUrw;
+  string 255 tstr;
+  Integer rw,pos,markUpQty;
+  Boolean TrHs,testf,TrHs1;
+  val totMarkUp;
+
+  StartReportJob("Отчет по наценкам");
+  rw = 1;
+  //HT2Per(RepSpec.sStartDate,RepSpec.sEndDate,tstr);
+  //Header(rw,tstr,1);
+  //rw = rw + 1;
+  if (NonBlank(RepSpec.f2)) then begin
+    HTITs(RepSpec.f2,"",tstr);
+    Header(rw,tstr,1);
+    rw = rw + 1;
+  end;
+  EndHeader;
+  
+  testf = true;
+  if (RepSpec.ArtMode==1 and Blank(RepSpec.f1)) then begin
+    StartFormat(15);
+      OutString(pos,0,"В подробном режиме отчета нужно указать конкретный товар",false);
+    EndFormat;
+    testf = false;
+  end;
+  if (testf) then begin
+    StartFormat(15);
+      pos = 0;
+      OutString(pos,0,USetStr(2462),false); pos = pos+70; //Товар
+      OutString(pos,0,USetStr(2463),false); pos = pos+200; //Наимен.
+      if (RepSpec.ArtMode==1) then begin
+        OutString(pos,0,USetStr(2605),false); pos = pos+30; //Пост.
+        OutString(pos,0,USetStr(3272),false); pos = pos+40; //Строка
+        OutString(pos,0,USetStr(2464) & "(" & USetStr(2605) & ")",false); pos = pos+50; //К-во
+      end else begin
+        pos = pos+70;
+        OutString(pos,0,USetStr(2464),false); pos = pos+50; //К-во
+      end;
+      OutString(pos,0,USetStr(2465),false); pos = pos+50; //Цена
+      OutString(pos,0,USetStr(3548) & ",%",false); pos = pos+50; //Наценка
+    EndFormat;
+      
+    Black_Divider(0,1);
+    
+    INr.Code = "";
+    if (NonBlank(RepSpec.f1)) then begin
+      INr.Code = RepSpec.f1;
+    end;
+    TrHs = true;
+    while (LoopMain(INr,1,TrHs)) begin
+      testf = true;
+      if (NonBlank(RepSpec.f1) and INr.Code!=RepSpec.f1) then begin TrHs = false; testf = false; end;
+      if (NonBlank(RepSpec.f2) and INr.Group!=RepSpec.f2) then begin testf = false; end;
+      if (testf) then begin
+        ISr.Code = INr.Code;
+        ISr.Location = ";;;";
+        ReadFirstMain(ISr,2,true);
+        if (RepSpec.flags[0]==1 and ISr.Instock<=0) then begin testf = false; end;
+      end;
+      if (testf) then begin
+        markUpQty = 0;
+        totMarkUp = BlankVal;
+        IHr.ArtCode = INr.Code;
+        IHr.FileName = "PUVc";
+        TrHs1 = true;
+        while (LoopBackKey("FNArtCode",IHr,2,TrHs1)) begin
+          if (IHr.ArtCode!=INr.Code or IHr.FileName!="PUVc") then begin TrHs1 = false; end;
+          if (TrHs1) then begin
+            PUr.SerNr = IHr.TransNr;
+            if (ReadFirstMain(PUr,1,true)) then begin
+              MatRowGet(PUr,IHr.Row,PUrw);
+              if (PUrw.rowGP<>0) then begin
+                if (RepSpec.ArtMode==1) then begin
+                  StartFormat(15);
+                    pos = 0;
+                    OutString(pos,0,INr.Code,false); pos = pos+70;
+                    OutString(pos,0,INr.Name,false); pos = pos+200;
+                    if (RepSpec.ArtMode==1) then begin
+                      OutString(pos,"dblPUVc",PUr.SerNr,false); pos = pos+30;
+                      OutString(pos,0,IHr.Row + 1,false); pos = pos+40;
+                    end else begin
+                      pos = pos+70;
+                    end;
+                    OutString(pos,0,PUrw.Quant,false); pos = pos+50;
+                    OutString(pos,0,PUrw.SellPrice,false); pos = pos+50;
+                    OutString(pos,0,PUrw.rowGP,false); pos = pos+50;
+                  EndFormat;
+                end else begin
+                  totMarkUp = totMarkUp + PUrw.rowGP;
+                  markUpQty = markUpQty + 1;  
+                end;
+              end;
+            end;
+          end;
+        end; RESETLOOP(IHr);
+        if (RepSpec.ArtMode==0 and totMarkUp<>blankVal) then begin
+          StartFormat(15);
+            pos = 0;
+            OutString(pos,"DblItemMarkUpReport",INr.Code,false); pos = pos+70;
+            OutString(pos,0,INr.Name,false); pos = pos+270;
+            OutString(pos,0,ISr.Instock,false); pos = pos+50;
+            OutString(pos,0,INr.UPrice1,false); pos = pos+50;
+            OutString(pos,0,Round(totMarkUp/markUpQty,DefaultCurRoundOff),false); pos = pos+50;
+          EndFormat;
+        end;
+      end;
+    end;
+    
+    /*Black_Divider(0,1);
+    StartFormat(15);
+      OutString(370,0,USetStr(2619),false);
+      OutString(420,0,0,false);
+    EndFormat;*/
+  end;
+
+  EndJob;
+  return;
+end;

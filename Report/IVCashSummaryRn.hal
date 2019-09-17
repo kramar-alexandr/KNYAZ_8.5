@@ -1,0 +1,195 @@
+external procedure HT2Per(Date,Date,var string);
+external procedure ExtractObjWithSeparator(string,string,Boolean,var Integer,var string);
+
+SetLangMode(LangRussian,"RUS",0); 
+
+function Boolean IVCashHasPaymentMode(record DefCashBlock DCb,record IVCashVc IVCashr,string PaymentMode)
+begin
+  Boolean res;
+  row IVCashVc IVCashrw;
+  Integer i,rwcnt;
+  
+  if (DCb.DefCashPayMode==PaymentMode) and (IVCashr.CashValue!=0) then begin
+    res = true;
+  end;
+  if (IVCashr.PayDeal==PaymentMode) and (IVCashr.RecValue!=0) then begin
+    res = true;
+  end;
+  if (IVCashr.PayDeal2==PaymentMode) and (IVCashr.RecValue2!=0) then begin
+    res = true;
+  end;
+  if (!res) then begin
+    rwcnt = MatRowCnt(IVCashr);
+    for (i=0;i<rwcnt;i=i+1) begin
+      MatRowGet(IVCashr,i,IVCashrw);
+      if (IVCashrw.ovst==0) then begin
+        if (IVCashrw.PayMode==PaymentMode) then begin
+          res = true;
+          i = rwcnt;
+        end;
+      end;
+    end;
+  end;
+  
+  IVCashHasPaymentMode = res;
+  return;
+end;
+
+procedure OutputTotals(vector val ClientSums,string splitChars,date outputDate,var vector string customerName, var vector string paymodeText)
+begin
+ record CUVc CUr;
+ record PMBlock PMb;
+ row PMBlock PMbrw;
+ array string 255 indexes;
+ Integer i,pos,k,rows;
+ String 20 customer,paymode;
+ val subTot;
+  
+    GetVectorTags(ClientSums,indexes);
+    for (i=0;i<indexes.length;i=i+1) begin
+      StartFormat(15);
+        if (i==0) then begin
+          OutString(15,0,outputDate,false);
+        end;
+        pos = 0;
+        ExtractObjWithSeparator(splitChars,indexes[i],false,pos,customer);
+        ExtractObjWithSeparator(splitChars,indexes[i],false,pos,paymode);
+        if (Blank(customerName[customer])) then begin
+          CUr.Code = customer;
+          if (ReadFirstMain(CUr,1,true)) then begin
+            customerName[customer] = CUr.Name;
+          end;
+        end;
+        if (Blank(paymodeText[paymode])) then begin
+          Blockload(PMb);
+          rows = MatRowCnt(PMb);
+          for (k=0;k<rows;k=k+1) begin
+            MatRowGet(PMb,k,PMbrw);
+            if (PMbrw.Code==paymode)then begin
+              paymodeText[paymode] = PMbrw.Comment;
+              k = rows;
+            end;
+          end;
+        end;
+        OutString(70,0,customerName[customer],false);
+        OutString(270,0,paymodeText[paymode],false);
+        OutString(420,0,ClientSums[indexes[i]],false);
+        subTot = subTot + ClientSums[indexes[i]];
+      EndFormat;
+    end;
+    Gray_Divider(0,1);
+    StartFormat(15);
+      OutString(380,0,USetStr(2429),false);
+      OutString(420,0,subTot,false);
+    EndFormat;
+    StartFormat(15);
+    EndFormat;
+    Gray_Divider(0,1);
+
+  return;
+end;
+
+global
+procedure IVCashSummaryRn(record RcVc RepSpec)
+begin
+  record IVCashVc IVCashr;
+  row IVCashVc IVCashrw;
+  record CashierDefBlock CDb;
+  String 255 tstr,index,IVCashTotDismatch;
+  String 20 mykey,splitChars;
+  Boolean TrHs,testf;
+  Integer rw;
+  Integer i,rwcnt;
+  val ivTot,TotSum;
+  vector val ClientSums;
+  date blankd,curdate,lastdate;
+  vector string 255 customerName,paymodeText;
+
+  BlockLoad(CDb);
+
+  StartReportJob("Отчет по кассе по дням");
+  rw = 1;
+  HT2Per(RepSpec.sStartDate,RepSpec.sEndDate,tstr);
+  Header(rw,tstr,1);
+  rw = rw + 1;
+  EndHeader;
+  
+  splitChars = chr(9);
+  TotSum = 0;
+
+  StartFormat(15);
+    OutString(15,0,USetStr(2353),false); //Дата
+    OutString(70,0,USetStr(2354),false); //Клиент
+    OutString(270,0,USetStr(2445),false); //Способ оплаты
+    OutString(420,0,USetStr(2355),false); //Сумма
+  EndFormat;
+  
+  IVCashr.TransDate = RepSpec.sStartDate;
+  mykey = "TransDate";
+    
+  Black_Divider(0,1);
+  TrHs = true;
+
+  while (LoopKey(mykey,IVCashr,1,TrHs)) begin
+    testf = true;
+    if (nonblank(RepSpec.TransStr)) then begin
+      if (IVCashHasPaymentMode(CDb,IVCashr,RepSpec.TransStr)==false) then begin
+        testf = false;
+      end;
+    end;
+    if (nonblank(RepSpec.f2) and  RepSpec.f2!=IVCashr.CustCode) then begin testf = false; end;
+    if (IVCashr.OKFlag==0) then begin testf = false; end;
+    if (IVCashr.Invalid!=0) then begin testf = false; end;
+    if (IVCashr.TransDate>RepSpec.sEndDate) then begin testf = false; TrHs = false; end;
+    if (testf) then begin
+      if (curdate==blankd) then begin
+        curdate = IVCashr.TransDate;
+      end;
+      if (curdate!=IVCashr.TransDate) then begin
+        OutputTotals(ClientSums,splitChars,curdate,customerName,paymodeText);
+        ClearVector(ClientSums);
+        curdate = IVCashr.TransDate;
+      end;
+      ivTot = 0;
+      rwcnt = MatRowCnt(IVCashr);
+      for (i=0;i<rwcnt;i=i+1) begin
+        MatRowGet(IVCashr,i,IVCashrw);
+        if (IVCashrw.stp==kInvoiceRowTypeCashPayment) then begin
+          index = IVCashr.CustCode & splitChars & IVCashrw.PayMode;
+          ClientSums[index] = ClientSums[index] + (IVCashrw.Sum - IVCashr.RetValue);
+          ivTot = ivTot + (IVCashrw.Sum - IVCashr.RetValue);
+        end;
+        if (IVCashrw.stp==kInvoiceRowTypeCreditCardPayment) then begin
+          index = IVCashr.CustCode & splitChars & IVCashrw.PayMode;
+          ClientSums[index] = ClientSums[index] + IVCashrw.Sum;
+          ivTot = ivTot + IVCashrw.Sum;
+        end;
+      end;
+      if (ivTot!=IVCashr.Sum4) then begin
+        IVCashTotDismatch = IVCashTotDismatch & IVCashr.SerNr & ",";
+      end;
+      TotSum = TotSum + IVCashr.Sum4;
+      lastdate = IVCashr.TransDate;
+    end;
+  end;
+  
+  OutputTotals(ClientSums,splitChars,lastdate,customerName,paymodeText);
+  
+  Black_Divider(0,1);
+  StartFormat(15);
+    OutString(370,0,USetStr(2619),false);
+    OutString(420,0,TotSum,false);
+  EndFormat;
+  
+  if (NonBlank(IVCashTotDismatch)) then begin
+    StartFormat(15);
+    EndFormat;
+    StartFormat(15);
+      OutString(20,0,"Расхождение по сумме в сч/ф: ",false);
+      OutString(120,0,IVCashTotDismatch,false);
+    EndFormat;
+  end;
+
+  EndJob;
+  return;
+end;
