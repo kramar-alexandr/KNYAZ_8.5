@@ -143,7 +143,7 @@ BEGIN
   RETURN;
 END;
 
-global 
+/*global// Edit ************************** BPI Ukraine - KramarAlexandr - 02, 17 09 2019 y. at 7:14:25 PM 
 procedure CreateOPFromVIDsm()
 begin
   record VIVc VIr;
@@ -163,7 +163,7 @@ begin
     nwn = OpenWindow("OPDClass",0,0,"","",OPr);
   end;
   return;
-end;
+end;*/
 
 global
 function LongInt VIforCLOutRecordExists(LongInt cloutser)
