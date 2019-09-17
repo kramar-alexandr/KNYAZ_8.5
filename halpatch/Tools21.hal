@@ -341,10 +341,12 @@ BEGIN
         if (VIp.InvType==kInvoiceTypeEmployee or VIp.InvType==kInvoiceTypeCash or VIp.InvType==kInvoiceTypeCashInvoiceReceiptPRT) then begin
           goto LIsUnOKAllowed_VIVc;
         end;
-        if (VIp.PayVal!=0) then begin
-        	logtext(0,"VIp.PayVal!=0 22222222");
-          res = 22059;
-          goto LIsUnOKAllowed_VIVc;
+        if(currentuser!="SA")then begin
+					if (VIp.PayVal!=0) then begin
+						logtext(0,"VIp.PayVal!=0 22222222");
+						res = 22059;
+						goto LIsUnOKAllowed_VIVc;
+					end;
         end;
       end;
     end;

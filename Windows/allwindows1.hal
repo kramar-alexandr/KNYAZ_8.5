@@ -3838,3 +3838,35 @@ begin
 
   EndWindow;
 end;*/
+
+window APDClass:1
+  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  real h,h2,v;
+  WindowBegin("APDClass",APDClass,CGother,-);
+  UseView(APVc);
+  SetWRect(80,300,530,440);
+  h = 210; h2 = 170; v=40;
+  
+	EditFieldTL(h,v+=20,70,"SerNr",M4Long,Normal,40,SerNr,false,0);
+	EditFieldTL(h,v+=20,70,"RVal",M45Val,Normal,40,RVal,false,0);
+
+  EndWindow;
+end;
+
+window APLClass:1
+  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  WindowBegin("Prepayments",APLClass,CGmlist,-);
+  SetWRect(20,80,700,355);
+  SpawnClass(APDClass);
+  Sizeable(-1,-1,0,0);
+  UseView(APVc);
+  RecordList(4,17,-21,-39);
+  RlColKey(4,1,    "No.",SerNr,false,SerNr);
+  RlCol(90,90,"Due Date",DueDate,false);
+  RlColKey(160,160,"#Supplier#",VECode,false,VECode);
+  RlCol(-310,-310, "Val",RVal,true);
+  SearchField("Search");
+  EndWindow;
+end;
