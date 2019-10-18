@@ -870,7 +870,8 @@ u might want to put loyalty card or bagger 1st
   end;
   if (CLb.IVSave==1) then begin  
     if (IVCashr.TransferToSL!=0) then begin
-      remoteconnection = CustomerCanGetCredit(IVCashr.CustCode,IVCashr.Sum4,CLb.Base,CLb.OwnCheques,CLb.ThirdCheques,CLb.IOUCheques,CLb.ThirdIOUCheques,CLb.ORSaveWarn,testf);
+    // Edit ************************** BPI Ukraine - KramarAlexandr - 05, 18 10 2019 y. at 10:24:59 AM
+      /*remoteconnection = CustomerCanGetCredit(IVCashr.CustCode,IVCashr.Sum4,CLb.Base,CLb.OwnCheques,CLb.ThirdCheques,CLb.IOUCheques,CLb.ThirdIOUCheques,CLb.ORSaveWarn,testf);
       if (remoteconnection==false) then begin
         RecordCheckError(27580,"",-1,"CustCode");      
         res = -1;
@@ -881,7 +882,7 @@ u might want to put loyalty card or bagger 1st
           res = -1;
           goto LIVCashVcRecordCheck;
         end;    
-      end;
+      end;*/
     end;
   end;
   if (IVCashr.SerNr<=0) then begin
@@ -1048,20 +1049,20 @@ u might want to put loyalty card or bagger 1st
       goto LIVCashVcRecordCheck;
     end;
 
-    remoteconnection = CustomerCanUseLoyaltyCard(IVCashr.CustCode,testf);
+    /*remoteconnection = CustomerCanUseLoyaltyCard(IVCashr.CustCode,testf);
     if (remoteconnection==false) then begin
       RecordCheckError(27581,"",-1,"CustCode");
       res = -1;
       goto LIVCashVcRecordCheck;
     end else begin
-/*    
-      if (testf==false) then begin
-        RecordCheckError(1164,"",-1,"CustCode");
-        res = -1;
-        goto LIVCashVcRecordCheck;
-      end;
-*/      
-    end;
+    
+      //if (testf==false) then begin
+      //  RecordCheckError(1164,"",-1,"CustCode");
+      //  res = -1;
+      //  goto LIVCashVcRecordCheck;
+      ///end;
+      
+    end;*/
 
   end;
   if (transf) then begin
