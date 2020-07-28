@@ -68,6 +68,8 @@ if(nonblank(location))then begin
 			if(ISr.Instock>0)then begin
 				AddTextToArea("{",resarea);
 				addParamToJSONArea("ArtCode",NormalizeStrToJson(INr.Code),resarea);
+				addParamToJSONArea("BarCode",NormalizeStrToJson(INr.BarCode),resarea);
+				addParamToJSONArea("AlternativeCode",NormalizeStrToJson(INr.AlternativeCode),resarea);
 				addParamToJSONArea("Name",NormalizeStrToJson(INr.Name),resarea);
 				addParamToJSONArea("Instock",NormalizeStrToJson(ISr.Instock),resarea);
 				addParamToJSONArea("Price",NormalizeStrToJson(INr.UPrice1),resarea);
@@ -144,6 +146,36 @@ if(nonblank(location))then begin
 	
 end;
 
+weboutarea2(resarea);
+return;
+end;
+
+
+global webpublic procedure WebGetBarCodes()
+begin
+string 50 location;
+record INVc INr;
+record ItemStatusVc ISr;
+area resarea;
+record BarCodeVc BCr;
+
+SetCompany(2,false);
+	
+	AddTextToArea("{",resarea);
+	AddTextToArea("codes:[",resarea);
+	while(loopmain(BCr,1,true))begin
+
+			AddTextToArea("{",resarea);
+			addParamToJSONArea("Barcode",NormalizeStrToJson(BCr.Barcode),resarea);
+			addParamToJSONArea("Itemcode",NormalizeStrToJson(BCr.Itemcode),resarea);
+			delLastComaInArea(resarea);
+			AddTextToArea("},",resarea);
+	end;
+	delLastComaInArea(resarea);
+	AddTextToArea("]",resarea);
+	AddTextToArea("}",resarea);
+	
+	
 weboutarea(resarea);
 return;
 end;
