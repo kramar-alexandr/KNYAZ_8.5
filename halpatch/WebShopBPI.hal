@@ -129,7 +129,7 @@ if(nonblank(location))then begin
 							addParamToJSONArea("vRebate",NormalizeStrToJson(IVrw.vRebate),resarea);
 							addParamToJSONArea("Sum",NormalizeStrToJson(IVrw.Sum),resarea);
 							delLastComaInArea(resarea);
-							AddTextToArea("}",resarea);
+							AddTextToArea("},",resarea);
 						end;
 					end;
 				delLastComaInArea(resarea);
