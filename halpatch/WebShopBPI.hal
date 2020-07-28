@@ -87,3 +87,63 @@ end;
 weboutarea(resarea);
 return;
 end;
+
+
+global webpublic procedure WebGetDaySales()
+begin
+string 50 location;
+record INVc INr;
+record ItemStatusVc ISr;
+area resarea;
+record IVVc IVr;
+row IVVc IVrw;
+boolean TrHs;
+integer i,rwcnt;
+
+SetCompany(2,false);
+
+location = webgetarg("location");
+
+if(nonblank(location))then begin
+	AddTextToArea("{",resarea);
+	AddTextToArea("invoices:[",resarea);
+	TrHs = true;
+	IVr.Location = location;
+	while(loopkey("Location",IVr,1,TrHs))begin
+		if(IVr.Location!=location)then begin TrHs = false; end;
+		
+		if(TrHs)then begin
+			AddTextToArea("{",resarea);
+				addParamToJSONArea("SerNr",NormalizeStrToJson(IVr.SerNr),resarea);
+				addParamToJSONArea("Sum4",NormalizeStrToJson(IVr.Sum4),resarea);
+				AddTextToArea("items:[",resarea);
+					rwcnt = matrowcnt(IVr);
+					for(i=0;i<rwcnt;i=i+1)begin
+						matrowget(IVr,i,IVrw);
+						if(IVrw.stp==kInvoiceRowTypeNormal)then begin
+							AddTextToArea("{",resarea);
+							addParamToJSONArea("ArtCode",NormalizeStrToJson(IVrw.ArtCode),resarea);
+							addParamToJSONArea("Spec",NormalizeStrToJson(IVrw.Spec),resarea);
+							addParamToJSONArea("Quant",NormalizeStrToJson(IVrw.Quant),resarea);
+							addParamToJSONArea("Price",NormalizeStrToJson(IVrw.Price),resarea);
+							addParamToJSONArea("vRebate",NormalizeStrToJson(IVrw.vRebate),resarea);
+							addParamToJSONArea("Sum",NormalizeStrToJson(IVrw.Sum),resarea);
+							delLastComaInArea(resarea);
+							AddTextToArea("}",resarea);
+						end;
+					end;
+				delLastComaInArea(resarea);
+				AddTextToArea("]",resarea);
+			AddTextToArea("},",resarea);
+		end;
+	end;
+	
+	delLastComaInArea(resarea);
+	AddTextToArea("]",resarea);
+	AddTextToArea("}",resarea);
+	
+end;
+
+weboutarea(resarea);
+return;
+end;
