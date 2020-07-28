@@ -1,3 +1,6 @@
+external function Boolean LoggedInTest();
+
+
 procedure addParamToJSONArea(string param, string value, var area req)
 begin
 
