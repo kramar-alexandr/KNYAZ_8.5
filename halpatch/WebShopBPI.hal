@@ -54,6 +54,7 @@ record ItemStatusVc ISr;
 area resarea;
 
 SetCompany(2,false);
+WebSetContentType("application/json");	
 
 location = webgetarg("location");
 
@@ -86,7 +87,7 @@ if(nonblank(location))then begin
 	
 end;
 
-weboutarea(resarea);
+weboutarea2(resarea);
 return;
 end;
 
@@ -105,6 +106,8 @@ integer i,rwcnt;
 SetCompany(2,false);
 
 location = webgetarg("location");
+
+WebSetContentType("application/json");	
 
 if(nonblank(location))then begin
 	AddTextToArea("{",resarea);
@@ -159,6 +162,8 @@ record ItemStatusVc ISr;
 area resarea;
 record BarCodeVc BCr;
 
+WebSetContentType("application/json");	
+
 SetCompany(2,false);
 	
 	AddTextToArea("{",resarea);
@@ -176,6 +181,6 @@ SetCompany(2,false);
 	AddTextToArea("}",resarea);
 	
 	
-weboutarea(resarea);
+weboutarea2(resarea);
 return;
 end;
