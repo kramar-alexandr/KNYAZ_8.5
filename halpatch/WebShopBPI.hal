@@ -1,0 +1,87 @@
+procedure addParamToJSONArea(string param, string value, var area req)
+begin
+
+AddTextToArea("\"" & param & "\":" &  "\"" & value & "\",",req);
+
+return;
+end;
+
+procedure delLastComaInArea(var area req)
+begin
+	longint alen;
+	string 1 lastsymb;
+	area tmpar;
+	
+	alen = getarealength(req);
+	lastsymb = getstringfromarea(req,alen-1,1);
+	if(lastsymb==",")then begin
+		getareafromarea(req,0,alen-1,tmpar);
+		setareazerosize(req);
+		getareafromarea(tmpar,0,getarealength(tmpar),req);
+	end;
+
+return;
+end;
+
+global function string 255 NormalizeStrToJson (string Str)
+begin
+	integer strln,i;
+	string 255 NormStr;
+	
+
+	NormStr = "";
+	strln = len(Str);
+	for (i=0;i<strln;i=i+1)begin
+		if(mid(Str,i,1)==chr(34))then begin
+			NormStr = NormStr & chr(92) & mid(Str,i,1);
+		end else begin
+			NormStr = NormStr & mid(Str,i,1);
+		end;
+	end;
+	
+	
+	NormalizeStrToJson = NormStr;
+	
+	return;
+end;
+
+
+global webpublic procedure WebGetInventStat()
+begin
+string 50 location;
+record INVc INr;
+record ItemStatusVc ISr;
+area resarea;
+
+SetCompany(2,false);
+
+location = webgetarg("location");
+
+if(nonblank(location))then begin
+	
+	AddTextToArea("{",resarea);
+	AddTextToArea("items:[",resarea);
+	while(loopmain(INr,1,true))begin
+		ISr.Code = INr.Code;
+		ISr.Location = location;
+		if(readfirstmain(ISr,2,true))then begin
+			if(ISr.Instock>0)then begin
+				AddTextToArea("{",resarea);
+				addParamToJSONArea("ArtCode",NormalizeStrToJson(INr.Code),resarea);
+				addParamToJSONArea("Name",NormalizeStrToJson(INr.Name),resarea);
+				addParamToJSONArea("Instock",NormalizeStrToJson(ISr.Instock),resarea);
+				addParamToJSONArea("Price",NormalizeStrToJson(INr.UPrice1),resarea);
+				delLastComaInArea(resarea);
+				AddTextToArea("},",resarea);
+			end;
+		end;
+	end;
+	delLastComaInArea(resarea);
+	AddTextToArea("]",resarea);
+	AddTextToArea("}",resarea);
+	
+end;
+
+
+return;
+end;
