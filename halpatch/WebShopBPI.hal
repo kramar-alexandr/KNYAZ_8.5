@@ -80,10 +80,10 @@ if(nonblank(location))then begin
 	AddTextToArea("]",resarea);
 	AddTextToArea("}",resarea);
 	
-	weboutarea(resarea);
+	
 	
 end;
 
-
+weboutarea(resarea);
 return;
 end;
