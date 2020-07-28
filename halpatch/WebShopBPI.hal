@@ -46,6 +46,30 @@ begin
 end;
 
 
+
+webpublic
+global procedure WebIsLogIn()
+begin
+  Time checkTime;
+  array string 5 checkTimeStr;
+  string 255 sentMD5,checkMD5;
+  integer deltaMin,i,cti;
+  boolean isLogedIn;
+  
+  logtext(0,"WebIsLogIn before " & currentuser);
+  
+  isLogedIn = LoggedInTest();
+  
+  if (isLogedIn and nonblank(currentuser)) then begin
+  	logtext(0,"WebIsLogIn" & currentuser);
+    WebOutString("true");
+  end else begin
+  	WebOutString("false");
+  end;
+  
+  return;
+end;
+
 global webpublic procedure WebGetInventStat()
 begin
 string 50 location;
