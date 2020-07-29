@@ -159,8 +159,9 @@ begin
 			IVrw.Sum = evaltoval(JSONCountChildren(jsonobj,"items[" & i & "]/Sum"));
 			matrowput(IVr,matrowcnt(IVr),IVrw);
 		end;
-		
 	end;
+	
+	logtext(0,"IVr.SerNr " & IVr.SerNr);
 	
 	if(IVr.SerNr>-1)then begin
 		recordstore(IVr,true);
