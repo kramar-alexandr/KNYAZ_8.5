@@ -146,18 +146,20 @@ begin
 		
 		rwcnt = matrowcnt(IVr);
 		if(rwcnt>0)then begin
-			matrowdelete(IVr,0);
+			for(i=0;i<rwcnt;i=i+1)begin
+				matrowdelete(IVr,0);
+			end;
 		end;
 		
 		rwcnt = JSONCountChildren(jsonobj,"items");
 		for(i=0;i<rwcnt;i=i+1)begin
 			clearrow(IVr,IVrw,kInvoiceRowTypeNormal);
-			IVrw.ArtCode = JSONCountChildren(jsonobj,"items[" & i & "]/ArtCode");
+			IVrw.ArtCode = JSONGet(jsonobj,"items[" & i & "]/ArtCode");
 			logtext(0,"IVrw.ArtCode " & IVrw.ArtCode);
-			IVrw.Spec = JSONCountChildren(jsonobj,"items[" & i & "]/Spec");
-			IVrw.Quant = evaltoval(JSONCountChildren(jsonobj,"items[" & i & "]/Quant"));
-			IVrw.Price = evaltoval(JSONCountChildren(jsonobj,"items[" & i & "]/Price"));
-			IVrw.Sum = evaltoval(JSONCountChildren(jsonobj,"items[" & i & "]/Sum"));
+			IVrw.Spec = JSONGet(jsonobj,"items[" & i & "]/Spec");
+			IVrw.Quant = evaltoval(JSONGet(jsonobj,"items[" & i & "]/Quant"));
+			IVrw.Price = evaltoval(JSONGet(jsonobj,"items[" & i & "]/Price"));
+			IVrw.Sum = evaltoval(JSONGet(jsonobj,"items[" & i & "]/Sum"));
 			matrowput(IVr,matrowcnt(IVr),IVrw);
 		end;
 	end;
