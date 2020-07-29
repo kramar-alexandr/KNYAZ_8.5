@@ -59,7 +59,7 @@ begin
   
   logtext(0,"WebIsLogIn before " & currentuser);
   
-  isLogedIn = LoggedInTest();
+  isLogedIn = WebLoginStatus==3;
   
   if (isLogedIn and nonblank(currentuser)) then begin
   	logtext(0,"WebIsLogIn" & currentuser);
