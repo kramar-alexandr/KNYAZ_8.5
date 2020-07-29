@@ -125,8 +125,7 @@ begin
 	
 	webgetpostdata(postdata);
 	
-	
-	weboutstring("\"result\":\"ok\"");
+	weboutstring("{\"result\":\"ok\",\"SerNr\":\"222\"}");
 	
  return;
 end;
