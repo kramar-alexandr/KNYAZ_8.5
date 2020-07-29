@@ -118,14 +118,54 @@ weboutarea2(resarea);
 return;
 end;
 
-global webpublic procedure WebSendSale()
+global webpublic updating procedure WebSendSale()
 begin
 	record IVVc IVr;
+	row IVVc IVrw;
+	integer i,rwcnt;
 	area postdata;
+	json jsonobj;
 	
+	SetCompany(2,false);
+	
+		
 	webgetpostdata(postdata);
 	
-	weboutstring("{\"result\":\"ok\",\"SerNr\":\"222\"}");
+	jsonobj = ParseJSONArea(postdata);
+	
+	if(nonblank(JSONGet(jsonobj,"SerNr")))then begin
+		IVr.SerNr = stringtolongint(JSONGet(jsonobj,"SerNr"));
+		if(readfirstmain(IVr,1,true))then begin
+			
+		end else begin
+			recordnew(IVr);
+			IVr.SerNr = NextSerNr("IVVc",IVr.TransDate,-1,false,IVr.LangCode);
+			IVr.CustCode = "NONAME";
+		end;
+		
+		rwcnt = matrowcnt(IVr);
+		if(rwcnt>0)then begin
+			matrowdelete(IVr,0);
+		end;
+		
+		rwcnt = JSONCountChildren(jsonobj,"items");
+		for(i=0;i<rwcnt;i=i+1)begin
+			clearrow(IVr,IVrw,kInvoiceRowTypeNormal);
+			IVrw.ArtCode = JSONCountChildren(jsonobj,"items[" & i & "]/ArtCode");
+			IVrw.Spec = JSONCountChildren(jsonobj,"items[" & i & "]/Spec");
+			IVrw.Quant = evaltoval(JSONCountChildren(jsonobj,"items[" & i & "]/Quant"));
+			IVrw.Price = evaltoval(JSONCountChildren(jsonobj,"items[" & i & "]/Price"));
+			IVrw.Sum = evaltoval(JSONCountChildren(jsonobj,"items[" & i & "]/Sum"));
+			matrowput(IVr,matrowcnt(IVr),IVrw);
+		end;
+		
+	end;
+	
+	if(IVr.SerNr>-1)then begin
+		recordstore(IVr,true);
+	end;
+	
+	weboutstring("{\"result\":\"ok\",\"SerNr\":\"" & IVr.SerNr & "\"}");
 	
  return;
 end;
