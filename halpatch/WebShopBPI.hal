@@ -154,12 +154,12 @@ begin
 		rwcnt = JSONCountChildren(jsonobj,"items");
 		for(i=0;i<rwcnt;i=i+1)begin
 			clearrow(IVr,IVrw,kInvoiceRowTypeNormal);
-			IVrw.ArtCode = JSONGet(jsonobj,"items[" & i & "]/ArtCode");
+			IVrw.ArtCode = JSONGet(jsonobj,"items/[" & i & "]/ArtCode");
 			logtext(0,"IVrw.ArtCode " & IVrw.ArtCode);
-			IVrw.Spec = JSONGet(jsonobj,"items[" & i & "]/Spec");
-			IVrw.Quant = evaltoval(JSONGet(jsonobj,"items[" & i & "]/Quant"));
-			IVrw.Price = evaltoval(JSONGet(jsonobj,"items[" & i & "]/Price"));
-			IVrw.Sum = evaltoval(JSONGet(jsonobj,"items[" & i & "]/Sum"));
+			IVrw.Spec = JSONGet(jsonobj,"items/[" & i & "]/Spec");
+			IVrw.Quant = evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Quant"));
+			IVrw.Price = evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Price"));
+			IVrw.Sum = evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Sum"));
 			matrowput(IVr,matrowcnt(IVr),IVrw);
 		end;
 	end;
