@@ -128,7 +128,8 @@ begin
 	
 	SetCompany(2,false);
 	
-		
+	logtext(0,"WebSendSale");
+	
 	webgetpostdata(postdata);
 	
 	jsonobj = ParseJSONArea(postdata);
