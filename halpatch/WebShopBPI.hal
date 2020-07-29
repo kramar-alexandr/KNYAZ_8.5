@@ -118,6 +118,18 @@ weboutarea2(resarea);
 return;
 end;
 
+global webpublic procedure WebSendSale()
+begin
+	record IVVc IVr;
+	area postdata;
+	
+	webgetpostdata(postdata);
+	
+	
+	weboutstring("\"result\":\"ok\"");
+	
+ return;
+end;
 
 global webpublic procedure WebGetDaySales()
 begin
