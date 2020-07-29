@@ -49,9 +49,7 @@ begin
 end;
 
 
-
-webpublic
-global procedure WebIsLogIn()
+global webpublic procedure WebIsLogIn()
 begin
   Time checkTime;
   array string 5 checkTimeStr;
