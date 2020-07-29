@@ -131,7 +131,7 @@ begin
 	logtext(0,"WebSendSale");
 	
 	webgetpostdata(postdata);
-	
+	writeareatofile(postdata,"WebSendSale.txt",0);
 	jsonobj = ParseJSONArea(postdata);
 	
 	if(nonblank(JSONGet(jsonobj,"SerNr")))then begin
