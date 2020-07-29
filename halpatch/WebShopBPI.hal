@@ -153,6 +153,7 @@ begin
 		for(i=0;i<rwcnt;i=i+1)begin
 			clearrow(IVr,IVrw,kInvoiceRowTypeNormal);
 			IVrw.ArtCode = JSONCountChildren(jsonobj,"items[" & i & "]/ArtCode");
+			logtext(0,"IVrw.ArtCode " & IVrw.ArtCode);
 			IVrw.Spec = JSONCountChildren(jsonobj,"items[" & i & "]/Spec");
 			IVrw.Quant = evaltoval(JSONCountChildren(jsonobj,"items[" & i & "]/Quant"));
 			IVrw.Price = evaltoval(JSONCountChildren(jsonobj,"items[" & i & "]/Price"));
