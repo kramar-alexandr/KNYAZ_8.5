@@ -341,9 +341,9 @@ SetCompany(2,false);
 		sum = sum - CLOutr.Total;
 	end;
 	
+	addtexttoarea(sum,resarea);
 	
-	
-weboutarea2(resarea);
+	weboutarea2(resarea);
 return;
 end;
 
