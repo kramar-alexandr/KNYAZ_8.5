@@ -82,8 +82,8 @@ area resarea;
 SetCompany(2,false);
 WebSetContentType("application/json; charset=UTF-8");	
 
-location = webgetarg("location");
-
+//location = webgetarg("location");
+location = "OSN";
 if(nonblank(location))then begin
 	
 	AddTextToArea("{",resarea);
@@ -187,8 +187,8 @@ integer i,rwcnt;
 
 SetCompany(2,false);
 
-location = webgetarg("location");
-
+//location = webgetarg("location");
+location = "OSN";
 WebSetContentType("application/json; charset=UTF-8");	
 
 if(nonblank(location))then begin
@@ -207,6 +207,7 @@ if(nonblank(location))then begin
 				addParamToJSONArea("salesman",NormalizeStrToJson(IVr.SalesMan),resarea);
 				addParamToJSONArea("TransDate",NormalizeStrToJson(IVr.TransDate),resarea);
 				addParamToJSONArea("TransTime",NormalizeStrToJson(IVr.TransTime),resarea);
+				addParamToJSONArea("OfficialSerNr",NormalizeStrToJson(IVr.OfficialSerNr),resarea);
 				addParamToJSONArea("salesman",NormalizeStrToJson(IVr.SalesMan),resarea);
 				AddTextToArea("\"items\":[",resarea);
 					rwcnt = matrowcnt(IVr);
@@ -314,34 +315,35 @@ string 50 location;
 area resarea;
 record CLInVc CLInr;
 record CLOutVc CLOutr;
+record IVVc IVr;
+boolean TrHs,testf;
+val sum;
 
 WebSetContentType("application/json; charset=UTF-8");	
 
 SetCompany(2,false);
 	
+	TrHs = true;
+	while(loopkey("SerNr:" & "BOSS",IVr,1,TrHs))begin
+		testf = true;
+		if(testf)then begin 
+			sum = sum + IVr.Sum4;
+		end;
+	
+	end;
+	
 	AddTextToArea("{",resarea);
 	AddTextToArea("\"cashins\":[",resarea);
-	while(loopmain(CLInr,1,true))begin
-			AddTextToArea("{",resarea);
-			addParamToJSONArea("doccode",NormalizeStrToJson("IN" & CLInr.SerNr),resarea);
-			addParamToJSONArea("date",NormalizeStrToJson(CLInr.TransDate),resarea);
-			addParamToJSONArea("sum",NormalizeStrToJson(CLInr.Total),resarea);
-			delLastComaInArea(resarea);
-			AddTextToArea("},",resarea);
+	while(loopkey("SerNr:" & "BOSS",CLInr,1,true))begin
+		sum = sum + CLInr.Total;
 	end;
-	while(loopmain(CLOutr,1,true))begin
-			AddTextToArea("{",resarea);
-			addParamToJSONArea("doccode",NormalizeStrToJson("IN" & CLInr.SerNr),resarea);
-			addParamToJSONArea("date",NormalizeStrToJson(CLInr.TransDate),resarea);
-			addParamToJSONArea("sum",NormalizeStrToJson(CLInr.Total),resarea);
-			delLastComaInArea(resarea);
-			AddTextToArea("},",resarea);
+	while(loopkey("SerNr" & "BOSS",CLOutr,1,true))begin
+		sum = sum - CLOutr.Total;
 	end;
-	delLastComaInArea(resarea);
-	AddTextToArea("]",resarea);
-	AddTextToArea("}",resarea);
+	
 	
 	
 weboutarea2(resarea);
 return;
 end;
+
