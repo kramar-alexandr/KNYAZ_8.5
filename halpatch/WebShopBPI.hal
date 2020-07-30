@@ -347,3 +347,24 @@ SetCompany(2,false);
 return;
 end;
 
+global webpublic procedure WebPutCashDocs()
+begin
+string 50 location;
+area resarea;
+record CLInVc CLInr;
+record CLOutVc CLOutr;
+record IVVc IVr;
+boolean TrHs,testf;
+val sum;
+
+	WebSetContentType("application/json; charset=UTF-8");	
+
+	SetCompany(2,false);
+	
+		
+	AddTextToArea("{\"result\":\"ok\"}",resarea);
+	
+	weboutarea2(resarea);
+return;
+end;
+
