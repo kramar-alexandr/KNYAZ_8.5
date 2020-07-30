@@ -79,38 +79,42 @@ record INVc INr;
 record ItemStatusVc ISr;
 area resarea;
 
-SetCompany(2,false);
-WebSetContentType("application/json; charset=UTF-8");	
+if(WebLoginStatus==3)then begin
 
-//location = webgetarg("location");
-location = "OSN";
-if(nonblank(location))then begin
+	SetCompany(2,false);
+	WebSetContentType("application/json; charset=UTF-8");	
+
+	//location = webgetarg("location");
+	location = "OSN";
+	if(nonblank(location))then begin
 	
-	AddTextToArea("{",resarea);
-	AddTextToArea("\"items\":[",resarea);
-	while(loopmain(INr,1,true))begin
-		ISr.Code = INr.Code;
-		ISr.Location = location;
-		if(readfirstmain(ISr,2,true))then begin
-			if(ISr.Instock>0)then begin
-				AddTextToArea("{",resarea);
-				addParamToJSONArea("ArtCode",NormalizeStrToJson(INr.Code),resarea);
-				addParamToJSONArea("BarCode",NormalizeStrToJson(INr.BarCode),resarea);
-				addParamToJSONArea("AlternativeCode",NormalizeStrToJson(INr.AlternativeCode),resarea);
-				addParamToJSONArea("Name",NormalizeStrToJson(INr.Name),resarea);
-				addParamToJSONArea("Instock",NormalizeStrToJson(ISr.Instock),resarea);
-				addParamToJSONArea("Price",NormalizeStrToJson(INr.UPrice1),resarea);
-				delLastComaInArea(resarea);
-				AddTextToArea("},",resarea);
+		AddTextToArea("{",resarea);
+		AddTextToArea("\"items\":[",resarea);
+		while(loopmain(INr,1,true))begin
+			ISr.Code = INr.Code;
+			ISr.Location = location;
+			if(readfirstmain(ISr,2,true))then begin
+				if(ISr.Instock>0)then begin
+					AddTextToArea("{",resarea);
+					addParamToJSONArea("ArtCode",NormalizeStrToJson(INr.Code),resarea);
+					addParamToJSONArea("BarCode",NormalizeStrToJson(INr.BarCode),resarea);
+					addParamToJSONArea("AlternativeCode",NormalizeStrToJson(INr.AlternativeCode),resarea);
+					addParamToJSONArea("Name",NormalizeStrToJson(INr.Name),resarea);
+					addParamToJSONArea("Instock",NormalizeStrToJson(ISr.Instock),resarea);
+					addParamToJSONArea("Price",NormalizeStrToJson(INr.UPrice1),resarea);
+					delLastComaInArea(resarea);
+					AddTextToArea("},",resarea);
+				end;
 			end;
 		end;
+		delLastComaInArea(resarea);
+		AddTextToArea("]",resarea);
+		AddTextToArea("}",resarea);
+	
+	
+	
 	end;
-	delLastComaInArea(resarea);
-	AddTextToArea("]",resarea);
-	AddTextToArea("}",resarea);
-	
-	
-	
+
 end;
 
 weboutarea2(resarea);
@@ -125,51 +129,55 @@ begin
 	area postdata;
 	json jsonobj;
 	
-	SetCompany(2,false);
+	if(WebLoginStatus==3)then begin
 	
-	logtext(0,"WebSendSale");
+		SetCompany(2,false);
 	
-	webgetpostdata(postdata);
-	writeareatofile(postdata,"WebSendSale.txt",0);
-	jsonobj = ParseJSONArea(postdata);
+		logtext(0,"WebSendSale");
 	
-	if(nonblank(JSONGet(jsonobj,"SerNr")))then begin
-		IVr.SerNr = stringtolongint(JSONGet(jsonobj,"SerNr"));
-		if(readfirstmain(IVr,1,true))then begin
+		webgetpostdata(postdata);
+		writeareatofile(postdata,"WebSendSale.txt",0);
+		jsonobj = ParseJSONArea(postdata);
+	
+		if(nonblank(JSONGet(jsonobj,"SerNr")))then begin
+			IVr.SerNr = stringtolongint(JSONGet(jsonobj,"SerNr"));
+			if(readfirstmain(IVr,1,true))then begin
 			
-		end else begin
-			recordnew(IVr);
-			IVr.SerNr = NextSerNr("IVVc",IVr.TransDate,-1,false,IVr.LangCode);
-			IVr.CustCode = "NONAME";
-		end;
+			end else begin
+				recordnew(IVr);
+				IVr.SerNr = NextSerNr("IVVc",IVr.TransDate,-1,false,IVr.LangCode);
+				IVr.CustCode = "NONAME";
+			end;
 		
-		rwcnt = matrowcnt(IVr);
-		if(rwcnt>0)then begin
+			rwcnt = matrowcnt(IVr);
+			if(rwcnt>0)then begin
+				for(i=0;i<rwcnt;i=i+1)begin
+					matrowdelete(IVr,0);
+				end;
+			end;
+		
+			rwcnt = JSONCountChildren(jsonobj,"items");
 			for(i=0;i<rwcnt;i=i+1)begin
-				matrowdelete(IVr,0);
+				clearrow(IVr,IVrw,kInvoiceRowTypeNormal);
+				IVrw.ArtCode = JSONGet(jsonobj,"items/[" & i & "]/ArtCode");
+				logtext(0,"IVrw.ArtCode " & IVrw.ArtCode);
+				IVrw.Spec = JSONGet(jsonobj,"items/[" & i & "]/Spec");
+				IVrw.Quant = evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Quant"));
+				IVrw.Price = evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Price"));
+				IVrw.Sum = evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Sum"));
+				matrowput(IVr,matrowcnt(IVr),IVrw);
 			end;
 		end;
-		
-		rwcnt = JSONCountChildren(jsonobj,"items");
-		for(i=0;i<rwcnt;i=i+1)begin
-			clearrow(IVr,IVrw,kInvoiceRowTypeNormal);
-			IVrw.ArtCode = JSONGet(jsonobj,"items/[" & i & "]/ArtCode");
-			logtext(0,"IVrw.ArtCode " & IVrw.ArtCode);
-			IVrw.Spec = JSONGet(jsonobj,"items/[" & i & "]/Spec");
-			IVrw.Quant = evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Quant"));
-			IVrw.Price = evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Price"));
-			IVrw.Sum = evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Sum"));
-			matrowput(IVr,matrowcnt(IVr),IVrw);
+	
+		logtext(0,"IVr.SerNr " & IVr.SerNr);
+	
+		if(IVr.SerNr>-1)then begin
+			recordstore(IVr,true);
 		end;
+	
+		weboutstring("{\"result\":\"ok\",\"SerNr\":\"" & IVr.SerNr & "\"}");
+	
 	end;
-	
-	logtext(0,"IVr.SerNr " & IVr.SerNr);
-	
-	if(IVr.SerNr>-1)then begin
-		recordstore(IVr,true);
-	end;
-	
-	weboutstring("{\"result\":\"ok\",\"SerNr\":\"" & IVr.SerNr & "\"}");
 	
  return;
 end;
@@ -185,59 +193,63 @@ row IVVc IVrw;
 boolean TrHs;
 integer i,rwcnt;
 
-SetCompany(2,false);
+if(WebLoginStatus==3)then begin
 
-//location = webgetarg("location");
-location = "OSN";
-WebSetContentType("application/json; charset=UTF-8");	
+	SetCompany(2,false);
 
-if(nonblank(location))then begin
-	AddTextToArea("{",resarea);
-	AddTextToArea("\"invoices\":[",resarea);
-	TrHs = true;
-	IVr.Location = location;
-	while(loopkey("Location",IVr,1,TrHs))begin
-		if(IVr.Location!=location)then begin TrHs = false; end;
+	//location = webgetarg("location");
+	location = "OSN";
+	WebSetContentType("application/json; charset=UTF-8");	
+
+	if(nonblank(location))then begin
+		AddTextToArea("{",resarea);
+		AddTextToArea("\"invoices\":[",resarea);
+		TrHs = true;
+		IVr.Location = location;
+		while(loopkey("Location",IVr,1,TrHs))begin
+			if(IVr.Location!=location)then begin TrHs = false; end;
 		
-		if(TrHs)then begin
-			AddTextToArea("{",resarea);
-				addParamToJSONArea("SerNr",NormalizeStrToJson(IVr.SerNr),resarea);
-				addParamToJSONArea("Sum4",NormalizeStrToJson(IVr.Sum4),resarea);
-				addParamToJSONArea("OKFlag",NormalizeStrToJson(IVr.OKFlag),resarea);
-				addParamToJSONArea("salesman",NormalizeStrToJson(IVr.SalesMan),resarea);
-				addParamToJSONArea("TransDate",NormalizeStrToJson(IVr.TransDate),resarea);
-				addParamToJSONArea("TransTime",NormalizeStrToJson(IVr.TransTime),resarea);
-				addParamToJSONArea("OfficialSerNr",NormalizeStrToJson(IVr.OfficialSerNr),resarea);
-				addParamToJSONArea("salesman",NormalizeStrToJson(IVr.SalesMan),resarea);
-				AddTextToArea("\"items\":[",resarea);
-					rwcnt = matrowcnt(IVr);
-					for(i=0;i<rwcnt;i=i+1)begin
-						matrowget(IVr,i,IVrw);
-						if(IVrw.stp==kInvoiceRowTypeNormal)then begin
-							AddTextToArea("{",resarea);
-							addParamToJSONArea("ArtCode",NormalizeStrToJson(IVrw.ArtCode),resarea);
-							addParamToJSONArea("Spec",NormalizeStrToJson(IVrw.Spec),resarea);
-							addParamToJSONArea("Quant",NormalizeStrToJson(IVrw.Quant),resarea);
-							addParamToJSONArea("Price",NormalizeStrToJson(IVrw.Price),resarea);
-							addParamToJSONArea("vRebate",NormalizeStrToJson(IVrw.vRebate),resarea);
-							addParamToJSONArea("Sum",NormalizeStrToJson(IVrw.Sum),resarea);
-							delLastComaInArea(resarea);
-							AddTextToArea("},",resarea);
+			if(TrHs)then begin
+				AddTextToArea("{",resarea);
+					addParamToJSONArea("SerNr",NormalizeStrToJson(IVr.SerNr),resarea);
+					addParamToJSONArea("Sum4",NormalizeStrToJson(IVr.Sum4),resarea);
+					addParamToJSONArea("OKFlag",NormalizeStrToJson(IVr.OKFlag),resarea);
+					addParamToJSONArea("salesman",NormalizeStrToJson(IVr.SalesMan),resarea);
+					addParamToJSONArea("TransDate",NormalizeStrToJson(IVr.TransDate),resarea);
+					addParamToJSONArea("TransTime",NormalizeStrToJson(IVr.TransTime),resarea);
+					addParamToJSONArea("OfficialSerNr",NormalizeStrToJson(IVr.OfficialSerNr),resarea);
+					addParamToJSONArea("salesman",NormalizeStrToJson(IVr.SalesMan),resarea);
+					AddTextToArea("\"items\":[",resarea);
+						rwcnt = matrowcnt(IVr);
+						for(i=0;i<rwcnt;i=i+1)begin
+							matrowget(IVr,i,IVrw);
+							if(IVrw.stp==kInvoiceRowTypeNormal)then begin
+								AddTextToArea("{",resarea);
+								addParamToJSONArea("ArtCode",NormalizeStrToJson(IVrw.ArtCode),resarea);
+								addParamToJSONArea("Spec",NormalizeStrToJson(IVrw.Spec),resarea);
+								addParamToJSONArea("Quant",NormalizeStrToJson(IVrw.Quant),resarea);
+								addParamToJSONArea("Price",NormalizeStrToJson(IVrw.Price),resarea);
+								addParamToJSONArea("vRebate",NormalizeStrToJson(IVrw.vRebate),resarea);
+								addParamToJSONArea("Sum",NormalizeStrToJson(IVrw.Sum),resarea);
+								delLastComaInArea(resarea);
+								AddTextToArea("},",resarea);
+							end;
 						end;
-					end;
-				delLastComaInArea(resarea);
-				AddTextToArea("]",resarea);
-			AddTextToArea("},",resarea);
+					delLastComaInArea(resarea);
+					AddTextToArea("]",resarea);
+				AddTextToArea("},",resarea);
+			end;
 		end;
+	
+		delLastComaInArea(resarea);
+		AddTextToArea("]",resarea);
+		AddTextToArea("}",resarea);
+	
 	end;
-	
-	delLastComaInArea(resarea);
-	AddTextToArea("]",resarea);
-	AddTextToArea("}",resarea);
-	
+
+	weboutarea2(resarea);
 end;
 
-weboutarea2(resarea);
 return;
 end;
 
@@ -250,26 +262,31 @@ record ItemStatusVc ISr;
 area resarea;
 record BarCodeVc BCr;
 
-WebSetContentType("application/json; charset=UTF-8");	
+	if(WebLoginStatus==3)then begin
 
-SetCompany(2,false);
+		WebSetContentType("application/json; charset=UTF-8");	
+
+		SetCompany(2,false);
 	
-	AddTextToArea("{",resarea);
-	AddTextToArea("\"codes\":[",resarea);
-	while(loopmain(BCr,1,true))begin
-
 			AddTextToArea("{",resarea);
-			addParamToJSONArea("Barcode",NormalizeStrToJson(BCr.Barcode),resarea);
-			addParamToJSONArea("Itemcode",NormalizeStrToJson(BCr.Itemcode),resarea);
+			AddTextToArea("\"codes\":[",resarea);
+			while(loopmain(BCr,1,true))begin
+
+					AddTextToArea("{",resarea);
+					addParamToJSONArea("Barcode",NormalizeStrToJson(BCr.Barcode),resarea);
+					addParamToJSONArea("Itemcode",NormalizeStrToJson(BCr.Itemcode),resarea);
+					delLastComaInArea(resarea);
+					AddTextToArea("},",resarea);
+			end;
 			delLastComaInArea(resarea);
-			AddTextToArea("},",resarea);
+			AddTextToArea("]",resarea);
+			AddTextToArea("}",resarea);
+	
+	
+		weboutarea2(resarea);
+
 	end;
-	delLastComaInArea(resarea);
-	AddTextToArea("]",resarea);
-	AddTextToArea("}",resarea);
-	
-	
-weboutarea2(resarea);
+
 return;
 end;
 
@@ -281,30 +298,34 @@ area resarea;
 record UserVc USr;
 record DepVc Depr;
 
-WebSetContentType("application/json; charset=UTF-8");	
+	if(WebLoginStatus==3)then begin
 
-SetCompany(2,false);
+		WebSetContentType("application/json; charset=UTF-8");	
+
+		SetCompany(2,false);
 	
-	AddTextToArea("{",resarea);
-	AddTextToArea("\"users\":[",resarea);
-	while(loopmain(USr,1,true))begin
-			Depr.Code = USr.Department;
-			readfirstmain(Depr,1,true);
 			AddTextToArea("{",resarea);
-			addParamToJSONArea("login",NormalizeStrToJson(USr.Code),resarea);
-			addParamToJSONArea("name",NormalizeStrToJson(USr.Name),resarea);
-			addParamToJSONArea("address",NormalizeStrToJson(Depr.Addr0),resarea);
-			addParamToJSONArea("location",NormalizeStrToJson(USr.Location),resarea);
-			addParamToJSONArea("phone",NormalizeStrToJson(USr.Phone1),resarea);
+			AddTextToArea("\"users\":[",resarea);
+			while(loopmain(USr,1,true))begin
+					Depr.Code = USr.Department;
+					readfirstmain(Depr,1,true);
+					AddTextToArea("{",resarea);
+					addParamToJSONArea("login",NormalizeStrToJson(USr.Code),resarea);
+					addParamToJSONArea("name",NormalizeStrToJson(USr.Name),resarea);
+					addParamToJSONArea("address",NormalizeStrToJson(Depr.Addr0),resarea);
+					addParamToJSONArea("location",NormalizeStrToJson(USr.Location),resarea);
+					addParamToJSONArea("phone",NormalizeStrToJson(USr.Phone1),resarea);
+					delLastComaInArea(resarea);
+					AddTextToArea("},",resarea);
+			end;
 			delLastComaInArea(resarea);
-			AddTextToArea("},",resarea);
+			AddTextToArea("]",resarea);
+			AddTextToArea("}",resarea);
+	
+	
+			weboutarea2(resarea);
 	end;
-	delLastComaInArea(resarea);
-	AddTextToArea("]",resarea);
-	AddTextToArea("}",resarea);
-	
-	
-weboutarea2(resarea);
+
 return;
 end;
 
@@ -319,31 +340,36 @@ record IVVc IVr;
 boolean TrHs,testf;
 val sum;
 
-WebSetContentType("application/json; charset=UTF-8");	
+if(WebLoginStatus==3)then begin
 
-SetCompany(2,false);
+	WebSetContentType("application/json; charset=UTF-8");	
+
+	SetCompany(2,false);
 	
-	TrHs = true;
-	while(loopkey("SerNr:" & "BOSS",IVr,1,TrHs))begin
-		testf = true;
-		if(testf)then begin 
-			sum = sum + IVr.Sum4;
+		TrHs = true;
+		while(loopkey("SerNr:" & "BOSS",IVr,1,TrHs))begin
+			testf = true;
+			if(testf)then begin 
+				sum = sum + IVr.Sum4;
+			end;
+	
 		end;
 	
-	end;
+		while(loopkey("SerNr:" & "BOSS",CLInr,1,true))begin
+			sum = sum + CLInr.Total;
+		end;
+		while(loopkey("SerNr:" & "BOSS",CLOutr,1,true))begin
+			sum = sum - CLOutr.Total;
+		end;
 	
-	while(loopkey("SerNr:" & "BOSS",CLInr,1,true))begin
-		sum = sum + CLInr.Total;
-	end;
-	while(loopkey("SerNr:" & "BOSS",CLOutr,1,true))begin
-		sum = sum - CLOutr.Total;
-	end;
+		AddTextToArea("{",resarea);
+		AddTextToArea("\"balance\":\"",resarea);
+		addtexttoarea(sum,resarea);
+		AddTextToArea("\"}",resarea);
+		weboutarea2(resarea);
 	
-	AddTextToArea("{",resarea);
-	AddTextToArea("\"balance\":\"",resarea);
-	addtexttoarea(sum,resarea);
-	AddTextToArea("\"}",resarea);
-	weboutarea2(resarea);
+	
+	end;
 return;
 end;
 
@@ -356,15 +382,16 @@ record CLOutVc CLOutr;
 record IVVc IVr;
 boolean TrHs,testf;
 val sum;
-
-	WebSetContentType("application/json; charset=UTF-8");	
-
-	SetCompany(2,false);
 	
-		
-	AddTextToArea("{\"result\":\"ok\"}",resarea);
+	if(WebLoginStatus==3)then begin
 	
-	weboutarea2(resarea);
+		WebSetContentType("application/json; charset=UTF-8");	
+		SetCompany(2,false);	
+		AddTextToArea("{\"result\":\"ok\"}",resarea);
+		weboutarea2(resarea);
+	
+	end;
+	
 return;
 end;
 
