@@ -337,7 +337,7 @@ SetCompany(2,false);
 	while(loopkey("SerNr:" & "BOSS",CLInr,1,true))begin
 		sum = sum + CLInr.Total;
 	end;
-	while(loopkey("SerNr" & "BOSS",CLOutr,1,true))begin
+	while(loopkey("SerNr:" & "BOSS",CLOutr,1,true))begin
 		sum = sum - CLOutr.Total;
 	end;
 	
