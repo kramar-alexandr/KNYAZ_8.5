@@ -332,8 +332,6 @@ SetCompany(2,false);
 	
 	end;
 	
-	AddTextToArea("{",resarea);
-	AddTextToArea("\"cashins\":[",resarea);
 	while(loopkey("SerNr:" & "BOSS",CLInr,1,true))begin
 		sum = sum + CLInr.Total;
 	end;
@@ -341,8 +339,10 @@ SetCompany(2,false);
 		sum = sum - CLOutr.Total;
 	end;
 	
+	AddTextToArea("{",resarea);
+	AddTextToArea("\"balance\":\"",resarea);
 	addtexttoarea(sum,resarea);
-	
+	AddTextToArea("\"{",resarea);
 	weboutarea2(resarea);
 return;
 end;
