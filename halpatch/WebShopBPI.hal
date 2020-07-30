@@ -342,7 +342,7 @@ SetCompany(2,false);
 	AddTextToArea("{",resarea);
 	AddTextToArea("\"balance\":\"",resarea);
 	addtexttoarea(sum,resarea);
-	AddTextToArea("\"{",resarea);
+	AddTextToArea("\"}",resarea);
 	weboutarea2(resarea);
 return;
 end;
