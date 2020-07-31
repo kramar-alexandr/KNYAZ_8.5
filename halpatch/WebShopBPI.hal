@@ -216,7 +216,9 @@ if(WebLoginStatus==3)then begin
 			testf = true;
 			if(IVr.Location!=location)then begin TrHs = false; testf = false; end;
 			if(IVr.SalesMan!=USr.Code)then begin testf = false; end;
-		
+			
+			logtext(0,IVr.Sernr & "  " & testf);
+			
 			if(testf)then begin
 				AddTextToArea("{",resarea);
 					addParamToJSONArea("SerNr",NormalizeStrToJson(IVr.SerNr),resarea);
