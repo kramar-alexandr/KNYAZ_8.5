@@ -1,6 +1,7 @@
 external function Boolean PasteCust2InInv(var record IVVc,record LocalMachineBlock,string,Boolean,var string,var string,var string,var string,var string);
 external function Boolean LoggedInTest();
 external function Boolean IVVc_PasteArtCode(var record IVVc,Integer,var string,var string,Boolean,var Integer);
+external function Boolean IVVc_PasteQuantity(var record IVVc,Integer);
 
 
 procedure addParamToJSONArea(string param, string value, var area req)
@@ -179,6 +180,9 @@ begin
 				IVrw.Spec = JSONGet(jsonobj,"items/[" & i & "]/Spec");
 				IVrw.Quant = evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Quant"));
 				IVrw.Price = evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Price"));
+				matrowput(IVr,k,IVrw);
+				IVVc_PasteQuantity(IVr,rownr);
+				matrowget(IVr,k,IVrw);
 				IVrw.Sum = evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Sum"));
 				matrowput(IVr,k,IVrw);
 				
