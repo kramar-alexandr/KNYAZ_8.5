@@ -181,7 +181,7 @@ begin
 				IVrw.Quant = evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Quant"));
 				IVrw.Price = evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Price"));
 				matrowput(IVr,k,IVrw);
-				IVVc_PasteQuantity(IVr,rownr);
+				IVVc_PasteQuantity(IVr,k);
 				matrowget(IVr,k,IVrw);
 				IVrw.Sum = evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Sum"));
 				matrowput(IVr,k,IVrw);
