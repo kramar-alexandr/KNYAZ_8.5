@@ -1,5 +1,6 @@
 external function Boolean PasteCust2InInv(var record IVVc,record LocalMachineBlock,string,Boolean,var string,var string,var string,var string,var string);
 external function Boolean LoggedInTest();
+external function Boolean IVVc_PasteArtCode(var record IVVc,Integer,var string,var string,Boolean,var Integer);
 
 
 procedure addParamToJSONArea(string param, string value, var area req)
@@ -126,12 +127,12 @@ global webpublic updating procedure WebSendSale()
 begin
 	record IVVc IVr;
 	row IVVc IVrw;
-	integer i,rwcnt;
+	integer i,rwcnt,k,sernrf;
 	area postdata;
 	json jsonobj;
 	record UserVc USr;
 	record LocalMachineBlock LMb;
-	string 100 warning,errstr,prepstr,invdatewarn,transdatewarn;
+	string 100 warning,errstr,prepstr,invdatewarn,transdatewarn,tstr;
 	
 	if(WebLoginStatus==3)then begin
 	
@@ -171,11 +172,16 @@ begin
 			for(i=0;i<rwcnt;i=i+1)begin
 				clearrow(IVr,IVrw,kInvoiceRowTypeNormal);
 				IVrw.ArtCode = JSONGet(jsonobj,"items/[" & i & "]/ArtCode");
+				matrowput(IVr,k,IVrw);
+				if IVVc_PasteArtCode(IVr,k,tstr,tstr,false,sernrf) then begin
+				end; 
 				IVrw.Spec = JSONGet(jsonobj,"items/[" & i & "]/Spec");
 				IVrw.Quant = evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Quant"));
 				IVrw.Price = evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Price"));
 				IVrw.Sum = evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Sum"));
-				matrowput(IVr,matrowcnt(IVr),IVrw);
+				matrowput(IVr,k,IVrw);
+				
+				k=k+1;
 			end;
 		end;
 	
