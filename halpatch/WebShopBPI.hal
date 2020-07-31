@@ -175,6 +175,7 @@ begin
 				matrowput(IVr,k,IVrw);
 				if IVVc_PasteArtCode(IVr,k,tstr,tstr,false,sernrf) then begin
 				end; 
+				matrowget(IVr,k,IVrw);
 				IVrw.Spec = JSONGet(jsonobj,"items/[" & i & "]/Spec");
 				IVrw.Quant = evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Quant"));
 				IVrw.Price = evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Price"));
