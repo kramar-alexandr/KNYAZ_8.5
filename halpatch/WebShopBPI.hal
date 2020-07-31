@@ -128,6 +128,7 @@ begin
 	integer i,rwcnt;
 	area postdata;
 	json jsonobj;
+	record UserVc USr;
 	
 	if(WebLoginStatus==3)then begin
 	
