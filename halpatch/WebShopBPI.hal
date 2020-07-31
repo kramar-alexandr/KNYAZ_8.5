@@ -155,7 +155,9 @@ begin
 					matrowdelete(IVr,0);
 				end;
 			end;
-		
+			
+			IVr.SalesMan = currentuser;
+			
 			rwcnt = JSONCountChildren(jsonobj,"items");
 			for(i=0;i<rwcnt;i=i+1)begin
 				clearrow(IVr,IVrw,kInvoiceRowTypeNormal);
@@ -190,13 +192,17 @@ record ItemStatusVc ISr;
 area resarea;
 record IVVc IVr;
 row IVVc IVrw;
-boolean TrHs;
+boolean TrHs,testf;
 integer i,rwcnt;
+record UserVc USr;
 
 if(WebLoginStatus==3)then begin
 
 	SetCompany(2,false);
-
+	
+	USr.Code = currentuser;
+	readfirstmain(USr,1,true);
+	location = USr.Location;
 	//location = webgetarg("location");
 	location = "OSN";
 	WebSetContentType("application/json; charset=UTF-8");	
@@ -207,9 +213,11 @@ if(WebLoginStatus==3)then begin
 		TrHs = true;
 		IVr.Location = location;
 		while(loopkey("Location",IVr,1,TrHs))begin
-			if(IVr.Location!=location)then begin TrHs = false; end;
+			testf = true;
+			if(IVr.Location!=location)then begin TrHs = false; testf = false; end;
+			if(IVr.SalesMan!=USr.Code)then begin testf = false; end;
 		
-			if(TrHs)then begin
+			if(testf)then begin
 				AddTextToArea("{",resarea);
 					addParamToJSONArea("SerNr",NormalizeStrToJson(IVr.SerNr),resarea);
 					addParamToJSONArea("Sum4",NormalizeStrToJson(IVr.Sum4),resarea);
@@ -373,7 +381,7 @@ if(WebLoginStatus==3)then begin
 return;
 end;
 
-global webpublic procedure WebPutCashDocs()
+global webpublic updating procedure WebPutCashDocs()
 begin
 string 50 location;
 area resarea;
@@ -382,11 +390,28 @@ record CLOutVc CLOutr;
 record IVVc IVr;
 boolean TrHs,testf;
 val sum;
+area postdata;
+json jsonobj;
 	
 	if(WebLoginStatus==3)then begin
-	
+		
 		WebSetContentType("application/json; charset=UTF-8");	
 		SetCompany(2,false);	
+		
+		
+		webgetpostdata(postdata);
+		writeareatofile(postdata,"WebSendSale.txt",0);
+		jsonobj = ParseJSONArea(postdata);
+		
+		recordnew(CLOutr);
+		CLOutr.SerNr = NextSerNr("CLOutVc",currentdate,-1,false,"");
+		recordstore(CLOutr,true);
+		
+		recordnew(CLInr);
+		CLInr.SerNr = NextSerNr("CLInVc",currentdate,-1,false,"");
+		recordstore(CLInr,true);
+		
+		
 		AddTextToArea("{\"result\":\"ok\"}",resarea);
 		weboutarea2(resarea);
 	
