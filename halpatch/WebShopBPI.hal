@@ -162,7 +162,7 @@ begin
 			
 			IVr.SalesMan = USr.Code;
 			IVr.Location = USr.Location;
-			IVr.Sum4 = JSONGet(jsonobj,"Sum4");
+			IVr.Sum4 = stringtoval(JSONGet(jsonobj,"Sum4"),m4val);
 			rwcnt = JSONCountChildren(jsonobj,"items");
 			for(i=0;i<rwcnt;i=i+1)begin
 				clearrow(IVr,IVrw,kInvoiceRowTypeNormal);
