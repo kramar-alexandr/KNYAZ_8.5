@@ -167,7 +167,6 @@ begin
 			for(i=0;i<rwcnt;i=i+1)begin
 				clearrow(IVr,IVrw,kInvoiceRowTypeNormal);
 				IVrw.ArtCode = JSONGet(jsonobj,"items/[" & i & "]/ArtCode");
-				logtext(0,"IVrw.ArtCode " & IVrw.ArtCode);
 				IVrw.Spec = JSONGet(jsonobj,"items/[" & i & "]/Spec");
 				IVrw.Quant = evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Quant"));
 				IVrw.Price = evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Price"));
@@ -222,7 +221,7 @@ if(WebLoginStatus==3)then begin
 			if(IVr.Location!=location)then begin TrHs = false; testf = false; end;
 			if(IVr.SalesMan!=USr.Code)then begin testf = false; end;
 			
-			logtext(0,IVr.Sernr & "  " & testf);
+			logtext(0,IVr.SerNr & "  " & testf);
 			
 			if(testf)then begin
 				AddTextToArea("{",resarea);
