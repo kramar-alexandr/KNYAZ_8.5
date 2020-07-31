@@ -1,3 +1,4 @@
+external function Boolean PasteCust2InInv(var record IVVc,record LocalMachineBlock,string,Boolean,var string,var string,var string,var string,var string);
 external function Boolean LoggedInTest();
 
 
@@ -129,6 +130,8 @@ begin
 	area postdata;
 	json jsonobj;
 	record UserVc USr;
+	record LocalMachineBlock LMb;
+	string 100 warning,errstr,prepstr,invdatewarn,transdatewarn;
 	
 	if(WebLoginStatus==3)then begin
 	
@@ -151,6 +154,7 @@ begin
 				recordnew(IVr);
 				IVr.SerNr = NextSerNr("IVVc",IVr.TransDate,-1,false,IVr.LangCode);
 				IVr.CustCode = "NONAME";
+				PasteCust2InInv(IVr,LMb,IVr.CustCode,true,warning,errstr,prepstr,invdatewarn,transdatewarn);
 			end;
 		
 			rwcnt = matrowcnt(IVr);
@@ -353,15 +357,18 @@ record CLOutVc CLOutr;
 record IVVc IVr;
 boolean TrHs,testf;
 val sum;
+record Uservc USr;
 
 if(WebLoginStatus==3)then begin
 
 	WebSetContentType("application/json; charset=UTF-8");	
 
 	SetCompany(2,false);
-	
+		
+		USr.Code = currentuser;
+		readfirstmain(USr,1,true);
 		TrHs = true;
-		while(loopkey("SerNr:" & "BOSS",IVr,1,TrHs))begin
+		while(loopkey("SerNr:" & USr.Code,IVr,1,TrHs))begin
 			testf = true;
 			if(testf)then begin 
 				sum = sum + IVr.Sum4;
@@ -369,10 +376,10 @@ if(WebLoginStatus==3)then begin
 	
 		end;
 	
-		while(loopkey("SerNr:" & "BOSS",CLInr,1,true))begin
+		while(loopkey("SerNr:" & USr.Code,CLInr,1,true))begin
 			sum = sum + CLInr.Total;
 		end;
-		while(loopkey("SerNr:" & "BOSS",CLOutr,1,true))begin
+		while(loopkey("SerNr:" & USr.Code,CLOutr,1,true))begin
 			sum = sum - CLOutr.Total;
 		end;
 	
@@ -398,24 +405,34 @@ boolean TrHs,testf;
 val sum;
 area postdata;
 json jsonobj;
+record UserVc USr;
 	
 	if(WebLoginStatus==3)then begin
 		
 		WebSetContentType("application/json; charset=UTF-8");	
 		SetCompany(2,false);	
-		
+		USr.Code = currentuser;
+		readfirstmain(USr,1,true);
 		
 		webgetpostdata(postdata);
 		writeareatofile(postdata,"WebSendSale.txt",0);
 		jsonobj = ParseJSONArea(postdata);
 		
-		recordnew(CLOutr);
-		CLOutr.SerNr = NextSerNr("CLOutVc",currentdate,-1,false,"");
-		recordstore(CLOutr,true);
+		if(stringtoval(JSONGet(jsonobj,"Sum"),m4val)	>0)then begin
+			recordnew(CLOutr);
+			CLOutr.SerNr = NextSerNr("CLOutVc",currentdate,-1,false,"");
+			CLOutr.Person = USr.Code;
+			CLOutr.Total = stringtoval(JSONGet(jsonobj,"Sum"),m4val);
+			recordstore(CLOutr,true);
+		end;
 		
-		recordnew(CLInr);
-		CLInr.SerNr = NextSerNr("CLInVc",currentdate,-1,false,"");
-		recordstore(CLInr,true);
+		if(stringtoval(JSONGet(jsonobj,"Sum"),m4val)<0)then begin
+			recordnew(CLInr);
+			CLInr.SerNr = NextSerNr("CLInVc",currentdate,-1,false,"");
+			CLInr.Person = USr.Code;
+			CLOutr.Total = stringtoval(JSONGet(jsonobj,"Sum"),m4val);
+			recordstore(CLInr,true);
+		end;
 		
 		
 		AddTextToArea("{\"result\":\"ok\"}",resarea);
