@@ -138,7 +138,7 @@ begin
 	record UserVc USr;
 	record LocalMachineBlock LMb;
 	string 100 warning,errstr,prepstr,invdatewarn,transdatewarn,tstr;
-	boolean OKFlag;
+	string 100 OKFlag;
 	
 	if(WebLoginStatus==3)then begin
 		
@@ -199,7 +199,7 @@ begin
 	
 		if(IVr.SerNr>-1)then begin
 			OKFlag = JSONGet(jsonobj,"OKFlag");
-			if(OKFlag>0) then begin
+			if(OKFlag=="true") then begin
 				IVr.OKFlag = 1;
 			end;
 			recordstore(IVr,true);
