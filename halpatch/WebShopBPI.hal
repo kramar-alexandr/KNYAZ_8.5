@@ -455,6 +455,8 @@ string 100 saler;
 			recordstore(CLOutr,true);
 			RecordCopy(OldCLOutr,CLOutr);
 			CLOutr.Objects = US2r.PersObjx;
+			if (RecordUpdate(OldCLOutr,CLOutr,true)==0) then begin end;
+			RecordCopy(OldCLOutr,CLOutr);
 			CLOutr.OKFlag = 1;
 			if (RecordUpdate(OldCLOutr,CLOutr,true)==0) then begin end;
 			
@@ -467,6 +469,8 @@ string 100 saler;
 			recordstore(CLInr,true);
 			RecordCopy(OldCLInr,CLInr);
 			CLInr.Objects = USr.PersObjx;
+			if (RecordUpdate(OldCLInr,CLInr,true)==0) then begin end;
+			RecordCopy(OldCLInr,CLInr);
 			CLInr.OKFlag = 1;
 			if (RecordUpdate(OldCLInr,CLInr,true)==0) then begin end;
 		end;
