@@ -347,16 +347,18 @@ record DepVc Depr;
 			AddTextToArea("{",resarea);
 			AddTextToArea("\"users\":[",resarea);
 			while(loopmain(USr,1,true))begin
-					Depr.Code = USr.Department;
-					readfirstmain(Depr,1,true);
-					AddTextToArea("{",resarea);
-					addParamToJSONArea("login",NormalizeStrToJson(USr.Code),resarea);
-					addParamToJSONArea("name",NormalizeStrToJson(USr.Name),resarea);
-					addParamToJSONArea("address",NormalizeStrToJson(Depr.Addr0),resarea);
-					addParamToJSONArea("location",NormalizeStrToJson(USr.Location),resarea);
-					addParamToJSONArea("phone",NormalizeStrToJson(USr.Phone1),resarea);
-					delLastComaInArea(resarea);
-					AddTextToArea("},",resarea);
+					if(USr.AccessGroup=="SALE") then begin
+						Depr.Code = USr.Department;
+						readfirstmain(Depr,1,true);
+						AddTextToArea("{",resarea);
+						addParamToJSONArea("login",NormalizeStrToJson(USr.Code),resarea);
+						addParamToJSONArea("name",NormalizeStrToJson(USr.Name),resarea);
+						addParamToJSONArea("address",NormalizeStrToJson(Depr.Addr0),resarea);
+						addParamToJSONArea("location",NormalizeStrToJson(USr.Location),resarea);
+						addParamToJSONArea("phone",NormalizeStrToJson(USr.Phone1),resarea);
+						delLastComaInArea(resarea);
+						AddTextToArea("},",resarea);
+					end;
 			end;
 			delLastComaInArea(resarea);
 			AddTextToArea("]",resarea);
@@ -420,14 +422,15 @@ global webpublic updating procedure WebPutCashDocs()
 begin
 string 50 location;
 area resarea;
-record CLInVc CLInr;
-record CLOutVc CLOutr;
+record CLInVc CLInr, OldCLInr;
+record CLOutVc CLOutr,OldCLOutr;
 record IVVc IVr;
 boolean TrHs,testf;
 val sum;
 area postdata;
 json jsonobj;
 record UserVc USr;
+string 100 saler;
 	
 	if(WebLoginStatus==3)then begin
 		
@@ -435,26 +438,41 @@ record UserVc USr;
 		SetCompany(5,false);	
 		USr.Code = currentuser;
 		readfirstmain(USr,1,true);
-		
+		saler = WebGetArg("foruser"); 
 		webgetpostdata(postdata);
-		writeareatofile(postdata,"WebSendSale.txt",0);
+		writeareatofile(postdata,"WebPushCashDoks.txt",0);
 		jsonobj = ParseJSONArea(postdata);
 		
 		if(stringtoval(JSONGet(jsonobj,"Sum"),m4val)	>0)then begin
 			recordnew(CLOutr);
 			CLOutr.SerNr = NextSerNr("CLOutVc",currentdate,-1,false,"");
-			CLOutr.Person = USr.Code;
+			CLOutr.Person = saler;
+			CLOutr.CorspCode = "CASH_OUT";
 			CLOutr.Total = stringtoval(JSONGet(jsonobj,"Sum"),m4val);
 			recordstore(CLOutr,true);
-		end;
-		
-		if(stringtoval(JSONGet(jsonobj,"Sum"),m4val)<0)then begin
+			RecordCopy(OldCLOutr,CLOutr);
+			CLOutr.OKFlag = 1;
+			if (RecordUpdate(OldCLOutr,CLOutr,true)==0) then begin end;
+			
 			recordnew(CLInr);
 			CLInr.SerNr = NextSerNr("CLInVc",currentdate,-1,false,"");
 			CLInr.Person = USr.Code;
-			CLOutr.Total = stringtoval(JSONGet(jsonobj,"Sum"),m4val);
+			CLInr.CorspCode = "CASH_OUT";
+			CLInr.Total = stringtoval(JSONGet(jsonobj,"Sum"),m4val);
 			recordstore(CLInr,true);
+			RecordCopy(OldCLInr,CLInr);
+			CLInr.OKFlag = 1;
+			if (RecordUpdate(OldCLInr,CLInr,true)==0) then begin end;
 		end;
+		
+		/* if(stringtoval(JSONGet(jsonobj,"Sum"),m4val)<0)then begin
+			recordnew(CLInr);
+			CLInr.SerNr = NextSerNr("CLInVc",currentdate,-1,false,"");
+			CLInr.Person = USr.Code;
+			CLInr.CorspCode = "CASH_OUT";
+			CLInr.Total = stringtoval(JSONGet(jsonobj,"Sum"),m4val);
+			recordstore(CLInr,true);
+		end;*/
 		
 		
 		AddTextToArea("{\"result\":\"ok\"}",resarea);
