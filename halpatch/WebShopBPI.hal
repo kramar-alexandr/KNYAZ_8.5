@@ -438,12 +438,13 @@ string 100 saler;
 		SetCompany(5,false);	
 		USr.Code = currentuser;
 		readfirstmain(USr,1,true);
-		saler = WebGetArg("foruser"); 
+		saler = WebGetArg("foruser");
 		webgetpostdata(postdata);
-		writeareatofile(postdata,"WebPushCashDoks.txt",0);
 		jsonobj = ParseJSONArea(postdata);
+		addTextToArea("user	" & saler,postdata);
+		writeareatofile(postdata,"WebPushCashDoks.txt",0);
 		
-		if(stringtoval(JSONGet(jsonobj,"Sum"),m4val)	>0)then begin
+		if(stringtoval(JSONGet(jsonobj,"Sum"),m4val)>0)then begin
 			recordnew(CLOutr);
 			CLOutr.SerNr = NextSerNr("CLOutVc",currentdate,-1,false,"");
 			CLOutr.Person = saler;
