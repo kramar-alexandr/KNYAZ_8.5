@@ -389,7 +389,7 @@ if(WebLoginStatus==3)then begin
 
 	SetCompany(5,false);
 		
-		USr.Code = currentuser;
+		USr.Code = WebGetArg("foruser");
 		readfirstmain(USr,1,true);
 		TrHs = true;
 		while(loopkey("SerNr:" & USr.Code,IVr,1,TrHs))begin
@@ -429,7 +429,7 @@ boolean TrHs,testf;
 val sum;
 area postdata;
 json jsonobj;
-record UserVc USr;
+record UserVc USr,US2r;
 string 100 saler;
 	
 	if(WebLoginStatus==3)then begin
@@ -439,17 +439,20 @@ string 100 saler;
 		USr.Code = currentuser;
 		readfirstmain(USr,1,true);
 		saler = WebGetArg("foruser");
+		US2r.Code = saler;
+		readfirstmain(US2r,1,true);
 		webgetpostdata(postdata);
 		jsonobj = ParseJSONArea(postdata);
-		addTextToArea("user	" & saler,postdata);
 		writeareatofile(postdata,"WebPushCashDoks.txt",0);
 		
 		if(stringtoval(JSONGet(jsonobj,"Sum"),m4val)>0)then begin
 			recordnew(CLOutr);
 			CLOutr.SerNr = NextSerNr("CLOutVc",currentdate,-1,false,"");
-			CLOutr.Person = saler;
+			CLOutr.Person = US2r.Code;
 			CLOutr.CorspCode = "CASH_OUT";
 			CLOutr.Total = stringtoval(JSONGet(jsonobj,"Sum"),m4val);
+			CLOutr.CurncyCode = "UAH";
+			CLOutr.Objects = US2r.PersObjx;
 			recordstore(CLOutr,true);
 			RecordCopy(OldCLOutr,CLOutr);
 			CLOutr.OKFlag = 1;
@@ -460,6 +463,8 @@ string 100 saler;
 			CLInr.Person = USr.Code;
 			CLInr.CorspCode = "CASH_OUT";
 			CLInr.Total = stringtoval(JSONGet(jsonobj,"Sum"),m4val);
+			CLInr.CurncyCode = "UAH";
+			CLInr.Objects = USr.PersObjx;
 			recordstore(CLInr,true);
 			RecordCopy(OldCLInr,CLInr);
 			CLInr.OKFlag = 1;
