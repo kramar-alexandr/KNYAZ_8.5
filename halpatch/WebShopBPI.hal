@@ -138,9 +138,10 @@ begin
 	record UserVc USr;
 	record LocalMachineBlock LMb;
 	string 100 warning,errstr,prepstr,invdatewarn,transdatewarn,tstr;
+	boolean OKFlag;
 	
 	if(WebLoginStatus==3)then begin
-	
+		
 		SetCompany(5,false);
 	
 		logtext(0,"WebSendSale");
@@ -197,6 +198,10 @@ begin
 		logtext(0,"IVr.SerNr " & IVr.SerNr);
 	
 		if(IVr.SerNr>-1)then begin
+			OKFlag = JSONGet(jsonobj,"OKFlag");
+			if(OKFlag>0) then begin
+				IVr.OKFlag = 1;
+			end;
 			recordstore(IVr,true);
 		end;
 	
