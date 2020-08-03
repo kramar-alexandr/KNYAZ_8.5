@@ -227,7 +227,7 @@ if(WebLoginStatus==3)then begin
 	readfirstmain(USr,1,true);
 	location = USr.Location;
 	//location = webgetarg("location");
-	location = "OSN";
+	// location = "OSN";
 	WebSetContentType("application/json; charset=UTF-8");	
 
 	if(nonblank(location))then begin
