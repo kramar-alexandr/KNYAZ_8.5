@@ -84,7 +84,7 @@ area resarea;
 
 if(WebLoginStatus==3)then begin
 
-	SetCompany(2,false);
+	SetCompany(5,false);
 	WebSetContentType("application/json; charset=UTF-8");	
 
 	//location = webgetarg("location");
@@ -137,7 +137,7 @@ begin
 	
 	if(WebLoginStatus==3)then begin
 	
-		SetCompany(2,false);
+		SetCompany(5,false);
 	
 		logtext(0,"WebSendSale");
 		
@@ -217,7 +217,7 @@ record UserVc USr;
 
 if(WebLoginStatus==3)then begin
 
-	SetCompany(2,false);
+	SetCompany(5,false);
 	
 	USr.Code = currentuser;
 	readfirstmain(USr,1,true);
@@ -295,7 +295,7 @@ record BarCodeVc BCr;
 
 		WebSetContentType("application/json; charset=UTF-8");	
 
-		SetCompany(2,false);
+		SetCompany(5,false);
 	
 			AddTextToArea("{",resarea);
 			AddTextToArea("\"codes\":[",resarea);
@@ -331,7 +331,7 @@ record DepVc Depr;
 
 		WebSetContentType("application/json; charset=UTF-8");	
 
-		SetCompany(2,false);
+		SetCompany(5,false);
 	
 			AddTextToArea("{",resarea);
 			AddTextToArea("\"users\":[",resarea);
@@ -374,7 +374,7 @@ if(WebLoginStatus==3)then begin
 
 	WebSetContentType("application/json; charset=UTF-8");	
 
-	SetCompany(2,false);
+	SetCompany(5,false);
 		
 		USr.Code = currentuser;
 		readfirstmain(USr,1,true);
@@ -421,7 +421,7 @@ record UserVc USr;
 	if(WebLoginStatus==3)then begin
 		
 		WebSetContentType("application/json; charset=UTF-8");	
-		SetCompany(2,false);	
+		SetCompany(5,false);	
 		USr.Code = currentuser;
 		readfirstmain(USr,1,true);
 		
