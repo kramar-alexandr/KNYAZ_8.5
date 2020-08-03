@@ -204,7 +204,7 @@ begin
 			if(OKFlag=="true") then begin
 				IVr.OKFlag = 1;
 			end;
-			if (RecordUpdate(oldIVr,IVr,false)==0) then begin end;
+			if (RecordUpdate(oldIVr,IVr,true)==0) then begin end;
 		end;
 	
 		weboutstring("{\"result\":\"ok\",\"SerNr\":\"" & IVr.SerNr & "\"}");
