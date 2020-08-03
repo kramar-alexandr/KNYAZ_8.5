@@ -130,7 +130,7 @@ end;
 
 global webpublic updating procedure WebSendSale()
 begin
-	record IVVc IVr;
+	record IVVc IVr,oldIVr;
 	row IVVc IVrw;
 	integer i,rwcnt,k,sernrf;
 	area postdata;
@@ -199,10 +199,12 @@ begin
 	
 		if(IVr.SerNr>-1)then begin
 			OKFlag = JSONGet(jsonobj,"OKFlag");
+			recordstore(IVr,true);
+			RecordCopy(oldIVr,IVr);
 			if(OKFlag=="true") then begin
 				IVr.OKFlag = 1;
 			end;
-			recordstore(IVr,true);
+			if (RecordUpdate(oldIVr,IVr,false)==0) then begin end;
 		end;
 	
 		weboutstring("{\"result\":\"ok\",\"SerNr\":\"" & IVr.SerNr & "\"}");
