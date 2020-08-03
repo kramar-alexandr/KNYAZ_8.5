@@ -81,6 +81,7 @@ string 50 location;
 record INVc INr;
 record ItemStatusVc ISr;
 area resarea;
+record UserVc User;
 
 if(WebLoginStatus==3)then begin
 
@@ -88,7 +89,10 @@ if(WebLoginStatus==3)then begin
 	WebSetContentType("application/json; charset=UTF-8");	
 
 	//location = webgetarg("location");
-	location = "OSN";
+	User.Code = CurrentUser;
+	if(ReadFirstMain(User,1,true)) then begin
+		location = User.Location;
+	end;
 	if(nonblank(location))then begin
 	
 		AddTextToArea("{",resarea);
