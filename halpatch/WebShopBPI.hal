@@ -2,7 +2,8 @@ external function Boolean PasteCust2InInv(var record IVVc,record LocalMachineBlo
 external function Boolean LoggedInTest();
 external function Boolean IVVc_PasteArtCode(var record IVVc,Integer,var string,var string,Boolean,var Integer);
 external function Boolean IVVc_PasteQuantity(var record IVVc,Integer);
-
+external procedure CLOutVc_PasteCurncyCode(var record CLOutVc);
+external procedure CLInVc_PasteCurncyCode(var record CLInVc);
 
 procedure addParamToJSONArea(string param, string value, var area req)
 begin
@@ -452,11 +453,10 @@ string 100 saler;
 			CLOutr.CorspCode = "CASH_OUT";
 			CLOutr.Total = stringtoval(JSONGet(jsonobj,"Sum"),m4val);
 			CLOutr.CurncyCode = "UAH";
+			CLOutVc_PasteCurncyCode(CLOutr);
 			recordstore(CLOutr,true);
 			RecordCopy(OldCLOutr,CLOutr);
 			CLOutr.Objects = US2r.PersObjx;
-			if (RecordUpdate(OldCLOutr,CLOutr,true)==0) then begin end;
-			RecordCopy(OldCLOutr,CLOutr);
 			CLOutr.OKFlag = 1;
 			if (RecordUpdate(OldCLOutr,CLOutr,true)==0) then begin end;
 			
@@ -466,11 +466,10 @@ string 100 saler;
 			CLInr.CorspCode = "CASH_OUT";
 			CLInr.Total = stringtoval(JSONGet(jsonobj,"Sum"),m4val);
 			CLInr.CurncyCode = "UAH";
+			CLInVc_PasteCurncyCode(CLInr);
 			recordstore(CLInr,true);
 			RecordCopy(OldCLInr,CLInr);
 			CLInr.Objects = USr.PersObjx;
-			if (RecordUpdate(OldCLInr,CLInr,true)==0) then begin end;
-			RecordCopy(OldCLInr,CLInr);
 			CLInr.OKFlag = 1;
 			if (RecordUpdate(OldCLInr,CLInr,true)==0) then begin end;
 		end;
