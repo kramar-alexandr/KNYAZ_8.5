@@ -243,11 +243,12 @@ if(WebLoginStatus==3)then begin
 		AddTextToArea("\"invoices\":[",resarea);
 		TrHs = true;
 		IVr.Location = location;
-		while(loopkey("Location",IVr,1,TrHs))begin
+		IVr.InvDate = currentdate;
+		while(loopkey("Location",IVr,2,TrHs))begin
 			testf = true;
 			if(IVr.Location!=location)then begin TrHs = false; testf = false; end;
 			if(IVr.SalesMan!=USr.Code)then begin testf = false; end;
-			
+			if(IVr.InvDate!=currentdate)then begin TrHs = false; testf = false; end;
 			logtext(0,IVr.SerNr & "  " & testf);
 			
 			if(testf)then begin
