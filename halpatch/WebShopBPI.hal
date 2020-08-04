@@ -424,7 +424,9 @@ begin
 string 50 location;
 area resarea;
 record CLInVc CLInr, OldCLInr;
+row CLInVc CLInrw;
 record CLOutVc CLOutr,OldCLOutr;
+row CLOutVc CLOutrw;
 record IVVc IVr;
 boolean TrHs,testf;
 val sum;
@@ -455,10 +457,12 @@ string 100 saler;
 			CLOutr.CurncyCode = "UAH";
 			CLOutVc_PasteCurncyCode(CLOutr);
 			recordstore(CLOutr,true);
+			
 			RecordCopy(OldCLOutr,CLOutr);
 			CLOutr.Objects = US2r.PersObjx;
 			CLOutr.OKFlag = 1;
 			if (RecordUpdate(OldCLOutr,CLOutr,true)==0) then begin end;
+			AddTextToArea(" row " & CLOutrw.stp & " " & CLOutrw.Type,postdata);	
 			
 			recordnew(CLInr);
 			CLInr.SerNr = NextSerNr("CLInVc",currentdate,-1,false,"");
@@ -468,10 +472,13 @@ string 100 saler;
 			CLInr.CurncyCode = "UAH";
 			CLInVc_PasteCurncyCode(CLInr);
 			recordstore(CLInr,true);
+			matrowget(CLInr,0,CLInrw);
 			RecordCopy(OldCLInr,CLInr);
 			CLInr.Objects = USr.PersObjx;
 			CLInr.OKFlag = 1;
 			if (RecordUpdate(OldCLInr,CLInr,true)==0) then begin end;
+			AddTextToArea(" row " & CLInrw.stp & " " & CLInrw.Type,postdata);	
+			writeareatofile(postdata,"WebPushCashDoks.txt",0);
 		end;
 		
 		/* if(stringtoval(JSONGet(jsonobj,"Sum"),m4val)<0)then begin
