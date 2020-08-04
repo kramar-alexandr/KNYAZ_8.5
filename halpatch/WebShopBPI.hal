@@ -462,7 +462,6 @@ string 100 saler;
 			CLOutr.Objects = US2r.PersObjx;
 			CLOutr.OKFlag = 1;
 			if (RecordUpdate(OldCLOutr,CLOutr,true)==0) then begin end;
-			AddTextToArea(" row " & CLOutrw.stp & " " & CLOutrw.Type,postdata);	
 			
 			recordnew(CLInr);
 			CLInr.SerNr = NextSerNr("CLInVc",currentdate,-1,false,"");
@@ -477,8 +476,6 @@ string 100 saler;
 			CLInr.Objects = USr.PersObjx;
 			CLInr.OKFlag = 1;
 			if (RecordUpdate(OldCLInr,CLInr,true)==0) then begin end;
-			AddTextToArea(" row " & CLInrw.stp & " " & CLInrw.Type,postdata);	
-			writeareatofile(postdata,"WebPushCashDoks.txt",0);
 		end;
 		
 		/* if(stringtoval(JSONGet(jsonobj,"Sum"),m4val)<0)then begin
