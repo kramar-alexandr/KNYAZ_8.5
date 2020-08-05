@@ -570,6 +570,7 @@ if(WebLoginStatus==3)then begin
 				delLastComaInArea(resarea);
 				AddTextToArea("]",resarea);
 				addParamToJSONArea("CredInv",CredInv,resarea);
+				delLastComaInArea(resarea);
 			AddTextToArea("}",resarea);
 		end;
 	
