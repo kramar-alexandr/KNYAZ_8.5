@@ -535,7 +535,7 @@ record ItemStatusVc ISr;
 area resarea;
 record IVVc IVr;
 row IVVc IVrw;
-boolean TrHs,testf;
+boolean TrHs,testf,find;
 integer i,rwcnt;
 record UserVc USr;
 string 50 delete,CredInv;
@@ -550,13 +550,13 @@ if(WebLoginStatus==3)then begin
 	//location = webgetarg("location");
 	// location = "OSN";
 	WebSetContentType("application/json; charset=UTF-8");	
-
+	find = false;
 	if(nonblank(location))then begin
 		AddTextToArea("{",resarea);
 		AddTextToArea("\"invoice\":[",resarea);
-		TrHs = true;
 		IVr.OKFlag = 0;
 		if(ReadLastkey("OKFlag:" & USr.Code,IVr,1,true))begin
+			find = true;
 			AddTextToArea("{",resarea);
 				addParamToJSONArea("SerNr",NormalizeStrToJson(IVr.SerNr),resarea);
 				addParamToJSONArea("Sum4",NormalizeStrToJson(IVr.Sum4),resarea);
@@ -596,7 +596,7 @@ if(WebLoginStatus==3)then begin
 		end;
 	
 		AddTextToArea("],",resarea);
-		if(delete=="true") then begin
+		if(delete=="true" and find) then begin
 			RecordDelete(IVr);
 			addParamToJSONArea("Result",NormalizeStrToJson("1"),resarea);
 			delLastComaInArea(resarea);
