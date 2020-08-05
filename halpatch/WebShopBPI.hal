@@ -169,7 +169,7 @@ begin
 		SetCompany(5,false);
 	
 		logtext(0,"WebSendSale");
-		CredInv = WebGetArg("foruser");
+		CredInv = WebGetArg("CredInv");
 		USr.Code = currentuser;
 		readfirstmain(USr,1,true);
 		
