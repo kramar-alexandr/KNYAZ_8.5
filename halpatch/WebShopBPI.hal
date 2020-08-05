@@ -391,7 +391,7 @@ if(WebLoginStatus==3)then begin
 	WebSetContentType("application/json; charset=UTF-8");	
 
 	SetCompany(5,false);
-		code = = WebGetArg("foruser");
+		code = WebGetArg("foruser");
 		if(nonblank(code)) then begin
 			USr.Code = code;
 		end else begin
