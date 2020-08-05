@@ -208,12 +208,12 @@ begin
 				matrowget(IVr,k,IVrw);
 				IVrw.Spec = JSONGet(jsonobj,"items/[" & i & "]/Spec");
 				if(CredInv=="true") then begin
-					IVrw.Quant = -evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Quant"));
-					IVrw.Price = -evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Price"));
+					IVrw.Quant = 0 - evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Quant"));
+					IVrw.Price = evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Price"));
 					matrowput(IVr,k,IVrw);
 					IVVc_PasteQuantity(IVr,k);
 					matrowget(IVr,k,IVrw);
-					IVrw.Sum = -evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Sum"));
+					IVrw.Sum = 0 - evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Sum"));
 					matrowput(IVr,k,IVrw);
 				end else begin
 					IVrw.Quant = evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Quant"));
