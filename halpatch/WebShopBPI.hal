@@ -595,10 +595,13 @@ if(WebLoginStatus==3)then begin
 			AddTextToArea("}",resarea);
 		end;
 	
-		AddTextToArea("]",resarea);
+		AddTextToArea("],",resarea);
 		if(delete=="true") then begin
 			RecordDelete(IVr);
-			AddTextToArea("\",result\":\"true\"",resarea);
+			addParamToJSONArea("Result",NormalizeStrToJson("1"),resarea);
+			delLastComaInArea(resarea);
+		end else begin
+			addParamToJSONArea("Result",NormalizeStrToJson("0"),resarea);
 			delLastComaInArea(resarea);
 		end;
 		AddTextToArea("}",resarea);
