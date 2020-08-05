@@ -4,6 +4,7 @@ external function Boolean IVVc_PasteArtCode(var record IVVc,Integer,var string,v
 external function Boolean IVVc_PasteQuantity(var record IVVc,Integer);
 external procedure CLOutVc_PasteCurncyCode(var record CLOutVc);
 external procedure CLInVc_PasteCurncyCode(var record CLInVc);
+external function val AbsoluteVal(val);;
 
 procedure addParamToJSONArea(string param, string value, var area req)
 begin
@@ -516,7 +517,7 @@ row IVVc IVrw;
 boolean TrHs,testf;
 integer i,rwcnt;
 record UserVc USr;
-string 50 delete;
+string 50 delete,CredInv;
 
 if(WebLoginStatus==3)then begin
 
@@ -552,7 +553,13 @@ if(WebLoginStatus==3)then begin
 							AddTextToArea("{",resarea);
 							addParamToJSONArea("ArtCode",NormalizeStrToJson(IVrw.ArtCode),resarea);
 							addParamToJSONArea("Spec",NormalizeStrToJson(IVrw.Spec),resarea);
-							addParamToJSONArea("Quant",NormalizeStrToJson(IVrw.Quant),resarea);
+							if(IVrw.Quant<0) then begin
+								addParamToJSONArea("Quant",NormalizeStrToJson(AbsoluteVal(IVrw.Quant)),resarea);
+								CredInv = "true";
+							end else begin
+								addParamToJSONArea("Quant",NormalizeStrToJson(IVrw.Quant),resarea);
+								CredInv = "false";
+							end;
 							addParamToJSONArea("Price",NormalizeStrToJson(IVrw.Price),resarea);
 							addParamToJSONArea("vRebate",NormalizeStrToJson(IVrw.vRebate),resarea);
 							addParamToJSONArea("Sum",NormalizeStrToJson(IVrw.Sum),resarea);
@@ -562,6 +569,7 @@ if(WebLoginStatus==3)then begin
 					end;
 				delLastComaInArea(resarea);
 				AddTextToArea("]",resarea);
+				addParamToJSONArea("CredInv",CredInv,resarea);
 			AddTextToArea("}",resarea);
 		end;
 	
