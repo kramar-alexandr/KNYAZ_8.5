@@ -85,6 +85,10 @@ record ItemStatusVc ISr;
 area resarea;
 record UserVc User;
 record StockMovVc StockMovr;
+row StockMovVc StockMovrw;
+vector integer moveQuant;
+boolean TrHs, testf;
+integer i;
 
 if(WebLoginStatus==3)then begin
 
@@ -97,14 +101,29 @@ if(WebLoginStatus==3)then begin
 		location = User.Location;
 	end;
 	if(nonblank(location))then begin
-	
+		
 		AddTextToArea("{",resarea);
 		AddTextToArea("\"items\":[",resarea);
+		StockMovr.ToLocation = location;
+		StockMovr.OKFlag = 0;
+		TrHs = true;
+		while(loopKey("ToLocOK",StockMovr,1,TrHs))begin
+			testf = true;
+			if(StockMovr.OKFlag>0) then begin TrHs = false; end;
+			if(StockMovr.ToLocation!=location) then begin TrHs = false; end;
+			if(StockMovr.OrdFlag=0) then begin testf=false; end;
+			if(testf and TrHs) then begin
+				for(i=0;i<matrowcnt(StockMovr);i=i+1) begin
+					matrowget(StockMovr,i,StockMovrw);
+					moveQuant[StockMovrw.ArtCode] = moveQuant[StockMovrw.ArtCode] + StockMovrw.Quant;
+				end;
+			end;
+		end;
 		while(loopmain(INr,1,true))begin
 			ISr.Code = INr.Code;
 			ISr.Location = location;
 			if(readfirstmain(ISr,2,true))then begin
-				if(ISr.Instock>0)then begin
+				if(ISr.Instock>0 or moveQuant[INr.Code]>0)then begin
 					AddTextToArea("{",resarea);
 					addParamToJSONArea("ArtCode",NormalizeStrToJson(INr.Code),resarea);
 					addParamToJSONArea("BarCode",NormalizeStrToJson(INr.BarCode),resarea);
@@ -112,6 +131,7 @@ if(WebLoginStatus==3)then begin
 					addParamToJSONArea("Name",NormalizeStrToJson(INr.Name),resarea);
 					addParamToJSONArea("Instock",NormalizeStrToJson(ISr.Instock),resarea);
 					addParamToJSONArea("Price",NormalizeStrToJson(INr.UPrice1),resarea);
+					addParamToJSONArea("InMove",NormalizeStrToJson(moveQuant[INr.Code]),resarea);
 					delLastComaInArea(resarea);
 					AddTextToArea("},",resarea);
 				end;
@@ -149,7 +169,7 @@ begin
 	
 		logtext(0,"WebSendSale");
 		
-		USr.Code = currentuser;
+		USr.Code = WebGetArg("foruser");;
 		readfirstmain(USr,1,true);
 		
 		webgetpostdata(postdata);
@@ -403,7 +423,7 @@ if(WebLoginStatus==3)then begin
 		TrHs = true;
 		while(loopkey("SerNr:" & USr.Code,IVr,1,TrHs))begin
 			testf = true;
-			if(testf)then begin 
+			if(testf and IVr.OKFlag>0)then begin 
 				sum = sum + IVr.Sum4;
 			end;
 	
@@ -578,7 +598,8 @@ if(WebLoginStatus==3)then begin
 		AddTextToArea("]",resarea);
 		if(delete=="true") then begin
 			RecordDelete(IVr);
-			AddTextToArea("\"result\":\"true\"",resarea);
+			AddTextToArea("\",result\":\"true\"",resarea);
+			delLastComaInArea(resarea);
 		end;
 		AddTextToArea("}",resarea);
 	
