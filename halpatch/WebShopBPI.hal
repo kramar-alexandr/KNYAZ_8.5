@@ -76,6 +76,54 @@ begin
   
   return;
 end;
+global webpublic updating procedure WebMoveOk()
+begin
+string 50 location;
+record INVc INr;
+record ItemStatusVc ISr;
+area resarea;
+record UserVc User;
+record StockMovVc StockMovr,oldStockMovr;
+row StockMovVc StockMovrw;
+vector integer moveQuant;
+boolean TrHs, testf;
+integer i;
+
+if(WebLoginStatus==3)then begin
+
+	SetCompany(5,false);
+	WebSetContentType("application/json; charset=UTF-8");	
+
+	//location = webgetarg("location");
+	User.Code = WebGetArg("foruser");
+	if(ReadFirstMain(User,1,true)) then begin
+		location = User.Location;
+	end;
+	if(nonblank(location))then begin
+		
+		
+		StockMovr.ToLocation = location;
+		StockMovr.OKFlag = 0;
+		TrHs = true;
+		while(loopKey("ToLocOK",StockMovr,1,TrHs))begin
+			testf = true;
+			if(StockMovr.OKFlag>0) then begin TrHs = false; end;
+			if(StockMovr.ToLocation!=location) then begin TrHs = false; end;
+			if(StockMovr.OrdFlag=0) then begin testf=false; end;
+			if(testf and TrHs) then begin
+				AddTextToArea("true",resarea);
+				RecordCopy(oldStockMovr,StockMovr);
+				StockMovr.OKFlag = 1;
+				if (RecordUpdate(oldStockMovr,StockMovr,true)==0) then begin end;
+			end;
+		end;
+	
+		weboutarea2(resarea);
+	end;
+	
+end;
+return;
+end;
 
 global webpublic procedure WebGetInventStat()
 begin
@@ -96,7 +144,7 @@ if(WebLoginStatus==3)then begin
 	WebSetContentType("application/json; charset=UTF-8");	
 
 	//location = webgetarg("location");
-	User.Code = CurrentUser;
+	User.Code = WebGetArg("foruser");
 	if(ReadFirstMain(User,1,true)) then begin
 		location = User.Location;
 	end;
