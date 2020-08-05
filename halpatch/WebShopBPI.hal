@@ -84,6 +84,7 @@ record INVc INr;
 record ItemStatusVc ISr;
 area resarea;
 record UserVc User;
+record StockMovVc StockMovr;
 
 if(WebLoginStatus==3)then begin
 
@@ -555,10 +556,10 @@ if(WebLoginStatus==3)then begin
 							addParamToJSONArea("Spec",NormalizeStrToJson(IVrw.Spec),resarea);
 							if(IVrw.Quant<0) then begin
 								addParamToJSONArea("Quant",NormalizeStrToJson(AbsoluteVal(IVrw.Quant)),resarea);
-								CredInv = "true";
+								CredInv = "1";
 							end else begin
 								addParamToJSONArea("Quant",NormalizeStrToJson(IVrw.Quant),resarea);
-								CredInv = "false";
+								CredInv = "0";
 							end;
 							addParamToJSONArea("Price",NormalizeStrToJson(IVrw.Price),resarea);
 							addParamToJSONArea("vRebate",NormalizeStrToJson(IVrw.vRebate),resarea);
