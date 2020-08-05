@@ -377,7 +377,7 @@ end;
 
 global webpublic procedure WebGetCashDocs()
 begin
-string 50 location;
+string 50 location,code;
 area resarea;
 record CLInVc CLInr;
 record CLOutVc CLOutr;
@@ -391,8 +391,12 @@ if(WebLoginStatus==3)then begin
 	WebSetContentType("application/json; charset=UTF-8");	
 
 	SetCompany(5,false);
-		
-		USr.Code = WebGetArg("foruser");
+		code = = WebGetArg("foruser");
+		if(nonblank(code)) then begin
+			USr.Code = code;
+		end else begin
+			USr.Code = currentuser;
+		end;
 		readfirstmain(USr,1,true);
 		TrHs = true;
 		while(loopkey("SerNr:" & USr.Code,IVr,1,TrHs))begin
