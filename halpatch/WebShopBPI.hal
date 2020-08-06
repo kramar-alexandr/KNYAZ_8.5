@@ -332,7 +332,7 @@ if(WebLoginStatus==3)then begin
 			if(IVr.Location!=location)then begin TrHs = false; testf = false; end;
 			if(IVr.SalesMan!=USr.Code)then begin testf = false; end;
 			if(IVr.InvDate!=currentdate)then begin TrHs = false; testf = false; end;
-			if(IVr.OKFlag>0) then begin testf = false; end;
+			if(IVr.OKFlag==0) then begin testf = false; end;
 			logtext(0,IVr.SerNr & "  " & testf);
 			
 			if(testf)then begin
