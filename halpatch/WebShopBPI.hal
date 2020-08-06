@@ -175,7 +175,7 @@ if(WebLoginStatus==3)then begin
 		while(loopmain(INr,1,true))begin
 			ISr.Code = INr.Code;
 			ISr.Location = location;
-			if(readfirstmain(ISr,2,true))then begin
+			if(readfirstmain(ISr,2,true) or moveQuant[INr.Code]>0)then begin
 				if(ISr.Instock>0 or moveQuant[INr.Code]>0)then begin
 					AddTextToArea("{",resarea);
 					addParamToJSONArea("ArtCode",NormalizeStrToJson(INr.Code),resarea);
