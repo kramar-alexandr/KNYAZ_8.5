@@ -111,10 +111,9 @@ if(WebLoginStatus==3)then begin
 			if(StockMovr.ToLocation!=location) then begin TrHs = false; end;
 			if(StockMovr.OrdFlag==0) then begin testf=false; end;
 			if(testf and TrHs) then begin
-				AddTextToArea("true",resarea);
 				RecordCopy(oldStockMovr,StockMovr);
 				StockMovr.OKFlag = 1;
-				if (RecordUpdate(oldStockMovr,StockMovr,true)==0) then begin end;
+				if (RecordUpdate(oldStockMovr,StockMovr,true)==0) then begin AddTextToArea("true",resarea); end;
 			end;
 		end;
 	
@@ -315,7 +314,7 @@ if(WebLoginStatus==3)then begin
 
 	SetCompany(5,false);
 	
-	USr.Code = currentuser;
+	USr.Code = WebGetArg("foruser");
 	readfirstmain(USr,1,true);
 	location = USr.Location;
 	//location = webgetarg("location");
