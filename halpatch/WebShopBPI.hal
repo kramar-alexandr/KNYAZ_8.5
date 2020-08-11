@@ -315,6 +315,7 @@ row IVVc IVrw;
 boolean TrHs,testf;
 integer i,rwcnt;
 record UserVc USr;
+string 10 credinv;
 
 if(WebLoginStatus==3)then begin
 
@@ -341,6 +342,8 @@ if(WebLoginStatus==3)then begin
 			if(IVr.OKFlag==0) then begin testf = false; end;
 			logtext(0,IVr.SerNr & "  " & testf);
 			
+			credinv = "0";
+			
 			if(testf)then begin
 				AddTextToArea("{",resarea);
 					addParamToJSONArea("SerNr",NormalizeStrToJson(IVr.SerNr),resarea);
@@ -357,6 +360,9 @@ if(WebLoginStatus==3)then begin
 							matrowget(IVr,i,IVrw);
 							if(IVrw.stp==kInvoiceRowTypeNormal)then begin
 								AddTextToArea("{",resarea);
+								if(IVrw.Quant<0)then begin
+									credinv = "1";
+								end;
 								addParamToJSONArea("ArtCode",NormalizeStrToJson(IVrw.ArtCode),resarea);
 								addParamToJSONArea("Spec",NormalizeStrToJson(IVrw.Spec),resarea);
 								addParamToJSONArea("Quant",NormalizeStrToJson(IVrw.Quant),resarea);
@@ -369,6 +375,8 @@ if(WebLoginStatus==3)then begin
 						end;
 					delLastComaInArea(resarea);
 					AddTextToArea("]",resarea);
+					addParamToJSONArea("CredInv",NormalizeStrToJson(credinv),resarea);
+					delLastComaInArea(resarea);
 				AddTextToArea("},",resarea);
 			end;
 		end;
@@ -576,17 +584,7 @@ string 100 saler;
 			CLInr.OKFlag = 1;
 			if (RecordUpdate(OldCLInr,CLInr,true)==0) then begin end;
 		end;
-		
-		/* if(stringtoval(JSONGet(jsonobj,"Sum"),m4val)<0)then begin
-			recordnew(CLInr);
-			CLInr.SerNr = NextSerNr("CLInVc",currentdate,-1,false,"");
-			CLInr.Person = USr.Code;
-			CLInr.CorspCode = "CASH_OUT";
-			CLInr.Total = stringtoval(JSONGet(jsonobj,"Sum"),m4val);
-			recordstore(CLInr,true);
-		end;*/
-		
-		
+
 		AddTextToArea("{\"result\":\"ok\"}",resarea);
 		weboutarea2(resarea);
 	
