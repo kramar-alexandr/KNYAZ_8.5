@@ -5,6 +5,7 @@ external function Boolean IVVc_PasteQuantity(var record IVVc,Integer);
 external procedure CLOutVc_PasteCurncyCode(var record CLOutVc);
 external procedure CLInVc_PasteCurncyCode(var record CLInVc);
 external function val AbsoluteVal(val);;
+external function Boolean IVVc_PasteSum(var record IVVc,Integer,var Boolean,Integer);
 
 procedure addParamToJSONArea(string param, string value, var area req)
 begin
@@ -215,6 +216,7 @@ begin
 	string 100 warning,errstr,prepstr,invdatewarn,transdatewarn,tstr;
 	string 100 OKFlag;
 	string 50 CredInv;
+	Boolean chsum;
 	
 	if(WebLoginStatus==3)then begin
 		
@@ -265,6 +267,8 @@ begin
 					matrowget(IVr,k,IVrw);
 					IVrw.Sum = evaltoval("-" & JSONGet(jsonobj,"items/[" & i & "]/Sum"));
 					matrowput(IVr,k,IVrw);
+					IVVc_PasteSum(IVr,k,chsum,1);
+					matrowget(IVr,k,IVrw);
 				end else begin
 					IVrw.Quant = evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Quant"));
 					IVrw.Price = evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Price"));
@@ -273,6 +277,8 @@ begin
 					matrowget(IVr,k,IVrw);
 					IVrw.Sum = evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Sum"));
 					matrowput(IVr,k,IVrw);
+					IVVc_PasteSum(IVr,k,chsum,1);
+					matrowget(IVr,k,IVrw);
 				end;
 				
 				k=k+1;
