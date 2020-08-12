@@ -145,6 +145,7 @@ if(WebLoginStatus==3)then begin
 
 	//location = webgetarg("location");
 	User.Code = WebGetArg("foruser");
+	logtext(0,"WebGetArg foruser " & WebGetArg("foruser"));
 	if(ReadFirstMain(User,1,true)) then begin
 		location = User.Location;
 	end else begin
