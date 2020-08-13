@@ -105,8 +105,8 @@ BEGIN
   end;
   objstr = objstr & objects;
   
-  if(nonblank(CLInp.RefStr) and CLInp.RefStr==CLInp.Person)then begin
-  	objstr = CLInp.Person;// Edit ************************** BPI Ukraine - KramarAlexandr - 04, 13 08 2020 y. at 4:57:31 PM
+  if(nonblank(CLInp.RefStr) and CLInp.RefStr!=CLInp.Person)then begin
+  	objstr = CLInp.RefStr;// Edit ************************** BPI Ukraine - KramarAlexandr - 04, 13 08 2020 y. at 4:57:31 PM
   end;
   
 //  if ((MainCLb.PostVAT==1) and (blank(CLInp.FileName)) and (MatRowCnt(CLInp)==0)) then begin
