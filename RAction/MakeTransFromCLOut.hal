@@ -130,6 +130,7 @@ BEGIN
     if (nonblank(objstr)) then begin objstr = objstr & ","; end;
     objstr = objstr & rowobjects;
   end;		    
+  
   nilv = -1;
   res = 1085;
   Accr.AccNumber = corspacc;    
@@ -338,7 +339,7 @@ BEGIN
   Boolean sumpmf;
   row VATCodeBlock VATCoderw;
   record AccVc Accr;
-  string 255 paymode;
+  string 255 paymode,objstr;
   Integer OPBookVAT;
 
   res = 1085;
@@ -770,13 +771,18 @@ LFOREND:;
     rs = CLOutp.Total - userval;
     rs = MulRateToBase1(CLOutp.CurncyCode,CLOutp.Total-userval,frrate,torate1,torate2,baserate1,baserate2,DefaultCurRoundOff);
     if (CheckTTRPerRow("CLOutVc",pmrw.AccNr,pmrw.Objects,dc2,taccnumber,0)) then begin end;
-		if(blank(pmrw.Objects)) then begin
-			AddEuroCurncyTrRow(gTRp,pmrw.AccNr,CLOutp.Objects,"",pmrw.Comment,rs,MainCLb.CLOutTransBankPerRow==0,dc2,totsum,
-                       CLOutp.CurncyCode,frrate,torate1,torate2,baserate1,baserate2,CLOutp.Total-userval,nilv,-1,false,taccnumber);
-		end else begin
-			AddEuroCurncyTrRow(gTRp,pmrw.AccNr,pmrw.Objects,"",pmrw.Comment,rs,MainCLb.CLOutTransBankPerRow==0,dc2,totsum,
-                       CLOutp.CurncyCode,frrate,torate1,torate2,baserate1,baserate2,CLOutp.Total-userval,nilv,-1,false,taccnumber);
-		end;
+		
+		objstr = pmrw.Objects;// Edit ************************** BPI Ukraine - KramarAlexandr - 04, 13 08 2020 y. at 4:47:01 PM
+    if(nonblank(CLOutp.Objects))then begin
+			if(nonblank(objstr) and nonblank(CLOutp.Objects))then begin
+				objstr = objstr & "," & CLOutp.Objects;
+			end else begin
+				objstr = CLOutp.Objects;
+			end;
+    end;// Edit ************************** BPI Ukraine - KramarAlexandr - 04, 13 08 2020 y. at 4:48:50 PM
+    
+		AddEuroCurncyTrRow(gTRp,pmrw.AccNr,objstr,"",pmrw.Comment,rs,MainCLb.CLOutTransBankPerRow==0,dc2,totsum,
+										 CLOutp.CurncyCode,frrate,torate1,torate2,baserate1,baserate2,CLOutp.Total-userval,nilv,-1,false,taccnumber);// Edit ************************** BPI Ukraine - KramarAlexandr - 04, 13 08 2020 y. at 4:48:52 PM
 	end;  
 
   if (bookvativf) then begin

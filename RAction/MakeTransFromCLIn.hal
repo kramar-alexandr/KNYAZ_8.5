@@ -104,6 +104,11 @@ BEGIN
     objstr = objstr & ",";
   end;
   objstr = objstr & objects;
+  
+  if(nonblank(CLInp.RefStr) and CLInp.RefStr==CLInp.Person)then begin
+  	objstr = CLInp.Person;// Edit ************************** BPI Ukraine - KramarAlexandr - 04, 13 08 2020 y. at 4:57:31 PM
+  end;
+  
 //  if ((MainCLb.PostVAT==1) and (blank(CLInp.FileName)) and (MatRowCnt(CLInp)==0)) then begin
   if ((MainCLb.PostVAT==1) and (blank(CLInp.FileName)) and (vatval!=0)) then begin
     rs = netval;
@@ -256,7 +261,7 @@ BEGIN
   Boolean sumpmf;
   string 20 vatacc1,vatacc2,taccnumber;  
   record AccVc Accr;
-  string 255 paymode;
+  string 255 paymode,objstr;// Edit ************************** BPI Ukraine - KramarAlexandr - 04, 13 08 2020 y. at 4:47:20 PM
   Integer OPBookVAT,IPBookVAT;
   
   res = 1085;
@@ -730,13 +735,18 @@ LFOREND:;
     rs = CLInp.Total;
     rs = MulRateToBase1(CLInp.CurncyCode,CLInp.Total,frrate,torate1,torate2,baserate1,baserate2,DefaultCurRoundOff);
     if (CheckTTRPerRow("CLInVc",pmrw.AccNr,pmrw.Objects,dc1,taccnumber,0)) then begin end;
-		if(blank(pmrw.Objects)) then begin
-			AddEuroCurncyTrRow(gTRp,pmrw.AccNr,CLInp.Objects,"",pmrw.Comment,rs,false,dc1,totsum,
-                       CLInp.CurncyCode,frrate,torate1,torate2,baserate1,baserate2,CLInp.Total,nilv,-1,false,taccnumber);
-		end else begin
-			AddEuroCurncyTrRow(gTRp,pmrw.AccNr,pmrw.Objects,"",pmrw.Comment,rs,false,dc1,totsum,
-                       CLInp.CurncyCode,frrate,torate1,torate2,baserate1,baserate2,CLInp.Total,nilv,-1,false,taccnumber);
-		end;
+    
+    objstr = pmrw.Objects;// Edit ************************** BPI Ukraine - KramarAlexandr - 04, 13 08 2020 y. at 4:47:01 PM
+    if(nonblank(CLInp.Objects))then begin
+			if(nonblank(objstr) and nonblank(CLInp.Objects))then begin
+				objstr = objstr & "," & CLInp.Objects;
+			end else begin
+				objstr = CLInp.Objects;
+			end;
+    end;
+    
+		AddEuroCurncyTrRow(gTRp,pmrw.AccNr,objstr,"",pmrw.Comment,rs,false,dc1,totsum,
+										 CLInp.CurncyCode,frrate,torate1,torate2,baserate1,baserate2,CLInp.Total,nilv,-1,false,taccnumber);// Edit ************************** BPI Ukraine - KramarAlexandr - 04, 13 08 2020 y. at 4:47:04 PM
 	end;  
   
   if (bookvativf) then begin

@@ -576,6 +576,7 @@ string 100 saler;
 			recordnew(CLInr);
 			CLInr.SerNr = NextSerNr("CLInVc",currentdate,-1,false,"");
 			CLInr.Person = USr.Code;
+			CLInr.RefStr = USr.Code;
 			CLInr.CorspCode = "CASH_OUT";
 			CLInr.Total = stringtoval(JSONGet(jsonobj,"Sum"),m4val);
 			CLInr.CurncyCode = "UAH";
