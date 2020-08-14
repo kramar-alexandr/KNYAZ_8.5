@@ -40,9 +40,6 @@ BEGIN
   string 255 tstr,tstr2;
   Date budsd,buded;
   
-    logtext(0,"ALPB2ResGr anru " & anru);
-
-  
   budsd = StringToDate(FirstInRange(RepSpec.Stext,10));
   if (blankdate(budsd)) then begin budsd = RepSpec.sStartDate; end;    
   buded = StringToDate(LastInRange(RepSpec.Stext,10));
@@ -77,7 +74,8 @@ BEGIN
         Pb1 = S3b1;
         Eb1 = S3b1 + Pb1;
     end;
-  end; LogText(0,S3b1 & " " & Pb1);
+  end; 
+  
   S3b1 = 0; //“бран вывод за пред.год Edit***************************Sasha2,15:55 06.10.2016
   S4b1 = 0; //“бран вывод за пред.год Edit***************************Sasha2,15:55 06.10.2016
 /*  
