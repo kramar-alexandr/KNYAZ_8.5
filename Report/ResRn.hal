@@ -40,6 +40,9 @@ BEGIN
   string 255 tstr,tstr2;
   Date budsd,buded;
   
+    logtext(0,"ALPB2ResGr anru " & anru);
+
+  
   budsd = StringToDate(FirstInRange(RepSpec.Stext,10));
   if (blankdate(budsd)) then begin budsd = RepSpec.sStartDate; end;    
   buded = StringToDate(LastInRange(RepSpec.Stext,10));
