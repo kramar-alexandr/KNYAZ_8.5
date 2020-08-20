@@ -300,11 +300,15 @@ begin
 			end;
 				SetRecordCheckVc("IVVc");
 				IVVcRecordCheck(IVr,oldIVr,2,3);
-				logtext(0,"res " & RECORDCHECKLASTERRORNO);
-				 res = RecordUpdate(oldIVr,IVr,true);
+				if(RECORDCHECKLASTERRORNO>0) then begin res = RECORDCHECKLASTERRORNO; end;
+				RecordUpdate(oldIVr,IVr,true);
 		end;
 	
-		weboutstring("{\"result\":\"ok\",\"SerNr\":\"" & IVr.SerNr & "\"}");
+		if(res>-1) then begin 
+			weboutstring("{\"error\":\"" & USetStr(res) & "\"}");
+		end else begin
+			weboutstring("{\"result\":\"ok\",\"\"SerNr\":\"" & IVr.SerNr & "\"}");
+		end;
 	end;
 	
  return;
