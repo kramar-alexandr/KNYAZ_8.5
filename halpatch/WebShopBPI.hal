@@ -299,8 +299,7 @@ begin
 			end;
 				 res = RecordUpdate(oldIVr,IVr,true);
 		end;
-		res = RECORDCHECKLASTERRORNO;
-		logtext(0,"res " & res);
+		logtext(0,"res " & RECORDCHECKLASTERRORNO);
 	
 		weboutstring("{\"result\":\"ok\",\"SerNr\":\"" & IVr.SerNr & "\"}");
 	end;
