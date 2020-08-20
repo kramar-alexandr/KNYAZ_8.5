@@ -299,9 +299,9 @@ begin
 				IVr.OKFlag = 1;
 			end;
 				SetRecordCheckVc("IVVc");
-			IVVcRecordCheck(IVr,oldIVr,2,3);
-			logtext(0,"res " & RECORDCHECKLASTERRORNO);
+			IVVcRecordCheck(IVr,oldIVr,2,0);
 				 res = RecordUpdate(oldIVr,IVr,true);
+				 logtext(0,"res " & RECORDCHECKLASTERRORNO);
 		end;
 	
 		weboutstring("{\"result\":\"ok\",\"SerNr\":\"" & IVr.SerNr & "\"}");
