@@ -219,6 +219,7 @@ begin
 	string 100 OKFlag;
 	string 50 CredInv;
 	Boolean chsum;
+	longint res;
 	
 	if(WebLoginStatus==3)then begin
 		
@@ -298,7 +299,7 @@ begin
 			end;
 				 res = RecordUpdate(oldIVr,IVr,true);
 		end;
-		weboutstring("res " & res);
+		logtext(0,"res " & res);
 	
 		weboutstring("{\"result\":\"ok\",\"SerNr\":\"" & IVr.SerNr & "\"}");
 	
