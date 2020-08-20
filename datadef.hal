@@ -6,6 +6,7 @@ SourceFile("halcust\\Windows",0);
 SourceFile("halcust\\WAction",0);
 SourceFile("halcust\\RAction",0);
 SourceFile("halcust\\Web",0);
+SourceFile("halcust\\Tools",0);
 
 
 begin

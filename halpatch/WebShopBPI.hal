@@ -5,6 +5,7 @@ external function Boolean IVVc_PasteQuantity(var record IVVc,Integer);
 external procedure CLOutVc_PasteCurncyCode(var record CLOutVc);
 external procedure CLInVc_PasteCurncyCode(var record CLInVc);
 external function val AbsoluteVal(val);;
+external function Boolean IVVc_PasteSum(var record IVVc,Integer,var Boolean,Integer);
 
 procedure addParamToJSONArea(string param, string value, var area req)
 begin
@@ -144,6 +145,7 @@ if(WebLoginStatus==3)then begin
 
 	//location = webgetarg("location");
 	User.Code = WebGetArg("foruser");
+	logtext(0,"WebGetArg foruser " & WebGetArg("foruser"));
 	if(ReadFirstMain(User,1,true)) then begin
 		location = User.Location;
 	end else begin
@@ -152,6 +154,7 @@ if(WebLoginStatus==3)then begin
 			location = User.Location;
 		end;
 	end;
+	logtext(0,"WebGetInventStat " & location);
 	if(nonblank(location))then begin
 		
 		AddTextToArea("{",resarea);
@@ -215,6 +218,7 @@ begin
 	string 100 warning,errstr,prepstr,invdatewarn,transdatewarn,tstr;
 	string 100 OKFlag;
 	string 50 CredInv;
+	Boolean chsum;
 	
 	if(WebLoginStatus==3)then begin
 		
@@ -265,6 +269,8 @@ begin
 					matrowget(IVr,k,IVrw);
 					IVrw.Sum = evaltoval("-" & JSONGet(jsonobj,"items/[" & i & "]/Sum"));
 					matrowput(IVr,k,IVrw);
+					IVVc_PasteSum(IVr,k,chsum,1);
+					matrowget(IVr,k,IVrw);
 				end else begin
 					IVrw.Quant = evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Quant"));
 					IVrw.Price = evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Price"));
@@ -273,6 +279,8 @@ begin
 					matrowget(IVr,k,IVrw);
 					IVrw.Sum = evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Sum"));
 					matrowput(IVr,k,IVrw);
+					IVVc_PasteSum(IVr,k,chsum,1);
+					matrowget(IVr,k,IVrw);
 				end;
 				
 				k=k+1;
@@ -310,6 +318,7 @@ row IVVc IVrw;
 boolean TrHs,testf;
 integer i,rwcnt;
 record UserVc USr;
+string 10 credinv;
 
 if(WebLoginStatus==3)then begin
 
@@ -332,9 +341,12 @@ if(WebLoginStatus==3)then begin
 			testf = true;
 			if(IVr.Location!=location)then begin TrHs = false; testf = false; end;
 			if(IVr.SalesMan!=USr.Code)then begin testf = false; end;
-			if(IVr.InvDate!=currentdate)then begin TrHs = false; testf = false; end;
+			if(IVr.InvDate>currentdate)then begin TrHs = false; testf = false; end;
+			if(IVr.InvDate<currentdate)then begin testf = false; end;
 			if(IVr.OKFlag==0) then begin testf = false; end;
 			logtext(0,IVr.SerNr & "  " & testf);
+			
+			credinv = "0";
 			
 			if(testf)then begin
 				AddTextToArea("{",resarea);
@@ -352,6 +364,9 @@ if(WebLoginStatus==3)then begin
 							matrowget(IVr,i,IVrw);
 							if(IVrw.stp==kInvoiceRowTypeNormal)then begin
 								AddTextToArea("{",resarea);
+								if(IVrw.Quant<0)then begin
+									credinv = "1";
+								end;
 								addParamToJSONArea("ArtCode",NormalizeStrToJson(IVrw.ArtCode),resarea);
 								addParamToJSONArea("Spec",NormalizeStrToJson(IVrw.Spec),resarea);
 								addParamToJSONArea("Quant",NormalizeStrToJson(IVrw.Quant),resarea);
@@ -363,7 +378,9 @@ if(WebLoginStatus==3)then begin
 							end;
 						end;
 					delLastComaInArea(resarea);
-					AddTextToArea("]",resarea);
+					AddTextToArea("],",resarea);
+					addParamToJSONArea("CredInv",NormalizeStrToJson(credinv),resarea);
+					delLastComaInArea(resarea);
 				AddTextToArea("},",resarea);
 			end;
 		end;
@@ -560,6 +577,7 @@ string 100 saler;
 			recordnew(CLInr);
 			CLInr.SerNr = NextSerNr("CLInVc",currentdate,-1,false,"");
 			CLInr.Person = USr.Code;
+			CLInr.RefStr = US2r.Code;
 			CLInr.CorspCode = "CASH_OUT";
 			CLInr.Total = stringtoval(JSONGet(jsonobj,"Sum"),m4val);
 			CLInr.CurncyCode = "UAH";
@@ -571,17 +589,7 @@ string 100 saler;
 			CLInr.OKFlag = 1;
 			if (RecordUpdate(OldCLInr,CLInr,true)==0) then begin end;
 		end;
-		
-		/* if(stringtoval(JSONGet(jsonobj,"Sum"),m4val)<0)then begin
-			recordnew(CLInr);
-			CLInr.SerNr = NextSerNr("CLInVc",currentdate,-1,false,"");
-			CLInr.Person = USr.Code;
-			CLInr.CorspCode = "CASH_OUT";
-			CLInr.Total = stringtoval(JSONGet(jsonobj,"Sum"),m4val);
-			recordstore(CLInr,true);
-		end;*/
-		
-		
+
 		AddTextToArea("{\"result\":\"ok\"}",resarea);
 		weboutarea2(resarea);
 	
