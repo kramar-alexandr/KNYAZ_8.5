@@ -6,6 +6,7 @@ external procedure CLOutVc_PasteCurncyCode(var record CLOutVc);
 external procedure CLInVc_PasteCurncyCode(var record CLInVc);
 external function val AbsoluteVal(val);;
 external function Boolean IVVc_PasteSum(var record IVVc,Integer,var Boolean,Integer);
+external updating function LongInt IVVcRecordCheck(record IVVc,record IVVc,LongInt,LongInt);
 
 procedure addParamToJSONArea(string param, string value, var area req)
 begin
@@ -298,6 +299,7 @@ begin
 				IVr.OKFlag = 1;
 			end;
 			SetRecordCheckVc("IVVc");
+				IVVcRecordCheck(IVr,oldIVr,2,0);
 				 res = RecordUpdate(oldIVr,IVr,true);
 		end;
 		logtext(0,"res " & RECORDCHECKLASTERRORNO);
