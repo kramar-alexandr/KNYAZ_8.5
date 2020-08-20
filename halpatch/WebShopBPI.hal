@@ -311,7 +311,7 @@ begin
 	
 		if(res>-1) then begin 
 			//weboutstring("{\"error\":\"" & USetStr(res) & "\"}");
-			weboutstring("{\"result\":\"error\",\"SerNr\":\"" & IVr.SerNr & "\",\"error\":\"" & USetStr(res) & artCode & "\"}");
+			weboutstring("{\"result\":\"error\",\"SerNr\":\"" & IVr.SerNr & "\",\"error\":\"" & USetStr(res) & " - " & artCode & "\"}");
 		end else begin
 			weboutstring("{\"result\":\"ok\",\"SerNr\":\"" & IVr.SerNr & "\"}");
 		end;
