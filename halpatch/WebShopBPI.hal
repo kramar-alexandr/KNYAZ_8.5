@@ -297,6 +297,7 @@ begin
 			if(OKFlag=="true") then begin
 				IVr.OKFlag = 1;
 			end;
+			SetRecordCheckVc("IVVc");
 				 res = RecordUpdate(oldIVr,IVr,true);
 		end;
 		logtext(0,"res " & RECORDCHECKLASTERRORNO);
