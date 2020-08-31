@@ -179,7 +179,7 @@ if(WebLoginStatus==3)then begin
 			ISr.Code = INr.Code;
 			ISr.Location = location;
 			if(readfirstmain(ISr,2,true) or moveQuant[INr.Code]>0)then begin
-				if(ISr.Instock>0 or moveQuant[INr.Code]>0)then begin
+				if(true)then begin// Edit ************************** BPI Ukraine - KramarAlexandr - 01, 31 08 2020 y. at 3:37:45 PM
 					AddTextToArea("{",resarea);
 					addParamToJSONArea("ArtCode",NormalizeStrToJson(INr.Code),resarea);
 					addParamToJSONArea("BarCode",NormalizeStrToJson(INr.BarCode),resarea);
