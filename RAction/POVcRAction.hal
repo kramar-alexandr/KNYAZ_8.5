@@ -590,6 +590,7 @@ begin
 	
 	if (nonblank(POr.SerNr)) then begin
 		r = RecordAction_raPastePOInPU(POr,PUr);
+		logtext(0,r & " RecordAction_raPastePOInPU");
 		if (r==0) then begin
 			RecordCopy (OldPUr,PUr);
 			PUr.OKFlag = 1;
@@ -597,6 +598,7 @@ begin
 				CreateRecordLink(PUr,currentcompany,POr,currentcompany);
 				CreateRecordLink(POr,currentcompany,PUr,currentcompany);
 				r = RecordAction_raPastePUInVI(PUr,VIr,errmsg);
+				logtext(0,r & " RecordAction_raPastePUInVI");
 				if (r==0) then begin
 					RecordCopy (VIr,OldVIr);
 					VIr.OKFlag = 1;
