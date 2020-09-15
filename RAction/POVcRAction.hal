@@ -600,9 +600,9 @@ begin
 				r = RecordAction_raPastePUInVI(PUr,VIr,errmsg);
 				logtext(0,r & " RecordAction_raPastePUInVI");
 				if (r==0) then begin
-					RecordCopy (VIr,OldVIr);
+					RecordCopy (OldVIr,VIr);
 					VIr.OKFlag = 1;
-					if (recordUpdate(VIr,OldVIr,true)==0) then begin
+					if (recordUpdate(OldVIr,VIr,true)==0) then begin
 						CreateRecordLink(VIr,currentcompany,POr,currentcompany);
 						CreateRecordLink(POr,currentcompany,VIr,currentcompany);
 					end;
