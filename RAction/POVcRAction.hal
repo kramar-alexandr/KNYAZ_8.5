@@ -631,9 +631,9 @@ begin
   UpdateVARItemsPO(POr);
   if (POr.OKFlag!=0) then begin
     AssignStockResFromPO(POr);
-		if (CurrentCompany>4) then begin
+		// if (CurrentCompany>4) then begin
 			CreatePUandVIfromPO(POr);
-		end;
+		// end;
   end;
   POCreatePlannedPayment(POr);
   if (POr.OKFlag!=0) then begin
