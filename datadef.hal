@@ -87,6 +87,7 @@ RecordAddBegin(POVc,"PoVc_Custom");
   ArrayField(newrowGP,M4Val,0,0);
   ArrayField(ItemGroup,M4Code,20,ITVc);
   ArrayField(PriceNoVAT,M45Val,0,0);
+	ArrayField(Payed,M4Mark,0,0); // _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_- Anton Preisinger 17:24 15.09.2020
 EndRecordAdd;
 
 RecordAddBegin(PUVc,"PUVc_Custom");
