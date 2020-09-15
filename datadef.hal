@@ -82,12 +82,12 @@ RecordAddBegin(POVc,"PoVc_Custom");
   RecordField(TaxFlag,M4Mark,0,0);
   RecordField(TransDateText,M4Str,20,0); //Edit***************************Sasha2,16:28 14.12.2016
   RecordField(Sum4Text,M4Str,20,0); //Edit***************************Sasha2,16:29 14.12.2016
+	RecordField(Payed,M4Mark,0,0); // _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_- Anton Preisinger 17:24 15.09.2020
   ArrayField(SellPrice,M45Val,0,0);
   ArrayField(rowGP,M4Val,0,0);
   ArrayField(newrowGP,M4Val,0,0);
   ArrayField(ItemGroup,M4Code,20,ITVc);
   ArrayField(PriceNoVAT,M45Val,0,0);
-	ArrayField(Payed,M4Mark,0,0); // _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_- Anton Preisinger 17:24 15.09.2020
 EndRecordAdd;
 
 RecordAddBegin(PUVc,"PUVc_Custom");
