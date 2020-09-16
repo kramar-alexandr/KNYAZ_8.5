@@ -588,6 +588,7 @@ updating procedure CreatePUandVIfromPO(record POVc POr, boolean Payedf)
 begin
   record PUVc PUr, OldPUr;
 	record VIVc VIr, OldVIr;
+	record OPVc OPr, OldOPr;
 	longint r;
 	string 255 errmsg, POSerNr;
 	
@@ -607,6 +608,19 @@ begin
 						if (recordUpdate(OldVIr,VIr,true)==0) then begin
 							CreateRecordLink(VIr,currentcompany,POr,currentcompany);
 							CreateRecordLink(POr,currentcompany,VIr,currentcompany);
+							if (Payedf) then begin
+								r = CreateOPFromVI(VIr,OPr);
+								if (r==0) then begin
+									RecordCopy (OldOPr,OPr);
+									OPr.OKFlag = 1;
+									if (recordUpdate(OldOPr,OPr,true)==0) then begin
+										CreateRecordLink(OPr,currentcompany,POr,currentcompany);
+										CreateRecordLink(POr,currentcompany,OPr,currentcompany);
+										CreateRecordLink(OPr,currentcompany,VIr,currentcompany);
+										CreateRecordLink(VIr,currentcompany,OPr,currentcompany);
+									end;
+								end;
+							end;
 						end;
 					end;
 				end;
@@ -618,6 +632,19 @@ begin
 					if (recordUpdate(OldVIr,VIr,true)==0) then begin
 						CreateRecordLink(VIr,currentcompany,POr,currentcompany);
 						CreateRecordLink(POr,currentcompany,VIr,currentcompany);
+						if (Payedf) then begin
+							r = CreateOPFromVI(VIr,OPr);
+							if (r==0) then begin
+								RecordCopy (OldOPr,OPr);
+								OPr.OKFlag = 1;
+								if (recordUpdate(OldOPr,OPr,true)==0) then begin
+									CreateRecordLink(OPr,currentcompany,POr,currentcompany);
+									CreateRecordLink(POr,currentcompany,OPr,currentcompany);
+									CreateRecordLink(OPr,currentcompany,VIr,currentcompany);
+									CreateRecordLink(VIr,currentcompany,OPr,currentcompany);
+								end;
+							end;
+						end;
 					end;
 				end;
 			end;
@@ -637,6 +664,19 @@ begin
 						if (recordUpdate(OldVIr,VIr,true)==0) then begin
 							CreateRecordLink(VIr,currentcompany,POr,currentcompany);
 							CreateRecordLink(POr,currentcompany,VIr,currentcompany);
+							if (Payedf) then begin
+								r = CreateOPFromVI(VIr,OPr);
+								if (r==0) then begin
+									RecordCopy (OldOPr,OPr);
+									OPr.OKFlag = 1;
+									if (recordUpdate(OldOPr,OPr,true)==0) then begin
+										CreateRecordLink(OPr,currentcompany,POr,currentcompany);
+										CreateRecordLink(POr,currentcompany,OPr,currentcompany);
+										CreateRecordLink(OPr,currentcompany,VIr,currentcompany);
+										CreateRecordLink(VIr,currentcompany,OPr,currentcompany);
+									end;
+								end;
+							end;
 						end;
 					end;
 				end;
@@ -657,6 +697,19 @@ begin
 						if (recordUpdate(OldVIr,VIr,true)==0) then begin
 							CreateRecordLink(VIr,currentcompany,POr,currentcompany);
 							CreateRecordLink(POr,currentcompany,VIr,currentcompany);
+							if (Payedf) then begin
+								r = CreateOPFromVI(VIr,OPr);
+								if (r==0) then begin
+									RecordCopy (OldOPr,OPr);
+									OPr.OKFlag = 1;
+									if (recordUpdate(OldOPr,OPr,true)==0) then begin
+										CreateRecordLink(OPr,currentcompany,POr,currentcompany);
+										CreateRecordLink(POr,currentcompany,OPr,currentcompany);
+										CreateRecordLink(OPr,currentcompany,VIr,currentcompany);
+										CreateRecordLink(VIr,currentcompany,OPr,currentcompany);
+									end;
+								end;
+							end;
 						end;
 					end;
 				end;
