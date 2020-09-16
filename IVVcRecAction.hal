@@ -1,0 +1,83 @@
+remote function Boolean POVc_PasteVECode(var record POVc,Boolean);
+remote function Boolean POVc_PasteArtCode(var record POVc,Integer,Boolean);
+remote procedure POVc_PasteQuant(var record POVc,Integer);
+
+global updating procedure CreatePOInOtherCom(record IVVc IVr)
+begin
+	record POVc POr;
+	row IVVc IVrw;
+	row POVc POrw;
+	integer i,rwcnt,k;
+	
+	if(currentcompany==6)then begin
+		if(IVr.CustCode=="COMP7" or IVr.CustCode=="COMP8")then begin
+			switch(IVr.CustCode)begin
+				case "COMP7":setcompany(7,false);
+				case "COMP8":setcompany(7,false);
+			end;
+			
+			recordnew(POr);
+			POr.SerNr = NextSerNr("POVc",POr.TransDate,-1,false,"");
+			POr.VECode = "BUSINESCONTROL";
+			POVc_PasteVECode(POr,true);
+			
+			rwcnt = matrowcnt(IVr);
+			for(i=0;i<rwcnt;i=i+1)begin
+				matrowget(IVr,i,IVrw);
+				if(IVrw.stp==1)then begin
+					clearrow(POr,POrw,1);
+					POrw.ArtCode = IVrw.ArtCode;
+					matrowput(POr,k,POrw);
+					POVc_PasteArtCode(POr,k,false);
+					matrowget(POr,k,POrw);
+					POrw.Quant = IVrw.Quant;
+					POrw.Price = IVrw.Price;
+					matrowput(POr,k,POrw);
+					POVc_PasteQuant(POr,k);
+					
+					
+					k=k+1;
+				end;
+			end;
+			
+			
+			recordstore(POr,true);
+			
+		end;
+		setcompany(6,false);
+	end;
+return;
+end;
+
+
+
+global
+updating function LongInt IVVcRecordSaveAfter(var record IVVc IVr,record IVVc IV2r,LongInt long3,LongInt long4)
+begin
+  LongInt res;
+
+	res = inner.IVVcRecordSaveAfter(IVr,IV2r,long3,long4);
+  
+  if(IVr.OKFlag==1)then begin
+  	CreatePOInOtherCom(IVr);
+  end;
+  
+  IVVcRecordSaveAfter = res; 
+  return;
+end;
+
+
+global
+updating function LongInt IVVcRecordUpdateAfter(var record IVVc IVr,record IVVc IV2r,LongInt long3,LongInt long4)
+begin
+  LongInt res;
+
+	res = inner.IVVcRecordSaveAfter(IVr,IV2r,long3,long4);
+  
+  if(IVr.OKFlag==1 and IV2r.OKFlag==0)then begin
+  	CreatePOInOtherCom(IVr);
+  end;
+  
+  IVVcRecordUpdateAfter = res; 
+  return;
+end;
