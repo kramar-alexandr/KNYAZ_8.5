@@ -675,7 +675,7 @@ begin
   if (POr.OKFlag!=0) then begin
     AssignStockResFromPO(POr);
 		// if (CurrentCompany>4) then begin
-			CreatePUandVIfromPO(POr);
+			CreatePUandVIfromPO(POr,false);
 		// end;
   end;
   POCreatePlannedPayment(POr);
