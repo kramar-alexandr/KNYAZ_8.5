@@ -1,6 +1,6 @@
-remote function Boolean POVc_PasteVECode(var record POVc,Boolean);
-remote function Boolean POVc_PasteArtCode(var record POVc,Integer,Boolean);
-remote procedure POVc_PasteQuant(var record POVc,Integer);
+external function Boolean POVc_PasteVECode(var record POVc,Boolean);
+external function Boolean POVc_PasteArtCode(var record POVc,Integer,Boolean);
+external procedure POVc_PasteQuant(var record POVc,Integer);
 
 global updating procedure CreatePOInOtherCom(record IVVc IVr)
 begin
