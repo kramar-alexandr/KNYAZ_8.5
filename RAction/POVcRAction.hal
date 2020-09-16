@@ -590,6 +590,7 @@ begin
 	record VIVc VIr, OldVIr;
 	longint r;
 	string 255 errmsg, POSerNr;
+	boolean TrHs;
 	
 	POSerNr = POr.SerNr;
 	
