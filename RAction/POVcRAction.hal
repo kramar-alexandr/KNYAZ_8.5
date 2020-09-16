@@ -613,7 +613,7 @@ begin
 								r = CreateOPFromVI(VIr,OPr);
 								if (r==0) then begin
 									RecordCopy (OldOPr,OPr);
-									OrderedFlag = 1;
+									OPr.OrderedFlag = 1;
 									recordUpdate(OldOPr,OPr,true);
 									RecordCopy (OldOPr,OPr);
 									OPr.DoneFlag = 1;
@@ -640,7 +640,7 @@ begin
 							r = CreateOPFromVI(VIr,OPr);
 							if (r==0) then begin
 								RecordCopy (OldOPr,OPr);
-								OrderedFlag = 1;
+								OPr.OrderedFlag = 1;
 								recordUpdate(OldOPr,OPr,true);
 								RecordCopy (OldOPr,OPr);
 								OPr.DoneFlag = 1;
@@ -675,7 +675,7 @@ begin
 								r = CreateOPFromVI(VIr,OPr);
 								if (r==0) then begin
 									RecordCopy (OldOPr,OPr);
-									OrderedFlag = 1;
+									OPr.OrderedFlag = 1;
 									recordUpdate(OldOPr,OPr,true);
 									RecordCopy (OldOPr,OPr);
 									OPr.DoneFlag = 1;
@@ -711,7 +711,7 @@ begin
 								r = CreateOPFromVI(VIr,OPr);
 								if (r==0) then begin
 									RecordCopy (OldOPr,OPr);
-									OrderedFlag = 1;
+									OPr.OrderedFlag = 1;
 									recordUpdate(OldOPr,OPr,true);
 									RecordCopy (OldOPr,OPr);
 									OPr.DoneFlag = 1;
