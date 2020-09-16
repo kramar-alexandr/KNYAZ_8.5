@@ -704,7 +704,7 @@ begin
     AssignStockResFromPO(POr);
     POCreateInterCompanyOR(POr);
 		// if (CurrentCompany>4) then begin
-			CreatePUandVIfromPO(POr);
+			CreatePUandVIfromPO(POr,false);
 		// end;
   end;
   UpdateStockResFromPO(POr,POr.Closed);
