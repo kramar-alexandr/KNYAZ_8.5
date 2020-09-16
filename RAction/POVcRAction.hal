@@ -611,6 +611,7 @@ begin
 				end;
 			end;
 		end else begin
+			RecordClear(PUr);
 			r = RecordAction_raPastePOInPU(POr,PUr);
 			if (r==0) then begin
 				RecordCopy (OldPUr,PUr);
@@ -642,6 +643,7 @@ begin
 				end;
 			end;
 		end else begin
+			RecordClear(PUr);
 			r = PastePOInVI(POr,VIr,"",true,false,false,false,false,false,false,false);
 			if (r==0) then begin
 				RecordCopy (OldVIr,VIr);
