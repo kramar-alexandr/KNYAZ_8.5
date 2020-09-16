@@ -645,6 +645,7 @@ begin
 		end else begin
 			RecordClear(PUr);
 			r = PastePOInVI(POr,VIr,"",true,false,false,false,false,false,false,false);
+			logtext(0,r);
 			if (r==0) then begin
 				RecordCopy (OldVIr,VIr);
 				VIr.OKFlag = 1;
