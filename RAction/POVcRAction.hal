@@ -590,31 +590,16 @@ begin
 	record VIVc VIr, OldVIr;
 	longint r;
 	string 255 errmsg, POSerNr;
-	boolean TrHs;
 	
 	POSerNr = POr.SerNr;
 	
 	if (nonblank(POr.SerNr)) then begin
 		PUr.PONr = POr.SerNr;
-		TrHs = true;
-		while (LoopbackKey("PONr",PUr,1,TrHs)) begin
-			if (PUr.PONr != POr.SerNr) then begin TrHs = false; end; 
-			if (TrHs) then begin
-				if (PUr.OKFlag!=1) then begin
-					RecordCopy (OldPUr,PUr);
-					PUr.OKFlag = 1;
-					if (recordUpdate(OldPUr,PUr,true)==0) then begin 
-						r = RecordAction_raPastePUInVI(PUr,VIr,errmsg);
-						if (r==0) then begin
-							RecordCopy (OldVIr,VIr);
-							VIr.OKFlag = 1;
-							if (recordUpdate(OldVIr,VIr,true)==0) then begin
-								CreateRecordLink(VIr,currentcompany,POr,currentcompany);
-								CreateRecordLink(POr,currentcompany,VIr,currentcompany);
-							end;
-						end;
-					end;
-				end else begin
+		if (ReadFirstKey("PONr",PUr,1,true)) then begin
+			if (PUr.OKFlag!=1) then begin
+				RecordCopy (OldPUr,PUr);
+				PUr.OKFlag = 1;
+				if (recordUpdate(OldPUr,PUr,true)==0) then begin 
 					r = RecordAction_raPastePUInVI(PUr,VIr,errmsg);
 					if (r==0) then begin
 						RecordCopy (OldVIr,VIr);
@@ -625,37 +610,7 @@ begin
 						end;
 					end;
 				end;
-				RecordClear(PUr);
-				RecordClear(VIr);
-				r = RecordAction_raPastePOInPU(POr,PUr);
-				if (r==0) then begin
-					RecordCopy (OldPUr,PUr);
-					PUr.OKFlag = 1;
-					if (recordUpdate(OldPUr,PUr,true)==0) then begin
-						CreateRecordLink(PUr,currentcompany,POr,currentcompany);
-						CreateRecordLink(POr,currentcompany,PUr,currentcompany);
-						r = RecordAction_raPastePUInVI(PUr,VIr,errmsg);
-						if (r==0) then begin
-							RecordCopy (OldVIr,VIr);
-							VIr.OKFlag = 1;
-							if (recordUpdate(OldVIr,VIr,true)==0) then begin
-								CreateRecordLink(VIr,currentcompany,POr,currentcompany);
-								CreateRecordLink(POr,currentcompany,VIr,currentcompany);
-							end;
-						end;
-					end;
-				end;
-			end;
-		end;
-		resetloop (PUr);
-		RecordClear(PUr);
-		r = RecordAction_raPastePOInPU(POr,PUr);
-		if (r==0) then begin
-			RecordCopy (OldPUr,PUr);
-			PUr.OKFlag = 1;
-			if (recordUpdate(OldPUr,PUr,true)==0) then begin
-				CreateRecordLink(PUr,currentcompany,POr,currentcompany);
-				CreateRecordLink(POr,currentcompany,PUr,currentcompany);
+			end else begin
 				r = RecordAction_raPastePUInVI(PUr,VIr,errmsg);
 				if (r==0) then begin
 					RecordCopy (OldVIr,VIr);
@@ -663,6 +618,46 @@ begin
 					if (recordUpdate(OldVIr,VIr,true)==0) then begin
 						CreateRecordLink(VIr,currentcompany,POr,currentcompany);
 						CreateRecordLink(POr,currentcompany,VIr,currentcompany);
+					end;
+				end;
+			end;
+			RecordClear(PUr);
+			RecordClear(VIr);
+			r = RecordAction_raPastePOInPU(POr,PUr);
+			if (r==0) then begin
+				RecordCopy (OldPUr,PUr);
+				PUr.OKFlag = 1;
+				if (recordUpdate(OldPUr,PUr,true)==0) then begin
+					CreateRecordLink(PUr,currentcompany,POr,currentcompany);
+					CreateRecordLink(POr,currentcompany,PUr,currentcompany);
+					r = RecordAction_raPastePUInVI(PUr,VIr,errmsg);
+					if (r==0) then begin
+						RecordCopy (OldVIr,VIr);
+						VIr.OKFlag = 1;
+						if (recordUpdate(OldVIr,VIr,true)==0) then begin
+							CreateRecordLink(VIr,currentcompany,POr,currentcompany);
+							CreateRecordLink(POr,currentcompany,VIr,currentcompany);
+						end;
+					end;
+				end;
+			end;
+		end else begin
+			RecordClear(PUr);
+			r = RecordAction_raPastePOInPU(POr,PUr);
+			if (r==0) then begin
+				RecordCopy (OldPUr,PUr);
+				PUr.OKFlag = 1;
+				if (recordUpdate(OldPUr,PUr,true)==0) then begin
+					CreateRecordLink(PUr,currentcompany,POr,currentcompany);
+					CreateRecordLink(POr,currentcompany,PUr,currentcompany);
+					r = RecordAction_raPastePUInVI(PUr,VIr,errmsg);
+					if (r==0) then begin
+						RecordCopy (OldVIr,VIr);
+						VIr.OKFlag = 1;
+						if (recordUpdate(OldVIr,VIr,true)==0) then begin
+							CreateRecordLink(VIr,currentcompany,POr,currentcompany);
+							CreateRecordLink(POr,currentcompany,VIr,currentcompany);
+						end;
 					end;
 				end;
 			end;
