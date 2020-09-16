@@ -1965,10 +1965,10 @@ begin
   EditField(h=255,v=vm,-40,"Наим.",Normal,Addr0,false,0);
   if (IsEnterprise) then begin
     EditField(h,vm=(v+=20),95,"Подписи",Normal,OKPersons,false,UserSClass);
-		CheckBox(h4=-200,v,0,"Оплачено",Payed);
+		if (CurrentCompany > 4) then begin CheckBox(h4=-200,v,0,"Оплачено",Payed); end;
     CheckBox(h4=-100,v,0,"ОК",OKFlag);
   end else begin
-		CheckBox(h4=-200,v+=vs,0,"Оплачено",Payed);
+		if (CurrentCompany > 4) then begin CheckBox(h4=-200,v+=vs,0,"Оплачено",Payed); end;
     CheckBox(h4=-100,v,0,"OK",OKFlag);
   end;
   tilenr = 1;
