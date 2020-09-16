@@ -596,7 +596,7 @@ begin
 	if (nonblank(POr.SerNr)) then begin
 		PUr.PONr = POr.SerNr;
 		TrHs = true;
-		while (LoopKey("PONr",PUr,1,TrHs)) then begin
+		while (LoopKey("PONr",PUr,1,TrHs)) begin
 			if (PUr.PONr != POr.SerNr) then begin TrHs = false; end; 
 			if (TrHs) then begin
 				if (PUr.OKFlag!=1) then begin
