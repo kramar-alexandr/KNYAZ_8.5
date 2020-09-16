@@ -742,6 +742,9 @@ updating function LongInt POVcRecordSaveAfter(var record POVc POr,record POVc PO
 begin
   LongInt res;
   
+	if (POr.Payed==1) then begin
+		if (POr.OKFlag!=1) then begin POr.OKFlag = 1; end;
+	end;
   CreateActFromPO(POr);
   POUpdatePOCO(POr,false);
   if (POr.IntORNo!=-1) then begin
@@ -751,7 +754,11 @@ begin
   if (POr.OKFlag!=0) then begin
     AssignStockResFromPO(POr);
 		// if (CurrentCompany>4) then begin
-			CreatePUandVIfromPO(POr,false);
+			if (POr.Payed==1) then begin
+				CreatePUandVIfromPO(POr,true);
+			end else begin
+				CreatePUandVIfromPO(POr,false);
+			end;
 		// end;
   end;
   POCreatePlannedPayment(POr);
@@ -770,6 +777,9 @@ begin
   LongInt res;
   val bc1v;
   
+	if (POr.Payed==1 and PO2r.Payed!=1) then begin
+		if (POr.OKFlag!=1) then begin POr.OKFlag = 1; end;
+	end;
   POUpdatePOCO(PO2r,true);
   POUpdatePOCO(POr,false);
   if ((POr.IntORNo!=-1) and (PO2r.OKFlag==0)) then begin
@@ -780,7 +790,11 @@ begin
     AssignStockResFromPO(POr);
     POCreateInterCompanyOR(POr);
 		// if (CurrentCompany>4) then begin
-			CreatePUandVIfromPO(POr,false);
+			if (POr.Payed==1) then begin
+				CreatePUandVIfromPO(POr,true);
+			end else begin
+				CreatePUandVIfromPO(POr,false);
+			end;
 		// end;
   end;
   UpdateStockResFromPO(POr,POr.Closed);
