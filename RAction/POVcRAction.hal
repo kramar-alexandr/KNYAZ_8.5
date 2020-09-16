@@ -589,6 +589,7 @@ begin
 	record OPVc OPr, OldOPr;
 	longint r;
 	string 255 errmsg, POSerNr;
+	boolean TrHs;
 	
 	VIr.POSerNr = POr.SerNr;
 	TrHs = true;
