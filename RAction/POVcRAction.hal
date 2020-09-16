@@ -790,13 +790,13 @@ begin
   UpdateVARItemsPO(POr);
   if (POr.OKFlag!=0) then begin
     AssignStockResFromPO(POr);
-		// if (CurrentCompany>4) then begin
+		if (CurrentCompany>4) then begin
 			if (POr.Payed==1) then begin
 				CreatePUandVIfromPO(POr,true);
 			end else begin
 				CreatePUandVIfromPO(POr,false);
 			end;
-		// end;
+		end;
   end;
   POCreatePlannedPayment(POr);
   if (POr.OKFlag!=0) then begin
@@ -830,13 +830,13 @@ begin
   if ((POr.OKFlag!=0) and (PO2r.OKFlag==0)) then begin
     AssignStockResFromPO(POr);
     POCreateInterCompanyOR(POr);
-		// if (CurrentCompany>4) then begin
+		if (CurrentCompany>4) then begin
 			if (POr.Payed==1) then begin
 				CreatePUandVIfromPO(POr,true);
 			end else begin
 				CreatePUandVIfromPO(POr,false);
 			end;
-		// end;
+		end;
   end;
   UpdateStockResFromPO(POr,POr.Closed);
   if (PO2r.Sum4!=POr.Sum4) then begin
@@ -1005,6 +1005,9 @@ begin
   record ItemSettingBlock ItSetb; //Edit***************************Sasha2,12:55 10.03.2016
   record ITVc ITr; //Edit***************************Sasha2,17:30 16.03.2016
   Boolean itemexists; //Edit***************************Sasha2,18:04 16.03.2016
+
+
+	if (POr.Payed == 1) then begin POr.OKFlag = 1; end; // _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_- Anton Preisinger 12:41 16.09.2020
 
 
   res = 0;
