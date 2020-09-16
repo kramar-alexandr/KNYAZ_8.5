@@ -613,7 +613,10 @@ begin
 								r = CreateOPFromVI(VIr,OPr);
 								if (r==0) then begin
 									RecordCopy (OldOPr,OPr);
-									OPr.OKFlag = 1;
+									OrderedFlag = 1;
+									recordUpdate(OldOPr,OPr,true);
+									RecordCopy (OldOPr,OPr);
+									OPr.DoneFlag = 1;
 									if (recordUpdate(OldOPr,OPr,true)==0) then begin
 										CreateRecordLink(OPr,currentcompany,POr,currentcompany);
 										CreateRecordLink(POr,currentcompany,OPr,currentcompany);
@@ -637,7 +640,10 @@ begin
 							r = CreateOPFromVI(VIr,OPr);
 							if (r==0) then begin
 								RecordCopy (OldOPr,OPr);
-								OPr.OKFlag = 1;
+								OrderedFlag = 1;
+								recordUpdate(OldOPr,OPr,true);
+								RecordCopy (OldOPr,OPr);
+								OPr.DoneFlag = 1;
 								if (recordUpdate(OldOPr,OPr,true)==0) then begin
 									CreateRecordLink(OPr,currentcompany,POr,currentcompany);
 									CreateRecordLink(POr,currentcompany,OPr,currentcompany);
@@ -669,7 +675,10 @@ begin
 								r = CreateOPFromVI(VIr,OPr);
 								if (r==0) then begin
 									RecordCopy (OldOPr,OPr);
-									OPr.OKFlag = 1;
+									OrderedFlag = 1;
+									recordUpdate(OldOPr,OPr,true);
+									RecordCopy (OldOPr,OPr);
+									OPr.DoneFlag = 1;
 									if (recordUpdate(OldOPr,OPr,true)==0) then begin
 										CreateRecordLink(OPr,currentcompany,POr,currentcompany);
 										CreateRecordLink(POr,currentcompany,OPr,currentcompany);
@@ -702,7 +711,10 @@ begin
 								r = CreateOPFromVI(VIr,OPr);
 								if (r==0) then begin
 									RecordCopy (OldOPr,OPr);
-									OPr.OKFlag = 1;
+									OrderedFlag = 1;
+									recordUpdate(OldOPr,OPr,true);
+									RecordCopy (OldOPr,OPr);
+									OPr.DoneFlag = 1;
 									if (recordUpdate(OldOPr,OPr,true)==0) then begin
 										CreateRecordLink(OPr,currentcompany,POr,currentcompany);
 										CreateRecordLink(POr,currentcompany,OPr,currentcompany);
