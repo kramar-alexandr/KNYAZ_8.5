@@ -582,8 +582,39 @@ begin
   return;
 end;
 
-
-
+updating procedure CreateOPbyVIfromPO(record POVc POr)
+begin
+  record PUVc PUr, OldPUr;
+	record VIVc VIr, OldVIr;
+	record OPVc OPr, OldOPr;
+	longint r;
+	string 255 errmsg, POSerNr;
+	
+	VIr.POSerNr = POr.SerNr;
+	TrHs = true;
+	while (loopkey("POSerNr",VIr,1,TrHs)) begin
+		if (VIr.POSerNr != POr.SerNr) then begin TrHs = false; end;
+		if (TrHs) then begin
+			if (VIr.OKFlag==1) then begin
+				r = CreateOPFromVI(VIr,OPr);
+				if (r==0) then begin
+					RecordCopy (OldOPr,OPr);
+					OPr.OrderedFlag = 1;
+					recordUpdate(OldOPr,OPr,true);
+					RecordCopy (OldOPr,OPr);
+					OPr.DoneFlag = 1;
+					if (recordUpdate(OldOPr,OPr,true)==0) then begin
+						CreateRecordLink(OPr,currentcompany,POr,currentcompany);
+						CreateRecordLink(POr,currentcompany,OPr,currentcompany);
+						CreateRecordLink(OPr,currentcompany,VIr,currentcompany);
+						CreateRecordLink(VIr,currentcompany,OPr,currentcompany);
+					end;
+				end;
+			end;
+		end;
+	end;
+return;
+end;
 
 updating procedure CreatePUandVIfromPO(record POVc POr, boolean Payedf)
 begin
@@ -743,7 +774,11 @@ begin
   LongInt res;
   
 	if (POr.Payed==1) then begin
-		if (POr.OKFlag!=1) then begin POr.OKFlag = 1; end;
+		if (POr.OKFlag!=1) then begin 
+			POr.OKFlag = 1; 
+		end else begin
+			CreateOPbyVIfromPO(POr);
+		end;
 	end;
   CreateActFromPO(POr);
   POUpdatePOCO(POr,false);
@@ -778,7 +813,11 @@ begin
   val bc1v;
   
 	if (POr.Payed==1 and PO2r.Payed!=1) then begin
-		if (POr.OKFlag!=1) then begin POr.OKFlag = 1; end;
+		if (POr.OKFlag!=1) then begin 
+			POr.OKFlag = 1; 
+		end else begin
+			CreateOPbyVIfromPO(POr);
+		end;
 	end;
   POUpdatePOCO(PO2r,true);
   POUpdatePOCO(POr,false);
