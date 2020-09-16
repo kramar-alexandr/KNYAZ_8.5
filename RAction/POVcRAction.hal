@@ -209,6 +209,7 @@ begin
   POr.WONr = -1;
   POr.POCQStatNr = -1;  
   POr.OKFlag = 0;
+	POr.Payed = 0;
   POr.Closed = 0;
   POr.IntORNo = -1;
   rwcnt = MatRowCnt(POr);
