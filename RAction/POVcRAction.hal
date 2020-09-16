@@ -50,6 +50,7 @@ remote updating function LongInt RecordAction_raPastePUInVI(record PUVc,var reco
 remote updating function Integer PastePOInVI2(var record POVc,var record VIVc,string,
                                       Boolean,Boolean,Boolean,
                                       Boolean,Boolean,Boolean,Boolean,Boolean);
+remote updating function Integer CreateOPFromVI(record VIVc,var record OPVc);
 
 global
 function LongInt POVcRecordInIndex(record POVc POr,string indexname)
