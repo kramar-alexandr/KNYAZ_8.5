@@ -2427,6 +2427,8 @@ old design
     if (HasModPL) then begin
       RlColKey(pos,pos,"Сч/ф",PIFlag,false,InvFlag);
       pos = 175;
+			RlColKeyTL(pos,pos,"Опл.",M4Mark,Payed,false,0);
+			pos = pos + 32;
     end;
     RlColKeyTL(pos,pos,"Закр",M4Mark,Closed,false,Closed);
     pos = pos + 32;
