@@ -47,7 +47,7 @@ external updating procedure UpdateStockResFromPO(record POVc,boolean);
 remote function Boolean POVc_PasteLocation(var record POVc);// Edit ************************** BPI Ukraine - KramarAlexandr - 02, 27 08 2019 y. at 12:02:40 PM
 remote updating function LongInt RecordAction_raPastePOInPU(var record POVc,var record PUVc);
 remote updating function LongInt RecordAction_raPastePUInVI(record PUVc,var record VIVc,var string);
-remote updating function Integer PastePOInVI(var record POVc,var record VIVc,string,
+remote updating function Integer PastePOInVI2(var record POVc,var record VIVc,string,
                                       Boolean,Boolean,Boolean,
                                       Boolean,Boolean,Boolean,Boolean,Boolean);
 
