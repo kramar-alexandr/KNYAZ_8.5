@@ -42,6 +42,8 @@ begin
 			
 			
 			recordstore(POr,true);
+			createrecordlink(IVr,6,POr,currentcompany);
+			createrecordlink(POr,currentcompany,IVr,6);
 			
 		end;
 		setcompany(6,false);
