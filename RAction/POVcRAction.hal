@@ -600,9 +600,19 @@ begin
 				RecordCopy (OldPUr,PUr);
 				PUr.OKFlag = 1;
 				if (recordUpdate(OldPUr,PUr,true)==0) then begin 
+					r = RecordAction_raPastePUInVI(PUr,VIr,errmsg);
+					if (r==0) then begin
+						RecordCopy (OldVIr,VIr);
+						VIr.OKFlag = 1;
+						if (recordUpdate(OldVIr,VIr,true)==0) then begin
+							CreateRecordLink(VIr,currentcompany,POr,currentcompany);
+							CreateRecordLink(POr,currentcompany,VIr,currentcompany);
+						end;
+					end;
 				end;
 			end;
 			RecordClear(PUr);
+			RecordClear(VIr);
 			r = RecordAction_raPastePOInPU(POr,PUr);
 			if (r==0) then begin
 				RecordCopy (OldPUr,PUr);
@@ -610,6 +620,15 @@ begin
 				if (recordUpdate(OldPUr,PUr,true)==0) then begin
 					CreateRecordLink(PUr,currentcompany,POr,currentcompany);
 					CreateRecordLink(POr,currentcompany,PUr,currentcompany);
+					r = RecordAction_raPastePUInVI(PUr,VIr,errmsg);
+					if (r==0) then begin
+						RecordCopy (OldVIr,VIr);
+						VIr.OKFlag = 1;
+						if (recordUpdate(OldVIr,VIr,true)==0) then begin
+							CreateRecordLink(VIr,currentcompany,POr,currentcompany);
+							CreateRecordLink(POr,currentcompany,VIr,currentcompany);
+						end;
+					end;
 				end;
 			end;
 		end else begin
@@ -621,40 +640,14 @@ begin
 				if (recordUpdate(OldPUr,PUr,true)==0) then begin
 					CreateRecordLink(PUr,currentcompany,POr,currentcompany);
 					CreateRecordLink(POr,currentcompany,PUr,currentcompany);
-				end;
-			end;
-		end;
-		
-		POr.SerNr = POSerNr;
-		if (ReadFirstMain(POr,1,true)) then begin
-			VIr.POSerNr = POr.SerNr;
-			if (ReadFirstKey("POSerNr",VIr,1,true)) then begin
-				if (VIr.OKFlag!=1) then begin
-					VIr.OKFlag = 1;
-					if (recordUpdate(OldVIr,VIr,true)==0) then begin 
-					
-					end;
-				end;
-				RecordClear(VIr);
-				r = PastePOInVI2(POr,VIr,"",true,false,false,false,false,false,false,false);
-				if (r==0) then begin
-					RecordCopy (OldVIr,VIr);
-					VIr.OKFlag = 1;
-					if (recordUpdate(OldVIr,VIr,true)==0) then begin
-						CreateRecordLink(VIr,currentcompany,POr,currentcompany);
-						CreateRecordLink(POr,currentcompany,VIr,currentcompany);
-					end;
-				end;
-			end else begin
-				RecordClear(PUr);
-				r = PastePOInVI2(POr,VIr,"",true,false,false,false,false,false,false,false);
-				logtext(0,VIr.SerNr);
-				if (r==0) then begin
-					RecordCopy (OldVIr,VIr);
-					VIr.OKFlag = 1;
-					if (recordUpdate(OldVIr,VIr,true)==0) then begin
-						CreateRecordLink(VIr,currentcompany,POr,currentcompany);
-						CreateRecordLink(POr,currentcompany,VIr,currentcompany);
+					r = RecordAction_raPastePUInVI(PUr,VIr,errmsg);
+					if (r==0) then begin
+						RecordCopy (OldVIr,VIr);
+						VIr.OKFlag = 1;
+						if (recordUpdate(OldVIr,VIr,true)==0) then begin
+							CreateRecordLink(VIr,currentcompany,POr,currentcompany);
+							CreateRecordLink(POr,currentcompany,VIr,currentcompany);
+						end;
 					end;
 				end;
 			end;
