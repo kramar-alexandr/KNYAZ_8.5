@@ -589,7 +589,9 @@ begin
   record PUVc PUr, OldPUr;
 	record VIVc VIr, OldVIr;
 	longint r;
-	string 255 errmsg;
+	string 255 errmsg, POSerNr;
+	
+	POSerNr = POr.SerNr;
 	
 	if (nonblank(POr.SerNr)) then begin
 		PUr.PONr = POr.SerNr;
@@ -623,35 +625,37 @@ begin
 			end;
 		end;
 		
-		
-		VIr.POSerNr = POr.SerNr;
-		if (ReadFirstKey("POSerNr",VIr,1,true)) then begin
-			if (VIr.OKFlag!=1) then begin
-				VIr.OKFlag = 1;
-				if (recordUpdate(OldVIr,VIr,true)==0) then begin 
-				
+		POr.SerNr = POSerNr;
+		if (ReadFirstMain(POr,1,true)) then begin
+			VIr.POSerNr = POr.SerNr;
+			if (ReadFirstKey("POSerNr",VIr,1,true)) then begin
+				if (VIr.OKFlag!=1) then begin
+					VIr.OKFlag = 1;
+					if (recordUpdate(OldVIr,VIr,true)==0) then begin 
+					
+					end;
 				end;
-			end;
-			RecordClear(VIr);
-			r = PastePOInVI(POr,VIr,"",true,false,false,false,false,false,false,false);
-			if (r==0) then begin
-				RecordCopy (OldVIr,VIr);
-				VIr.OKFlag = 1;
-				if (recordUpdate(OldVIr,VIr,true)==0) then begin
-					CreateRecordLink(VIr,currentcompany,POr,currentcompany);
-					CreateRecordLink(POr,currentcompany,VIr,currentcompany);
+				RecordClear(VIr);
+				r = PastePOInVI(POr,VIr,"",true,false,false,false,false,false,false,false);
+				if (r==0) then begin
+					RecordCopy (OldVIr,VIr);
+					VIr.OKFlag = 1;
+					if (recordUpdate(OldVIr,VIr,true)==0) then begin
+						CreateRecordLink(VIr,currentcompany,POr,currentcompany);
+						CreateRecordLink(POr,currentcompany,VIr,currentcompany);
+					end;
 				end;
-			end;
-		end else begin
-			RecordClear(PUr);
-			r = PastePOInVI(POr,VIr,"",true,false,false,false,false,false,false,false);
-			logtext(0,r);
-			if (r==0) then begin
-				RecordCopy (OldVIr,VIr);
-				VIr.OKFlag = 1;
-				if (recordUpdate(OldVIr,VIr,true)==0) then begin
-					CreateRecordLink(VIr,currentcompany,POr,currentcompany);
-					CreateRecordLink(POr,currentcompany,VIr,currentcompany);
+			end else begin
+				RecordClear(PUr);
+				r = PastePOInVI(POr,VIr,"",true,false,false,false,false,false,false,false);
+				logtext(0,r);
+				if (r==0) then begin
+					RecordCopy (OldVIr,VIr);
+					VIr.OKFlag = 1;
+					if (recordUpdate(OldVIr,VIr,true)==0) then begin
+						CreateRecordLink(VIr,currentcompany,POr,currentcompany);
+						CreateRecordLink(POr,currentcompany,VIr,currentcompany);
+					end;
 				end;
 			end;
 		end;
