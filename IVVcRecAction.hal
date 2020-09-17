@@ -21,7 +21,7 @@ begin
 			POr.SerNr = NextSerNr("POVc",POr.TransDate,-1,false,"");
 			POr.VECode = "BUSINESCONTROL";
 			POVc_PasteVECode(POr,true);
-			POp.Location = IVr.Location;
+			POr.Location = IVr.Location;
 			POVc_PasteLocation2(POr);
 			
 			rwcnt = matrowcnt(IVr);
