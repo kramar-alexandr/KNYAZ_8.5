@@ -14,7 +14,7 @@ begin
 		if(IVr.CustCode=="COMP7" or IVr.CustCode=="COMP8")then begin
 			switch(IVr.CustCode)begin
 				case "COMP7":setcompany(7,false);
-				case "COMP8":setcompany(7,false);
+				case "COMP8":setcompany(8,false);
 			end;
 			
 			recordnew(POr);
