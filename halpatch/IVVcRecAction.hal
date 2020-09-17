@@ -724,7 +724,7 @@ begin
     res = -1;
     goto L99;
   end;
-  if (HasLocalization("RUS")) then begin
+  /*if (HasLocalization("RUS")) then begin
     if (blank(IVp.OperationCode)) then begin //DDC
       RecordCheckError(1058,"",-1,"OperationCode");
       res = -1;
@@ -736,7 +736,7 @@ begin
         goto L99;
       end;
     end;
-  end;
+  end;*/
   if (nonblank(IVp.OfficialSerNr)) then begin    
     BlockLoad(IOSTr);
     if (nonblank(IOSTr.From)) then begin

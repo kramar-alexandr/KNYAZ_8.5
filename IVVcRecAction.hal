@@ -1,6 +1,7 @@
 external inner function Boolean POVc_PasteVECode(var record POVc,Boolean);
 external inner function Boolean POVc_PasteArtCode(var record POVc,Integer,Boolean);
 external inner procedure POVc_PasteQuant(var record POVc,Integer);
+external inner function LongInt POVc_PasteLocation2(var record POVc);
 
 global updating procedure CreatePOInOtherCom(record IVVc IVr)
 begin
@@ -20,6 +21,8 @@ begin
 			POr.SerNr = NextSerNr("POVc",POr.TransDate,-1,false,"");
 			POr.VECode = "BUSINESCONTROL";
 			POVc_PasteVECode(POr,true);
+			POp.Location = IVr.Location;
+			POVc_PasteLocation2(POr);
 			
 			rwcnt = matrowcnt(IVr);
 			for(i=0;i<rwcnt;i=i+1)begin

@@ -868,7 +868,7 @@ begin
   VIr.HoldSum = blankval;
   VIr.NoTAXonVAT = ARAccb.NoTAXonVAT;
   if (HasLocalization("RUS")) then begin
-    VIr.OperationCode = "01";
+    //VIr.OperationCode = "01";
   end;
   VIVcRecordDefaults = res; 
   RETURN;

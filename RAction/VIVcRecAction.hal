@@ -393,7 +393,7 @@ why here ?
     res = -1;
     goto L99VIVcRecordCheck;
   end;
-  if (HasLocalization("RUS")) then begin
+  /*if (HasLocalization("RUS")) then begin
     if (blank(VIp.OperationCode)) then begin
       RecordCheckError(1058,"",-1,"OperationCode");
       res = -1;
@@ -405,7 +405,7 @@ why here ?
         goto L99VIVcRecordCheck;
       end;
     end;
-  end;
+  end;*/
   if (MainCLRec.CashCollection!=0) then begin
     if (CLOutforVIRecordExists(VIp.SerNr,"VIVc",clout)) then begin
       error = CheckCLOutAmount(clout,VIp.PayVal,VIp.CurncyCode);

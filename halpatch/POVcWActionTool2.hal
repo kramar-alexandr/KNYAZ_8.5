@@ -1980,7 +1980,7 @@ L20OrdDownPay:;
   VIp.BaseRate1 = POr.BaseRate1;
   VIp.BaseRate2 = POr.BaseRate2;
   if (HasLocalization("RUS")) then begin
-    VIp.OperationCode = "02";
+   // VIp.OperationCode = "02";
   end;
   BlockLoad(DPb);
   if (nonblank(DPb.PayDeal)) then begin
