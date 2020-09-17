@@ -2,6 +2,8 @@ event startup
 begin
   SetLangMode(LangRussian,"RUS",0);
   
+  Register("ARVc","ARVc",ARVc,modDBMain);
+  
   Setting("Перепечатать чек",ReprintingFiscalReceiptTClass,modPOS);
   Setting("Печать на фискальном принтере",FiscalPrintingTClass,modPOS);
   Setting("Локальные настройки фискального принтера",FiscalSetLocalTClass,modPOS);
