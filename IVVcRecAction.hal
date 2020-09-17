@@ -5,7 +5,7 @@ external inner function LongInt POVc_PasteLocation2(var record POVc);
 
 global updating procedure CreatePOInOtherCom(record IVVc IVr)
 begin
-	record POVc POr;
+	record POVc POr,oldPOr;
 	row IVVc IVrw;
 	row POVc POrw;
 	integer i,rwcnt,k;
@@ -45,6 +45,11 @@ begin
 			
 			
 			recordstore(POr,true);
+			
+			recordcopy(oldPOr,POr);
+			POr.OKFlag = 1;
+			recordupdate(oldPOr,POr,true);
+			
 			createrecordlink(IVr,6,POr,currentcompany);
 			createrecordlink(POr,currentcompany,IVr,6);
 			
