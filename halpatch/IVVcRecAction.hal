@@ -1253,6 +1253,11 @@ L12:;
       end;
     end;
   end;
+  
+  if(blank(IVp.Location))then begin// Edit ************************** BPI Ukraine - KramarAlexandr - 05, 18 09 2020 y. at 9:06:32 AM
+  	IVp.Location = MSb.MainStock;
+  end;
+  
   if (HasIntegratedNL) then begin
     if (nonblank(IVp.ARAcc)) then begin
       Accr.AccNumber = IVp.ARAcc;
