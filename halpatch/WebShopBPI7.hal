@@ -255,6 +255,8 @@ begin
 			RecordCopy(oldIVr,IVr);
 			if(OKFlag=="true") then begin
 				IVr.OKFlag = 1;
+				IVr.TransDate = currentdate;
+				IVr.InvDate = currentdate;
 			end;
 				SetRecordCheckVc("IVVc");
 				IVVcRecordCheck(IVr,oldIVr,2,3);

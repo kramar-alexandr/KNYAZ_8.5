@@ -300,6 +300,8 @@ begin
 			RecordCopy(oldIVr,IVr);
 			if(OKFlag=="true") then begin
 				IVr.OKFlag = 1;
+				IVr.TransDate = currentdate;
+				IVr.InvDate = currentdate;
 			end;
 				SetRecordCheckVc("IVVc");
 				IVVcRecordCheck(IVr,oldIVr,2,3);
@@ -312,7 +314,6 @@ begin
 		end;
 	
 		if(res>-1) then begin 
-			//weboutstring("{\"error\":\"" & USetStr(res) & "\"}");
 			weboutstring("{\"result\":\"error\",\"SerNr\":\"" & IVr.SerNr & "\",\"error\":\"" & USetStr(res) & " - " & artCode & "\"}");
 		end else begin
 			weboutstring("{\"result\":\"ok\",\"SerNr\":\"" & IVr.SerNr & "\"}");
