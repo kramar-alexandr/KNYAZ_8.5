@@ -2070,15 +2070,19 @@ if (true) then begin
   //  MatCol(t,144,"Qty",0,Quant,true,0);
   if (HasVarieties) then begin
     MatCol(t,94,"К-во",0,Quant,true,MATVARINSClass);
+    EnterSkip(ArtCode);
   end else begin
     MatCol(t,94,"К-во",0,Quant,true,0);
+    EnterSkip(ArtCode);
   end;
   EnterSkip(ArtCode);
   MatCol(t=kInvoiceRowTypeStructuredItemComponent,32,"Товар",0,ArtCode,false,ForSaleINSClass);
   if (HasVarieties) then begin
     MatCol(t,94,"К-во",0,Quant,true,MATVARINSClass);
+    EnterSkip(ArtCode);
   end else begin
     MatCol(t,94,"К-во",0,Quant,true,0);
+    EnterSkip(ArtCode);
   end;
   EnterSkip(ArtCode);
   MatText(t=kInvoiceRowTypeCredit,32,"Кредитовать сч/ф",true);
@@ -2090,10 +2094,12 @@ if (true) then begin
   MatText(t=kInvoiceRowTypeInterest,32,"Пеня",true);
   MatCol(t,98,"",0,ArtCode,false,0);
   MatCol(t,153,"",0,Quant,true,0);
+  EnterSkip(ArtCode);
   MatCol(t,188,"",0,Spec,false,0);
   MatText(t=kInvoiceRowTypeDownpayment,32,"Авансовый платеж",true);
   MatColTL(t,122,"",0,-1,ViewOnly,0,ArtCode,true,0);
   MatColTL(t,188,"",0,-1,ViewOnly,0,Quant,true,0);
+  EnterSkip(ArtCode);
   MatCol(t,238,"",0,Spec,false,0);
   MatColTL(t,-240,"",0,-1,ViewOnly,0,Price,true,0);
   MatColTL(t,-180,"",0,-1,ViewOnly,0,vRebate,true,0);         
@@ -2130,8 +2136,10 @@ if (true) then begin
   MatCol(t,100,"Товар",0,ArtCode,false,ForSaleINSClass);
   if (HasVarieties) then begin
     MatCol(t,150,"К-во",0,Quant,true,MATVARINSClass);
+    EnterSkip(ArtCode);
   end else begin
     MatCol(t,150,"К-во",0,Quant,true,0);
+    EnterSkip(ArtCode);
   end;
   MatCol(t,190,"Цена",0,Price,true,0);
   MatCol(t,250,"Описание",0,Spec,false,0);
