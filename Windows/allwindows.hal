@@ -3023,8 +3023,10 @@ begin
     MatCol(1,130,"Товар",0,ArtCode,false,INSClass);
     if (HasVarieties) then begin
       MatCol(1,192,"К-во",0,Qty,true,MATVARINSClass);
+      EnterSkip(ArtCode);
     end else begin
       MatCol(1,192,"К-во",0,Qty,true,0);
+      EnterSkip(ArtCode);
     end;
     MatCol(1,254,"Описание",0,Spec,false,0);
   end else begin
@@ -3033,8 +3035,10 @@ begin
 //  MatCol(1,144,"Qty",0,Qty,true,0);
     if (HasVarieties) then begin
       MatCol(1,94,"К-во",0,Qty,true,MATVARINSClass);
+      EnterSkip(ArtCode);
     end else begin
       MatCol(1,94,"К-во",0,Qty,true,0);
+      EnterSkip(ArtCode);
     end;
     MatCol(1,154,"Описание",0,Spec,false,0);
   end;
