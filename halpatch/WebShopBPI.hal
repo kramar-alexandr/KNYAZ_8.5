@@ -336,7 +336,7 @@ begin
 		webgetpostdata(postdata);
 		writeareatofile(postdata,"WebSendSale.txt",0);
 		jsonobj = ParseJSONArea(postdata);
-		CredInv = JSONGet(jsonobj,"CredInv");
+		logtext(0,JSONGet(jsonobj,"SerNr"));
 		if(nonblank(JSONGet(jsonobj,"SerNr")))then begin
 			IVr.SerNr = stringtolongint(JSONGet(jsonobj,"SerNr"));
 			if(readfirstmain(IVr,1,true))then begin
