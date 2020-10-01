@@ -764,12 +764,16 @@ if(WebLoginStatus==3)then begin
 							AddTextToArea("{",resarea);
 							addParamToJSONArea("ArtCode",NormalizeStrToJson(IVrw.ArtCode),resarea);
 							addParamToJSONArea("Spec",NormalizeStrToJson(IVrw.Spec),resarea);
-							if(IVrw.Quant<0) then begin
-								addParamToJSONArea("Quant",NormalizeStrToJson(AbsoluteVal(IVrw.Quant)),resarea);
-								CredInv = "1";
+							if(blank(webgetarg("foruser")))then begin
+								if(IVrw.Quant<0) then begin
+									addParamToJSONArea("Quant",NormalizeStrToJson(AbsoluteVal(IVrw.Quant)),resarea);
+									CredInv = "1";
+								end else begin
+									addParamToJSONArea("Quant",NormalizeStrToJson(IVrw.Quant),resarea);
+									CredInv = "0";
+								end;
 							end else begin
 								addParamToJSONArea("Quant",NormalizeStrToJson(IVrw.Quant),resarea);
-								CredInv = "0";
 							end;
 							addParamToJSONArea("Price",NormalizeStrToJson(IVrw.Price),resarea);
 							addParamToJSONArea("vRebate",NormalizeStrToJson(IVrw.vRebate),resarea);
