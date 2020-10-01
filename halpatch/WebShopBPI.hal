@@ -284,13 +284,14 @@ begin
 	
 		logtext(0,"IVr.SerNr " & IVr.SerNr);
 	
-		logtext(0,"done falg  " & JSONGet(jsonobj,"DoneFlag"));
+		
 		if(IVr.SerNr>-1)then begin
 			OKFlag = JSONGet(jsonobj,"DoneFlag");
 			recordstore(IVr,true);
 			
 			
 			if(OKFlag=="true") then begin
+				logtext(0,"done falg  " & JSONGet(jsonobj,"DoneFlag"));
 				RecordCopy(oldIVr,IVr);
 				//IVr.OKFlag = 1;
 				IVr.TransDate = currentdate;
@@ -303,7 +304,6 @@ begin
 						rwcnt = rwcnt - 1;
 						IVDchsum(IVr,i);
 						IVSumup(IVr,true);  
-						
 					end;
 				end;
 				SetRecordCheckVc("IVVc");
@@ -313,7 +313,7 @@ begin
 					matrowget(IVr,RECORDCHECKLASTERRORROWNO,IVrw);
 					artCode = IVrw.Spec;
 				end;
-			RecordUpdate(oldIVr,IVr,true);
+				RecordUpdate(oldIVr,IVr,true);
 				
 				
 			end;
