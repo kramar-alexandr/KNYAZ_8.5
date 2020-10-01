@@ -284,6 +284,7 @@ begin
 	
 		logtext(0,"IVr.SerNr " & IVr.SerNr);
 	
+		logtext(0,"done falg  " & JSONGet(jsonobj,"DoneFlag"););
 		if(IVr.SerNr>-1)then begin
 			OKFlag = JSONGet(jsonobj,"DoneFlag");
 			recordstore(IVr,true);
