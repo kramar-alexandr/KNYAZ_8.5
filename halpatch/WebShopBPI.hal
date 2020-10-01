@@ -209,6 +209,119 @@ weboutarea2(resarea);
 return;
 end;
 
+global webpublic updating procedure WebSendInvent()
+begin
+	record IVVc IVr,oldIVr;
+	row IVVc IVrw;
+	integer i,rwcnt,k,sernrf;
+	area postdata;
+	json jsonobj;
+	record UserVc USr;
+	record LocalMachineBlock LMb;
+	string 100 warning,errstr,prepstr,invdatewarn,transdatewarn,tstr;
+	string 100 OKFlag;
+	string 50 CredInv;
+	Boolean chsum;
+	string 255 artCode;
+	longint res;
+	
+	if(WebLoginStatus==3)then begin
+		
+		SetCompany(5,false);
+		logtext(0,"WebSendInvent");
+		USr.Code = currentuser;
+		readfirstmain(USr,1,true);
+		webgetpostdata(postdata);
+		writeareatofile(postdata,"WebSendSale.txt",0);
+		jsonobj = ParseJSONArea(postdata);
+		if(nonblank(JSONGet(jsonobj,"SerNr")))then begin
+			IVr.SerNr = stringtolongint(JSONGet(jsonobj,"SerNr"));
+			if(readfirstmain(IVr,1,true))then begin
+			
+			end else begin
+				recordnew(IVr);
+				IVr.SerNr = NextSerNr("IVVc",IVr.TransDate,-1,false,IVr.LangCode);
+				IVr.CustCode = "NONAME";
+				PasteCust2InInv(IVr,LMb,IVr.CustCode,true,warning,errstr,prepstr,invdatewarn,transdatewarn);
+			end;
+		
+			rwcnt = matrowcnt(IVr);
+			if(rwcnt>0)then begin
+				for(i=0;i<rwcnt;i=i+1)begin
+					matrowdelete(IVr,0);
+				end;
+			end;
+			
+			IVr.SalesMan = USr.Code;
+			IVr.Location = USr.Location;
+			IVr.Sum4 = stringtoval(JSONGet(jsonobj,"Sum4"),m4val);
+			rwcnt = JSONCountChildren(jsonobj,"items");
+			for(i=0;i<rwcnt;i=i+1)begin
+				clearrow(IVr,IVrw,kInvoiceRowTypeNormal);
+				IVrw.ArtCode = JSONGet(jsonobj,"items/[" & i & "]/ArtCode");
+				matrowput(IVr,k,IVrw);
+				if IVVc_PasteArtCode(IVr,k,tstr,tstr,false,sernrf) then begin
+				end; 
+				matrowget(IVr,k,IVrw);
+				IVrw.Spec = JSONGet(jsonobj,"items/[" & i & "]/Spec");
+				if(CredInv=="true") then begin
+					IVrw.Quant = evaltoval("-" & JSONGet(jsonobj,"items/[" & i & "]/Quant"));
+					IVrw.Price = evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Price"));
+					matrowput(IVr,k,IVrw);
+					IVVc_PasteQuantity(IVr,k);
+					matrowget(IVr,k,IVrw);
+					IVrw.Sum = evaltoval("-" & JSONGet(jsonobj,"items/[" & i & "]/Sum"));
+					matrowput(IVr,k,IVrw);
+					IVVc_PasteSum(IVr,k,chsum,1);
+					matrowget(IVr,k,IVrw);
+				end else begin
+					IVrw.Quant = evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Quant"));
+					IVrw.Price = evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Price"));
+					matrowput(IVr,k,IVrw);
+					IVVc_PasteQuantity(IVr,k);
+					matrowget(IVr,k,IVrw);
+					IVrw.Sum = evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Sum"));
+					matrowput(IVr,k,IVrw);
+					IVVc_PasteSum(IVr,k,chsum,1);
+					matrowget(IVr,k,IVrw);
+				end;
+				
+				k=k+1;
+			end;
+		end;
+	
+		logtext(0,"IVr.SerNr " & IVr.SerNr);
+	
+		if(IVr.SerNr>-1)then begin
+			OKFlag = JSONGet(jsonobj,"OKFlag");
+			recordstore(IVr,true);
+			/*
+			RecordCopy(oldIVr,IVr);
+			if(OKFlag=="true") then begin
+				IVr.OKFlag = 1;
+				IVr.TransDate = currentdate;
+				IVr.InvDate = currentdate;
+			end;*/
+			SetRecordCheckVc("IVVc");
+			IVVcRecordCheck(IVr,oldIVr,2,3);
+			if(RECORDCHECKLASTERRORNO>0) then begin 
+				res = RECORDCHECKLASTERRORNO; 
+				matrowget(IVr,RECORDCHECKLASTERRORROWNO,IVrw);
+				artCode = IVrw.Spec;
+			end;
+			RecordUpdate(oldIVr,IVr,true);
+		end;
+	
+		if(res>-1) then begin 
+			weboutstring("{\"result\":\"error\",\"SerNr\":\"" & IVr.SerNr & "\",\"error\":\"" & USetStr(res) & " - " & artCode & "\"}");
+		end else begin
+			weboutstring("{\"result\":\"ok\",\"SerNr\":\"" & IVr.SerNr & "\"}");
+		end;
+	end;
+	
+ return;
+end;
+
 global webpublic updating procedure WebSendSale()
 begin
 	record IVVc IVr,oldIVr;
