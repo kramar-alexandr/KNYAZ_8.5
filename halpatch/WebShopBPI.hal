@@ -773,7 +773,7 @@ if(WebLoginStatus==3)then begin
 									CredInv = "0";
 								end;
 							end else begin
-								addParamToJSONArea("Quant",NormalizeStrToJson(IVrw.Quant),resarea);
+								addParamToJSONArea("Quant",NormalizeStrToJson(IVrw.Quant),resarea); 
 							end;
 							addParamToJSONArea("Price",NormalizeStrToJson(IVrw.Price),resarea);
 							addParamToJSONArea("vRebate",NormalizeStrToJson(IVrw.vRebate),resarea);
