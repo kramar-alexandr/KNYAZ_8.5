@@ -732,6 +732,9 @@ if(WebLoginStatus==3)then begin
 	SetCompany(5,false);
 	delete = WebGetArg("delete");
 	USr.Code = currentuser;
+	if(nonblank(webgetarg("foruser")))then begin
+		USr.Code = webgetarg("foruser");
+	end;
 	readfirstmain(USr,1,true);
 	location = USr.Location;
 	//location = webgetarg("location");
