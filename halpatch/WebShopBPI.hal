@@ -301,6 +301,7 @@ begin
 					matrowget(IVr,i,IVrw);
 					if(IVrw.Quant==0)then begin
 						matrowdelete(IVr,i);
+						i=i-1;
 						rwcnt = rwcnt - 1;
 						IVDchsum(IVr,i);
 						IVSumup(IVr,true);  
