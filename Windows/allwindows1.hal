@@ -3878,3 +3878,155 @@ begin
   SearchField("Search");
   EndWindow;
 end;
+
+window StockTakeDClass:5
+  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  real h,h2,v,vm,vs;
+  Integer f,flipnr,t;
+  Integer icn,pos;
+
+  icn = StringToInt(USetStr(912));
+  WindowBegin("Инвентаризация",StockTakeDClass,CGview,-);
+  SetWRect(20,80,560,350);
+  Sizeable(-1,-1,0,0);
+  UseView(StockTakeVc);
+  if (false) then begin
+    if (GUIType==kGuiAndroid) then begin
+      WindowTitleBar(6002,icn,6003,"Инвентаризация");
+    end;
+    h = 10; h2 = 165;
+    vs = 38;
+    EditField(h,v=6,145,"Номер",Normal,SerNr,false,0);
+    if (HasMultiLocations) then begin
+      EditField(h2,v,145,"Склад",Normal,Location,false,LocationSClass);
+    end;
+    EditField(h,v+=vs,300,"Дата операции",Normal,TransDate,false,PasteCurDate);
+    EditField(h,v+=vs,-10,"Комментарий",Normal,Comment,false,0);
+    CheckBox(40,v+=vs,0,"OK",OKFlag);
+    EnterSkip(Math);
+    v = v + 42;
+    MatrixBegin(0,v,-1,-1,-,200);
+
+    MatCell(t=1,10,6,120,19,ArtCode,false,12,patM4black);
+    MatCell(t,130,6,280,19,SerialNr,false,12,patM4black);
+    MatCell(t,10,26,190,39,Spec,false,12,patM4black);
+    MatCell(t,200,26,280,39,Qty,true,12,patM4black);
+
+  //MatCol(1,-340,"Position",0,Position,false,PosSClass);
+    InsertRowTest;
+    DeleteRowTest;
+    EndMatrix;
+  end else begin
+    if (GUIType==kGuiiPhone) then begin
+      Tile(0,130,false,"",SerNr); 
+    end;
+    vs = 20; h2 = 300;
+    EditField(h=100,v=6, 82,"Номер",Normal,SerNr,false,TSerSClass);
+    EditField(h2,v,82,"Дата операции",Normal,TransDate,false,PasteCurDate);
+    if (IsEnterprise) then begin
+      CheckBox(-100,v,0,"OK",OKFlag);
+    end;
+    if (HasMultiLocations) then begin
+      EditField(h,v+=vs,82,"Склад",Normal,Location,false,LocationSClass);
+    end;
+    EnterSkip(Math);
+  //  CheckBox(420,v=6,0,"Set #Stock# Levels to these Balances on this day",SetStockValue); // Still not working properly
+  //  CheckBox(420,v+=vs,0,"Override Backdated",OverrideBackdated); // Still not working properly
+    v = v + 42;
+    vm = v + 1;
+    if (GUIType==kGuiiPhone) then begin
+      TileButton(1,"К-во"); 
+      TileButton(2,"Комментарий"); 
+      Tile(1,230,false,"",Math); 
+    end;
+    MatrixBegin(4,v,-50,-35,-,200);
+    Flip(0); flipnr = flipnr + 1;
+    if (HasJewelleryInterface) then begin
+      MatCol(1,32,"Серийный номер",0,SerialNr,false,SerialNrSClass);
+      EnterSkip(Quant);
+      MatCol(1,130,"Товар",0,ArtCode,false,INSClass);
+      EnterSkip(ArtCode);
+      if (HasVarieties) then begin
+        MatCol(1,192,"Рассч.",0,Qty,true,MATVARINSClass);
+      end else begin
+        MatCol(1,192,"Рассч.",0,Qty,true,0);
+      end;
+      if (HasAdvancedStock) then begin
+        MatCol(1,254,"На складе",0,InStock,true,0);
+        MatCol(1,314,"Описание",0,Spec,false,0);
+      end else begin
+        MatCol(1,254,"Описание",0,Spec,false,0);
+      end;
+    end else begin
+      MatCol(1,32,"Товар",0,ArtCode,false,INSClass);
+      EnterSkip(Qty);// Edit ************************** BPI Ukraine - KramarAlexandr - 04, 01 10 2020 y. at 2:25:44 PM
+  //  MatCol(1,94,"Var",0,VARList,false,VARSClass);
+  //  MatCol(1,144,"Qty",0,Qty,true,0);
+      if (HasVarieties) then begin
+        MatCol(1,94,"К-во",0,Qty,true,MATVARINSClass);
+        EnterSkip(ArtCode);// Edit ************************** BPI Ukraine - KramarAlexandr - 04, 01 10 2020 y. at 2:25:42 PM
+      end else begin
+        MatCol(1,94,"Рассч.",0,Qty,true,0);
+				EnterSkip(ArtCode);// Edit ************************** BPI Ukraine - KramarAlexandr - 04, 01 10 2020 y. at 2:25:39 PM
+      end;
+      pos = 154;
+      if (HasAdvancedStock) then begin
+        MatCol(1,pos,"На скл.",0,InStock,true,0);
+        pos = pos + 62;
+        if (HasSerialNumbers) then begin
+          MatCol(1,pos,"Нр.серии",0,SerialNr,false,SerialNrSClass);  
+          pos = pos + 120;
+        end;
+        MatCol(1,pos,"Наименование",0,Spec,false,0);
+      end else begin
+        if (HasSerialNumbers) then begin
+          MatCol(1,pos,"Серийный №",0,SerialNr,false,SerialNrSClass); 
+          pos = pos + 120;
+        end;
+        MatCol(1,pos,"Описание",0,Spec,false,0);
+      end;
+      if (HasMultiLocations) then begin
+        MatCol(1,-160,"Склад",0,Location,false,LocationSClass);  
+      end;
+    end;
+    if (IsEnterprise) then begin
+      Flip(flipnr); flipnr = flipnr + 1;
+      MatCol(1,-160,"Склад",0,Location,false,LocationSClass);
+      if (HasModWHM) then begin
+        MatCol(1,-100,"Позиция",0,Position,false,PosSClass);
+      end;
+      MatCol(1,-40,"Коэфф.",0,Coefficient,false,0);
+      Flip(flipnr); flipnr = flipnr + 1;
+      MatCol(1,-125,"Отпускная цена",0,BasePrice,true,0);
+      MatCol(1,-40,"Коэф",0,Coefficient,false,0);
+      Flip(flipnr); flipnr = flipnr + 1;
+      MatCol(1,-140,"Ширина",0,UnitXval,true,0);
+      MatCol(1,-95,"Высота",0,UnitYval,true,0);
+      MatCol(1,-50,"Глубина",0,UnitZval,true,0);
+    end;
+    DeleteRowTest;
+    EndMatrix;
+    vs = 20; v=vm;
+
+    if (flipnr>2) then begin
+      for (f=1;f<flipnr;f=f+1) begin
+        VTab(-35,v,-16,v+vs,ToolFlip,f,chr(asc("A") + f - 1));
+        v = v + vs;
+      end;
+    end;
+    if (GUIType==kGuiiPhone) then begin
+      Tile(2,230,false,"",Comment); 
+    end;
+    if (IsEnterprise==false) then begin
+      CheckBox(20,-30,0,"OK",OKFlag);
+    end;
+    EditField(h=150,-30,-35,"Коммент.",Normal,Comment,false,0);
+    if (IsEnterprise) then begin
+      SpecialMenu("Заполнить текущую стоимость",' ',1,"StockTakeFillFIFODsm");
+      SpecialMenu("Поиск товара",'f',1,"ItemSearchDsm");
+  //  SpecialMenu("Import Data from Digitag",'f',1,"StockTakeDigitagDsm");
+    end;
+  end;
+  EndWindow;
+end;
