@@ -253,6 +253,7 @@ begin
 				logtext(0,"done falg  " & JSONGet(jsonobj,"DoneFlag"));
 				RecordCopy(oldIVr,IVr);
 				IVr.OKFlag = 1;
+				IVr.Objects = USr.Objects;
 				IVr.TransDate = currentdate;
 				IVr.InvDate = currentdate;
 				rwcnt = matrowcnt(IVr);
