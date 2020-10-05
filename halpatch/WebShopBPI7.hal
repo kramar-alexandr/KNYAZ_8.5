@@ -244,14 +244,15 @@ begin
 		
 		if(IVr.SerNr>-1)then begin
 			OKFlag = JSONGet(jsonobj,"DoneFlag");
+			IVr.Objects = USr.PersObjx;
 			recordstore(IVr,true);
 			
 			
 			if(OKFlag=="true") then begin
 				logtext(0,"done falg  " & JSONGet(jsonobj,"DoneFlag"));
 				RecordCopy(oldIVr,IVr);
-				IVr.OKFlag = 1;
-				IVr.Objects = USr.PersObjx;
+				//IVr.OKFlag = 1;
+				
 				IVr.TransDate = currentdate;
 				IVr.InvDate = currentdate;
 				rwcnt = matrowcnt(IVr);
