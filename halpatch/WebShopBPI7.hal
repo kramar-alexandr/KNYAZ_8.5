@@ -731,7 +731,9 @@ if(WebLoginStatus==3)then begin
 		AddTextToArea("{",resarea);
 		AddTextToArea("\"invoice\":[",resarea);
 		IVr.OKFlag = 0;
+		logtext(0,"OKFlag:" & USr.Code);
 		if(ReadLastkey("OKFlag:" & USr.Code,IVr,1,true))begin
+			logtext(0,"IVr " & IVr.SerNr);
 			find = true;
 			AddTextToArea("{",resarea);
 				addParamToJSONArea("SerNr",NormalizeStrToJson(IVr.SerNr),resarea);
