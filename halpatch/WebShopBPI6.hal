@@ -248,16 +248,17 @@ begin
 		if(IVr.SerNr>-1)then begin
 			OKFlag = JSONGet(jsonobj,"DoneFlag");
 			IVr.Objects = USr.PersObjx;
+			IVr.TransDate = currentdate;
+			IVr.InvDate = currentdate;
 			recordstore(IVr,true);
 			
 			
-			if(OKFlag=="true") then begin
+			/*if(OKFlag=="true") then begin
 				logtext(0,"done falg  " & JSONGet(jsonobj,"DoneFlag"));
 				RecordCopy(oldIVr,IVr);
 				//IVr.OKFlag = 1;
 				
-				IVr.TransDate = currentdate;
-				IVr.InvDate = currentdate;
+				
 				rwcnt = matrowcnt(IVr);
 				for(i=0;i<rwcnt;i=i+1)begin
 					matrowget(IVr,i,IVrw);
@@ -276,10 +277,8 @@ begin
 					matrowget(IVr,RECORDCHECKLASTERRORROWNO,IVrw);
 					artCode = IVrw.Spec;
 				end;
-				RecordUpdate(oldIVr,IVr,true);
-				
-				
-			end;
+				RecordUpdate(oldIVr,IVr,true);				
+			end;*/
 			
 		end;
 lendinvent:;	
@@ -732,7 +731,9 @@ if(WebLoginStatus==3)then begin
 		AddTextToArea("{",resarea);
 		AddTextToArea("\"invoice\":[",resarea);
 		IVr.OKFlag = 0;
+		logtext(0,"OKFlag:" & USr.Code);
 		if(ReadLastkey("OKFlag:" & USr.Code,IVr,1,true))begin
+			logtext(0,"IVr " & IVr.SerNr);
 			find = true;
 			AddTextToArea("{",resarea);
 				addParamToJSONArea("SerNr",NormalizeStrToJson(IVr.SerNr),resarea);
