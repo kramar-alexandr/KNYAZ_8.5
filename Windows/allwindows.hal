@@ -2620,7 +2620,7 @@ begin
   end else begin
     MatCol(1,94,"К-во",0,Quant,true,0);
   end;
-  EnterSkip(Spec);
+  EnterSkip(ArtCode);
   MatText(t=3,28,"Подпись",true);
   MatCol(t,100,"",0,Sign,false,0);
   MatText(t,160,"Дата исправления",true);
