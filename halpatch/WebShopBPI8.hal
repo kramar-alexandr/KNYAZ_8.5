@@ -189,7 +189,7 @@ begin
 	
 	if(WebLoginStatus==3)then begin
 		
-		SetCompany(7,false);
+		SetCompany(8,false);
 		logtext(0,"WebSendInvent");
 		USr.Code = webgetarg("foruser");
 		readfirstmain(USr,1,true);
