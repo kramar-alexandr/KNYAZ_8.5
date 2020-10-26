@@ -84,6 +84,47 @@ begin
   Integer rw;
   val stock1,stock2,order1,order2,free1,free2,absfree2,dif;
   val to1,to2,ts1,ts2,totship,totable;
+  record UserVc USr;// Edit ************************** BPI Ukraine - KramarAlexandr - 01, 26 10 2020 y. at 3:25:51 PM
+  record LocationVc Locr;
+	string 20 lgroup,lcode;
+	
+	USr.Code = currentuser;// Edit ************************** BPI Ukraine - KramarAlexandr - 01, 26 10 2020 y. at 8:48:49 PM
+  if(readfirstmain(USr,1,true))then begin
+  	if(nonblank(USr.SalesGroup) and nonblank(USr.Location))then begin
+  		Locr.Code = USr.Location;
+  		if(readfirstmain(Locr,1,true))then begin
+  			if(nonblank(Locr.Group))then begin
+  				lgroup = Locr.Group;
+  				lcode = Locr.Code;
+  				if(blank(RepSpec.AccStr))then begin
+  					RepSpec.AccStr = lcode;
+  				end else begin
+  					Locr.Code = RepSpec.AccStr;
+  					if(readfirstmain(Locr,1,true))then begin
+  						if(Locr.Group!=lgroup)then begin
+  							RepSpec.AccStr = lcode;
+  							
+  						end;
+  					end;
+  				end;
+  				
+  				if(blank(RepSpec.LastAcc))then begin
+  					RepSpec.LastAcc = lcode;
+  				end else begin
+  					Locr.Code = RepSpec.LastAcc;
+  					if(readfirstmain(Locr,1,true))then begin
+  						if(Locr.Group!=lgroup)then begin
+  							RepSpec.LastAcc = lcode;
+  						end;
+  					end;
+  				end;
+  				
+  			end;
+  		end;
+  	end;
+  end;// Edit ************************** BPI Ukraine - KramarAlexandr - 01, 26 10 2020 y. at 8:48:52 PM
+  
+  
 
   fromart = FirstInRange(RepSpec.f1,50);
   toart   = LastInRange(RepSpec.f1,50);
