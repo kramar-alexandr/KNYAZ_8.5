@@ -141,6 +141,8 @@ row StockMovVc StockMovrw;
 vector integer moveQuant;
 boolean TrHs, testf;
 integer i;
+record PLVc PLr;
+val price;
 
 if(WebLoginStatus==3)then begin
 
@@ -184,13 +186,22 @@ if(WebLoginStatus==3)then begin
 			if(INr.Terminated==0 and INr.NotForSales==0)then begin
 				if(readfirstmain(ISr,2,true) or moveQuant[INr.Code]>0)then begin
 					if(true)then begin// Edit ************************** BPI Ukraine - KramarAlexandr - 01, 31 08 2020 y. at 3:37:45 PM
+						price = INr.UPrice1;
+						if(nonblank(User.MinPLCode))then begin
+							PLr.PLCode = User.MinPLCode;
+							PLr.ArtCode = INr.Code;
+							if(readfirstmain(PLr,2,true))then begin
+								price = PLr.ExVatPrice;
+							end;
+						end;
+						
 						AddTextToArea("{",resarea);
 						addParamToJSONArea("ArtCode",NormalizeStrToJson(INr.Code),resarea);
 						addParamToJSONArea("BarCode",NormalizeStrToJson(INr.BarCode),resarea);
 						addParamToJSONArea("AlternativeCode",NormalizeStrToJson(INr.AlternativeCode),resarea);
 						addParamToJSONArea("Name",NormalizeStrToJson(INr.Name),resarea);
 						addParamToJSONArea("Instock",NormalizeStrToJson(ISr.Instock),resarea);
-						addParamToJSONArea("Price",NormalizeStrToJson(INr.UPrice1),resarea);
+						addParamToJSONArea("Price",NormalizeStrToJson(price),resarea);
 						addParamToJSONArea("InMove",NormalizeStrToJson(moveQuant[INr.Code]),resarea);
 						delLastComaInArea(resarea);
 						AddTextToArea("},",resarea);
