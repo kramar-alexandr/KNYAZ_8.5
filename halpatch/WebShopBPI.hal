@@ -291,10 +291,12 @@ begin
 		if(IVr.SerNr>-1)then begin
 			OKFlag = JSONGet(jsonobj,"DoneFlag");
 			IVr.Objects = USr.PersObjx;
+			IVr.TransDate = currentdate;
+			IVr.InvDate = currentdate;
 			recordstore(IVr,true);
 			
 			
-			if(OKFlag=="true") then begin
+			/*if(OKFlag=="true") then begin
 				logtext(0,"done falg  " & JSONGet(jsonobj,"DoneFlag"));
 				RecordCopy(oldIVr,IVr);
 				//IVr.OKFlag = 1;
@@ -319,10 +321,8 @@ begin
 					matrowget(IVr,RECORDCHECKLASTERRORROWNO,IVrw);
 					artCode = IVrw.Spec;
 				end;
-				RecordUpdate(oldIVr,IVr,true);
-				
-				
-			end;
+				RecordUpdate(oldIVr,IVr,true);				
+			end;*/
 			
 		end;
 lendinvent:;
@@ -362,10 +362,14 @@ begin
 		webgetpostdata(postdata);
 		writeareatofile(postdata,"WebSendSale.txt",0);
 		jsonobj = ParseJSONArea(postdata);
+		CredInv = JSONGet(jsonobj,"CredInv");
 		if(nonblank(JSONGet(jsonobj,"SerNr")))then begin
 			IVr.SerNr = stringtolongint(JSONGet(jsonobj,"SerNr"));
 			if(readfirstmain(IVr,1,true))then begin
-			
+				if(IVr.OKFlag==1)then begin
+					res = 1115;
+					goto lendinvent;
+				end;
 			end else begin
 				recordnew(IVr);
 				IVr.SerNr = NextSerNr("IVVc",IVr.TransDate,-1,false,IVr.LangCode);
@@ -581,19 +585,27 @@ global webpublic procedure WebGetUsers()
 begin
 string 50 location;
 area resarea;
-record UserVc USr;
+record UserVc USr,curUSr;
 record DepVc Depr;
+boolean testf;
 
 	if(WebLoginStatus==3)then begin
 
 		WebSetContentType("application/json; charset=UTF-8");	
 
 		SetCompany(5,false);
-	
+			
+			curUSr.Code = currentuser;
+			readfirstmain(curUSr,true);
+			
 			AddTextToArea("{",resarea);
 			AddTextToArea("\"users\":[",resarea);
 			while(loopmain(USr,1,true))begin
-					if(USr.AccessGroup=="SALE") then begin
+					testf  = true;
+					if(USr.AccessGroup!="SALE")then begin testf = false; end;
+					if(nonblank(curUSr.SalesGroup) and USr.SalesGroup!=curUSr.SalesGroup)then begin testf = false; end;
+					
+					if(testf) then begin
 						Depr.Code = USr.Department;
 						readfirstmain(Depr,1,true);
 						AddTextToArea("{",resarea);
@@ -773,7 +785,9 @@ if(WebLoginStatus==3)then begin
 		AddTextToArea("{",resarea);
 		AddTextToArea("\"invoice\":[",resarea);
 		IVr.OKFlag = 0;
+		logtext(0,"OKFlag:" & USr.Code);
 		if(ReadLastkey("OKFlag:" & USr.Code,IVr,1,true))begin
+			logtext(0,"IVr " & IVr.SerNr);
 			find = true;
 			AddTextToArea("{",resarea);
 				addParamToJSONArea("SerNr",NormalizeStrToJson(IVr.SerNr),resarea);
