@@ -944,6 +944,22 @@ begin
   return;
 end;
 
+global
+function string 40 StDifRClassSpecPasteName(Integer wn,string defpsname)
+begin
+  string 255 psname;
+  
+  psname = defpsname;
+  switch (WindowActiveField(wn)) begin
+   	case "LastAcc": StockMovDClassSpecPasteNameFrLocation(wn,psname);
+    case "AccStr": StockMovDClassSpecPasteNameFrLocation(wn,psname);
+  end;
+  StDifRClassSpecPasteName = psname;
+  return;
+end;
+
+
+
 
 global
 function Boolean AllowLocationSClassOnOpenWindow(Integer wn)
