@@ -261,6 +261,7 @@ begin
 			
 			IVr.SalesMan = USr.Code;
 			IVr.Location = USr.Location;
+			IVr.SalesGroup = USr.SalesGroup;
 			IVr.Sum4 = stringtoval(JSONGet(jsonobj,"Sum4"),m4val);
 			rwcnt = JSONCountChildren(jsonobj,"items");
 			for(i=0;i<rwcnt;i=i+1)begin
@@ -293,6 +294,7 @@ begin
 			IVr.Objects = USr.PersObjx;
 			IVr.TransDate = currentdate;
 			IVr.InvDate = currentdate;
+			
 			recordstore(IVr,true);
 			
 			
