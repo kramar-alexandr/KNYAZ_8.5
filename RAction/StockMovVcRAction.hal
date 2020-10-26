@@ -2132,9 +2132,7 @@ begin
   Integer rownr;
   Boolean UnOKedCheckSerialf;
   record UserVc USr;// Edit ************************** BPI Ukraine - KramarAlexandr - 01, 26 10 2020 y. at 3:25:51 PM
-	
-	logtext(0,"StockMovVcRecordCheck 01");
-	
+		
   res = 0;
   oldnr = SMp.SerNr;
   oldOfficialSerNr = SMp.OfficialSerNr;

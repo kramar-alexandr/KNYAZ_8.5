@@ -1597,6 +1597,19 @@ begin
   Boolean found,testf;
   record LocationVc Locr;
   vector val vreptotals;
+  record UserVc USr;
+  
+  USr.Code = currentuser;// Edit ************************** BPI Ukraine - KramarAlexandr - 01, 26 10 2020 y. at 8:31:54 PM
+  if(readfirstmain(USr,1,true))then begin
+  	if(nonblank(USr.SalesGroup) and nonblank(USr.Location))then begin
+  		Locr.Code = USr.Location;
+  		if(readfirstmain(Locr,1,true))then begin
+				RepSpec.f10 = Locr.Group;
+  		end;
+  		
+  	end;
+  end;
+  
   
   BlockLoad(mst);
   BlockLoad(CAb);

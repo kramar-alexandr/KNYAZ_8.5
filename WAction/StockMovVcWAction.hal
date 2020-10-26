@@ -33,6 +33,7 @@ external function LongInt AddTime(Time,LongInt,var Time);
 external function LongInt DateDiff(Date,Date);
 external procedure DisplayStrArray(array string);
 remote function string 20 FindCustRouteByLocation(string,string,string);
+external procedure PasteFromSysList(Integer,Integer);// Edit ************************** BPI Ukraine - KramarAlexandr - 01, 26 10 2020 y. at 8:22:29 PM
 
 global
 procedure CalcNewPrice(val oldprice,string extra,var val newprice)
@@ -894,6 +895,23 @@ begin
   return;
 end;
 
+
+
+procedure StockMovDClassSpecPasteNameFrLocation(Integer wn,var string psname)
+BEGIN
+  record UserVc USr;
+    
+  USr.Code = currentuser;
+  readfirstmain(USr,1,true);
+  
+  if (blank(USr.SalesGroup)) then begin
+    psname = "LocationSClass";
+  end else begin    
+    psname = "AllowLocationSClass";
+  end;
+  RETURN;
+END;
+
 global
 function string 40 StockMovDClassSpecPasteName(Integer wn,string defpsname)
 begin
@@ -903,8 +921,66 @@ begin
   switch (WindowActiveField(wn)) begin
     case "SerialNr": psname = SerialNrSClassSpecPName(defpsname);
     case "ArtCode": StockMovDClassSpecPasteNameArtCode(wn,psname);
+    case "FrLocation": StockMovDClassSpecPasteNameFrLocation(wn,psname);
+    case "ToLocation": StockMovDClassSpecPasteNameFrLocation(wn,psname);
+    case "ThrouLocation": StockMovDClassSpecPasteNameFrLocation(wn,psname);
+    
   end;
   StockMovDClassSpecPasteName = psname;
+  return;
+end;
+
+
+global
+function string 40 INRClassSpecPasteName(Integer wn,string defpsname)
+begin
+  string 255 psname;
+  
+  psname = defpsname;
+  switch (WindowActiveField(wn)) begin
+    case "f2": StockMovDClassSpecPasteNameFrLocation(wn,psname);
+  end;
+  INRClassSpecPasteName = psname;
+  return;
+end;
+
+
+global
+function Boolean AllowLocationSClassOnOpenWindow(Integer wn)
+begin
+  Array string 255 astr;
+  Integer i,acnt;
+  record LocationVc Locr;
+  record UserVc USr,allUSr;
+  vector boolean vlocs;
+  array string 20 alocs;
+  
+  USr.Code = currentuser;
+  readfirstmain(USr,1,true);
+  
+  if(nonblank(USr.SalesGroup))then begin
+  	resetloop(allUSr);
+  	allUSr.Code = "";
+  	while(loopmain(allUSr,1,true))begin
+  		if(allUSr.SalesGroup==USr.SalesGroup and nonblank(allUSr.Location))then begin
+  			vlocs[allUSr.Location] = true;
+  		end;
+  	end;
+  end;
+  getvectortags(vlocs,alocs);
+  
+  for (i=0;i<alocs.length;i=i+1) begin
+    SetListString(wn,len(alocs[i]),alocs[i],false);    
+  end;
+  AllowLocationSClassOnOpenWindow = false;
+  return;
+end;
+
+global
+function Boolean AllowLocationSClassOnOKWindow(Integer wn)
+begin
+  PasteFromSysList(wn,5);
+  AllowLocationSClassOnOKWindow = false;
   return;
 end;
 

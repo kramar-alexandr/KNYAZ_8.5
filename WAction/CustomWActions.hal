@@ -51,11 +51,22 @@ procedure INRClassReportDefaults(Integer wn)
 begin
   record RcVc RepSpec;
   record VarietyBlock Varb;
+  record Uservc USr;
+  
+  
     
   BlockLoad(Varb);  
   DeselectWindow(wn,false);
   GetWindowRecord(wn,RepSpec);
-  ReportDefaults(RepSpec,"INRClass");  
+  ReportDefaults(RepSpec,"INRClass"); 
+   
+  USr.Code = currentuser;
+  if(readfirstmain(USr,1,true))then begin
+  	if(nonblank(USr.SalesGroup) and nonblank(USr.Location))then begin
+  		RepSpec.f2 = USr.Location;
+  	end;
+  end;
+  
   RepSpec.flags[11] = 2;
   RepSpec.flags[22] = Varb.AutoVarietyDef;
   PutWindowRecord(wn,RepSpec);
@@ -701,3 +712,4 @@ begin
 		HasIntegratedNL = true;
 return;
 end;
+
