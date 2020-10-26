@@ -596,7 +596,7 @@ boolean testf;
 		SetCompany(5,false);
 			
 			curUSr.Code = currentuser;
-			readfirstmain(curUSr,true);
+			readfirstmain(curUSr,1,true);
 			
 			AddTextToArea("{",resarea);
 			AddTextToArea("\"users\":[",resarea);
