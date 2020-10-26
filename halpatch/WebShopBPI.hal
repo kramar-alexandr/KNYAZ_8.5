@@ -442,7 +442,7 @@ begin
 				end;
 				RecordUpdate(oldIVr,IVr,true);
 		end;
-	
+lendinvent:;	
 		if(res>-1) then begin 
 			weboutstring("{\"result\":\"error\",\"SerNr\":\"" & IVr.SerNr & "\",\"error\":\"" & USetStr(res) & " - " & artCode & "\"}");
 		end else begin
