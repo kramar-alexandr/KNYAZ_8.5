@@ -443,7 +443,7 @@ begin
         end;
       end;   
       StartFormat(15);
-      OutString(0,"DblINVc",artcode,false);
+      OutStringID(0,"DblPLfrRep",artcode,false,RepSpec.f2);// Edit ************************** BPI Ukraine - KramarAlexandr - 01, 26 10 2020 y. at 8:56:32 PM
       OutString(2,0,namestr,false);
       OutString(3,0,INr.Unittext,false);
       if (RepSpec.flags[9]==1) then begin

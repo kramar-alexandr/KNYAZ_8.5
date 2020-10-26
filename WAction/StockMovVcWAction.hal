@@ -959,6 +959,24 @@ begin
 end;
 
 
+global
+procedure DblPLfrRep(string dblstr,string l,Integer currepwn)
+begin
+  Integer wn;
+  record PLVc PLr;
+
+  if (nonblank(dblstr)) then begin
+    PLr.ArtCode = dblstr;
+    PLr.PLCode = l;
+    
+    if(readfirstmain(PLr,2,true))then begin
+    	OpenWindow("PL2DClass",1,0,"","",PLr);
+    end;
+  end;
+  return;
+end;
+
+
 
 
 global
