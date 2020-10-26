@@ -2143,12 +2143,13 @@ begin
     goto LStockMovVcRecordCheck;
   end;
   
-  
+  logtext(0,"StockMovVcRecordCheck");
 	while(loopmain(USr,1,true))begin// Edit ************************** BPI Ukraine - KramarAlexandr - 01, 26 10 2020 y. at 3:26:00 PM
 		if(nonblank(USr.SalesGroup))then begin
 			if(nonblank(USr.Location))then begin
 				if(USr.Location==SMp.FrLocation or USr.Location==SMp.ToLocation)then begin
 					SMp.SalesGroup = USr.SalesGroup;
+					logtext(0,"StockMovVcRecordCheck " & SMp.SalesGroup);
 				end;
 			end;
 		end;
