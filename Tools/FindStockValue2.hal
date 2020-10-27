@@ -953,6 +953,8 @@ begin
   	end;
   end;
   
+  logtext(0,"FindStockValue2");
+  
   BlockLoad(CAb);
   BlockLoad(GOb);
   GetCostModel(INp,CAb,ITr,primary,queuecostmodel,false);
