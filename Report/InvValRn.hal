@@ -987,7 +987,7 @@ BEGIN
     if (ReadFirstItemInclClosed(ISr.Code,INr,false,false)==false) then begin goto LILLoopISEnd; end;
     if (INr.Code==lastitem) then begin goto LILLoopISEnd; end;
 //    ISr.Code = INr.Code; // ??
-logtext(0,"ISr.Location " & ISr.Location);
+
     lastitem = INr.Code;
     testf = true;
     if (RepSpec.flags[18]==0) then begin
@@ -1046,13 +1046,11 @@ logtext(0,"ISr.Location " & ISr.Location);
       end;
     end;      
     if (testf) then begin
-    	
       if (nonblank(RepSpec.f10) or nonblank(RepSpec.f11)) then begin
         Locr.Code = ISr.Location;
         ReadFirstMain(Locr,1,true);
         if (nonblank(RepSpec.f10)) then begin
           if (Locr.Group!=RepSpec.f10) then begin testf = false; end;
-          logtext(0,"testf = false; " & testf & " " & Locr.Code);
         end;
         if (nonblank(RepSpec.f11)) then begin
           if (SetInSet(RepSpec.f11,Locr.Classification)==false) then begin testf = false; end;
@@ -1172,7 +1170,7 @@ logtext(0,"ISr.Location " & ISr.Location);
         if (nonblank(frvariety)) then begin
           InvListOneItem(RepSpec,0,INr,ISr.Variety,CAb,true,itemout,grout,lastgroup,sum1p,nrp,groupqty,groupsum,roundof,nrq2p,dblstr,vlocationtotals);
         end else begin
-          //InvListOneItem(RepSpec,0,INr,"",CAb,true,itemout,grout,lastgroup,sum1p,nrp,groupqty,groupsum,roundof,nrq2p,dblstr,vlocationtotals);
+          InvListOneItem(RepSpec,0,INr,"",CAb,true,itemout,grout,lastgroup,sum1p,nrp,groupqty,groupsum,roundof,nrq2p,dblstr,vlocationtotals);
         end;
         if (ISb.UseSupersessionIN!=0) then begin
           switch (RepSpec.flags[21]) begin
@@ -1597,7 +1595,7 @@ begin
   Integer rw;
   vector val vlocationtotals;
   Boolean found,testf;
-  record LocationVc Locr;
+  record LocationVc Locr,Loc2r;
   vector val vreptotals;
   record UserVc USr;
   
@@ -1606,8 +1604,17 @@ begin
   	if(nonblank(USr.SalesGroup) and nonblank(USr.Location))then begin
   		Locr.Code = USr.Location;
   		if(readfirstmain(Locr,1,true))then begin
-				RepSpec.f10 = Locr.Group;
+  			if(blank(RepSpec.f2))then begin
+					RepSpec.f10 = Locr.Group;
+				end else begin
+					Loc2r.Code = RepSpec.f2;
+					readfirstmain(Loc2r,1,true);
+					if(Loc2r.Group!=Locr.Group)then begin
+					
+					end;
+				end;
   		end;
+  		
   	end;
   end;
   
@@ -1824,7 +1831,6 @@ begin
         testf = true;
         if (nonblank(RepSpec.f10)) then begin
           if (Locr.Group!=RepSpec.f10) then begin testf = false; end;
-          logtext(0,"1testf = false; " & testf & " " & Locr.Code);
         end;
         if (nonblank(RepSpec.f11)) then begin
           if (SetInSet(RepSpec.f11,Locr.Classification)==false) then begin testf = false; end;
@@ -1840,7 +1846,6 @@ begin
         end;
       end;
     end;
-    resetloop(Locr);// Edit ************************** BPI Ukraine - KramarAlexandr - 02, 27 10 2020 y. at 10:01:15 AM
     Gray_Divider(0,1);
     StartFormat(15);
     OutVal(5,0,sum1,M4UVal,true);
