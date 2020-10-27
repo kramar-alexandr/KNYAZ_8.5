@@ -1051,6 +1051,7 @@ BEGIN
         ReadFirstMain(Locr,1,true);
         if (nonblank(RepSpec.f10)) then begin
           if (Locr.Group!=RepSpec.f10) then begin testf = false; end;
+          logtext(0,"testf = false; " & testf & " " & Locr.Code);
         end;
         if (nonblank(RepSpec.f11)) then begin
           if (SetInSet(RepSpec.f11,Locr.Classification)==false) then begin testf = false; end;
@@ -1822,6 +1823,7 @@ begin
         testf = true;
         if (nonblank(RepSpec.f10)) then begin
           if (Locr.Group!=RepSpec.f10) then begin testf = false; end;
+          logtext(0,"1testf = false; " & testf & " " & Locr.Code);
         end;
         if (nonblank(RepSpec.f11)) then begin
           if (SetInSet(RepSpec.f11,Locr.Classification)==false) then begin testf = false; end;
