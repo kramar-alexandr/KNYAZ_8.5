@@ -1172,7 +1172,7 @@ logtext(0,"ISr.Location " & ISr.Location);
         if (nonblank(frvariety)) then begin
           InvListOneItem(RepSpec,0,INr,ISr.Variety,CAb,true,itemout,grout,lastgroup,sum1p,nrp,groupqty,groupsum,roundof,nrq2p,dblstr,vlocationtotals);
         end else begin
-          InvListOneItem(RepSpec,0,INr,"",CAb,true,itemout,grout,lastgroup,sum1p,nrp,groupqty,groupsum,roundof,nrq2p,dblstr,vlocationtotals);
+          //InvListOneItem(RepSpec,0,INr,"",CAb,true,itemout,grout,lastgroup,sum1p,nrp,groupqty,groupsum,roundof,nrq2p,dblstr,vlocationtotals);
         end;
         if (ISb.UseSupersessionIN!=0) then begin
           switch (RepSpec.flags[21]) begin
