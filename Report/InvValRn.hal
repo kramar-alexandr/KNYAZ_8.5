@@ -1046,6 +1046,7 @@ BEGIN
       end;
     end;      
     if (testf) then begin
+    	logtext(0,"ISr.Location " & ISr.Location);
       if (nonblank(RepSpec.f10) or nonblank(RepSpec.f11)) then begin
         Locr.Code = ISr.Location;
         ReadFirstMain(Locr,1,true);
