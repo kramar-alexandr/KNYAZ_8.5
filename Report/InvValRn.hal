@@ -1610,7 +1610,7 @@ begin
 					Loc2r.Code = RepSpec.f2;
 					readfirstmain(Loc2r,1,true);
 					if(Loc2r.Group!=Locr.Group)then begin
-					
+						RepSpec.f10 = Locr.Group;
 					end;
 				end;
   		end;
