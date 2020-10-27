@@ -800,6 +800,7 @@ begin
   if(readfirstmain(USr,1,true))then begin
   	if(nonblank(USr.SalesGroup) and nonblank(USr.MinPLCode))then begin
   		RepSpec.f2 = USr.MinPLCode;
+  		RepSpec.flags[5] = 1;
   	end;
   end;
 	
