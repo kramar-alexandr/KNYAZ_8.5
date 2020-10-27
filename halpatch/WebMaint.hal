@@ -1,0 +1,318 @@
+global webpublic updating procedure WebDelete5Comp()
+begin
+	boolean TrHs;
+	record IVCashVc IVCashr;
+  record POSEventVc POSEventr;
+  record CashVc Cashr;
+  record POSBalanceVc POSBalancer;
+  record CashierBalVc CashierBalr;
+  record CLInVc CLInr;
+	record CLOutVc CLOutr;
+	record IPVc IPr;
+	record OPVc OPr;
+	record IVVc IVr;
+	record VIVc VIr;
+	record POVc POr;
+	record SHVc SHr;
+	record PUVc PUr;
+	record SDVc SDr;
+	record StockMovVc StockMovr;
+	record RetVc Retr;
+	record RetPUVc RetPUr;
+	record StockTakeVc StockTaker;
+	record SRVc SRr;
+	record ORVc ORr;
+	record TRVc TRr;
+	record FBVc FBr;
+	record ItemHistVc IHr;
+	record ItemStatusVc ISr;
+	record SerBalVc SerBalr;
+	record PPVc PPr;
+	record CUVc CUr;
+	record INVc INr;
+	record APVc APr;
+	record ARVc ARr;
+	record OPrsVc OPrsr;
+	record IPrsVc IPrsr;
+	record RecVc Recr; //Структуры (Рецепты)
+	record ProdOrderVc ProdOrderr;
+	record ProdVc Prodr;
+	record MainVc Mainr;
+	
+		
+	setcompany(5,false);
+		
+  TrHs = true;
+	while (LoopMain(IVCashr,1,TrHs)) begin
+		recorddelete(IVCashr);
+		StepBack(IVCashr);
+	end;
+	
+	TrHs = true;
+	while (LoopMain(POSEventr,1,TrHs)) begin
+	  if (TrHs) then begin
+	    RecordDelete(POSEventr);
+	    StepBack(POSEventr);
+	  end;
+	end;
+	
+	TrHs = true;
+	while (LoopMain(Cashr,1,TrHs)) begin
+	  if (TrHs) then begin
+	    RecordDelete(Cashr);
+	    StepBack(Cashr);
+	  end;
+	end;
+	
+	TrHs = true;
+	while (LoopMain(POSBalancer,1,TrHs)) begin
+	  if (TrHs) then begin
+	    RecordDelete(POSBalancer);
+	    StepBack(POSBalancer);
+	  end;
+	end;
+	
+	TrHs = true;
+	while (LoopMain(CashierBalr,1,TrHs)) begin
+	  if (TrHs) then begin
+	    RecordDelete(CashierBalr);
+	    StepBack(CashierBalr);
+	  end;
+	end;
+
+  TrHs = true;
+	while (LoopMain(CLInr,1,TrHs)) begin
+	  if (TrHs) then begin
+	    RecordDelete(CLInr);
+	    StepBack(CLInr);
+	  end;
+	end;
+
+	TrHs = true;
+	while (LoopMain(CLOutr,1,TrHs)) begin
+	  if (TrHs) then begin
+	    RecordDelete(CLOutr);
+	    StepBack(CLOutr);
+	  end;
+	end;
+
+	TrHs = true;
+	while (LoopMain(IPr,1,TrHs)) begin
+	  if (TrHs) then begin
+	    RecordDelete(IPr);
+	    StepBack(IPr);
+	  end;
+	end;
+
+	TrHs = true;
+	while (LoopMain(IVr,1,TrHs)) begin
+	  if (TrHs) then begin
+	    RecordDelete(IVr);
+	    StepBack(IVr);
+	  end;
+	end;
+
+	TrHs = true;
+	while (LoopMain(VIr,1,TrHs)) begin
+	  if (TrHs) then begin
+	    RecordDelete(VIr);
+	    StepBack(VIr);
+	  end;
+	end;
+
+	TrHs = true;
+	while (LoopMain(POr,1,TrHs)) begin
+	  if (TrHs) then begin
+	    RecordDelete(POr);
+	    StepBack(POr);
+	  end;
+	end;
+
+	TrHs = true;
+	while (LoopMain(OPr,1,TrHs)) begin
+	  if (TrHs) then begin
+	    RecordDelete(OPr);
+	    StepBack(OPr);
+	  end;
+	end;
+
+	TrHs = true;
+	while (LoopMain(SHr,1,TrHs)) begin
+	  if (TrHs) then begin
+	    RecordDelete(SHr);
+	    StepBack(SHr);
+	  end;
+	end;
+
+	TrHs = true;
+	while (LoopMain(PUr,1,TrHs)) begin
+	  if (TrHs) then begin
+	    RecordDelete(PUr);
+	    StepBack(PUr);
+	  end;
+	end;
+
+	TrHs = true;
+	while (LoopMain(SDr,1,TrHs)) begin
+	  if (TrHs) then begin
+	    RecordDelete(SDr);
+	    StepBack(SDr);
+	  end;
+	end;
+
+	TrHs = true;
+	while (LoopMain(StockMovr,1,TrHs)) begin
+	  if (TrHs) then begin
+	    RecordDelete(StockMovr);
+	    StepBack(StockMovr);
+	  end;
+	end;
+
+	TrHs = true;
+	while (LoopMain(Retr,1,TrHs)) begin
+	  if (TrHs) then begin
+	    RecordDelete(Retr);
+	    StepBack(Retr);
+	  end;
+	end;
+
+	TrHs = true;
+	while (LoopMain(RetPUr,1,TrHs)) begin
+	  if (TrHs) then begin
+	    RecordDelete(RetPUr);
+	    StepBack(RetPUr);
+	  end;
+	end;
+
+	TrHs = true;
+	while (LoopMain(ORr,1,TrHs)) begin
+	  if (TrHs) then begin
+	    RecordDelete(ORr);
+	    StepBack(ORr);
+	  end;
+	end;
+
+	TrHs = true;
+	while (LoopMain(TRr,1,TrHs)) begin
+	  if (TrHs) then begin
+	    RecordDelete(TRr);
+	    StepBack(TRr);
+	  end;
+	end;
+
+	TrHs = true;
+	while (LoopMain(FBr,1,TrHs)) begin
+	  if (TrHs) then begin
+	    RecordDelete(FBr);
+	    StepBack(FBr);
+	  end;
+	end;
+
+	TrHs = true;
+	while (LoopMain(IHr,1,TrHs)) begin
+	  if (TrHs) then begin
+	    RecordDelete(IHr);
+	    StepBack(IHr);
+	  end;
+	end;
+
+	TrHs = true;
+	while (LoopMain(ISr,1,TrHs)) begin
+	  if (TrHs) then begin
+	    RecordDelete(ISr);
+	    StepBack(ISr);
+	  end;
+	end;
+	
+	TrHs = true;
+	while (LoopMain(SerBalr,1,TrHs)) begin
+	  if (TrHs) then begin
+	    RecordDelete(SerBalr);
+	    StepBack(SerBalr);
+	  end;
+	end; 
+
+	TrHs = true;
+	while (LoopMain(PPr,1,TrHs)) begin
+	  if (TrHs) then begin
+	    RecordDelete(PPr);
+	    StepBack(PPr);
+	  end;
+	end;
+
+	TrHs = true;
+	while (LoopMain(ARr,1,TrHs)) begin
+	  if (TrHs) then begin
+	    RecordDelete(ARr);
+	    StepBack(ARr);
+	  end;
+	end;
+	
+	TrHs = true;
+	while (LoopMain(OPrsr,1,TrHs)) begin
+	  if (TrHs) then begin
+	    RecordDelete(OPrsr);
+	    StepBack(OPrsr);
+	  end;
+	end; 
+	
+	TrHs = true;
+	while (LoopMain(IPrsr,1,TrHs)) begin
+	  if (TrHs) then begin
+	    RecordDelete(IPrsr);
+	    StepBack(IPrsr);
+	  end;
+	end; 
+	
+	TrHs = true;
+	while (LoopMain(StockTaker,1,TrHs)) begin
+	  if (TrHs) then begin
+	    RecordDelete(StockTaker);
+	    StepBack(StockTaker);
+	  end;
+	end; 
+	
+	TrHs = true;
+	while (LoopMain(SRr,1,TrHs)) begin
+	  if (TrHs) then begin
+	    RecordDelete(SRr);
+	    StepBack(SRr);
+	  end;
+	end; 
+	
+	TrHs = true;
+	while (LoopMain(Recr,1,TrHs)) begin
+	  if (TrHs) then begin
+	    RecordDelete(Recr);
+	    StepBack(Recr);
+	  end;
+	end;
+	
+	TrHs = true;
+	while (LoopMain(ProdOrderr,1,TrHs)) begin
+	  if (TrHs) then begin
+	    RecordDelete(ProdOrderr);
+	    StepBack(ProdOrderr);
+	  end;
+	end;
+	
+	TrHs = true;
+	while (LoopMain(Prodr,1,TrHs)) begin
+	  if (TrHs) then begin
+	    RecordDelete(Prodr);
+	    StepBack(Prodr);
+	  end;
+	end;
+	
+	TrHs = true;
+	while (LoopMain(Mainr,1,TrHs)) begin
+	  if (TrHs) then begin
+	    RecordDelete(Mainr);
+	    StepBack(Mainr);
+	  end;
+	end;
+	
+	
+
+return;
+end; //Edit***************************Sasha2,11:22 22.09.2016 }
