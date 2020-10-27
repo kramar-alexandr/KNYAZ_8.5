@@ -28,7 +28,6 @@ begin
 	record ItemStatusVc ISr;
 	record SerBalVc SerBalr;
 	record PPVc PPr;
-	record CUVc CUr;
 	record INVc INr;
 	record APVc APr;
 	record ARVc ARr;
