@@ -1013,7 +1013,7 @@ end;
 global
 function Boolean AllowLocationSClassOnOKWindow(Integer wn)
 begin
-  PasteFromSysList(wn,5);
+  PasteFromSysList(wn,20);
   AllowLocationSClassOnOKWindow = false;
   return;
 end;
