@@ -623,7 +623,10 @@ begin
   val totv,vatv,t1,totQty;
   string 255 frin,toin;
   record COCUServiceVc COCUSr;
-
+	record UserVc USr;// Edit ************************** BPI Ukraine - KramarAlexandr - 02, 27 10 2020 y. at 10:23:57 AM
+	record LocationVc Locr,Loc2r;// Edit ************************** BPI Ukraine - KramarAlexandr - 02, 27 10 2020 y. at 10:24:13 AM
+	
+	
   RepSpec.sStartDate2 = FirstInRange(RepSpec.Period2Str2,10);
   RepSpec.sEndDate2 = LastInRange(RepSpec.Period2Str2,10);
   totinv = 0;
@@ -894,6 +897,26 @@ begin
   end;
 */
   Gray_Divider(0,1);
+  
+  
+  USr.Code = currentuser;// Edit ************************** BPI Ukraine - KramarAlexandr - 01, 26 10 2020 y. at 8:31:54 PM
+  if(readfirstmain(USr,1,true))then begin
+  	if(nonblank(USr.SalesGroup) and nonblank(USr.Location))then begin
+  		Locr.Code = USr.Location;
+  		readfirstmain(Locr,1,true);
+  		if(blank(RepSpec.LastAcc))then begin
+				RepSpec.LastAcc = USr.Location;
+			end else begin
+				Loc2r.Code = RepSpec.LastAcc;
+				readfirstmain(Loc2r,1,true);
+				if(Loc2r.Group!=Locr.Group)then begin
+					RepSpec.LastAcc = Locr.Code;
+				end;
+			end;
+  	end;
+  end;
+  
+  
   TrHs = true;  
   while (LoopKey(mykey,IVr,1,TrHs)) begin
     iv = 0;
@@ -911,6 +934,7 @@ begin
         end;
       end;      
     end;
+    
     if (RepSpec.flags[10]==2) then begin
       if (nonblank(RepSpec.LastAcc)) then begin
         if (RepSpec.LastAcc<>IVr.Location) then begin
