@@ -987,7 +987,7 @@ BEGIN
     if (ReadFirstItemInclClosed(ISr.Code,INr,false,false)==false) then begin goto LILLoopISEnd; end;
     if (INr.Code==lastitem) then begin goto LILLoopISEnd; end;
 //    ISr.Code = INr.Code; // ??
-
+logtext(0,"ISr.Location " & ISr.Location);
     lastitem = INr.Code;
     testf = true;
     if (RepSpec.flags[18]==0) then begin
@@ -1046,7 +1046,7 @@ BEGIN
       end;
     end;      
     if (testf) then begin
-    	logtext(0,"ISr.Location " & ISr.Location);
+    	
       if (nonblank(RepSpec.f10) or nonblank(RepSpec.f11)) then begin
         Locr.Code = ISr.Location;
         ReadFirstMain(Locr,1,true);
