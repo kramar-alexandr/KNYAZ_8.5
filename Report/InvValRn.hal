@@ -1839,6 +1839,7 @@ begin
         end;
       end;
     end;
+    resetloop(Locr);// Edit ************************** BPI Ukraine - KramarAlexandr - 02, 27 10 2020 y. at 10:01:15 AM
     Gray_Divider(0,1);
     StartFormat(15);
     OutVal(5,0,sum1,M4UVal,true);
