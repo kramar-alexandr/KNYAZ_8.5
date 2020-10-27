@@ -1606,7 +1606,6 @@ begin
   		if(readfirstmain(Locr,1,true))then begin
 				RepSpec.f10 = Locr.Group;
   		end;
-  		
   	end;
   end;
   
