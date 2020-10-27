@@ -640,6 +640,28 @@ begin
   bc1ivtot = 0;
   bc2ivtot = 0;
   rw = 1;
+  
+  
+  
+   
+  USr.Code = currentuser;// Edit ************************** BPI Ukraine - KramarAlexandr - 01, 26 10 2020 y. at 8:31:54 PM
+  if(readfirstmain(USr,1,true))then begin
+  	if(nonblank(USr.SalesGroup) and nonblank(USr.Location))then begin
+  		Locr.Code = USr.Location;
+  		readfirstmain(Locr,1,true);
+  		if(blank(RepSpec.LastAcc))then begin
+				RepSpec.LastAcc = USr.Location;
+			end else begin
+				Loc2r.Code = RepSpec.LastAcc;
+				readfirstmain(Loc2r,1,true);
+				if(Loc2r.Group!=Locr.Group)then begin
+					RepSpec.LastAcc = Locr.Code;
+				end;
+			end;
+  	end;
+  end;
+  
+  
   if (RepSpec.PocketPC == 0) then begin
     HT2Per(RepSpec.sStartDate,RepSpec.sEndDate,tstr);
     Header(rw,tstr,1);
@@ -897,25 +919,6 @@ begin
   end;
 */
   Gray_Divider(0,1);
-  
-  
-  USr.Code = currentuser;// Edit ************************** BPI Ukraine - KramarAlexandr - 01, 26 10 2020 y. at 8:31:54 PM
-  if(readfirstmain(USr,1,true))then begin
-  	if(nonblank(USr.SalesGroup) and nonblank(USr.Location))then begin
-  		Locr.Code = USr.Location;
-  		readfirstmain(Locr,1,true);
-  		if(blank(RepSpec.LastAcc))then begin
-				RepSpec.LastAcc = USr.Location;
-			end else begin
-				Loc2r.Code = RepSpec.LastAcc;
-				readfirstmain(Loc2r,1,true);
-				if(Loc2r.Group!=Locr.Group)then begin
-					RepSpec.LastAcc = Locr.Code;
-				end;
-			end;
-  	end;
-  end;
-  
   
   TrHs = true;  
   while (LoopKey(mykey,IVr,1,TrHs)) begin
