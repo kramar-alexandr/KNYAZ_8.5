@@ -804,14 +804,14 @@ L34GetItemPriceDiscount3:;
        if (crncycode==PLDefr.CurncyCode) then begin goto L45GetItemPriceDiscount3; end;// do not touch price 
        if (nonblank(PLDefr.CurncyCode)) then begin
          if (blank(crncycode)) then begin           
-           tprice = MulWithRateToBase1(PLDefr.CurncyCode,CurrentDate,tprice,DefaultCurRoundOff);
+           //tprice = MulWithRateToBase1(PLDefr.CurncyCode,CurrentDate,tprice,DefaultCurRoundOff);
            goto L45GetItemPriceDiscount3;
          end else begin
-           tprice = MulWithRateToBase1(PLDefr.CurncyCode,CurrentDate,tprice,DefaultCurRoundOff);
+           //tprice = MulWithRateToBase1(PLDefr.CurncyCode,CurrentDate,tprice,DefaultCurRoundOff);
            if (frrate==0 and torate1==0 and torate2==0 and basrate1==0 and basrate2==0) then begin
-             tprice = DivWithRateToBase1(crncycode,CurrentDate,tprice,DefaultCurRoundOff);
+             //tprice = DivWithRateToBase1(crncycode,CurrentDate,tprice,DefaultCurRoundOff);
            end else begin
-             tprice = DivRateToBase1(crncycode,tprice,frrate,torate1,torate2,basrate1,basrate2,DefaultCurRoundOff);
+             //tprice = DivRateToBase1(crncycode,tprice,frrate,torate1,torate2,basrate1,basrate2,DefaultCurRoundOff);
            end;
            goto L45GetItemPriceDiscount3;
          end;
@@ -820,9 +820,9 @@ L34GetItemPriceDiscount3:;
 L44GetItemPriceDiscount3:;
 //is this Div needed at all ? 
     if (frrate==0 and torate1==0 and torate2==0 and basrate1==0 and basrate2==0) then begin
-      tprice = DivWithRateToBase1(crncycode,CurrentDate,tprice,DefaultCurRoundOff);
+      //tprice = DivWithRateToBase1(crncycode,CurrentDate,tprice,DefaultCurRoundOff);
     end else begin
-      tprice = DivRateToBase1(crncycode,tprice,frrate,torate1,torate2,basrate1,basrate2,DefaultCurRoundOff);
+      //tprice = DivRateToBase1(crncycode,tprice,frrate,torate1,torate2,basrate1,basrate2,DefaultCurRoundOff);
     end;
 L45GetItemPriceDiscount3:;
     price = tprice;
