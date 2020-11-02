@@ -713,3 +713,99 @@ begin
 return;
 end;
 
+
+global procedure DelBlankRowPUDsm()
+begin
+	record PUVc PUr;
+	row PUVc PUrw;
+	integer wn,i,rwcnt;
+	
+	wn = curwindow;
+	getwindowrecord(wn,PUr);
+	rwcnt = matrowcnt(PUr);
+	
+	for(i=0;i<rwcnt;i=i+1)begin
+		matrowget(PUr,i,PUrw);
+		if(blank(PUrw.ArtCode))then begin
+			matrowdelete(PUr,i);
+			i=i-1;
+			rwcnt = rwcnt - 1;
+		end;
+	end;
+	putwindowrecord(wn,PUr);
+	
+	
+return;
+end;
+
+global procedure DelBlankRowSMDsm()
+begin
+	record StockMovVc SMr;
+	row StockMovVc SMrw;
+	integer wn,i,rwcnt;
+	
+	wn = curwindow;
+	getwindowrecord(wn,SMr);
+	rwcnt = matrowcnt(SMr);
+	
+	for(i=0;i<rwcnt;i=i+1)begin
+		matrowget(SMr,i,SMrw);
+		if(blank(SMrw.ArtCode))then begin
+			matrowdelete(SMr,i);
+			i=i-1;
+			rwcnt = rwcnt - 1;
+		end;
+	end;
+	putwindowrecord(wn,SMr);
+	
+	
+return;
+end;
+
+global procedure DelBlankRowSDDsm()
+begin
+	record SDVc SDr;
+	row SDVc SDrw;
+	integer wn,i,rwcnt;
+	
+	wn = curwindow;
+	getwindowrecord(wn,SDr);
+	rwcnt = matrowcnt(SDr);
+	
+	for(i=0;i<rwcnt;i=i+1)begin
+		matrowget(SDr,i,SDrw);
+		if(blank(SDrw.ArtCode))then begin
+			matrowdelete(SDr,i);
+			i=i-1;
+			rwcnt = rwcnt - 1;
+		end;
+	end;
+	putwindowrecord(wn,SDr);
+	
+	
+return;
+end;
+
+global procedure DelBlankRowPODsm()
+begin
+	record POVc POr;
+	row POVc POrw;
+	integer wn,i,rwcnt;
+	
+	wn = curwindow;
+	getwindowrecord(wn,POr);
+	rwcnt = matrowcnt(POr);
+	
+	for(i=0;i<rwcnt;i=i+1)begin
+		matrowget(POr,i,POrw);
+		if(blank(POrw.ArtCode))then begin
+			matrowdelete(POr,i);
+			i=i-1;
+			rwcnt = rwcnt - 1;
+		end;
+	end;
+	putwindowrecord(wn,POr);
+	
+	
+return;
+end;
