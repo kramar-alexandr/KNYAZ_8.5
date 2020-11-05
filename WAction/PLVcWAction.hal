@@ -63,7 +63,7 @@ BEGIN
     case "ArtCode": res = PLDClassArtCodeEFAfter(wn,changed);
     case "PLCode": res = PLDClassPLCodeEFAfter(wn,changed);
   end;
-  PLDClassAfterEditField = res;
+  PL2DClassAfterEditField = res;
   RETURN;
 END;
 
