@@ -46,6 +46,28 @@ begin
   return;
 end; //Edit***************************Sasha2,13:36 07.12.2016 }
 
+
+global
+procedure PriceRClassReportDefaults(Integer wn)
+begin
+  record RcVc RepSpec;
+  record VarietyBlock Varb;
+  
+  BlockLoad(Varb);  
+  DeselectWindow(wn,false);
+  GetWindowRecord(wn,RepSpec);
+  ReportDefaults(RepSpec,"PriceRClass");  
+  RepSpec.flags[2] = 2;// Edit ************************** BPI Ukraine - KramarAlexandr - 04, 05 11 2020 y. at 5:03:23 PM
+  RepSpec.flags[8] = 1;
+  RepSpec.flags[9] = 1;  
+  RepSpec.flags[7] = Varb.AutoVarietyDef;
+  PutWindowRecord(wn,RepSpec);
+  SelectWindow(wn);
+  return;
+end;
+
+
+
 global
 procedure INRClassReportDefaults(Integer wn)
 begin
