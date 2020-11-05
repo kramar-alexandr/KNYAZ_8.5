@@ -54,6 +54,19 @@ BEGIN
   RETURN;
 END;
 
+global
+function Boolean PL2DClassAfterEditField(Integer wn,string fieldname,Integer fn, Integer rownr,Integer changed)
+BEGIN
+  Boolean res;
+
+  switch (fieldname) begin
+    case "ArtCode": res = PLDClassArtCodeEFAfter(wn,changed);
+    case "PLCode": res = PLDClassPLCodeEFAfter(wn,changed);
+  end;
+  PLDClassAfterEditField = res;
+  RETURN;
+END;
+
 procedure PLDClassSpecPasteNameArtCode(Integer wn,var string psname)
 begin
   record PLVc PLr;
