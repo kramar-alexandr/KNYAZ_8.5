@@ -1094,7 +1094,7 @@ begin
           end;
         end;
         
-        salaryCommission = 7.00/CountObjects(cashierList);
+        salaryCommission = 800/CountObjects(cashierList);
         RECORDNEW(TRr);
         TRr.RegDate = CurrentDate;
         TRr.RegTime = CurrentTime;
@@ -1128,16 +1128,16 @@ begin
             end;
             persobj = left(persobj,len(persobj)-1);
             
-            if (IncomeTotSum<>0) then begin
+            //if (IncomeTotSum<>0) then begin
               GetAccName("929",tstr,60);
-              AddEuroCurncyTrRow(TRr,"929",persobj,"",tstr,Round((IncomeTotSum/100)*salaryCommission,DefaultRoundMode),false,true,TrTotsum,BaseCurb.BaseCur1,blankval,blankval,blankval,blankval,blankval,blankval,blankval,-1,false,"");
+              AddEuroCurncyTrRow(TRr,"929",persobj,"",tstr,Round(salaryCommission,DefaultRoundMode),false,true,TrTotsum,BaseCurb.BaseCur1,blankval,blankval,blankval,blankval,blankval,blankval,blankval,-1,false,"");
               GetAccName("66",tstr,60);
-              AddEuroCurncyTrRow(TRr,"66",persobj,"",tstr,Round((IncomeTotSum/100)*salaryCommission,DefaultRoundMode),false,false,TrTotsum,BaseCurb.BaseCur1,blankval,blankval,blankval,blankval,blankval,blankval,blankval,-1,false,"");
-            end else begin
-              LogText(0,"IVCash total sum for " & salaryDateMin & " is 0");
-            end;
+              AddEuroCurncyTrRow(TRr,"66",persobj,"",tstr,Round(salaryCommission,DefaultRoundMode),false,false,TrTotsum,BaseCurb.BaseCur1,blankval,blankval,blankval,blankval,blankval,blankval,blankval,-1,false,"");
+           // end else begin
+            //  LogText(0,"IVCash total sum for " & salaryDateMin & " is 0");
+            //end;
             
-            cashierSelfSaleSum = customerSum[curObj];
+            /*cashierSelfSaleSum = customerSum[curObj];
             switch (CurrentCompany) begin
               case 1:
                 selfSaleAcc = "3722";
@@ -1151,12 +1151,12 @@ begin
               AddEuroCurncyTrRow(TRr,selfSaleAcc,persobj,"",tstr,cashierSelfSaleSum,false,false,TrTotsum,BaseCurb.BaseCur1,blankval,blankval,blankval,blankval,blankval,blankval,blankval,-1,false,"");
             end;
             cashierWasHandledF[curObj] = true;
-            
+            */
             ExtractObj(cashierList,pos,curObj);
           end;
         end;
         
-        GetVectorTags(customerSum,indexes);
+        /*GetVectorTags(customerSum,indexes);
         for (i=0;i<indexes.length;i=i+1) begin
           if (cashierWasHandledF[indexes[i]]==false) then begin
             cashierSelfSaleSum = customerSum[indexes[i]];
@@ -1181,7 +1181,7 @@ begin
               end;
             end;
           end;
-        end;
+        end;*/
         
         if (MatRowCnt(TRr)>0) then begin
           TR2r.IntYc = intYcNum;
