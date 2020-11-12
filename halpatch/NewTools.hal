@@ -1252,7 +1252,7 @@ begin
     
     
   
-    if (SetCompany(1,false)) then begin
+    SetCompany(1,false);
       LogText(0,"Switched to company #" & CurrentCompany);
       BlockLoad(CDBl);
       logtext(0,"CustTimeTableAction " & CDBl.DaySessionStartTime);
@@ -1264,8 +1264,7 @@ begin
         RECORDNEW(RepSpec);
         CalcCashierSalaryAndMakeTransaction(RepSpec);
       end;
-    end;
-    if (SetCompany(3,false)) then begin
+   SetCompany(3,false);
       LogText(0,"Switched to company #" & CurrentCompany);
       BlockLoad(CDBl);
       logtext(0,"CustTimeTableAction " & CDBl.DaySessionStartTime);
@@ -1277,7 +1276,6 @@ begin
         RECORDNEW(RepSpec);
         CalcCashierSalaryAndMakeTransaction(RepSpec);
       end;
-    end;
     
     ResetCompany(oldComp);
     LogText(0,"Returned to company #" & CurrentCompany);
