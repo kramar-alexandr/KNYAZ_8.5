@@ -17,12 +17,6 @@ begin
 return;
 end;
 
-global procedure CustTimeTableAction()
-begin		
-
-return;
-end;
-
 global procedure POSAudit_ButtonClick()
 begin		
 
