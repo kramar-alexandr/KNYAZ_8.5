@@ -1250,17 +1250,29 @@ begin
     end;
     curtnew = StringToTime(hr & ":" & mn);
     
+    
+  
     if (SetCompanyCode("1",false)) then begin
-      //LogText(0,"Switched to company #" & CurrentCompany);
+      LogText(0,"Switched to company #" & CurrentCompany);
       BlockLoad(CDBl);
+      logtext(0,"CustTimeTableAction " & CDBl.DaySessionStartTime);
+      logtext(0,"DaySessionEndTime " & CDBl.DaySessionEndTime);
+      logtext(0,"curtnew " & curtnew);
+      logtext(0,"AddMinutes(CDBl.DaySessionEndTime,15) " & AddMinutes(CDBl.DaySessionEndTime,15));
+      
       if (CDBl.DaySessionStartTime!=blankt and CDBl.DaySessionEndTime!=blankt and curtnew==AddMinutes(CDBl.DaySessionEndTime,15)) then begin
         RECORDNEW(RepSpec);
         CalcCashierSalaryAndMakeTransaction(RepSpec);
       end;
     end;
     if (SetCompanyCode("3",false)) then begin
-      //LogText(0,"Switched to company #" & CurrentCompany);
+      LogText(0,"Switched to company #" & CurrentCompany);
       BlockLoad(CDBl);
+      logtext(0,"CustTimeTableAction " & CDBl.DaySessionStartTime);
+      logtext(0,"DaySessionEndTime " & CDBl.DaySessionEndTime);
+      logtext(0,"curtnew " & curtnew);
+      logtext(0,"AddMinutes(CDBl.DaySessionEndTime,15) " & AddMinutes(CDBl.DaySessionEndTime,15));
+      
       if (CDBl.DaySessionStartTime!=blankt and CDBl.DaySessionEndTime!=blankt and curtnew==AddMinutes(CDBl.DaySessionEndTime,15)) then begin
         RECORDNEW(RepSpec);
         CalcCashierSalaryAndMakeTransaction(RepSpec);
@@ -1268,7 +1280,7 @@ begin
     end;
     
     ResetCompany(oldComp);
-    //LogText(0,"Returned to company #" & CurrentCompany);
+    LogText(0,"Returned to company #" & CurrentCompany);
 		
 return;
 end; //Edit***************************Sasha2,17:59 13.03.2017 }
