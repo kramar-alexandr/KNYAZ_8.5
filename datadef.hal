@@ -143,9 +143,6 @@ EndBlock;
 
  RecordAddBegin(StockMovVc,"StockMovVc_Custom");
     ArrayField(InStock1,M4Long,0,0); 	//Edit*************************** Ira 18.11.20
- EndRecordAdd; 
-  
- RecordAddBegin(StockMovVc,"StockMovVc_Custom");
     ArrayField(InStock2,M4Long,0,0); 	//Edit*************************** Ira 18.11.20
  EndRecordAdd; 
 
