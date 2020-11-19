@@ -760,6 +760,108 @@ begin
 return;
 end;
 
+
+global procedure CheckStockMovement()
+begin
+	record StockMovVc SMr;
+	record INVc INr;
+	record ItemStatusVc ISr1, ISr2;
+	//record I ISr;
+	row StockMovVc SMrw;
+	integer wn,i,rwcnt;
+	boolean b;
+	
+	wn = curwindow;
+	getwindowrecord(wn,SMr);
+
+	
+	b = true;
+	
+	if(blank(SMr.FrLocation))then begin
+		messagebox(0, "Ћткуда");
+		b = false;
+	end;
+	
+	if(blank(SMr.ToLocation))then begin
+		messagebox(0, "Људа");
+		b = false;
+	end;
+	
+	if(b)then begin
+		//messagebox(0, "OK");
+		
+		i = 0;
+		
+		 
+		messagebox(0,SMr.FrLocation );
+		messagebox(0,SMr.ToLocation );
+		while(LoopMain(INr, 1, true)) begin
+			SMrw.ArtCode = INr.Code;
+
+			 ISr1.Code = INr.Code;
+			 ISr2.Code = INr.Code;
+			 
+			 ISr1.Location = SMr.FrLocation;
+			 ISr2.Location = SMr.ToLocation;
+			
+			
+			 if(readfirstmain(ISr1,1,true) and ISr1.Instock > 0)then begin // and readfirstmain(ISr2.Location > 0)) then begin
+				
+				//messagebox(0, ISr2.Instock);
+				
+				
+				readfirstmain(ISr2,1,true);
+				
+						
+				
+				SMrw.InStock1 = ISr1.Instock;
+				SMrw.InStock2 = ISr2.Instock;
+				
+				MatRowPut(SMr, i, SMrw);
+				
+				i = i + 1;
+			 end;
+			 
+			// */
+			
+			
+		
+			//if(ISr.Location==SMr.FrLocation) then begin
+				//ISr.Code = INr.Instock;
+				
+			//MatRowPut(ISr, i, ISr.Instock);
+			//MatRowPut(INr, i, ISr.);
+			
+			//end;
+			end;
+		putwindowrecord(wn,SMr);
+	end;
+	
+	/*
+	EditField(h,v+=vs,80, "‘о склада",Normal,FrLocation,false,LocationSClass);
+	EditField(h3,v,80,"на склад",Normal,ToLocation,false,LocationSClass);
+
+
+	wn = curwindow;
+	getwindowrecord(wn,SMr);
+	rwcnt = matrowcnt(SMr);
+	
+	for(i=0;i<rwcnt;i=i+1)begin
+		matrowget(SMr,i,SMrw);
+		if(blank(SMrw.ArtCode))then begin
+			matrowdelete(SMr,i);
+			i=i-1;
+			rwcnt = rwcnt - 1;
+		end;
+	end;
+	putwindowrecord(wn,SMr);
+	
+	//*/
+return;
+end;
+
+
+
 global procedure DelBlankRowSMDsm()
 begin
 	record StockMovVc SMr;

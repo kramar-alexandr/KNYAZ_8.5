@@ -3743,9 +3743,13 @@ begin
     MatCol(1,210,"Получ.кол.",0,Quant,true,0);
     MatCol(1,272,"Наименование",0,Spec,false,0);
   end;
+  MatCol(1,-260,"Скл. 1",0,InStock1,true,0);			//Edit*************************** Ira 18.11.20
+  MatCol(1,-160,"Скл. 2",0,InStock2,true,0);			//Edit*************************** Ira 18.11.20
+  /*
   MatCol(1,-260,"Старая цена",0,OldPrice,true,0);
   MatCol(1,-160,"Накл. расх.",0,ExtraSCost,true,0);
   MatCol(1,-80,"Новая цена",0,NewPrice,true,0);
+  */
   Flip(flipnr); flipnr = flipnr + 1;
   if (HasVarieties) then begin
     MatCol(1,86,"Треб.кол.",0,OrdQuant,true,MATVARINSClass);
@@ -3902,7 +3906,12 @@ begin
   EditField(h,v+=vs,-40,"",Normal,ToAddr2,false,0);
   EditField(h,v+=vs,-40,"",Normal,ToAddr3,false,0);
   EditField(h,v+=vs,-40,"",Normal,ToAddr4,false,0);
+  
   SpecialMenu("Удалить пустые строки",'',4,"DelBlankRowSMDsm");// Edit ************************** BPI Ukraine - KramarAlexandr - 01, 02 11 2020 y. at 11:58:23 AM
+  SpecialMenu("Проверить перемещение",'',5,"CheckStockMovement");// Edit ************************** BPI Ukraine - KramarAlexandr - 01, 02 11 2020 y. at 11:58:23 AM
+  
+  
+  SpecialMenu("Стоимость в старой цене за единицу",'=',0,"StockMovFillFIFODsm");
   SpecialMenu("Стоимость в старой цене за единицу",'=',0,"StockMovFillFIFODsm");
   SpecialMenu("Поиск товара",'f',1,"ItemSearchDsm");
   if (HasIntegratedNL) then begin
