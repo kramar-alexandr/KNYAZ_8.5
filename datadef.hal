@@ -143,7 +143,7 @@ EndBlock;
 
  RecordAddBegin(StockMovVc,"StockMovVc_Custom");
     ArrayField(InStock1,M4UVal,0,0); 	//Edit*************************** Ira 18.11.20
-    ArrayField(InStock2,M45Val,0,0); 	//Edit*************************** Ira 18.11.20
+    ArrayField(InStock2,M4UVal,0,0); 	//Edit*************************** Ira 18.11.20
  EndRecordAdd; 
 
 

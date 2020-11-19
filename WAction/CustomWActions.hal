@@ -5,7 +5,7 @@ remote updating function Integer ExecuteCrateIPFromIVD(record IVVc,var longint);
 external function LongInt CheckDaySessionCashiersIsValid(date,time);
 external function Integer CountObjects(string);
 external procedure ExtractObj(string,var Integer,var string); 
-external procedure  StockMovVc_CheckStockMovement(var record StockMovVc);
+remote procedure  StockMovVc_CheckStockMovement(var record StockMovVc);
 
 SetLangMode(LangRussian,"RUS",0); 
 
