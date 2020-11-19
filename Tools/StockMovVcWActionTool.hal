@@ -572,7 +572,7 @@ begin
 	
 	i = 0;
 
-	while(LoopMain(INr, 2, true)) begin
+	while(LoopMain(INr, 1, true)) begin
 		SMrw.ArtCode = INr.Code;
 		
 		ISr1.Code = INr.Code;
@@ -582,6 +582,9 @@ begin
 		ISr2.Location = SMr.ToLocation;
 			
 		if(readfirstmain(ISr1,2,true) and ISr1.Instock > 0)then begin
+			
+			readfirstmain(ISr2, 2, true);
+			
 			SMrw.InStock1 = ISr1.Instock;
 			SMrw.InStock2 = ISr2.Instock;
 				

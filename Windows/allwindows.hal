@@ -3911,7 +3911,6 @@ begin
   
   SpecialMenu("Удалить пустые строки",'',4,"DelBlankRowSMDsm");// Edit ************************** BPI Ukraine - Ira - 01, 02 11 2020 y. at 11:58:23 AM
   SpecialMenu("Заполнить остатки на перемещение",'',5,"CheckStockMovement");// Edit ************************** BPI Ukraine - Ira - 01, 02 11 2020 y. at 11:58:23 AM
-  SpecialMenu("Заполнить остатки на перемещение1",'',5,"CheckStockMovement1");// // Edit ************************** BPI Ukraine - Ira - 01, 02 11 2020 y. at 11:58:23 AM
   
   SpecialMenu("Стоимость в старой цене за единицу",'=',0,"StockMovFillFIFODsm");
   SpecialMenu("Стоимость в старой цене за единицу",'=',0,"StockMovFillFIFODsm");
