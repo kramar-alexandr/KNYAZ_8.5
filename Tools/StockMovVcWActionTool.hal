@@ -20,6 +20,7 @@ external updating procedure StockMovUpdateItemHist(record StockMovVc,record Stoc
 external updating procedure StockMovUpdateStock(record StockMovVc,record StockMovVc,Boolean,Boolean,Boolean);
 external updating procedure SetPositionStatus(string,Integer);
 external procedure AddToStrArray(string,var array string);
+//remote function Boolean StockMovVc_PasteArtCode(var record StockMovVc,Integer,Integer,var array string);
 
 
 global
@@ -561,7 +562,6 @@ end;
 
 
 // By Ira
-
 global
  procedure StockMovVc_CheckStockMovement(var record StockMovVc SMr)
 begin
@@ -569,6 +569,7 @@ begin
 	record ItemStatusVc ISr1, ISr2;
 	row StockMovVc SMrw;
 	integer i;
+	array string 255 aWarning;
 	
 	i = 0;
 
@@ -589,6 +590,8 @@ begin
 			SMrw.InStock2 = ISr2.Instock;
 				
 			MatRowPut(SMr, i, SMrw);
+			
+			StockMovVc_PasteArtCode(SMr,i,1,aWarning); 
 				
 			i = i + 1;
 		
