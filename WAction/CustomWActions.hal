@@ -774,6 +774,7 @@ begin
 	boolean b;
 	
 	wn = curwindow;
+	deselectwindow(wn,true);
 	getwindowrecord(wn,SMr);
 
 	

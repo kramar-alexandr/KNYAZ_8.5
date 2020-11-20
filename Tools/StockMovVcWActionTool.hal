@@ -20,7 +20,6 @@ external updating procedure StockMovUpdateItemHist(record StockMovVc,record Stoc
 external updating procedure StockMovUpdateStock(record StockMovVc,record StockMovVc,Boolean,Boolean,Boolean);
 external updating procedure SetPositionStatus(string,Integer);
 external procedure AddToStrArray(string,var array string);
-//remote function Boolean StockMovVc_PasteArtCode(var record StockMovVc,Integer,Integer,var array string);
 
 
 global
