@@ -10,6 +10,8 @@ BEGIN
   string 255 docname,repclass;
   Boolean testf,prntdf,remf;
   
+  logtext(0,"srlIVLPrint   ==========");
+  
   testf = true;
   
   docname = "InvForm";// Edit ************************** BPI Ukraine - KramarAlexandr - 01, 23 11 2020 y. at 10:33:15 AM
