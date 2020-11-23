@@ -41,6 +41,9 @@ begin
   string 30 langcode,langcod2;
   Integer intdocnr;
   
+  
+  logtext(0,"GetInvoiceFormCodeGetInvoiceFormCodeGetInvoiceFormCode");
+  
   langcode = IVr.LangCode;
   langcod2 = IVr.ShipMode;
   switch (IVr.InvType) begin
