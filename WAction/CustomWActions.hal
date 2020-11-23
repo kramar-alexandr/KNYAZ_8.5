@@ -792,6 +792,31 @@ begin
 return;
 end;
 
+// by Ira
+global procedure DelBlankRowIVDsm()
+begin
+	record IVVc IVr;
+	row IVVc IVrw;
+	integer wn,i,rwcnt;
+	
+	wn = curwindow;
+	getwindowrecord(wn,IVr);
+	rwcnt = matrowcnt(IVr);
+	
+	for(i=0;i<rwcnt;i=i+1)begin
+		matrowget(IVr,i,IVrw);
+		if(blank(IVrw.ArtCode))then begin
+			matrowdelete(IVr,i);
+			i=i-1;
+			rwcnt = rwcnt - 1;
+		end;
+	end;
+	putwindowrecord(wn,IVr);
+	
+	
+return;
+end;
+
 
 global procedure DelBlankRowSMDsm()
 begin

@@ -2692,6 +2692,7 @@ if (true) then begin
     if (HasCustomerStatusReport) then begin 
     SpecialMenu("Справка по клиенту",'e',0,"CUStatusIVDsm"); 
     end;
+	SpecialMenu("Удалить пустые строки",'',0,"DelBlankRowIVDsm");// Edit ************************** BPI Ukraine - Ira - 01, 23 11 2020 y. at 11:58:23 AM
     SpecialMenu("Поиск товара",'f',1,"ItemSearchDsm");
     SpecialMenu("Статус счета-фактуры",'r',2,"IVInfoIVDsm");
     SpecialMenu("Добавить налог на окружающую среду",' ',19,"RepaIVsm");
