@@ -639,16 +639,19 @@ begin
   record IVVc credIVr;
   Boolean testf,errf;
 	
-	logtext(0,"IVDClassPrintIVDClassPrintIVDClassPrintIVDClassPrintIVDClassPrint");
-	docname = "InvForm";
-	RecordActionIV_Print(IVr,"",docname,0,true);//RecidAction(rlIVLPrint,IVVc,recid,NIL);
-	PrintDocument(IVr,docname,true);
-	goto LIVDClassPrintErr;
+	
 	
   BlockLoad(LMb); 
   normalmode = 0;//Rs_normal
   DeselectWindow(wn,false);
   GetWindowRecord(wn,IVr); 
+  
+  logtext(0,"IVDClassPrintIVDClassPrintIVDClassPrintIVDClassPrintIVDClassPrint");
+	docname = "InvForm";
+	RecordActionIV_Print(IVr,"",docname,0,true);//RecidAction(rlIVLPrint,IVVc,recid,NIL);
+	PrintDocument(IVr,docname,true);
+	goto LIVDClassPrintErr;
+  
   testf = true;
   if (PreviewFlag==false) then begin
     err = TestEinvoiceinQueue(IVr.SerNr);
