@@ -3648,7 +3648,7 @@ begin
   if (HasMultiLocations) then begin
     EditField(h,v+=vs,80, "Со склада",Normal,FrLocation,false,LocationSClass);
     if (IsEnterprise) then begin
-    EditField(h2,v,80,"через склад",Normal,ThrouLocation,false,LocationSClass);
+ //   EditField(h2,v,80,"через склад",Normal,ThrouLocation,false,LocationSClass);    //Edit*************************** Ira 18.11.20 
     end;
     EditField(h3,v,80,"на склад",Normal,ToLocation,false,LocationSClass);
   end;
@@ -3723,25 +3723,27 @@ begin
     end;
     end;
     if (HasThrouLocation) then begin
-    MatCol(1,250,"Отправ. кол-во",0,SentQuant,true,0);
+ //   MatCol(1,250,"Отправ. кол-во",0,SentQuant,true,0);		//Edit*************************** Ira 18.11.20
     end;
-    MatCol(1,300,"Получ. кол-во",0,Quant,true,0);
+ //   MatCol(1,300,"Получ. кол-во",0,Quant,true,0); 			//Edit*************************** Ira 18.11.20
     MatCol(1,350,"Описание",0,Spec,false,0);
   end else begin
     MatCol(1,32,"Товар",0,ArtCode,false,INSClass);
     Flip(flipnr);  flipnr = flipnr + 1;
+	
+	MatCol(1,170,"Наименование",0,Spec,false,0);  		//Edit*************************** Ira 18.11.20
+	
     if (HasVarieties) then begin
-      MatCol(1,86,"Треб.кол.",0,OrdQuant,true,MATVARINSClass);
+      MatCol(1,-160,"Треб.кол.",0,OrdQuant,true,MATVARINSClass);
     end else begin
       if (HasThrouLocation or BuildProductCode=="StandardHealthcare") then begin
-      MatCol(1,86,"Треб.кол.",0,OrdQuant,true,0);
+      MatCol(1,-160,"Треб.кол.",0,OrdQuant,true,0);
     end;
     end;
     if (HasThrouLocation) then begin
-    MatCol(1,148,"Отпр.кол.",0,SentQuant,true,0);
+ //   MatCol(1,148,"Отпр.кол.",0,SentQuant,true,0);			//Edit*************************** Ira 18.11.20
     end;
-    MatCol(1,210,"Получ.кол.",0,Quant,true,0);
-    MatCol(1,272,"Наименование",0,Spec,false,0);
+ //   MatCol(1,210,"Получ.кол.",0,Quant,true,0); 			//Edit*************************** Ira 18.11.20
   end;
   MatCol(1,-80,"Скл. 1",0,InStock1,true,0);			//Edit*************************** Ira 18.11.20
   MatCol(1,-40,"Скл. 2",0,InStock2,true,0);			//Edit*************************** Ira 18.11.20

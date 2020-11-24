@@ -587,6 +587,13 @@ begin
 			
 			SMrw.InStock1 = ISr1.Instock;
 			SMrw.InStock2 = ISr2.Instock;
+			if(blank(SMrw.OrdQuant)) then begin
+				SMrw.OrdQuant = 0;
+			end;
+				
+			if(blank(SMrw.Quant)) then begin
+				SMrw.Quant = 0;
+			end;
 				
 			MatRowPut(SMr, i, SMrw);
 			
