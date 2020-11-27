@@ -68,7 +68,7 @@ begin
   boolean isLogedIn;
   
   logtext(0,"WebIsLogIn before " & currentuser);
-  
+  logtext(0,"WebRemoteIPAddress " & WebRemoteIPAddress);
   isLogedIn = WebLoginStatus==3;
   logtext(0,"isLogedIn " & isLogedIn);
   
@@ -152,6 +152,7 @@ if(WebLoginStatus==3)then begin
 	//location = webgetarg("location");
 	User.Code = WebGetArg("foruser");
 	logtext(0,"WebGetArg foruser " & WebGetArg("foruser"));
+	logtext(0,"WebRemoteIPAddress " & WebRemoteIPAddress);
 	if(ReadFirstMain(User,1,true)) then begin
 		location = User.Location;
 	end else begin
@@ -243,6 +244,7 @@ begin
 		
 		SetCompany(5,false);
 		logtext(0,"WebSendInvent");
+		logtext(0,"WebRemoteIPAddress " & WebRemoteIPAddress);
 		USr.Code = webgetarg("foruser");
 		readfirstmain(USr,1,true);
 		webgetpostdata(postdata);
@@ -298,6 +300,7 @@ begin
 		end;
 	
 		logtext(0,"IVr.SerNr " & IVr.SerNr);
+		logtext(0,"WebRemoteIPAddress " & WebRemoteIPAddress);
 	
 		
 		if(IVr.SerNr>-1)then begin
@@ -339,6 +342,7 @@ begin
 		SetCompany(5,false);
 	
 		logtext(0,"WebSendSale");
+		logtext(0,"WebRemoteIPAddress " & WebRemoteIPAddress);
 		USr.Code = currentuser;
 		readfirstmain(USr,1,true);
 		webgetpostdata(postdata);
@@ -405,6 +409,7 @@ begin
 		end;
 	
 		logtext(0,"IVr.SerNr " & IVr.SerNr);
+		logtext(0,"WebRemoteIPAddress " & WebRemoteIPAddress);
 	
 		if(IVr.SerNr>-1)then begin
 			OKFlag = JSONGet(jsonobj,"OKFlag");
@@ -471,6 +476,7 @@ if(WebLoginStatus==3)then begin
 			if(IVr.InvDate<currentdate)then begin testf = false; end;
 			//if(IVr.OKFlag==0) then begin testf = false; end;
 			logtext(0,IVr.SerNr & "  " & testf);
+			logtext(0,"WebRemoteIPAddress " & WebRemoteIPAddress);
 			
 			credinv = "0";
 			
@@ -766,6 +772,7 @@ if(WebLoginStatus==3)then begin
 		AddTextToArea("\"invoice\":[",resarea);
 		IVr.OKFlag = 0;
 		logtext(0,"OKFlag:" & USr.Code);
+		logtext(0,"WebRemoteIPAddress " & WebRemoteIPAddress);
 		if(ReadLastkey("OKFlag:" & USr.Code,IVr,1,true))begin
 			logtext(0,"IVr " & IVr.SerNr);
 			find = true;
