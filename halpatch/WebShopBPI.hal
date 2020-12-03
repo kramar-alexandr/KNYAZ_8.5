@@ -309,6 +309,13 @@ begin
 			IVr.TransDate = currentdate;
 			IVr.InvDate = currentdate;
 			recordstore(IVr,true);
+			
+			
+			if(OKFlag=="true")then begin
+				recordcopy(oldIVr,IVr);
+					IVr.OKFlag = 1;
+				recordupdate(oldIVr,IVr,true);
+			end;
 		end;
 lendinvent:;
 		if(res>-1) then begin 
