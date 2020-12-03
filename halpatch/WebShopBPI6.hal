@@ -252,6 +252,11 @@ begin
 			IVr.InvDate = currentdate;
 			recordstore(IVr,true);
 			
+			if(OKFlag=="true")then begin
+				recordcopy(oldIVr,IVr);
+					IVr.OKFlag = 1;
+				recordupdate(oldIVr,IVr,true);
+			end;
 			
 			/*if(OKFlag=="true") then begin
 				logtext(0,"done falg  " & JSONGet(jsonobj,"DoneFlag"));
