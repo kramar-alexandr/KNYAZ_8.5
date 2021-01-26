@@ -100,6 +100,8 @@ row StockMovVc StockMovrw;
 vector integer moveQuant;
 boolean TrHs, testf;
 integer i;
+record PLVc PLr;
+val price;
 
 if(WebLoginStatus==3)then begin
 
@@ -109,6 +111,7 @@ if(WebLoginStatus==3)then begin
 	//location = webgetarg("location");
 	User.Code = WebGetArg("foruser");
 	logtext(0,"WebGetArg foruser " & WebGetArg("foruser"));
+	logtext(0,"WebRemoteIPAddress " & WebRemoteIPAddress);																											 
 	if(ReadFirstMain(User,1,true)) then begin
 		location = User.Location;
 	end else begin
@@ -143,13 +146,21 @@ if(WebLoginStatus==3)then begin
 			if(INr.Terminated==0 and INr.NotForSales==0)then begin
 				if(readfirstmain(ISr,2,true) or moveQuant[INr.Code]>0)then begin
 					if(true)then begin// Edit ************************** BPI Ukraine - KramarAlexandr - 01, 31 08 2020 y. at 3:37:45 PM
+						price = INr.UPrice1;
+						if(nonblank(User.MinPLCode))then begin
+							PLr.PLCode = User.MinPLCode;
+							PLr.ArtCode = INr.Code;
+							if(readfirstmain(PLr,2,true))then begin
+								price = PLr.ExVatPrice;
+							end;
+						end;
 						AddTextToArea("{",resarea);
 						addParamToJSONArea("ArtCode",NormalizeStrToJson(INr.Code),resarea);
 						addParamToJSONArea("BarCode",NormalizeStrToJson(INr.BarCode),resarea);
 						addParamToJSONArea("AlternativeCode",NormalizeStrToJson(INr.AlternativeCode),resarea);
 						addParamToJSONArea("Name",NormalizeStrToJson(INr.Name),resarea);
 						addParamToJSONArea("Instock",NormalizeStrToJson(ISr.Instock),resarea);
-						addParamToJSONArea("Price",NormalizeStrToJson(INr.UPrice1),resarea);
+						addParamToJSONArea("Price",NormalizeStrToJson(price),resarea);
 						addParamToJSONArea("InMove",NormalizeStrToJson(moveQuant[INr.Code]),resarea);
 						delLastComaInArea(resarea);
 						AddTextToArea("},",resarea);
@@ -191,6 +202,7 @@ begin
 		
 		SetCompany(8,false);
 		logtext(0,"WebSendInvent");
+		logtext(0,"WebRemoteIPAddress " & WebRemoteIPAddress);																											
 		USr.Code = webgetarg("foruser");
 		readfirstmain(USr,1,true);
 		webgetpostdata(postdata);
@@ -220,6 +232,7 @@ begin
 			
 			IVr.SalesMan = USr.Code;
 			IVr.Location = USr.Location;
+			IVr.SalesGroup = USr.SalesGroup;																	 
 			IVr.Sum4 = stringtoval(JSONGet(jsonobj,"Sum4"),m4val);
 			rwcnt = JSONCountChildren(jsonobj,"items");
 			for(i=0;i<rwcnt;i=i+1)begin
@@ -245,6 +258,7 @@ begin
 		end;
 	
 		logtext(0,"IVr.SerNr " & IVr.SerNr);
+		logtext(0,"WebRemoteIPAddress " & WebRemoteIPAddress);																												
 	
 		
 		if(IVr.SerNr>-1)then begin
@@ -255,10 +269,10 @@ begin
 			recordstore(IVr,true);
 			
 			
-			/*if(OKFlag=="true") then begin
+				if(OKFlag=="true") then begin
 				logtext(0,"done falg  " & JSONGet(jsonobj,"DoneFlag"));
 				RecordCopy(oldIVr,IVr);
-				//IVr.OKFlag = 1;
+				IVr.OKFlag = 1;
 				
 				
 				rwcnt = matrowcnt(IVr);
@@ -280,7 +294,7 @@ begin
 					artCode = IVrw.Spec;
 				end;
 				RecordUpdate(oldIVr,IVr,true);				
-			end;*/
+			end;
 			
 		end;
 lendinvent:;	
@@ -315,6 +329,7 @@ begin
 		SetCompany(8,false);
 	
 		logtext(0,"WebSendSale");
+		logtext(0,"WebRemoteIPAddress " & WebRemoteIPAddress);																										
 		USr.Code = currentuser;
 		readfirstmain(USr,1,true);
 		webgetpostdata(postdata);
@@ -381,6 +396,7 @@ begin
 		end;
 	
 		logtext(0,"IVr.SerNr " & IVr.SerNr);
+		logtext(0,"WebRemoteIPAddress " & WebRemoteIPAddress);																											
 	
 		if(IVr.SerNr>-1)then begin
 			OKFlag = JSONGet(jsonobj,"OKFlag");
@@ -450,6 +466,7 @@ if(WebLoginStatus==3)then begin
 			if(IVr.InvDate<currentdate)then begin testf = false; end;
 			//if(IVr.OKFlag==0) then begin testf = false; end;
 			logtext(0,IVr.SerNr & "  " & testf);
+			logtext(0,"WebRemoteIPAddress " & WebRemoteIPAddress);																											 
 			
 			credinv = "0";
 			
@@ -544,8 +561,9 @@ global webpublic procedure WebGetUsers8()
 begin
 string 50 location;
 area resarea;
-record UserVc USr;
+record UserVc USr,curUSr;
 record DepVc Depr;
+boolean testf;							
 
 	if(WebLoginStatus==3)then begin
 
@@ -553,10 +571,16 @@ record DepVc Depr;
 
 		SetCompany(8,false);
 	
+			curUSr.Code = currentuser;
+			readfirstmain(curUSr,1,true);
 			AddTextToArea("{",resarea);
 			AddTextToArea("\"users\":[",resarea);
 			while(loopmain(USr,1,true))begin
-					if(USr.AccessGroup=="SALE") then begin
+					testf  = true;
+					if(USr.AccessGroup!="SALE")then begin testf = false; end;
+					if(nonblank(curUSr.SalesGroup) and USr.SalesGroup!=curUSr.SalesGroup)then begin testf = false; end;
+					
+					if(testf) then begin
 						Depr.Code = USr.Department;
 						readfirstmain(Depr,1,true);
 						AddTextToArea("{",resarea);
@@ -737,6 +761,7 @@ if(WebLoginStatus==3)then begin
 		AddTextToArea("\"invoice\":[",resarea);
 		IVr.OKFlag = 0;
 		logtext(0,"OKFlag:" & USr.Code);
+	  logtext(0,"WebRemoteIPAddress " & WebRemoteIPAddress);																									
 		if(ReadLastkey("OKFlag:" & USr.Code,IVr,1,true))begin
 			logtext(0,"IVr " & IVr.SerNr);
 			find = true;
