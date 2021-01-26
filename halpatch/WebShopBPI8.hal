@@ -273,31 +273,10 @@ begin
 				logtext(0,"done falg  " & JSONGet(jsonobj,"DoneFlag"));
 				RecordCopy(oldIVr,IVr);
 				IVr.OKFlag = 1;
-				
-				
-				rwcnt = matrowcnt(IVr);
-				for(i=0;i<rwcnt;i=i+1)begin
-					matrowget(IVr,i,IVrw);
-					if(IVrw.Quant==0)then begin
-						matrowdelete(IVr,i);
-						i=i-1;
-						rwcnt = rwcnt - 1;
-						IVDchsum(IVr,i);
-						IVSumup(IVr,true);  
-					end;
-				end;
-				SetRecordCheckVc("IVVc");
-				IVVcRecordCheck(IVr,oldIVr,2,3);
-				if(RECORDCHECKLASTERRORNO>0) then begin 
-					res = RECORDCHECKLASTERRORNO; 
-					matrowget(IVr,RECORDCHECKLASTERRORROWNO,IVrw);
-					artCode = IVrw.Spec;
-				end;
 				RecordUpdate(oldIVr,IVr,true);				
 			end;
-			
 		end;
-lendinvent:;	
+lendinvent:;
 		if(res>-1) then begin 
 			weboutstring("{\"result\":\"error\",\"SerNr\":\"" & IVr.SerNr & "\",\"error\":\"" & USetStr(res) & " - " & artCode & "\"}");
 		end else begin
@@ -416,8 +395,7 @@ begin
 				end;
 				RecordUpdate(oldIVr,IVr,true);
 		end;
-	
-lendinvent:;
+lendinvent:;	
 		if(res>-1) then begin 
 			weboutstring("{\"result\":\"error\",\"SerNr\":\"" & IVr.SerNr & "\",\"error\":\"" & USetStr(res) & " - " & artCode & "\"}");
 		end else begin
@@ -573,6 +551,7 @@ boolean testf;
 	
 			curUSr.Code = currentuser;
 			readfirstmain(curUSr,1,true);
+			
 			AddTextToArea("{",resarea);
 			AddTextToArea("\"users\":[",resarea);
 			while(loopmain(USr,1,true))begin
