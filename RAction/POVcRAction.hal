@@ -628,7 +628,7 @@ begin
 	
 	POSerNr = POr.SerNr;
 	
-	if (nonblank(POr.SerNr)) then begin
+	if (POr.SerNr>-1) then begin
 		PUr.PONr = POr.SerNr;
 		if (ReadFirstKey("PONr",PUr,1,true)) then begin
 			if (PUr.OKFlag!=1) then begin
