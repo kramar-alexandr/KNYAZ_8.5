@@ -9,6 +9,7 @@ external function Boolean IVVc_PasteSum(var record IVVc,Integer,var Boolean,Inte
 external updating function LongInt IVVcRecordCheck(record IVVc,record IVVc,LongInt,LongInt);
 external procedure IVDchsum(var record IVVc,Integer);
 external procedure IVSumup(var record IVVc,Boolean);
+remote procedure CLOutVc_PasteCurncyCode(var record CLOutVc);
 
 
 procedure addParamToJSONArea(string param, string value, var area req)
@@ -223,6 +224,103 @@ end;
 weboutarea2(resarea);
 return;
 end;
+
+
+
+
+global webpublic procedure WebGetCLCorsp()
+begin
+area resarea;
+record UserVc User;
+record CLCorspVc CLCorspr;
+
+
+if(WebLoginStatus==3)then begin
+
+	SetCompany(5,false);
+	WebSetContentType("application/json; charset=UTF-8");	
+
+	User.Code = WebGetArg("foruser");
+	logtext(0,"WebGetArg foruser " & WebGetArg("foruser"));
+	logtext(0,"WebRemoteIPAddress " & WebRemoteIPAddress);
+	if(ReadFirstMain(User,1,true)) then begin
+		AddTextToArea("{",resarea);
+		AddTextToArea("\"CorspCodes\":[",resarea);
+		while(loopmain(CLCorspr,1,true))begin
+			if (CLCorspr.Closed==0) then begin
+				AddTextToArea("{",resarea);
+				addParamToJSONArea("Code",NormalizeStrToJson(CLCorspr.Code),resarea);
+				addParamToJSONArea("Comment",NormalizeStrToJson(CLCorspr.Comment),resarea);
+				delLastComaInArea(resarea);
+				AddTextToArea("},",resarea);
+			end;
+		end;
+		delLastComaInArea(resarea);
+		AddTextToArea("]",resarea);
+		AddTextToArea("}",resarea);
+	end;
+
+end;
+
+weboutarea2(resarea);
+return;
+end;
+
+
+
+
+
+
+
+global webpublic updating procedure WebSendCLOut()
+begin
+area resarea;
+json jsonobj;
+record UserVc USr;
+record CLOutVc CLOutr;
+row CLOutVc CLOutrw;
+area postdata;
+
+	if(WebLoginStatus==3)then begin
+		SetCompany(5,false);
+		logtext(0,"WebSendCLOut");
+		logtext(0,"WebRemoteIPAddress " & WebRemoteIPAddress);
+		USr.Code = webgetarg("foruser");
+		if (readfirstmain(USr,1,true)) then begin
+			webgetpostdata(postdata);
+			writeareatofile(postdata,"WebSendCLOut.txt",0);
+			jsonobj = ParseJSONArea(postdata);
+		
+			recordnew(CLOutr);
+			CLOutr.SerNr = NextSerNr("CLOutVc",CLOutr.TransDate,-1,false,"");
+			CLOutr.PayMode = "O";
+			CLOutr.ARonTR = 1;
+			CLOutr.CurncyCode = "UAH";
+			CLOutVc_PasteCurncyCode(CLOutr);
+			CLOutr.Total = stringtoval(JSONGet(jsonobj,"Total"),m4val);
+			CLOutr.NetVal = stringtoval(JSONGet(jsonobj,"Total"),m4val);
+			CLOutr.TransDate = CurrentDate;
+			CLOutr.CorspCode = JSONGet(jsonobj,"CorspCode");
+			CLOutr.Comment = JSONGet(jsonobj,"Comment");
+			CLOutr.CorspComment = JSONGet(jsonobj,"CorspComment");
+			
+			if (RecordStore(CLOutr,true))then begin
+				weboutstring("{\"result\":\"ok\",\"SerNr\":\"" & CLOutr.SerNr & "\"}");
+			end;
+		end else begin
+			weboutstring("{\"result\":\"error\",\"foruser\":\"" & webgetarg("foruser") & "\"}");
+		end;
+	
+		logtext(0,"CLOutr.SerNr " & CLOutr.SerNr);
+		logtext(0,"WebRemoteIPAddress " & WebRemoteIPAddress);
+	end;
+return;
+end;
+
+
+
+
+
 
 global webpublic updating procedure WebSendInvent()
 begin
