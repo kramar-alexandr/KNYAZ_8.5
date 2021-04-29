@@ -303,6 +303,7 @@ area postdata;
 			CLOutr.CorspCode = JSONGet(jsonobj,"CorspCode");
 			CLOutr.Comment = JSONGet(jsonobj,"Comment");
 			CLOutr.CorspComment = JSONGet(jsonobj,"CorspComment");
+			CLOutr.Objects = USr.PersObjx;
 			
 			if (RecordStore(CLOutr,true))then begin
 				weboutstring("{\"result\":\"ok\",\"SerNr\":\"" & CLOutr.SerNr & "\"}");
