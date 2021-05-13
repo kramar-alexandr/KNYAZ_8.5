@@ -3647,8 +3647,8 @@ begin
   EditField(h3,v,80,"Дата получения",Normal,TransDate,false,PasteCurDate);
   if (HasMultiLocations) then begin
     EditField(h,v+=vs,80, "Со склада",Normal,FrLocation,false,LocationSClass);
-    if (IsEnterprise) then begin
- //   EditField(h2,v,80,"через склад",Normal,ThrouLocation,false,LocationSClass);    //Edit*************************** Ira 18.11.20 
+    if (IsEnterprise and currentcompany==5) then begin
+			EditField(h2,v,80,"через склад",Normal,ThrouLocation,false,LocationSClass);    //Edit*************************** Ira 18.11.20 
     end;
     EditField(h3,v,80,"на склад",Normal,ToLocation,false,LocationSClass);
   end;
@@ -3740,10 +3740,12 @@ begin
       MatCol(1,-160,"Треб.кол.",0,OrdQuant,true,0);
     end;
     end;
-    if (HasThrouLocation) then begin
- //   MatCol(1,148,"Отпр.кол.",0,SentQuant,true,0);			//Edit*************************** Ira 18.11.20
-    end;
- //   MatCol(1,210,"Получ.кол.",0,Quant,true,0); 			//Edit*************************** Ira 18.11.20
+		if (currentcompany==5) then begin
+			if (HasThrouLocation) then begin
+				MatCol(1,148,"Отпр.кол.",0,SentQuant,true,0);			//Edit*************************** Ira 18.11.20
+			end;
+			MatCol(1,210,"Получ.кол.",0,Quant,true,0); 			//Edit*************************** Ira 18.11.20
+		end;
   end;
   MatCol(1,-80,"Скл. 1",0,InStock1,true,0);			//Edit*************************** Ira 18.11.20
   MatCol(1,-40,"Скл. 2",0,InStock2,true,0);			//Edit*************************** Ira 18.11.20
