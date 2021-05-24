@@ -305,9 +305,9 @@ area postdata;
 			CLOutr.CorspComment = JSONGet(jsonobj,"CorspComment");
 			CLOutr.Objects = USr.PersObjx;
 			
-			if (RecordStore(CLOutr,true))then begin
-				weboutstring("{\"result\":\"ok\",\"SerNr\":\"" & CLOutr.SerNr & "\"}");
-			end;
+			// if (RecordStore(CLOutr,true))then begin
+				// weboutstring("{\"result\":\"ok\",\"SerNr\":\"" & CLOutr.SerNr & "\"}");
+			// end;
 		end else begin
 			weboutstring("{\"result\":\"error\",\"foruser\":\"" & webgetarg("foruser") & "\"}");
 		end;
