@@ -3731,10 +3731,10 @@ begin
     MatCol(1,32,"Товар",0,ArtCode,false,INSClass);
     Flip(flipnr);  flipnr = flipnr + 1;
 	  MatCol(1,170,"Наименование",0,Spec,false,0);  		//Edit*************************** Ira 18.11.20
-    MatCol(1,-200,"Треб.кол.",0,OrdQuant,true,0);
+    MatCol(1,-230,"Треб.кол.",0,OrdQuant,true,0);
 		if (currentcompany==5) then begin
-      MatCol(1,-160,"Отпр.кол.",0,SentQuant,true,0);			//Edit*************************** Ira 18.11.20
-			MatCol(1,-120,"Получ.кол.",0,Quant,true,0); 			//Edit*************************** Ira 18.11.20
+      MatCol(1,-180,"Отпр.кол.",0,SentQuant,true,0);			//Edit*************************** Ira 18.11.20
+			MatCol(1,-130,"Получ.кол.",0,Quant,true,0); 			//Edit*************************** Ira 18.11.20
 		end;
   end;
   MatCol(1,-80,"Скл. 1",0,InStock1,true,0);			//Edit*************************** Ira 18.11.20
