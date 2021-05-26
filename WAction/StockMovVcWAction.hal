@@ -34,6 +34,7 @@ external function LongInt DateDiff(Date,Date);
 external procedure DisplayStrArray(array string);
 remote function string 20 FindCustRouteByLocation(string,string,string);
 external procedure PasteFromSysList(Integer,Integer);// Edit ************************** BPI Ukraine - KramarAlexandr - 01, 26 10 2020 y. at 8:22:29 PM
+remote updating procedure AssignDestPositionOnStockMov(string);
 
 global
 procedure CalcNewPrice(val oldprice,string extra,var val newprice)
@@ -1537,3 +1538,252 @@ begin
 LPrintStockMovInvoices:;  
   return;
 end;
+
+
+
+
+
+function Boolean FindInMathGeneral( string RegisterName, integer mwn, string search, integer from, var integer RowNumber)
+begin					//added -----------------------Dima 12.01.2015
+  row SHVc SHrw;
+	row StockMovVc SMovrw;
+	record SHVc SHr;
+	record StockMovVc SMovr;
+  boolean res;
+  Integer i,rwcnt;
+
+  res=false;
+
+  switch (RegisterName) begin
+    case "SHVc":
+								GetWindowRecord(mwn,SHr); 
+								rwcnt = MatRowCnt(SHr);
+								for (i = from;i<rwcnt;i=i+1) begin
+										MatRowGet(SHr,i,SHrw);
+											if(search==SHrw.ArtCode) then begin
+												RowNumber = i;
+												res = true;
+												goto LFindInMathGeneral;
+											end;		  
+								 end;								
+       
+    case "StockMovVc": 
+								GetWindowRecord(mwn,SMovr);
+								rwcnt = MatRowCnt(SMovr);
+								for (i = from;i<rwcnt;i=i+1) begin
+										MatRowGet(SMovr,i,SMovrw);
+											if(search==SMovrw.ArtCode) then begin
+												RowNumber = i;
+												res = true;
+												goto LFindInMathGeneral;
+											end;		  
+								 end;								
+      
+  end;  
+
+  LFindInMathGeneral:;	
+  FindInMathGeneral = res;
+return;
+end;
+
+
+
+
+
+global 	//Edit-------------Dima  12.01.2015
+updating procedure StockMove_AddOneItemTo()
+begin
+	record INVc INr,INr1;
+	record StockMovVc SMr;
+	row StockMovVc SMrw;
+	record BarcodeVc Barcoder;
+	record RcVc RepSpec;
+	integer wn,mwn,RowNumber,curRow,rwcnt;
+	Boolean key,put;
+	string 30 searchstr;
+	integer sQuant,sSentQuant;
+
+	sSentQuant = 3;	
+  sQuant = 2;
+
+  wn=CurWindow;
+  GetWindowRecord(wn,RepSpec);
+  mwn = RepSpec.flags[0];
+  DeselectWindow(mwn,false);
+  GetWindowRecord(mwn,SMr);
+	rwcnt = MatRowCnt(SMr);
+
+
+	searchstr = RepSpec.f2;
+
+
+	INr1.Code = searchstr;
+	if(ReadFirstMain(INr1,1,true)) then begin
+		INr.Code = INr1.Code;
+		key = true;
+	end else begin
+		RecordClear(INr1);
+		INr1.BarCode = searchstr;
+		if(ReadFirstKey("BarCode",INr1,1,true)) then begin
+			INr.Code = INr1.Code;
+			key = true;
+		end else begin
+			RecordClear(INr1);
+			INr1.AlternativeCode = searchstr;
+			if(ReadFirstKey("AlternativeCode",INr1,1,true)) then begin
+				INr.Code = INr1.Code;
+				key = true;
+			end else begin
+				Barcoder.Barcode = searchstr;
+				if (ReadFirstMain(Barcoder,1,true)) then begin
+					INr.Code = Barcoder.Itemcode;
+					key = true;					
+				end;
+			end;
+		end;
+	end;
+
+	curRow = 0;
+	RowNumber = 0;
+	put = false;
+
+	if(key) then begin
+			while	(curRow < rwcnt) begin	 //we try to find the same item in next rows
+				if(FindInMathGeneral("StockMovVc",mwn,INr.Code,curRow,RowNumber)==true) then begin
+						MatRowGet(SMr,RowNumber,SMrw);
+								if (SMrw.SentQuant < SMrw.OrdQuant) then begin
+									SMrw.SentQuant = SMrw.SentQuant+1;
+									put = true;
+								end;
+								if (put) then begin
+										MatRowPut(SMr,RowNumber,SMrw);
+										PutWindowRecord(mwn,SMr);
+			  						WindowFieldGoto(mwn,SMr,RowNumber,"SentQuant",true);
+										DeselectWindow(mwn,false);									
+										WindowFieldGoto(wn,RepSpec,-1,"f1",false);
+										goto LStockMove_AddOneItemTo;
+								end else begin
+          					curRow = curRow+1; //we try to find the same item in next rows
+								end;
+
+					end else begin
+						Beep;
+						MessageBox(50019,RepSpec.f2);
+						goto LStockMove_AddOneItemTo;
+					end;
+			end;
+			Beep;
+			MessageBox(50019,RepSpec.f2);
+	end else begin
+			Beep;
+			MessageBox(50020,"");
+	end;	
+
+	LStockMove_AddOneItemTo:;
+
+return;  
+end;
+
+
+
+
+procedure UnSelect(integer wn)//Edit----------------------Dima  16.02.2015
+Begin
+	record StockMovVc SMr;
+	row StockMovVc SMrw;
+	record SHVc SHr;
+	row SHVc SHrw;	
+	record RcVc RepSpec;
+	integer mwn,i,rwcnt;
+	string 20 windowClass;	
+
+  GetWindowRecord(wn,RepSpec);
+  mwn = RepSpec.flags[0];
+
+	windowClass = GetWindowClass(mwn);
+
+  switch(windowClass) begin
+  	case "StockMovDClass":		
+  		GetWindowRecord(mwn,SMr);
+			rwcnt = MatRowCnt(SMr);	
+				for(i=0;i<rwcnt;i=i+1) begin
+						MatRowGet(SMr,i,SMrw);
+						MatRowPut(SMr,i,SMrw);
+						PutWindowRecord(mwn,SMr);
+						goto LUnSelect;
+				end;
+		case "SHDClass":		
+  		GetWindowRecord(mwn,SHr);
+			rwcnt = MatRowCnt(SHr);	
+				for(i=0;i<rwcnt;i=i+1) begin
+						MatRowGet(SHr,i,SHrw);
+						MatRowPut(SHr,i,SHrw);
+						PutWindowRecord(mwn,SHr);
+						goto LUnSelect;
+				end;
+	end;			
+					
+LUnSelect:;
+return;
+end;
+
+
+
+
+global		//Edit----------------------Dima  16.02.2015
+function Boolean TableSearchAddition2IClassAfterEditField(Integer wn,string fieldname,Integer fn,Integer rownr,Integer changed)
+BEGIN
+	record RcVc RepSpec;
+	boolean res;
+
+	GetWindowRecord(wn,RepSpec);
+	if (nonblank(RepSpec.f2)) then begin
+		UnSelect(wn);
+	end;
+
+  TableSearchAddition2IClassAfterEditField = res;
+  RETURN;
+END;
+
+
+
+
+global	//Edit-------------Dima  12.01.2015
+updating function Boolean TableSearchAddition2IClassOnEnterKey(Integer wn,string fieldname,Integer fn,Integer rownr)
+begin
+  Boolean res;
+	record RcVc RepSpec;	
+
+  res = true;
+	//DeselectWindow(wn,false);
+		StockMove_AddOneItemTo;
+		GetWindowRecord(wn,RepSpec);
+		RepSpec.f2 = "";
+  	PutWindowRecord(wn,RepSpec);
+
+  TableSearchAddition2IClassOnEnterKey = res;
+  return;
+end;
+
+
+
+
+
+global  //added --------------Dima 12.01.2015
+procedure TableSearchAddition2Dsm()
+BEGIN
+  record RcVc RepSpec;
+  Integer wn,res;
+  wn = CurWindow;
+  RepSpec.flags[0] = wn;
+  RepSpec.flags[1] = 0;  //current row in table
+  RepSpec.flags[2] = 0;  //search direction: 1-forward, 2-backward
+  RepSpec.flags[3] = 0; 
+  res = OpenWindow("TableSearchAddition2IClass",0,wn,"","",RepSpec);
+  millisleep(1000);
+  selectwindow(res);
+  WindowFieldGoto(res,RepSpec,-1,"f1",true);
+
+  RETURN;
+END;
+

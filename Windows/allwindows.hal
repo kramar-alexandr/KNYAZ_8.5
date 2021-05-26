@@ -1935,6 +1935,37 @@ begin
   EndWindow;
 end;
 
+
+
+window TableSearchAddition2IClass:1  // added ************ Dima, 12.01.2015
+  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+real h,v,vs;
+Integer i,mwn;
+  WindowBegin("Поиск и добавление в таблице",TableSearchIClass,CGother,RcType);
+	//DynamicWindow;
+  SetWRect(3,140,350,250);
+  UseView(RcVc);
+  Modality(2);
+
+  v=30;
+  h=40;
+ 	EditFieldTL(h+30,v+30 ,250,"Отправлено",M4Str,Normal,20,f2,true,0);
+	EnterSkip(f2);
+	EditFieldTL(h+280,v+30 ,0,"",M4Str,Normal,20,f3,true,0);
+	EnterSkip(f3);
+  // EditFieldTL(h+30,v-10 ,150,"Поиск",M4Str,Normal,20,f1,true,0); // new search field
+
+	StaticText(h-25,v,"Для добавления в таблицу введите Штрих-код или Алт.код",false);
+
+  // ColourPushButton(h+=200,v-10,h+58,v+26,"GoPreviousItem","Пред.",20);
+  // ColourPushButton(h+=75,v-10,h+58,v+26,"GoNextItem","След.",2);
+
+  EndWindow;
+end;
+
+
+
 window PODClass:1
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
@@ -3732,19 +3763,28 @@ begin
     Flip(flipnr);  flipnr = flipnr + 1;
 	
 	MatCol(1,170,"Наименование",0,Spec,false,0);  		//Edit*************************** Ira 18.11.20
-	
-    if (HasVarieties) then begin
-      MatCol(1,-160,"Треб.кол.",0,OrdQuant,true,MATVARINSClass);
-    end else begin
-      if (HasThrouLocation or BuildProductCode=="StandardHealthcare") then begin
-      MatCol(1,-160,"Треб.кол.",0,OrdQuant,true,0);
-    end;
+		if (currentcompany==5) then begin
+			if (HasVarieties) then begin
+				MatCol(1,-225,"Треб.кол.",0,OrdQuant,true,MATVARINSClass);
+			end else begin
+				if (HasThrouLocation or BuildProductCode=="StandardHealthcare") then begin
+				MatCol(1,-225,"Треб.кол.",0,OrdQuant,true,0);
+			end;
+		end else begin
+			if (HasVarieties) then begin
+				MatCol(1,-160,"Треб.кол.",0,OrdQuant,true,MATVARINSClass);
+			end else begin
+				if (HasThrouLocation or BuildProductCode=="StandardHealthcare") then begin
+				MatCol(1,-160,"Треб.кол.",0,OrdQuant,true,0);
+			end;
+		end;
+		end;
     end;
 		if (currentcompany==5) then begin
 			if (HasThrouLocation) then begin
-				MatCol(1,148,"Отпр.кол.",0,SentQuant,true,0);			//Edit*************************** Ira 18.11.20
+				MatCol(1,-175,"Отпр.кол.",0,SentQuant,true,0);			//Edit*************************** Ira 18.11.20
 			end;
-			MatCol(1,210,"Получ.кол.",0,Quant,true,0); 			//Edit*************************** Ira 18.11.20
+			MatCol(1,-125,"Получ.кол.",0,Quant,true,0); 			//Edit*************************** Ira 18.11.20
 		end;
   end;
   MatCol(1,-80,"Скл. 1",0,InStock1,true,0);			//Edit*************************** Ira 18.11.20
@@ -3919,6 +3959,7 @@ begin
   SpecialMenu("Стоимость в старой цене за единицу",'=',0,"StockMovFillFIFODsm");
   SpecialMenu("Стоимость в старой цене за единицу",'=',0,"StockMovFillFIFODsm");
   SpecialMenu("Поиск товара",'f',1,"ItemSearchDsm");
+	SpecialMenu("Сканировать товары на складе",'f',1,"TableSearchAddition2Dsm");
   if (HasIntegratedNL) then begin
     SpecialMenu("Открыть запись операции отправки",' ',2,"OpenTRFromStockMovSent");
     SpecialMenu("Открыть запись операции получения",'t',3,"OpenTRFromStockMov");
