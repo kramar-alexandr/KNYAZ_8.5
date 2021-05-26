@@ -55,7 +55,8 @@ begin
 	SString(50019,"Нельзя добавить товар с кодом ");
 	SString(50020,"Товара с указанным кодом не существует ");
 	
-	
+	StrSetBegin(3);
 	StrSetText(FreezAllFieldsForStock,"Сканировать товар для перемещений");
+	EndStrSet;
 	return;
 end;
