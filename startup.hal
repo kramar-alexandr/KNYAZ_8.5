@@ -56,6 +56,6 @@ begin
 	SString(50020,"Товара с указанным кодом не существует ");
 	
 	
-	StrSetText(FreezAllFieldsForStock,"Разрешить создавать карточки контактов");
+	StrSetText(FreezAllFieldsForStock,"Сканировать товар для перемещений");
 	return;
 end;
