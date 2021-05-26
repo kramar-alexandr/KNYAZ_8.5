@@ -3762,7 +3762,7 @@ begin
     MatCol(1,32,"Товар",0,ArtCode,false,INSClass);
     Flip(flipnr);  flipnr = flipnr + 1;
 	
-	MatCol(1,170,"Наименование",0,Spec,false,0);  		//Edit*************************** Ira 18.11.20
+		MatCol(1,170,"Наименование",0,Spec,false,0);  		//Edit*************************** Ira 18.11.20
 		if (currentcompany==5) then begin
 			if (HasVarieties) then begin
 				MatCol(1,-225,"Треб.кол.",0,OrdQuant,true,MATVARINSClass);
