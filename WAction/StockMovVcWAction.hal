@@ -756,7 +756,7 @@ BEGIN
   res = true;
   GetWindowRecord(wn,StockMovr);    
   GetPrevWindowRecord(wn,StockMov2r);
-
+	if (UserCanAction("FreezAllFieldsForStock",false)) then begin res = false; end;
   if (wnst==Rs_update) then begin
     if (StockMov2r.SentOKFlag==0) then begin
       if (StockMovr.IntORNo>0) then begin
