@@ -10,6 +10,7 @@ external updating function LongInt IVVcRecordCheck(record IVVc,record IVVc,LongI
 external procedure IVDchsum(var record IVVc,Integer);
 external procedure IVSumup(var record IVVc,Boolean);
 remote procedure CLOutVc_PasteCurncyCode(var record CLOutVc);
+remote procedure CLOutVc_PasteCorspCode(var record CLOutVc,Integer);
 
 
 procedure addParamToJSONArea(string param, string value, var area req)
@@ -301,6 +302,7 @@ area postdata;
 			CLOutr.NetVal = stringtoval(JSONGet(jsonobj,"Total"),m4val);
 			CLOutr.TransDate = CurrentDate;
 			CLOutr.CorspCode = JSONGet(jsonobj,"CorspCode");
+			CLOutVc_PasteCorspCode(CLOutr,-1);
 			CLOutr.Comment = JSONGet(jsonobj,"Comment");
 			CLOutr.CorspComment = JSONGet(jsonobj,"CorspComment");
 			CLOutr.Objects = USr.PersObjx;

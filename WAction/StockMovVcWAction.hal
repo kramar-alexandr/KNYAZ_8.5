@@ -519,6 +519,9 @@ BEGIN
   if (changedf) then begin
     GetWindowRecord(wn,StockMovr);
     StockMovVc_PasteFromLocation(StockMovr);    
+		if (CurrentCompany==5) then begin
+			StockMovr.ThrouLocation = "TRANZ";
+		end;
     PutWindowRecord(wn,StockMovr);
   end;
   StockMovDClassFrLocationEFAfter = res;
@@ -756,7 +759,7 @@ BEGIN
   res = true;
   GetWindowRecord(wn,StockMovr);    
   GetPrevWindowRecord(wn,StockMov2r);
-	if (UserCanAction("FreezAllFieldsForStock",false)) then begin res = false; end;
+	if (UserCanAction("FreezAllFieldsForStock",false) and fieldname!="SentOKFlag" and fieldname!="OKFlag") then begin res = false; end;
   if (wnst==Rs_update) then begin
     if (StockMov2r.SentOKFlag==0) then begin
       if (StockMovr.IntORNo>0) then begin
@@ -1657,6 +1660,7 @@ begin
 								end;
 								if (put) then begin
 										MatRowPut(SMr,RowNumber,SMrw);
+										StockMovVc_PasteSentQuant(SMr,RowNumber);
 										PutWindowRecord(mwn,SMr);
 			  						WindowFieldGoto(mwn,SMr,RowNumber,"SentQuant",true);
 										DeselectWindow(mwn,false);									
