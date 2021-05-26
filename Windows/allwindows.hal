@@ -3952,29 +3952,32 @@ begin
   EditField(h,v+=vs,-40,"",Normal,ToAddr2,false,0);
   EditField(h,v+=vs,-40,"",Normal,ToAddr3,false,0);
   EditField(h,v+=vs,-40,"",Normal,ToAddr4,false,0);
-  
-  SpecialMenu("Удалить пустые строки",'',4,"DelBlankRowSMDsm");// Edit ************************** BPI Ukraine - Ira - 01, 02 11 2020 y. at 11:58:23 AM
-  SpecialMenu("Заполнить остатки на перемещение",'',5,"CheckStockMovement");// Edit ************************** BPI Ukraine - Ira - 01, 02 11 2020 y. at 11:58:23 AM
-  
-  SpecialMenu("Стоимость в старой цене за единицу",'=',0,"StockMovFillFIFODsm");
-  SpecialMenu("Стоимость в старой цене за единицу",'=',0,"StockMovFillFIFODsm");
-  SpecialMenu("Поиск товара",'f',1,"ItemSearchDsm");
-	SpecialMenu("Сканировать товары на складе",'f',1,"TableSearchAddition2Dsm");
-  if (HasIntegratedNL) then begin
-    SpecialMenu("Открыть запись операции отправки",' ',2,"OpenTRFromStockMovSent");
-    SpecialMenu("Открыть запись операции получения",'t',3,"OpenTRFromStockMov");
-  end;
-  if (HasLocalization("PRT")) then begin
-    if (HasETaxDocuments) then begin
-      SpecialMenu("Send to Tax Authorities",'',10,"EShipPRTDsm");  
-    end;
-  end;  
-   if (HasConsStockMoveInvoices) then begin 
-     SpecialMenu("Распечатать сч/ф перемещения склада",'p',3,"PrintStockMovInvoices");
-   end;   
-  if (HasLocalization("PRT")) then begin  
-    SpecMenuGroup("",kSpecMenuGroupTypeExtendedPlusMenu,0);  
-    SpecialMenu("Invoice",'F',5,"IVFromGlobalStockMovDsm");  
-  end;
+  if (!UserCanAction("FreezAllFieldsForStock",false)) then begin
+		SpecialMenu("Удалить пустые строки",'',4,"DelBlankRowSMDsm");// Edit ************************** BPI Ukraine - Ira - 01, 02 11 2020 y. at 11:58:23 AM
+		SpecialMenu("Заполнить остатки на перемещение",'',5,"CheckStockMovement");// Edit ************************** BPI Ukraine - Ira - 01, 02 11 2020 y. at 11:58:23 AM
+		
+		SpecialMenu("Стоимость в старой цене за единицу",'=',0,"StockMovFillFIFODsm");
+		SpecialMenu("Стоимость в старой цене за единицу",'=',0,"StockMovFillFIFODsm");
+		SpecialMenu("Поиск товара",'f',1,"ItemSearchDsm");
+		SpecialMenu("Сканировать товары на складе",'f',1,"TableSearchAddition2Dsm");
+		if (HasIntegratedNL) then begin
+			SpecialMenu("Открыть запись операции отправки",' ',2,"OpenTRFromStockMovSent");
+			SpecialMenu("Открыть запись операции получения",'t',3,"OpenTRFromStockMov");
+		end;
+		if (HasLocalization("PRT")) then begin
+			if (HasETaxDocuments) then begin
+				SpecialMenu("Send to Tax Authorities",'',10,"EShipPRTDsm");  
+			end;
+		end;  
+		 if (HasConsStockMoveInvoices) then begin 
+			 SpecialMenu("Распечатать сч/ф перемещения склада",'p',3,"PrintStockMovInvoices");
+		 end;   
+		if (HasLocalization("PRT")) then begin  
+			SpecMenuGroup("",kSpecMenuGroupTypeExtendedPlusMenu,0);  
+			SpecialMenu("Invoice",'F',5,"IVFromGlobalStockMovDsm");  
+		end;
+	end else begin
+		SpecialMenu("Сканировать товары на складе",'f',1,"TableSearchAddition2Dsm");
+	end;
   EndWindow;
 end;
