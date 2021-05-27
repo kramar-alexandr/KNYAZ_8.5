@@ -355,6 +355,8 @@ begin
 	StrSetText(EditCostInIN,"Редактировать стоимость в карточке товара");	
 	StrSetText(CanUnReserve,"Снимать резерв с документов заказов Е-Коммерс");	
 	StrSetText(FreezAllFieldsForStock,"Сканировать товар для перемещений");
+	StrSetText(StockMovOrdFlagOff,"Не подтвержденные движения запасов"); //!!ПЕРЕВОД
+	StrSetText(StockMovOrdFlag,"Конфигурация перемещений запасов");
   EndStrSet;
 	
 	
