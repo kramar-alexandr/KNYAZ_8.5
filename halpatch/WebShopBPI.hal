@@ -361,6 +361,7 @@ boolean TrHs,testf;
 					addParamToJSONArea("SerNr",NormalizeStrToJson(CLOutr.SerNr),resarea);
 					addParamToJSONArea("Comment",NormalizeStrToJson(CLOutr.Comment),resarea);
 					addParamToJSONArea("Total",NormalizeStrToJson(CLOutr.Total),resarea);
+					addParamToJSONArea("TransDate",NormalizeStrToJson(CLOutr.TransDate),resarea);
 					delLastComaInArea(resarea);
 					AddTextToArea("},",resarea);
 				end;
