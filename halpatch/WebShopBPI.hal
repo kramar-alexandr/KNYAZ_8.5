@@ -342,7 +342,7 @@ row CLOutVc CLOutrw;
 area postdata;
 boolean TrHs,testf;
 
-	if(WebLoginStatus==3)then begin
+	// if(WebLoginStatus==3)then begin
 		SetCompany(5,false);
 		logtext(0,"WebGetCreatedCLOutForCurUs");
 		logtext(0,"WebRemoteIPAddress " & WebRemoteIPAddress);
@@ -366,9 +366,9 @@ boolean TrHs,testf;
 			end;
 			delLastComaInArea(resarea);
 			AddTextToArea("]",resarea);
-		end else begin
-			weboutstring("{\"result\":\"error\",\"foruser\":\"" & webgetarg("foruser") & "\"}");
-		end;
+		// end else begin
+			// weboutstring("{\"result\":\"error\",\"foruser\":\"" & webgetarg("foruser") & "\"}");
+		// end;
 	end;
 return;
 end;
