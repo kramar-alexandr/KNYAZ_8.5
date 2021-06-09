@@ -270,6 +270,65 @@ end;
 
 
 
+global webpublic updating procedure WebSyncCurrWithNBUMn()
+begin
+	area resarea;
+	json jsonobj;
+	record UserVc USr;
+	record CLOutVc CLOutr;
+	row CLOutVc CLOutrw;
+	area postdata;
+	area text,replyPr;
+	string 255 tstr,code,brand,price,name,paramName,parseString,coding,qty;
+	integer i,posa,cnt,paramCnt,j,countstr,s;
+
+		// https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json
+
+
+		SetCompany(5,false);
+		SendWebRequest("bank.gov.ua",443,-1,true,"GET","/NBUStatService/v1/statdirectory/exchange?json","application/JSON","",false,text,replyPr,10);
+
+		logtext(0,"WebSendCLOut");
+		logtext(0,"WebRemoteIPAddress " & WebRemoteIPAddress);
+		writeareatofile(replyPr,"WebSendCLOut.txt",0);
+		jsonobj = ParseJSONArea(replyPr);
+	
+	
+	
+		
+	
+	
+	
+	
+		// recordnew(CLOutr);
+		// CLOutr.SerNr = NextSerNr("CLOutVc",CLOutr.TransDate,-1,false,"");
+		// CLOutr.PayMode = "O";
+		// CLOutr.ARonTR = 1;
+		// CLOutr.CurncyCode = "UAH";
+		// CLOutVc_PasteCurncyCode(CLOutr);
+		// CLOutr.Total = stringtoval(JSONGet(jsonobj,"Total"),m4val);
+		// CLOutr.NetVal = stringtoval(JSONGet(jsonobj,"Total"),m4val);
+		// CLOutr.TransDate = CurrentDate;
+		// CLOutr.CorspCode = JSONGet(jsonobj,"CorspCode");
+		// CLOutVc_PasteCorspCode(CLOutr,-1);
+		// CLOutr.Comment = JSONGet(jsonobj,"Comment");
+		// CLOutr.Objects = USr.PersObjx;
+		
+		// if (RecordStore(CLOutr,true))then begin
+			// weboutstring("{\"result\":\"ok\",\"SerNr\":\"" & CLOutr.SerNr & "\"}");
+		// end;
+	
+		logtext(0,"CLOutr.SerNr " & CLOutr.SerNr);
+		logtext(0,"WebRemoteIPAddress " & WebRemoteIPAddress);
+return;
+end;
+
+
+
+
+
+
+
 
 
 
