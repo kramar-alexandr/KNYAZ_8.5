@@ -802,8 +802,10 @@ begin
         OutString(110,0,USetStr(2354),false);//110
         if (overviewpervatcodef) then begin
           OutString(170,0,USetStr(2358),false);//280
+					OutString(200,0,USetStr(50021),false);//280
         end else begin
           OutString(285,0,USetStr(2358),false);//280
+					OutString(300,0,USetStr(50021),false);//280
         end;
       end;
       if (RepSpec.flags[15]!=0) then begin
@@ -836,10 +838,12 @@ begin
         OutString(115,0,USetStr(2353),false);
         OutString(170,0,USetStr(2354),false);
         OutString(305,0,USetStr(2358),false);
+				OutString(320,0,USetStr(50021),false);//280
       end else begin
         OutString(60,0,USetStr(2353),false);
         OutString(115,0,USetStr(2354),false);
         OutString(280,0,USetStr(2358),false);
+				OutString(300,0,USetStr(50021),false);//280
       end;
       if (RepSpec.flags[15]!=0) then begin
         OutStringAdjust(5,0,USetStr(2328),true,M4Val);
