@@ -802,10 +802,10 @@ begin
         OutString(110,0,USetStr(2354),false);//110
         if (overviewpervatcodef) then begin
           OutString(170,0,USetStr(2358),false);//280
-					OutString(250,0,USetStr(50021),false);//280
+					OutString(220,0,USetStr(50021),false);//280
         end else begin
           OutString(285,0,USetStr(2358),false);//280
-					OutString(350,0,USetStr(50021),false);//280
+					OutString(320,0,USetStr(50021),false);//280
         end;
       end;
       if (RepSpec.flags[15]!=0) then begin
@@ -838,12 +838,12 @@ begin
         OutString(115,0,USetStr(2353),false);
         OutString(170,0,USetStr(2354),false);
         OutString(305,0,USetStr(2358),false);
-				OutString(370,0,USetStr(50021),false);//280
+				OutString(320,0,USetStr(50021),false);//280
       end else begin
         OutString(60,0,USetStr(2353),false);
         OutString(115,0,USetStr(2354),false);
         OutString(280,0,USetStr(2358),false);
-				OutString(350,0,USetStr(50021),false);//280
+				OutString(320,0,USetStr(50021),false);//280
       end;
       if (RepSpec.flags[15]!=0) then begin
         OutStringAdjust(5,0,USetStr(2328),true,M4Val);
@@ -1557,7 +1557,7 @@ LkInvoiceTypeCredit1:;
                     tstr = USetStr(2364);
                   end;
                   OutString(170,0,tstr,false);
-									OutString(250,0,IVr.Objects,false);
+									OutString(220,0,IVr.Objects,false);
                   OutVal(5,0,VATrw.DebVal,M4Val,true);
                   MulVATIV(VATrw.VATCode,VATrw.DebVal,vatv,t1,IVr.InclVAT,IVr.NoTAXonVAT);
                   if (IVr.InclVAT>0) then begin
@@ -1606,7 +1606,7 @@ LkInvoiceTypeCredit1:;
                 OutStringCut(110,220,0,IVr.Addr0,false,0);
                 OutString(285,0,tstr,false);
               end;
-							OutString(350,0,IVr.Objects,false);
+							OutString(320,0,IVr.Objects,false);
               if (RepSpec.flags[15]!=0) then begin
                 OutVal(5,0,ivnvat,M4Val,true);
                 OutVal(6,0,iv,M4Val,true);
@@ -1660,7 +1660,7 @@ LkInvoiceTypeCredit1:;
               OutStringCut(115,275,0,IVr.Addr0,false,0);
               OutString(280,0,tstr,false);
             end;
-						OutString(350,0,IVr.Objects,false);
+						OutString(320,0,IVr.Objects,false);
             if (RepSpec.flags[15]!=0) then begin
               OutVal(5,0,ivnvat,M4Val,true);
               OutVal(6,0,iv,M4Val,true);
@@ -1719,7 +1719,7 @@ LkInvoiceTypeCredit1:;
             tstr = USetStr(2364);
           end;
           OutString(280,0,tstr,false);
-					OutString(350,0,IVr.Objects,false);
+					OutString(320,0,IVr.Objects,false);
           OutVal(4,0,iv,M4Val,true);
           if (HasMultiCurrency) then begin 
             OutString(465,0,IVr.CurncyCode,true);
