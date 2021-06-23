@@ -1553,7 +1553,7 @@ LkInvoiceTypeCredit1:;
                     tstr = USetStr(2364);
                   end;
                   OutString(170,0,tstr,false);
-  
+									OutString(465,0,IVr.Objects,false);
                   OutVal(5,0,VATrw.DebVal,M4Val,true);
                   MulVATIV(VATrw.VATCode,VATrw.DebVal,vatv,t1,IVr.InclVAT,IVr.NoTAXonVAT);
                   if (IVr.InclVAT>0) then begin
@@ -1602,6 +1602,7 @@ LkInvoiceTypeCredit1:;
                 OutStringCut(110,220,0,IVr.Addr0,false,0);
                 OutString(285,0,tstr,false);
               end;
+							OutString(465,0,IVr.Objects,false);
               if (RepSpec.flags[15]!=0) then begin
                 OutVal(5,0,ivnvat,M4Val,true);
                 OutVal(6,0,iv,M4Val,true);
@@ -1655,6 +1656,7 @@ LkInvoiceTypeCredit1:;
               OutStringCut(115,275,0,IVr.Addr0,false,0);
               OutString(280,0,tstr,false);
             end;
+						OutString(465,0,IVr.Objects,false);
             if (RepSpec.flags[15]!=0) then begin
               OutVal(5,0,ivnvat,M4Val,true);
               OutVal(6,0,iv,M4Val,true);
@@ -1713,6 +1715,7 @@ LkInvoiceTypeCredit1:;
             tstr = USetStr(2364);
           end;
           OutString(280,0,tstr,false);
+					OutString(465,0,IVr.Objects,false);
           OutVal(4,0,iv,M4Val,true);
           if (HasMultiCurrency) then begin 
             OutString(465,0,IVr.CurncyCode,true);
