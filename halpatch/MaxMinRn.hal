@@ -216,6 +216,9 @@ begin
     // EndFormat;
     // goto LItemSalesRn;
   // end;  
+	StartFormat(15);
+	OutString(0,0,RepSpec.sStartDate & ":" & RepSpec.sEndDate,false);
+	EndFormat;
   StartFormat(15);
   OutString(0,0,USetStr(2462),false);
   OutString(100,0,USetStr(2448),false);
