@@ -6,6 +6,7 @@ external function LongInt CheckDaySessionCashiersIsValid(date,time);
 external function Integer CountObjects(string);
 external procedure ExtractObj(string,var Integer,var string); 
 remote procedure  StockMovVc_CheckStockMovement(var record StockMovVc);
+remote procedure  StockMovVc_CheckInstockFildsMn(var record StockMovVc);
 
 SetLangMode(LangRussian,"RUS",0); 
 
@@ -791,6 +792,46 @@ begin
 	end;
 return;
 end;
+
+
+
+
+
+
+// By Ira
+global procedure CheckInstockFildsStockMovementMn()
+begin
+	record StockMovVc SMr;
+	record INVc INr;
+	record ItemStatusVc ISr1, ISr2;
+	
+	row StockMovVc SMrw;
+	integer wn,i,rwcnt;
+	boolean b;
+	
+	wn = curwindow;
+	deselectwindow(wn,true);
+	getwindowrecord(wn,SMr);
+
+	
+	b = true;
+	
+	if(blank(SMr.FrLocation) or blank(SMr.ToLocation))then begin
+		messagebox(0, "Заполните склады");
+		b = false;
+	end;
+	
+	if(b)then begin
+		StockMovVc_CheckInstockFildsMn(SMr);
+		putwindowrecord(wn,SMr);
+	end;
+return;
+end;
+
+
+
+
+
 
 // by Ira
 global procedure DelBlankRowIVDsm()
