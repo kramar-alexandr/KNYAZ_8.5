@@ -1152,97 +1152,97 @@ LCCATBEGIN:;
         end;        
         varf = FindItemVAR(INr.Code,sz,msk,mskrep,varsubset);
 
-				if (nonblank(vQTYItemSort[q])) then begin vQTYItemSort[q] = vQTYItemSort[q] & ","; end;
-				vQTYItemSort[q] = vQTYItemSort[q] & INr.Code;
+				// if (nonblank(vQTYItemSort[q])) then begin vQTYItemSort[q] = vQTYItemSort[q] & ","; end;
+				// vQTYItemSort[q] = vQTYItemSort[q] & INr.Code;
 
 
 
-				tstr = " ";
-        tstr = INr.Unittext;
-				vItemboolAllParam[INr.Code & "varf"] = varf;
-				vItemAllParam[INr.Code & "INr.Name"] = INr.Name;
-				vItemvalAllParam[INr.Code & "q"] = q;
-				vItemAllParam[INr.Code & "Unittext"] = tstr;
-				vItemboolAllParam[INr.Code & "withcost"] = withcost;
-				vItemvalAllParam[INr.Code & "gps"] = gps;
-				t = gps * 100;
-				t = t / s;
-				MakeMarginString(t,tstr);
-				vItemboolAllParam[INr.Code & "HasModIN"] = HasModIN;
-				vItemAllParam[INr.Code & "MarginString"] = tstr;
-				vItemvalAllParam[INr.Code & "s"] = s;
-				vItemboolAllParam[INr.Code & "locationf"] = locationf;
-				vItemboolAllParam[INr.Code & "showlocf"] = showlocf;
-				vItemlintAllParam[INr.Code & "loccnt"] = loccnt;
-				
-				
-				if locationf and showlocf then begin
-          for (i=0;i<loccnt;i=i+1) begin
-            if (usedonly==false) or (alocs[i]<>0) or (alocqty[i]<>0) then begin
-							vItemboolAllParam[INr.Code & "for" & i] = true;
-							vItemAllParam[INr.Code & "for1" & i] = "  " & alocations[i] & " - " & alocnames[i];
-							vItemvalAllParam[INr.Code & "for2" & i] = alocqty[i];
-							vItemvalAllParam[INr.Code & "for3" & i] = alocgps[i];
-							 t = alocgps[i] * 100;
-              t = t / alocs[i];
-              MakeMarginString(t,tstr);
-							vItemAllParam[INr.Code & "for4" & i] = tstr;
-							vItemvalAllParam[INr.Code & "for5" & i] = alocs[i];
-            end;
-          end;
-        end;
-				
-				
-				
-				
-				
-				
-        // tstr = " ";
+				// tstr = " ";
         // tstr = INr.Unittext;
-        // StartFormat(15);
-         // if (varf) then begin
-           // OutString(0,"ArtSTVarDblClk",INr.Code,false);
-         // end else begin
-           // OutString(0,"DblINVc",INr.Code,false);
-         // end;
-         // OutString(2,0,INr.Name,false);
-// //         OutVal(8,0,GetPriceListPrice(INr.Code,RepSpec.FirstAcc),M4Val,true);
-         // OutVal(3,0,q,M4Qty,true);
-         // OutString(5,0,tstr,false);         
-         // if (withcost) then begin
-           // OutVal(4,0,gps,M4Val,true);
-         // end;  
-         // t = gps * 100;
-         // t = t / s;
-         // MakeMarginString(t,tstr);
-         // if (HasModIN) then begin
-           // OutString(420,0,tstr,true);      
-         // end;
-         // OutValBiDi(1,0,s,M4Val,true,515);
-        // EndFormat;
-        
-        // //Print locations
-        // if locationf and showlocf then begin
+				// vItemboolAllParam[INr.Code & "varf"] = varf;
+				// vItemAllParam[INr.Code & "INr.Name"] = INr.Name;
+				// vItemvalAllParam[INr.Code & "q"] = q;
+				// vItemAllParam[INr.Code & "Unittext"] = tstr;
+				// vItemboolAllParam[INr.Code & "withcost"] = withcost;
+				// vItemvalAllParam[INr.Code & "gps"] = gps;
+				// t = gps * 100;
+				// t = t / s;
+				// MakeMarginString(t,tstr);
+				// vItemboolAllParam[INr.Code & "HasModIN"] = HasModIN;
+				// vItemAllParam[INr.Code & "MarginString"] = tstr;
+				// vItemvalAllParam[INr.Code & "s"] = s;
+				// vItemboolAllParam[INr.Code & "locationf"] = locationf;
+				// vItemboolAllParam[INr.Code & "showlocf"] = showlocf;
+				// vItemlintAllParam[INr.Code & "loccnt"] = loccnt;
+				
+				
+				// if locationf and showlocf then begin
           // for (i=0;i<loccnt;i=i+1) begin
             // if (usedonly==false) or (alocs[i]<>0) or (alocqty[i]<>0) then begin
-              // StartFormat(15);
-              // OutString(2,0,"  " & alocations[i] & " - " & alocnames[i],false);
-              // OutVal(3,0,alocqty[i],M4Qty,true);
-              // if (withcost) then begin
-                // OutVal(4,0,alocgps[i],M4Val,true);
-              // end;  
-              // t = alocgps[i] * 100;
+							// vItemboolAllParam[INr.Code & "for" & i] = true;
+							// vItemAllParam[INr.Code & "for1" & i] = "  " & alocations[i] & " - " & alocnames[i];
+							// vItemvalAllParam[INr.Code & "for2" & i] = alocqty[i];
+							// vItemvalAllParam[INr.Code & "for3" & i] = alocgps[i];
+							 // t = alocgps[i] * 100;
               // t = t / alocs[i];
               // MakeMarginString(t,tstr);
-              // if (HasModIN) then begin
-                // OutString(420,0,tstr,true);      
-              // end;
-              // OutValBiDi(1,0,alocs[i],M4Val,true,515);
-              // EndFormat;
+							// vItemAllParam[INr.Code & "for4" & i] = tstr;
+							// vItemvalAllParam[INr.Code & "for5" & i] = alocs[i];
             // end;
           // end;
-          // Gray_Divider(0,1);
         // end;
+				
+				
+				
+				
+				
+				
+        tstr = " ";
+        tstr = INr.Unittext;
+        StartFormat(15);
+         if (varf) then begin
+           OutString(0,"ArtSTVarDblClk",INr.Code,false);
+         end else begin
+           OutString(0,"DblINVc",INr.Code,false);
+         end;
+         OutString(2,0,INr.Name,false);
+//         OutVal(8,0,GetPriceListPrice(INr.Code,RepSpec.FirstAcc),M4Val,true);
+         OutVal(3,0,q,M4Qty,true);
+         OutString(5,0,tstr,false);         
+         if (withcost) then begin
+           OutVal(4,0,gps,M4Val,true);
+         end;  
+         t = gps * 100;
+         t = t / s;
+         MakeMarginString(t,tstr);
+         if (HasModIN) then begin
+           OutString(420,0,tstr,true);      
+         end;
+         OutValBiDi(1,0,s,M4Val,true,515);
+        EndFormat;
+        
+        //Print locations
+        if locationf and showlocf then begin
+          for (i=0;i<loccnt;i=i+1) begin
+            if (usedonly==false) or (alocs[i]<>0) or (alocqty[i]<>0) then begin
+              StartFormat(15);
+              OutString(2,0,"  " & alocations[i] & " - " & alocnames[i],false);
+              OutVal(3,0,alocqty[i],M4Qty,true);
+              if (withcost) then begin
+                OutVal(4,0,alocgps[i],M4Val,true);
+              end;  
+              t = alocgps[i] * 100;
+              t = t / alocs[i];
+              MakeMarginString(t,tstr);
+              if (HasModIN) then begin
+                OutString(420,0,tstr,true);      
+              end;
+              OutValBiDi(1,0,alocs[i],M4Val,true,515);
+              EndFormat;
+            end;
+          end;
+          Gray_Divider(0,1);
+        end;
         
         sum1 = sum1 + s;
         sum2 = sum2 + q;
@@ -1259,59 +1259,59 @@ LSKIP:;
 	
 	
 	
-	GetVectorTags(vQTYItemSort,tags);
-  SortStringArray(tags);
-	cnt = 20;
-	for (l=20;l>=0;l=l-1) begin
-		for(i=tags.length;i>=0;i=i-1) begin
-			if (len(tags[i])==l) then begin
-				pos = 0;
-				ItemCode = "";
-				ExtractObjWithSeparator(",",vQTYItemSort[tags[i]],true,pos,ItemCode);
-				while (nonblank(ItemCode)) begin
-					StartFormat(15);
-					 if (vItemboolAllParam[ItemCode & "varf"]) then begin
-						 OutString(0,"ArtSTVarDblClk",ItemCode,false);
-					 end else begin
-						 OutString(0,"DblINVc",ItemCode,false);
-					 end;
-					 OutString(2,0,vItemAllParam[ItemCode & "INr.Name"],false);
-		//         OutVal(8,0,GetPriceListPrice(INr.Code,RepSpec.FirstAcc),M4Val,true);
-					 OutVal(3,0,vItemvalAllParam[ItemCode & "q"],M4Qty,true);
-					 OutString(5,0,vItemAllParam[ItemCode & "Unittext"],false);         
-					 if (vItemboolAllParam[ItemCode & "withcost"]) then begin
-						 OutVal(4,0,vItemvalAllParam[ItemCode & "gps"],M4Val,true);
-					 end;  
-					 if (vItemboolAllParam[ItemCode & "HasModIN"]) then begin
-						 OutString(420,0,vItemAllParam[ItemCode & "MarginString"],true);      
-					 end;
-					 OutValBiDi(1,0,vItemvalAllParam[ItemCode & "s"],M4Val,true,515);
-					EndFormat;
+	// GetVectorTags(vQTYItemSort,tags);
+  // SortStringArray(tags);
+	// cnt = 20;
+	// for (l=20;l>=0;l=l-1) begin
+		// for(i=tags.length;i>=0;i=i-1) begin
+			// if (len(tags[i])==l) then begin
+				// pos = 0;
+				// ItemCode = "";
+				// ExtractObjWithSeparator(",",vQTYItemSort[tags[i]],true,pos,ItemCode);
+				// while (nonblank(ItemCode)) begin
+					// StartFormat(15);
+					 // if (vItemboolAllParam[ItemCode & "varf"]) then begin
+						 // OutString(0,"ArtSTVarDblClk",ItemCode,false);
+					 // end else begin
+						 // OutString(0,"DblINVc",ItemCode,false);
+					 // end;
+					 // OutString(2,0,vItemAllParam[ItemCode & "INr.Name"],false);
+		// //         OutVal(8,0,GetPriceListPrice(INr.Code,RepSpec.FirstAcc),M4Val,true);
+					 // OutVal(3,0,vItemvalAllParam[ItemCode & "q"],M4Qty,true);
+					 // OutString(5,0,vItemAllParam[ItemCode & "Unittext"],false);         
+					 // if (vItemboolAllParam[ItemCode & "withcost"]) then begin
+						 // OutVal(4,0,vItemvalAllParam[ItemCode & "gps"],M4Val,true);
+					 // end;  
+					 // if (vItemboolAllParam[ItemCode & "HasModIN"]) then begin
+						 // OutString(420,0,vItemAllParam[ItemCode & "MarginString"],true);      
+					 // end;
+					 // OutValBiDi(1,0,vItemvalAllParam[ItemCode & "s"],M4Val,true,515);
+					// EndFormat;
 					
-					//Print locations
-					if (vItemboolAllParam[ItemCode & "locationf"] and vItemboolAllParam[ItemCode & "showlocf"]) then begin
-						for (j=0;j<vItemlintAllParam[ItemCode & "loccnt"];j=j+1) begin
-							if (vItemboolAllParam[ItemCode & "for" & j]) then begin
-								StartFormat(15);
-								OutString(2,0,vItemAllParam[ItemCode & "for1" & j],false);
-								OutVal(3,0,vItemvalAllParam[ItemCode & "for2" & j],M4Qty,true);
-								if (vItemboolAllParam[ItemCode & "withcost"]) then begin
-									OutVal(4,0,vItemvalAllParam[ItemCode & "for3" & j],M4Val,true);
-								end;  
-								if (vItemboolAllParam[ItemCode & "HasModIN"]) then begin
-									OutString(420,0,vItemAllParam[ItemCode & "for4" & j],true);      
-								end;
-								OutValBiDi(1,0,vItemvalAllParam[ItemCode & "for5" & j],M4Val,true,515);
-								EndFormat;
-							end;
-						end;
-						Gray_Divider(0,1);
-					end;
-					ExtractObjWithSeparator(",",vQTYItemSort[tags[i]],true,pos,ItemCode);
-				end;
-			end;
-		end;
-	end;
+					// //Print locations
+					// if (vItemboolAllParam[ItemCode & "locationf"] and vItemboolAllParam[ItemCode & "showlocf"]) then begin
+						// for (j=0;j<vItemlintAllParam[ItemCode & "loccnt"];j=j+1) begin
+							// if (vItemboolAllParam[ItemCode & "for" & j]) then begin
+								// StartFormat(15);
+								// OutString(2,0,vItemAllParam[ItemCode & "for1" & j],false);
+								// OutVal(3,0,vItemvalAllParam[ItemCode & "for2" & j],M4Qty,true);
+								// if (vItemboolAllParam[ItemCode & "withcost"]) then begin
+									// OutVal(4,0,vItemvalAllParam[ItemCode & "for3" & j],M4Val,true);
+								// end;  
+								// if (vItemboolAllParam[ItemCode & "HasModIN"]) then begin
+									// OutString(420,0,vItemAllParam[ItemCode & "for4" & j],true);      
+								// end;
+								// OutValBiDi(1,0,vItemvalAllParam[ItemCode & "for5" & j],M4Val,true,515);
+								// EndFormat;
+							// end;
+						// end;
+						// Gray_Divider(0,1);
+					// end;
+					// ExtractObjWithSeparator(",",vQTYItemSort[tags[i]],true,pos,ItemCode);
+				// end;
+			// end;
+		// end;
+	// end;
 	
 	
   if (blank(ingrps)) then begin
