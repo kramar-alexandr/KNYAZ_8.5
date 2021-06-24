@@ -11,6 +11,7 @@ external procedure IVDchsum(var record IVVc,Integer);
 external procedure IVSumup(var record IVVc,Boolean);
 remote procedure CLOutVc_PasteCurncyCode(var record CLOutVc);
 remote procedure CLOutVc_PasteCorspCode(var record CLOutVc,Integer);
+external function roundmode SetRoundModeD(Integer);
 
 
 procedure addParamToJSONArea(string param, string value, var area req)
@@ -504,7 +505,7 @@ begin
 				end; 
 				matrowget(IVr,k,IVrw);
 				IVrw.Spec = JSONGet(jsonobj,"items/[" & i & "]/Spec");
-				IVrw.Quant = evaltoval(JSONGet(jsonobj,"items/[" & i & "]/SoldQuant"));
+				IVrw.Quant = Round(evaltoval(JSONGet(jsonobj,"items/[" & i & "]/SoldQuant")),SetRoundModeD(1));
 				IVrw.Price = evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Price"));
 				matrowput(IVr,k,IVrw);
 				IVVc_PasteQuantity(IVr,k);
