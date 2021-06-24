@@ -600,6 +600,110 @@ BEGIN
   RETURN;
 END;
 
+
+
+
+
+
+global function boolean StockMovDClassArtCode2EFAfter(integer wn,integer rownr,integer changed)
+begin
+ record StockMovVc SMr;
+ row StockMovVc SMrw, SM2rw;
+ record ItemStatusVc ISr;
+ boolean res;
+ integer i;
+ 
+ res = true;
+ getwindowrecord(wn,SMr);
+ matrowget(SMr,rownr,SMrw);
+	if(nonblank(SMr.FrLocation) AND changed!=0 And CurrentCompany==5) then begin
+		ISr.Location = SMr.FrLocation;
+		ISr.Code = SMrw.ArtCode;
+		if(ReadfirstMain(ISr,2,true)) then begin
+			for (i=0;i<matrowcnt(SMr);i=i+1) begin
+				matrowget(SMr,i,SM2rw);
+				if (i!=rownr and SMrw.ArtCode==SM2rw.ArtCode) then begin
+					ISr.Instock = ISr.Instock-SM2rw.OrdQuant;
+				end;
+			end;
+			if(ISr.Instock-ISr.RsrvQty < SMrw.OrdQuant or ISr.Instock-ISr.RsrvQty<=0) then begin
+				Messagebox(50022,"");
+				SMrw.ArtCode = "";
+				matrowput(SMr,rownr,SMrw);
+				PutWindowRecord(wn,SMr);
+				res = false;
+			end;
+		end else begin
+			Messagebox(50023,"");
+			res = false;
+			SMrw.ArtCode = "";
+			matrowput(SMr,rownr,SMrw);
+			PutWindowRecord(wn,SMr);
+		end;	
+	end;	
+StockMovDClassArtCode2EFAfter = res;
+return;
+end;
+
+
+
+
+global function boolean StockMovDClassOrdQuant2EFAfter(integer wn,integer rownr,integer changed)
+begin
+ record StockMovVc SMr;
+ row StockMovVc SMrw, SM2rw;
+ record ItemStatusVc ISr;
+ boolean res;
+ integer i;
+ 
+ res = true;
+ getwindowrecord(wn,SMr);
+ matrowget(SMr,rownr,SMrw);
+	if(nonblank(SMr.FrLocation) AND changed!=0 And CurrentCompany==5) then begin
+		ISr.Location = SMr.FrLocation;
+		ISr.Code = SMrw.ArtCode;
+		if(ReadfirstMain(ISr,2,true)) then begin
+			for (i=0;i<matrowcnt(SMr);i=i+1) begin
+				matrowget(SMr,i,SM2rw);
+				if (i!=rownr and SMrw.ArtCode==SM2rw.ArtCode) then begin
+					ISr.Instock = ISr.Instock-SM2rw.OrdQuant;
+				end;
+			end;
+			if(ISr.Instock-ISr.RsrvQty < SMrw.OrdQuant or ISr.Instock-ISr.RsrvQty<=0) then begin
+				Messagebox(50022,"");
+				if ISr.Instock-ISr.RsrvQty<=0 then begin
+					SMrw.OrdQuant = 0;
+					matrowput(SMr,rownr,SMrw);
+					PutWindowRecord(wn,SMr);
+				end else begin
+					SMrw.OrdQuant = ISr.Instock-ISr.RsrvQty;
+					matrowput(SMr,rownr,SMrw);
+					PutWindowRecord(wn,SMr);
+				end;
+				res = false;
+			end;
+		end else begin
+			Messagebox(50023,"");
+			res = false;
+			if ISr.Instock-ISr.RsrvQty<=0 then begin
+				SMrw.OrdQuant = 0;
+				matrowput(SMr,rownr,SMrw);
+				PutWindowRecord(wn,SMr);
+			end else begin
+				SMrw.OrdQuant = ISr.Instock-ISr.RsrvQty;
+				matrowput(SMr,rownr,SMrw);
+				PutWindowRecord(wn,SMr);
+			end;
+		end;	
+	end;	
+StockMovDClassOrdQuant2EFAfter = res;
+return;
+end;
+
+
+
+
+
 global
 function Boolean StockMovDClassAfterEditField(Integer wn,string fieldname,Integer fn, Integer rownr,Integer changed)
 BEGIN
@@ -613,11 +717,17 @@ BEGIN
     case "TransDate": res = StockMovDClassTransDateEFAfter(wn,changed);
     case "SentTransDate": res = StockMovDClassSentTransDateEFAfter(wn,changed);
     case "CurncyCode": res = StockMovDClassCurncyCodeEFAfter(wn,changed);
-    case "ArtCode": res = StockMovDClassArtCodeEFAfter(wn,rownr,changed);
+    case "ArtCode": res = StockMovDClassArtCode2EFAfter(wn,rownr,changed); 
+										if (res) then begin
+											res = StockMovDClassArtCodeEFAfter(wn,rownr,changed);
+										end;
     case "Quant": res = StockMovDClassQuantEFAfter(wn,rownr,changed);
     case "SentQuant": res = StockMovDClassSentQuantEFAfter(wn,rownr,changed);
-    case "OrdQuant": res = StockMovDClassOrdQuantEFAfter(wn,rownr,changed);// Edit ************************** BPI Ukraine - KramarAlexandr - 01, 17 08 2020 y. at 12:12:40 PM
-    case "OldPrice": res = StockMovDClassOldPriceEFAfter(wn,rownr,changed);
+    case "OrdQuant": res = StockMovDClassOrdQuant2EFAfter(wn,rownr,changed);
+										if (res) then begin	
+											res = StockMovDClassOrdQuantEFAfter(wn,rownr,changed);// Edit ************************** BPI Ukraine - KramarAlexandr - 01, 17 08 2020 y. at 12:12:40 PM
+										end;
+		case "OldPrice": res = StockMovDClassOldPriceEFAfter(wn,rownr,changed);
     case "ExtraSCost": res = StockMovDClassExtraSCostEFAfter(wn,rownr,changed);
     case "NewPrice": res = StockMovDClassNewPriceEFAfter(wn,rownr,changed);
     case "ToPosCode": res = StockMovDClassToPosCodeEFAfter(wn,rownr,changed);

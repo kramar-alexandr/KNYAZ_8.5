@@ -567,10 +567,17 @@ begin
 	record INVc INr;
 	record ItemStatusVc ISr1, ISr2;
 	row StockMovVc SMrw;
-	integer i;
+	integer i, cnt;
 	array string 255 aWarning;
 	
 	i = 0;
+
+	cnt = matrowcnt(SMr);
+	for (i=matrowcnt(SMr)-1;i>=0;i=i-1) begin
+		matrowdelete(SMr,i);
+	end;
+
+
 
 	while(LoopMain(INr, 1, true)) begin
 		SMrw.ArtCode = INr.Code;
@@ -581,12 +588,12 @@ begin
 		ISr1.Location = SMr.FrLocation;
 		ISr2.Location = SMr.ToLocation;
 			
-		if(readfirstmain(ISr1,2,true) and ISr1.Instock > 0)then begin
+		if(readfirstmain(ISr1,2,true) and ISr1.Instock - ISr1.RsrvQty > 0)then begin
 			
 			readfirstmain(ISr2, 2, true);
 			
-			SMrw.InStock1 = ISr1.Instock;
-			SMrw.InStock2 = ISr2.Instock;
+			SMrw.InStock1 = ISr1.Instock - ISr1.RsrvQty;
+			SMrw.InStock2 = ISr2.Instock - ISr2.RsrvQty;
 			if(blank(SMrw.OrdQuant)) then begin
 				SMrw.OrdQuant = 0;
 			end;
