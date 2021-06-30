@@ -35,6 +35,7 @@ external procedure DisplayStrArray(array string);
 remote function string 20 FindCustRouteByLocation(string,string,string);
 external procedure PasteFromSysList(Integer,Integer);// Edit ************************** BPI Ukraine - KramarAlexandr - 01, 26 10 2020 y. at 8:22:29 PM
 remote updating procedure AssignDestPositionOnStockMov(string);
+remote updating function Boolean Remote_StockMove_AddOneItemTo(record RcVc,var record StockMovVc,var integer, var integer);
 
 global
 procedure CalcNewPrice(val oldprice,string extra,var val newprice)
@@ -1709,8 +1710,6 @@ end;
 
 
 
-
-
 global 	//Edit-------------Dima  12.01.2015
 updating procedure StockMove_AddOneItemTo()
 begin
@@ -1809,6 +1808,63 @@ end;
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+global 	//Edit-------------Dima  12.01.2015
+updating procedure StockMove_AddOneItemTo2()
+begin
+	record INVc INr,INr1;
+	record StockMovVc SMr;
+	row StockMovVc SMrw;
+	record BarcodeVc Barcoder;
+	record RcVc RepSpec;
+	integer wn,mwn,RowNumber,curRow,rwcnt;
+	Boolean key,put,res;
+	string 30 searchstr;
+	integer sQuant,sSentQuant,warn;
+
+	sSentQuant = 3;	
+  sQuant = 2;
+
+  wn=CurWindow;
+  GetWindowRecord(wn,RepSpec);
+  mwn = RepSpec.flags[0];
+  DeselectWindow(mwn,false);
+  GetWindowRecord(mwn,SMr);
+
+	res = Remote_StockMove_AddOneItemTo(RepSpec,SMr,RowNumber,warn);
+
+	if (res) then begin
+			PutWindowRecord(mwn,SMr);
+			WindowFieldGoto(mwn,SMr,RowNumber,"SentQuant",true);
+			DeselectWindow(mwn,false);									
+			WindowFieldGoto(wn,RepSpec,-1,"f1",false);
+	end else begin
+		if (warn==1) then begin
+			Beep;
+			MessageBox(50019,RepSpec.f2);
+		end;
+		if (warn==2) then begin
+			Beep;
+			MessageBox(50020,"");
+		end;
+	end;
+	
+return;  
+end;
+
+
+
 procedure UnSelect(integer wn)//Edit----------------------Dima  16.02.2015
 Begin
 	record StockMovVc SMr;
@@ -1878,7 +1934,8 @@ begin
 
   res = true;
 	//DeselectWindow(wn,false);
-		StockMove_AddOneItemTo;
+		// StockMove_AddOneItemTo;
+		StockMove_AddOneItemTo2;
 		GetWindowRecord(wn,RepSpec);
 		RepSpec.f2 = "";
   	PutWindowRecord(wn,RepSpec);

@@ -3957,7 +3957,6 @@ begin
 		SpecialMenu("Заполнить остатки на перемещение",'',5,"CheckStockMovement");// Edit ************************** BPI Ukraine - Ira - 01, 02 11 2020 y. at 11:58:23 AM
 		SpecialMenu("Обновить остатки на перемещение",'',5,"CheckInstockFildsStockMovementMn"); // _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_- Anton Preisinger 16:11 24.06.2021
 		SpecialMenu("Стоимость в старой цене за единицу",'=',0,"StockMovFillFIFODsm");
-		SpecialMenu("Стоимость в старой цене за единицу",'=',0,"StockMovFillFIFODsm");
 		SpecialMenu("Поиск товара",'f',1,"ItemSearchDsm");
 		SpecialMenu("Сканировать товары на складе",'f',1,"TableSearchAddition2Dsm");
 		if (HasIntegratedNL) then begin

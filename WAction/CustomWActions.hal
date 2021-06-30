@@ -7,6 +7,8 @@ external function Integer CountObjects(string);
 external procedure ExtractObj(string,var Integer,var string); 
 remote procedure  StockMovVc_CheckStockMovement(var record StockMovVc);
 remote procedure  StockMovVc_CheckInstockFildsMn(var record StockMovVc);
+remote procedure StockMovVc_PasteSentQuant(var record StockMovVc,Integer);
+
 
 SetLangMode(LangRussian,"RUS",0); 
 
@@ -929,4 +931,127 @@ begin
 	
 	
 return;
+end;
+
+
+
+
+
+
+function Boolean FindInMathGeneral2( string RegisterName, record StockMovVc SMovr, string search, integer from, var integer RowNumber)
+begin					
+  row SHVc SHrw;
+	row StockMovVc SMovrw;
+	record SHVc SHr;
+  boolean res;
+  Integer i,rwcnt;
+
+  res=false;
+
+ 
+	rwcnt = MatRowCnt(SMovr);
+	for (i = from;i<rwcnt;i=i+1) begin
+			MatRowGet(SMovr,i,SMovrw);
+				if(search==SMovrw.ArtCode) then begin
+					RowNumber = i;
+					res = true;
+					goto LFindInMathGeneral2;
+				end;		  
+      
+  end;  
+
+  LFindInMathGeneral2:;	
+  FindInMathGeneral2 = res;
+return;
+end;
+
+
+
+
+
+
+
+
+global 	//Edit-------------Dima  12.01.2015
+updating function boolean Remote_StockMove_AddOneItemTo(record RcVc RepSpec,var record StockMovVc SMr,var integer RowNumber, var integer warn)
+
+begin
+	record INVc INr,INr1;
+	row StockMovVc SMrw;
+	record BarcodeVc Barcoder;
+	integer wn,mwn,curRow,rwcnt;
+	Boolean key,put,res;
+	string 30 searchstr;
+	integer sQuant,sSentQuant;
+
+	sSentQuant = 3;	
+  sQuant = 2;
+
+	rwcnt = MatRowCnt(SMr);
+	res = false;
+
+	searchstr = RepSpec.f2;
+	warn = 0;
+
+	INr1.Code = searchstr;
+	if(ReadFirstMain(INr1,1,true)) then begin
+		INr.Code = INr1.Code;
+		key = true;
+	end else begin
+		RecordClear(INr1);
+		INr1.BarCode = searchstr;
+		if(ReadFirstKey("BarCode",INr1,1,true)) then begin
+			INr.Code = INr1.Code;
+			key = true;
+		end else begin
+			RecordClear(INr1);
+			INr1.AlternativeCode = searchstr;
+			if(ReadFirstKey("AlternativeCode",INr1,1,true)) then begin
+				INr.Code = INr1.Code;
+				key = true;
+			end else begin
+				Barcoder.Barcode = searchstr;
+				if (ReadFirstMain(Barcoder,1,true)) then begin
+					INr.Code = Barcoder.Itemcode;
+					key = true;					
+				end;
+			end;
+		end;
+	end;
+
+	curRow = 0;
+	RowNumber = 0;
+	put = false;
+
+	if(key) then begin
+			while	(curRow < rwcnt) begin	 //we try to find the same item in next rows
+				if(FindInMathGeneral2("StockMovVc",SMr,INr.Code,curRow,RowNumber)==true) then begin
+						MatRowGet(SMr,RowNumber,SMrw);
+								if (SMrw.SentQuant < SMrw.OrdQuant) then begin
+									SMrw.SentQuant = SMrw.SentQuant+1;
+									put = true;
+								end;
+								if (put) then begin
+										MatRowPut(SMr,RowNumber,SMrw);
+										res = true;
+										StockMovVc_PasteSentQuant(SMr,RowNumber);
+										goto LStockMove_AddOneItemTo;
+								end else begin
+          					curRow = curRow+1; //we try to find the same item in next rows
+								end;
+
+					end else begin
+						Beep;
+						warn = 1;
+						goto LStockMove_AddOneItemTo;
+					end;
+			end;
+			warn = 1;
+	end else begin
+			warn = 2;
+	end;	
+
+	LStockMove_AddOneItemTo:;
+	Remote_StockMove_AddOneItemTo = res;
+return;  
 end;
