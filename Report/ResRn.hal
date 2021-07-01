@@ -851,7 +851,6 @@ BEGIN
   vector Boolean sumsv;
   Array record UserDefRepLinesVc aUserDefRepLinesr;
   Integer udrli,udrlcnt;
-
   Boolean negf,AGrs;
   Integer i,aid,nr;
   Integer aidn,maxrsums;
@@ -867,12 +866,12 @@ BEGIN
 //only when reportnigperiods on
   PLf = true;
   headerf = true;
-  if (RepSpec.CalledFromHAL==0) then begin
-    if (((RepSpec.AccSpec==2) or (RepSpec.AccSpec==3)) and (nonblank(RepSpec.ObjType))) then begin
-      MessageBox(1072,"!!!!!!!!!!!!");
-      goto LResRn;
-    end;
-  end;
+  // if (RepSpec.CalledFromHAL==0) then begin
+    // if (((RepSpec.AccSpec==2) or (RepSpec.AccSpec==3)) and (nonblank(RepSpec.ObjType))) then begin
+      // MessageBox(1072,"!!!!!!!!!!!!");
+      // goto LResRn;
+    // end;
+  // end;
   BlockLoad(CYb);
 
   if (blank(RepSpec.shortname)) then begin
