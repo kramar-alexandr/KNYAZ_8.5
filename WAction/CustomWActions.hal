@@ -938,7 +938,7 @@ end;
 
 
 
-function Boolean FindInMathGeneral2( string RegisterName, record StockMovVc SMovr, string search, integer from, var integer RowNumber)
+function Boolean FindInMathGeneral2( string RegisterName, record StockMovVc SMovr, string search, integer from, var integer RowNumber) // _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_- Anton Preisinger 12:00 01.07.2021
 begin					
   row SHVc SHrw;
 	row StockMovVc SMovrw;
@@ -972,7 +972,7 @@ end;
 
 
 
-global 	//Edit-------------Dima  12.01.2015
+global  // _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_- Anton Preisinger 12:00 01.07.2021
 updating function boolean Remote_StockMove_AddOneItemTo(record RcVc RepSpec,var record StockMovVc SMr,var integer RowNumber, var integer warn)
 
 begin

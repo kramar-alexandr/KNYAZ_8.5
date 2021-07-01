@@ -1820,7 +1820,7 @@ end;
 
 
 
-global 	//Edit-------------Dima  12.01.2015
+global 	 // _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_- Anton Preisinger 12:01 01.07.2021
 updating procedure StockMove_AddOneItemTo2()
 begin
 	record INVc INr,INr1;
@@ -1847,7 +1847,11 @@ begin
 	if (res) then begin
 			PutWindowRecord(mwn,SMr);
 			WindowFieldGoto(mwn,SMr,RowNumber,"SentQuant",true);
-			DeselectWindow(mwn,false);									
+			DeselectWindow(mwn,false);
+			RepSpec.f1 = RepSpec.f2;
+			matrowget(SMr,RowNumber,SMrw);
+			RepSpec.f4 = SMrw.SentQuant;
+			PutWindowRecord(wn,RepSpec);
 			WindowFieldGoto(wn,RepSpec,-1,"f1",false);
 	end else begin
 		if (warn==1) then begin
@@ -1926,7 +1930,7 @@ END;
 
 
 
-global	//Edit-------------Dima  12.01.2015
+global	 // _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_- Anton Preisinger 12:25 01.07.2021
 updating function Boolean TableSearchAddition2IClassOnEnterKey(Integer wn,string fieldname,Integer fn,Integer rownr)
 begin
   Boolean res;
