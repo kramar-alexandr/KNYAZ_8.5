@@ -3766,10 +3766,10 @@ begin
 		MatCol(1,170,"Наименование",0,Spec,false,0);  		//Edit*************************** Ira 18.11.20
 		if (currentcompany==5) then begin
 			if (HasVarieties) then begin
-				MatCol(1,-225,"Треб.кол.",0,OrdQuant,true,MATVARINSClass);
+				MatCol(1,-255,"Треб.кол.",0,OrdQuant,true,MATVARINSClass);
 			end else begin
 				if (HasThrouLocation or BuildProductCode=="StandardHealthcare") then begin
-				MatCol(1,-225,"Треб.кол.",0,OrdQuant,true,0);
+				MatCol(1,-255,"Треб.кол.",0,OrdQuant,true,0);
 			end;
 		end else begin
 			if (HasVarieties) then begin
@@ -3783,14 +3783,14 @@ begin
     end;
 		if (currentcompany==5) then begin
 			if (HasThrouLocation) then begin
-				MatCol(1,-175,"Отпр.кол.",0,SentQuant,true,0);			//Edit*************************** Ira 18.11.20
+				MatCol(1,-205,"Отпр.кол.",0,SentQuant,true,0);			//Edit*************************** Ira 18.11.20
 			end;
-			MatCol(1,-125,"Получ.кол.",0,Quant,true,0); 			//Edit*************************** Ira 18.11.20
+			MatCol(1,-155,"Получ.кол.",0,Quant,true,0); 			//Edit*************************** Ira 18.11.20
 		end;
   end;
-  MatCol(1,-80,"Скл. 1",0,InStock1,true,0);			//Edit*************************** Ira 18.11.20
-  MatCol(1,-40,"Скл. 2",0,InStock2,true,0);			//Edit*************************** Ira 18.11.20
-  
+  MatCol(1,-110,"Скл. 1",0,InStock1,true,0);			//Edit*************************** Ira 18.11.20
+  MatCol(1,-70,"Скл. 2",0,InStock2,true,0);			//Edit*************************** Ira 18.11.20
+  MatCol(1,-30,"Продано",0,InvQty,true,0);  // _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_- Anton Preisinger 13:54 01.07.2021
   
   /*
   MatCol(1,-260,"Старая цена",0,OldPrice,true,0);

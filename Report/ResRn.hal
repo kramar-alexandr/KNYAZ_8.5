@@ -869,7 +869,7 @@ BEGIN
   headerf = true;
   if (RepSpec.CalledFromHAL==0) then begin
     if (((RepSpec.AccSpec==2) or (RepSpec.AccSpec==3)) and (nonblank(RepSpec.ObjType))) then begin
-      MessageBox(1072,"");
+      MessageBox(1072,"!!!!!!!!!!!!");
       goto LResRn;
     end;
   end;

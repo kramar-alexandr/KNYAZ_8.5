@@ -608,11 +608,14 @@ END;
 
 global function boolean StockMovDClassArtCode2EFAfter(integer wn,integer rownr,integer changed)
 begin
- record StockMovVc SMr;
- row StockMovVc SMrw, SM2rw;
- record ItemStatusVc ISr,ISr2;
- boolean res;
- integer i;
+	record StockMovVc SMr;
+	row StockMovVc SMrw, SM2rw;
+	record ItemStatusVc ISr,ISr2;
+	boolean res;
+	integer i;
+	record ItemHistVc IHr;
+	boolean TrHs, testf;
+	val saleDayQty;
  
  res = true;
  getwindowrecord(wn,SMr);
@@ -626,6 +629,23 @@ begin
 			readfirstmain(ISr2,2,true);
 			SMrw.InStock1 = ISr.Instock - ISr.RsrvQty;
 			SMrw.InStock2 = ISr2.Instock - ISr2.RsrvQty;
+			saleDayQty = 0;
+			IHr.TransDate = CurrentDate;
+			IHr.ArtCode = SMrw.ArtCode;
+			IHr.Location = SMr.ToLocation;
+			TrHs = true;
+			while (loopkey("ArtCodeLoc",IHr,3,TrHs)) begin
+				testf = true;
+				if IHr.TransDate!=CurrentDate then begin TrHs = false; end;
+				if IHr.ArtCode!=SMrw.ArtCode then begin TrHs = false; end;
+				if IHr.Location!=SMr.ToLocation then begin TrHs = false; end;
+				if IHr.FileName!="IVVc" or !TrHs then begin testf = false; end;
+				if (testf) then begin
+					saleDayQty = saleDayQty + IHr.Qty * -1;
+				end;
+			end;
+			resetloop(IHr);
+			SMrw.InvQty = saleDayQty;
 			matrowput(SMr,rownr,SMrw);
 			PutWindowRecord(wn,SMr);
 			getwindowrecord(wn,SMr);

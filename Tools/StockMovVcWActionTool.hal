@@ -567,8 +567,11 @@ begin
 	record INVc INr;
 	record ItemStatusVc ISr1, ISr2;
 	row StockMovVc SMrw;
+	record ItemHistVc IHr;
 	integer i, cnt;
 	array string 255 aWarning;
+	boolean TrHs, testf;
+	val saleDayQty;
 	
 	i = 0;
 
@@ -594,6 +597,24 @@ begin
 			
 			SMrw.InStock1 = ISr1.Instock - ISr1.RsrvQty;
 			SMrw.InStock2 = ISr2.Instock - ISr2.RsrvQty;
+			saleDayQty = 0;
+			IHr.TransDate = CurrentDate;
+			IHr.ArtCode = SMrw.ArtCode;
+			IHr.Location = SMr.ToLocation;
+			TrHs = true;
+			while (loopkey("ArtCodeLoc",IHr,3,TrHs)) begin
+				testf = true;
+				if IHr.TransDate!=CurrentDate then begin TrHs = false; end;
+				if IHr.ArtCode!=SMrw.ArtCode then begin TrHs = false; end;
+				if IHr.Location!=SMr.ToLocation then begin TrHs = false; end;
+				if IHr.FileName!="IVVc" or !TrHs then begin testf = false; end;
+				if (testf) then begin
+					saleDayQty = saleDayQty + IHr.Qty * -1;
+				end;
+			end;
+			resetloop(IHr);
+			SMrw.InvQty = saleDayQty;
+			
 			if(blank(SMrw.OrdQuant)) then begin
 				SMrw.OrdQuant = 0;
 			end;
