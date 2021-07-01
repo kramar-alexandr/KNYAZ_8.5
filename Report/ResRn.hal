@@ -1036,12 +1036,12 @@ BEGIN
     end;
     EndFormat;
 end;
-  if ((nonblank(RepSpec.ObjType)) and (RepSpec.AccSpec==2)) then begin
-    StartFormat(20);
-    OutString(0,0,USetStr(1565),false);
-    EndFormat;
-    goto L88LResRn;
-  end;
+  // if ((nonblank(RepSpec.ObjType)) and (RepSpec.AccSpec==2)) then begin
+    // StartFormat(20);
+    // OutString(0,0,USetStr(1565),false);
+    // EndFormat;
+    // goto L88LResRn;
+  // end;
   
   ckey = "ShortIDKey:" & UserDefRepr.shortname;
   UserDefRepLinesr.IdKey = 0; 
