@@ -596,8 +596,8 @@ begin
 
 			readfirstmain(ISr2, 2, true);
 			
-			if (ISr1.RsrvQty<0) then begin ISr1.RsrvQty = ISr1.RsrvQty * -1;	end;
-			if (ISr2.RsrvQty<0) then begin ISr2.RsrvQty = ISr2.RsrvQty * -1;	end;
+			if (ISr1.RsrvQty<0) then begin ISr1.RsrvQty = 0;	end;
+			if (ISr2.RsrvQty<0) then begin ISr2.RsrvQty = 0;	end;
 			
 			if (ISr1.Instock - ISr1.RsrvQty > 0) then begin
 			
@@ -675,8 +675,8 @@ begin
 			
 			readfirstmain(ISr2, 2, true);
 			
-			if (ISr1.RsrvQty<0) then begin ISr1.RsrvQty = ISr1.RsrvQty * -1;	end;
-			if (ISr2.RsrvQty<0) then begin ISr2.RsrvQty = ISr2.RsrvQty * -1;	end;
+			if (ISr1.RsrvQty<0) then begin ISr1.RsrvQty = 0;	end;
+			if (ISr2.RsrvQty<0) then begin ISr2.RsrvQty = 0;	end;
 			if (ISr1.Instock - ISr1.RsrvQty > 0) then begin
 				SMrw.InStock1 = ISr1.Instock - ISr1.RsrvQty;
 				SMrw.InStock2 = ISr2.Instock - ISr2.RsrvQty;
