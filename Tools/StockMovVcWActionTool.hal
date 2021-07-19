@@ -590,10 +590,15 @@ begin
 			 
 		ISr1.Location = SMr.FrLocation;
 		ISr2.Location = SMr.ToLocation;
+		
 			
-		if(readfirstmain(ISr1,2,true) and ISr1.Instock - ISr1.RsrvQty > 0)then begin
-			
+		if(readfirstmain(ISr1,2,true) and ISr1.Instock + ISr1.RsrvQty > 0)then begin
+
+		
 			readfirstmain(ISr2, 2, true);
+			
+			if (ISr1.RsrvQty<0) then begin ISr1.RsrvQty = ISr1.RsrvQty * -1;	end;
+			if (ISr2.RsrvQty<0) then begin ISr2.RsrvQty = ISr2.RsrvQty * -1;	end;
 			
 			SMrw.InStock1 = ISr1.Instock - ISr1.RsrvQty;
 			SMrw.InStock2 = ISr2.Instock - ISr2.RsrvQty;
@@ -667,9 +672,12 @@ begin
 		ISr1.Location = SMr.FrLocation;
 		ISr2.Location = SMr.ToLocation;
 			
-		if(readfirstmain(ISr1,2,true) and ISr1.Instock - ISr1.RsrvQty > 0)then begin
+		if(readfirstmain(ISr1,2,true) and ISr1.Instock + ISr1.RsrvQty > 0)then begin
 			
 			readfirstmain(ISr2, 2, true);
+			
+			if (ISr1.RsrvQty<0) then begin ISr1.RsrvQty = ISr1.RsrvQty * -1;	end;
+			if (ISr2.RsrvQty<0) then begin ISr2.RsrvQty = ISr2.RsrvQty * -1;	end;
 			
 			SMrw.InStock1 = ISr1.Instock - ISr1.RsrvQty;
 			SMrw.InStock2 = ISr2.Instock - ISr2.RsrvQty;
