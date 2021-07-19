@@ -592,45 +592,47 @@ begin
 		
 			
 
-		if(readfirstmain(ISr1,2,true) and ISr1.Instock + ISr1.RsrvQty > 0)then begin
+		if(readfirstmain(ISr1,2,true))then begin
 
 			readfirstmain(ISr2, 2, true);
 			
 			if (ISr1.RsrvQty<0) then begin ISr1.RsrvQty = ISr1.RsrvQty * -1;	end;
 			if (ISr2.RsrvQty<0) then begin ISr2.RsrvQty = ISr2.RsrvQty * -1;	end;
 			
-			SMrw.InStock1 = ISr1.Instock - ISr1.RsrvQty;
-			SMrw.InStock2 = ISr2.Instock - ISr2.RsrvQty;
-			saleDayQty = 0;
-			IHr.TransDate = CurrentDate;
-			IHr.ArtCode = SMrw.ArtCode;
-			IHr.Location = SMr.ToLocation;
-			TrHs = true;
-			while (loopkey("ArtCodeLoc",IHr,3,TrHs)) begin
-				testf = true;
-				if IHr.TransDate!=CurrentDate then begin TrHs = false; end;
-				if IHr.ArtCode!=SMrw.ArtCode then begin TrHs = false; end;
-				if IHr.Location!=SMr.ToLocation then begin TrHs = false; end;
-				if IHr.FileName!="IVVc" or !TrHs then begin testf = false; end;
-				if (testf) then begin
-					saleDayQty = saleDayQty + IHr.Qty * -1;
+			if (ISr1.Instock - ISr1.RsrvQty > 0) then begin
+			
+				SMrw.InStock1 = ISr1.Instock - ISr1.RsrvQty;
+				SMrw.InStock2 = ISr2.Instock - ISr2.RsrvQty;
+				saleDayQty = 0;
+				IHr.TransDate = CurrentDate;
+				IHr.ArtCode = SMrw.ArtCode;
+				IHr.Location = SMr.ToLocation;
+				TrHs = true;
+				while (loopkey("ArtCodeLoc",IHr,3,TrHs)) begin
+					testf = true;
+					if IHr.TransDate!=CurrentDate then begin TrHs = false; end;
+					if IHr.ArtCode!=SMrw.ArtCode then begin TrHs = false; end;
+					if IHr.Location!=SMr.ToLocation then begin TrHs = false; end;
+					if IHr.FileName!="IVVc" or !TrHs then begin testf = false; end;
+					if (testf) then begin
+						saleDayQty = saleDayQty + IHr.Qty * -1;
+					end;
 				end;
-			end;
-			resetloop(IHr);
-			SMrw.InvQty = saleDayQty;
-			
-			if(blank(SMrw.OrdQuant)) then begin
-				SMrw.OrdQuant = 0;
-			end;
-			if(blank(SMrw.Quant)) then begin
-				SMrw.Quant = 0;
-			end;
-			MatRowPut(SMr, i, SMrw);
-			
-			StockMovVc_PasteArtCode(SMr,i,1,aWarning); 
+				resetloop(IHr);
+				SMrw.InvQty = saleDayQty;
 				
-			i = i + 1;
-		
+				if(blank(SMrw.OrdQuant)) then begin
+					SMrw.OrdQuant = 0;
+				end;
+				if(blank(SMrw.Quant)) then begin
+					SMrw.Quant = 0;
+				end;
+				MatRowPut(SMr, i, SMrw);
+				
+				StockMovVc_PasteArtCode(SMr,i,1,aWarning); 
+					
+				i = i + 1;
+			end;
 		end;
 	end;
 end;
@@ -669,26 +671,29 @@ begin
 		ISr1.Location = SMr.FrLocation;
 		ISr2.Location = SMr.ToLocation;
 			
-		if(readfirstmain(ISr1,2,true) and ISr1.Instock + ISr1.RsrvQty > 0)then begin
+		if(readfirstmain(ISr1,2,true))then begin
 			
 			readfirstmain(ISr2, 2, true);
 			
 			if (ISr1.RsrvQty<0) then begin ISr1.RsrvQty = ISr1.RsrvQty * -1;	end;
 			if (ISr2.RsrvQty<0) then begin ISr2.RsrvQty = ISr2.RsrvQty * -1;	end;
-			
-			SMrw.InStock1 = ISr1.Instock - ISr1.RsrvQty;
-			SMrw.InStock2 = ISr2.Instock - ISr2.RsrvQty;
-			if(blank(SMrw.OrdQuant)) then begin
-				SMrw.OrdQuant = 0;
+			if (ISr1.Instock - ISr1.RsrvQty > 0) then begin
+				SMrw.InStock1 = ISr1.Instock - ISr1.RsrvQty;
+				SMrw.InStock2 = ISr2.Instock - ISr2.RsrvQty;
+				if(blank(SMrw.OrdQuant)) then begin
+					SMrw.OrdQuant = 0;
+				end;
+					
+				if(blank(SMrw.Quant)) then begin
+					SMrw.Quant = 0;
+				end;
+					
+				MatRowPut(SMr, i, SMrw);
+			end else begin
+				SMrw.InStock1 = 0;
+				SMrw.InStock2 = 0;
+				MatRowPut(SMr, i, SMrw);
 			end;
-				
-			if(blank(SMrw.Quant)) then begin
-				SMrw.Quant = 0;
-			end;
-				
-			MatRowPut(SMr, i, SMrw);
-							
-		
 		end else begin
 			SMrw.InStock1 = 0;
 			SMrw.InStock2 = 0;
