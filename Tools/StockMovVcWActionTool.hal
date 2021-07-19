@@ -580,11 +580,10 @@ begin
 		matrowdelete(SMr,i);
 	end;
 
-
+	i = 0;
 
 	while(LoopMain(INr, 1, true)) begin
 		SMrw.ArtCode = INr.Code;
-		
 		ISr1.Code = INr.Code;
 		ISr2.Code = INr.Code;
 			 
@@ -592,7 +591,6 @@ begin
 		ISr2.Location = SMr.ToLocation;
 			
 		if(readfirstmain(ISr1,2,true) and ISr1.Instock - ISr1.RsrvQty > 0)then begin
-			
 			readfirstmain(ISr2, 2, true);
 			
 			SMrw.InStock1 = ISr1.Instock - ISr1.RsrvQty;
@@ -618,11 +616,9 @@ begin
 			if(blank(SMrw.OrdQuant)) then begin
 				SMrw.OrdQuant = 0;
 			end;
-				
 			if(blank(SMrw.Quant)) then begin
 				SMrw.Quant = 0;
 			end;
-				
 			MatRowPut(SMr, i, SMrw);
 			
 			StockMovVc_PasteArtCode(SMr,i,1,aWarning); 
