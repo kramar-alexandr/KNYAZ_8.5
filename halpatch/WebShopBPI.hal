@@ -843,6 +843,31 @@ return;
 end;
 
 
+global webpublic procedure WebGetCurrentUsers()
+begin
+string 50 location;
+area resarea;
+record UserVc USr,curUSr;
+record DepVc Depr;
+boolean testf;
+
+	if(WebLoginStatus==3)then begin
+
+		WebSetContentType("application/json; charset=UTF-8");	
+
+		SetCompany(5,false);
+			
+			curUSr.Code = currentuser;
+			readfirstmain(curUSr,1,true);
+			AddTextToArea("{",resarea);
+			AddTextToArea("\"user\":\"" & curUSr.Code & "\"}",resarea);
+			weboutarea2(resarea);
+	end;
+
+return;
+end;
+
+
 global webpublic procedure WebGetCashDocs()
 begin
 string 50 location,code;
