@@ -32,6 +32,7 @@ begin
   Maintenance("Пересчитать наценку в Поступлениях",RecalcMarkUpsInPUVClass,RecalcMarkUpsInPUMn,modDBMain);
   Maintenance("Насчитать зарплату за дату",MakeSalaryTransactionVClass,MakeSalaryTransactionMn,modNL); //Edit***************************Sasha2,10:18 14.03.2017
 	Maintenance("Удалить старые записи RHist",CustomRegisterRemoveVClass,RHistRemoveMn,modDBMain);
+	Maintenance("Пересобрать резервы",ReserveRecalcVClass,ReserveRecalcMn,modIN); // Edit ********** Ihor Trubachov 22*07*2021
 
   SString(50000,"Укажите цену закупки"); 
   SString(50001,"Укажите себестоимость");

@@ -535,3 +535,15 @@ begin
   EndWindow;
 end;
 
+window ReserveRecalcVClass:1 // Edit ****** Ihor Trubachov 22*07*2021
+  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  real h,v,vs;
+  WindowBegin("Обновление",EmptyVClass,CGMnt,RcType);
+  SetWRect(20,80,400,240);
+  vs = 20;h = 130; v = 26;
+  EditField(h=90,v=10, -20, "Товар",Normal,f1,false,0);
+ EditField(h=90,v=25, -20, "Компания",Normal,f2,false,0);
+  PeriodField(h,v,"Период");
+  EndWindow;
+end;
