@@ -185,6 +185,11 @@ logtext(0,"Start - ReserveRecalcMn");
 				while (loopmain(ISr,1,TrHs)) begin
 					if (nonblank(RepSpec.f1) and RepSpec.f1!=ISr.Code) then begin TrHs = false; end;
 					
+					if(nonblank(sDate) and nonblank(eDate)) then begin
+								if(!DateInRange(ISr.NoDataBefore,sDate,eDate) and nonblank(ISr.NoDataBefore)) then begin 
+									testf = false;  ///////////
+						end;
+					end;
 					
 					if(ISr.Location!=";;;")then begin
 						if(ISr.RsrvQty != quantShipAll[ISr.Code & ISr.Location]) then begin
