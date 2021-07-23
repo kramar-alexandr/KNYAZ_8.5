@@ -103,11 +103,11 @@ logtext(0,"Start - ReserveRecalcMn");
 					testf = true;
 					if(ORr.Reserved<1) then begin TrHs = false; testf = false; end;
 					if(ORr.Closed==1) then begin testf = false; end;
-					if(nonblank(sDate) and nonblank(eDate)) then begin
-						if(!DateInRange(ORr.OrdDate,sDate,eDate) and nonblank(ORr.OrdDate)) then begin 
-							testf = false;  ///////////
-						end;
-					end;
+					// if(nonblank(sDate) and nonblank(eDate)) then begin
+						// if(!DateInRange(ORr.OrdDate,sDate,eDate) and nonblank(ORr.OrdDate)) then begin 
+							// testf = false;  ///////////
+						// end;
+					// end;
 					
 					if(testf) then begin
 						rowcnt = MatRowCnt(ORr);
@@ -127,29 +127,7 @@ logtext(0,"Start - ReserveRecalcMn");
 				end;
 				ResetLoop(ORr);
 				
-				// SDr.OKFlag = 0;
-				// TrHs = true;
-				// while(loopkey("OKFlag",SDr,1,TrHs)) begin
-					// testf = true;
-					// if(SDr.Reservf<1) then begin testf = false; end;
-					// if(SDr.OKFlag>0) then begin testf = false; TrHs = false; end;
-					// if(testf) then begin
-						// rowcnt = MatRowCnt(SDr);
-						// for(i=0;i<rowcnt;i=i+1) begin
-							// testf = true;
-							// matrowget(SDr,i,SDrw);
-							// if(nonblank(RepSpec.f1) and RepSpec.f1!=SDrw.ArtCode) then begin testf = false; end;
-							// if(SDrw.Qty>0 and testf) then begin
-								// if (blank(SDrw.Location)) then begin
-									// SDrw.Location = SDr.Location;
-								// end;
-								// quantShipAll[SDrw.ArtCode & SDrw.Location] = quantShipAll[SDrw.ArtCode & SDrw.Location] + SDrw.Qty;
-								// quantAllShipAll[SDrw.ArtCode] = quantAllShipAll[SDrw.ArtCode] + SDrw.Qty;
-							// end;
-						// end;
-					// end;
-				// end;
-				// ResetLoop(SDr);
+				
 				
 				SMr.OKFlag = 0;
 				TrHs = true;
@@ -162,11 +140,11 @@ logtext(0,"Start - ReserveRecalcMn");
 							testf = true;
 							matrowget(SMr,i,SMrw);
 							if(nonblank(RepSpec.f1) and RepSpec.f1!=SMrw.ArtCode) then begin testf = false; end;
-							if(nonblank(sDate) and nonblank(eDate)) then begin
-								if(!DateInRange(SMr.TransDate,sDate,eDate) and nonblank(SMr.TransDate)) then begin 
-									testf = false;  ///////////
-								end;
-							end;
+							// if(nonblank(sDate) and nonblank(eDate)) then begin
+								// if(!DateInRange(SMr.TransDate,sDate,eDate) and nonblank(SMr.TransDate)) then begin 
+									// testf = false;  ///////////
+								// end;
+							// end;
 							
 							if(SMrw.Quant>0 and testf) then begin
 								quantShipAll[SMrw.ArtCode & SMr.FrLocation] = quantShipAll[SMrw.ArtCode & SMr.FrLocation] + SMrw.Quant;
