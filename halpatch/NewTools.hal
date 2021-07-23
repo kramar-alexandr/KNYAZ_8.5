@@ -15,6 +15,7 @@ external function Boolean GetAccName(string,var string,Integer);
 external function roundmode DefaultRoundMode();
 external function Integer GetIntYc(Date);
 remote procedure SyncCurrWithNBUMn();
+remote procedure ReserveRecalcMnTime();
 
 /*global 
 function Boolean LocMachDrawerVcRecordShouldBeSynchronised(record LocMachDrawerVc LocMachDrawerr,string tagstr)
@@ -1280,6 +1281,7 @@ begin
     SetCompany(5,false);
 			if(getminute(currenttime)==0 and gethour(currenttime)<=23 and gethour(currenttime)>=17)then begin
 				SyncCurrWithNBUMn;
+				ReserveRecalcMnTime;
 			end;
 		
 		

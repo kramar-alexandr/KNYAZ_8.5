@@ -103,11 +103,11 @@ logtext(0,"Start - ReserveRecalcMn");
 					testf = true;
 					if(ORr.Reserved<1) then begin TrHs = false; testf = false; end;
 					if(ORr.Closed==1) then begin testf = false; end;
-					// if(nonblank(sDate) and nonblank(eDate)) then begin
-						// if(!DateInRange(ORr.OrdDate,sDate,eDate) and nonblank(ORr.OrdDate)) then begin 
-							// testf = false;  ///////////
-						// end;
-					// end;
+					if(nonblankdate(sDate) and nonblankdate(eDate)) then begin
+						if(!DateInRange(ORr.OrdDate,sDate,eDate) and nonblankdate(ORr.OrdDate)) then begin 
+							testf = false;  ///////////
+						end;
+					end;
 					
 					if(testf) then begin
 						rowcnt = MatRowCnt(ORr);
@@ -140,11 +140,11 @@ logtext(0,"Start - ReserveRecalcMn");
 							testf = true;
 							matrowget(SMr,i,SMrw);
 							if(nonblank(RepSpec.f1) and RepSpec.f1!=SMrw.ArtCode) then begin testf = false; end;
-							// if(nonblank(sDate) and nonblank(eDate)) then begin
-								// if(!DateInRange(SMr.TransDate,sDate,eDate) and nonblank(SMr.TransDate)) then begin 
-									// testf = false;  ///////////
-								// end;
-							// end;
+							if(nonblankdate(sDate) and nonblankdate(eDate)) then begin
+								if(!DateInRange(SMr.TransDate,sDate,eDate) and nonblankdate(SMr.TransDate)) then begin 
+									testf = false;  ///////////
+								end;
+							end;
 							
 							if(SMrw.Quant>0 and testf) then begin
 								quantShipAll[SMrw.ArtCode & SMr.FrLocation] = quantShipAll[SMrw.ArtCode & SMr.FrLocation] + SMrw.Quant;
@@ -185,5 +185,17 @@ logtext(0,"Start - ReserveRecalcMn");
 logtext(0,"Finish - ReserveRecalcMn");
 	ResetCompany(oldCompany);
 	LogProcTime("ReserveRecalcMn",getcurtick() - curtick);
+  return;
+end;
+
+
+global
+procedure ReserveRecalcMnTime() // Edit ********** Ihor Trubachov 23*07*2021
+begin
+  record RcVc RepSpec;
+	RepSpec.f1 = "";
+	RepSpec.f2 = "";
+	
+	ReserveRecalcMn(RepSpec);
   return;
 end;
