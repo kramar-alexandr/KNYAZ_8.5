@@ -163,15 +163,12 @@ logtext(0,"Start - ReserveRecalcMn");
 							matrowget(SMr,i,SMrw);
 							if(nonblank(RepSpec.f1) and RepSpec.f1!=SMrw.ArtCode) then begin testf = false; end;
 							if(nonblank(sDate) and nonblank(eDate)) then begin
-								if(!DateInRange(SMr.OrdTransDate,sDate,eDate) and nonblank(SMr.OrdTransDate) and
-								!DateInRange(SMr.TransDate,sDate,eDate) and nonblank(SMr.TransDate) and 
-								!DateInRange(SMr.SentTransDate,sDate,eDate) and nonblank(SMr.SentTransDate)) then begin 
+								if(!DateInRange(SMr.TransDate,sDate,eDate) and nonblank(SMr.TransDate)) then begin 
 									testf = false;  ///////////
 								end;
 							end;
 							
 							if(SMrw.Quant>0 and testf) then begin
-
 								quantShipAll[SMrw.ArtCode & SMr.FrLocation] = quantShipAll[SMrw.ArtCode & SMr.FrLocation] + SMrw.Quant;
 								quantAllShipAll[SMrw.ArtCode] = quantAllShipAll[SMrw.ArtCode] + SMrw.Quant;
 							end;
@@ -184,12 +181,6 @@ logtext(0,"Start - ReserveRecalcMn");
 				TrHs = true;
 				while (loopmain(ISr,1,TrHs)) begin
 					if (nonblank(RepSpec.f1) and RepSpec.f1!=ISr.Code) then begin TrHs = false; end;
-					
-					if(nonblank(sDate) and nonblank(eDate)) then begin
-								if(!DateInRange(ISr.NoDataBefore,sDate,eDate) and nonblank(ISr.NoDataBefore)) then begin 
-									testf = false;  ///////////
-						end;
-					end;
 					
 					if(ISr.Location!=";;;")then begin
 						if(ISr.RsrvQty != quantShipAll[ISr.Code & ISr.Location]) then begin
