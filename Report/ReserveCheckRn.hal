@@ -168,6 +168,11 @@ logtext(0,"Start - ReserveRecalcMn");
 							MilliSleep(50);
 							//RecordStore(ISr,true);
 						end;
+						if (ISr.RsrvQty==blankval) then begin
+							ISr.RsrvQty = 0;
+							queued.QdReserveRecalcMn(ISr);
+							MilliSleep(50);
+						end;
 					end;			
 					if(ISr.Location==";;;")then begin
 						if (quantAllShipAll[ISr.Code & ISr.Location]==blankval) then begin quantAllShipAll[ISr.Code & ISr.Location] = 0; end;
@@ -176,6 +181,11 @@ logtext(0,"Start - ReserveRecalcMn");
 							queued.QdReserveRecalcMn(ISr); // _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_- Anton Preisinger 19:55 19.02.2021
 							MilliSleep(50);
 							//RecordStore(ISr,true);
+						end;	
+						if (ISr.RsrvQty==blankval) then begin
+							ISr.RsrvQty = 0;
+							queued.QdReserveRecalcMn(ISr);
+							MilliSleep(50);
 						end;						
 					end;
 				end;
