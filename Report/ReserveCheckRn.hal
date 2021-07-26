@@ -49,6 +49,51 @@ begin
 end;
 
 global
+procedure ZeroBlankReserveRecalcMn()
+begin
+
+	record INVc INr;
+  record ORVc ORr;
+	row ORVc ORrw;
+	boolean TrHs,testf,testf1;
+	vector string 255 orders,loc,custName,OrdDate,reservDate;
+	vector val quantShip,rownr;
+  longint curtick;
+	integer rowcnt,i,j,c;
+	array string 255 tags,tags1;
+	integer itemall,pos,rwcnt,oldCompany;
+	string 255 orderNr;
+	record CompaniesBlock CBb;
+	row CompaniesBlock Comprw;
+	record ItemStatusVc ISr;
+	vector string 255 ordersSM,OrdDateSM;
+	vector val quantShipSM,rownrSM,quantShipSD,quantShipAll,quantAllShipAll;
+	record StockMovVc SMr;
+	row StockMovVc SMrw;
+	record SDVc SDr;
+	row SDVc SDrw;
+	string 225 isrcode, isrlocation;
+	record RcVc RepSpec2;
+	date sDate, eDate; /////////////////
+
+
+	ISr.Code = "";
+	TrHs = true;
+	while (loopmain(ISr,1,TrHs)) begin
+		if (ISr.RsrvQty==blankval) then begin
+			ISr.RsrvQty = 0;
+			queued.QdReserveRecalcMn(ISr);
+			MilliSleep(50);
+		end;
+	end;
+	ResetLoop(ISr);
+
+return;
+end;
+
+
+
+global
 procedure ReserveRecalcMn(record RcVc RepSpec) // Edit ********** Ihor Trubachov 22*07*2021
 begin
   record INVc INr;
@@ -194,6 +239,7 @@ logtext(0,"Start - ReserveRecalcMn");
 		end;
 		
 	end;
+	ZeroBlankReserveRecalcMn;
 logtext(0,"Finish - ReserveRecalcMn");
 	ResetCompany(oldCompany);
 	LogProcTime("ReserveRecalcMn",getcurtick() - curtick);
