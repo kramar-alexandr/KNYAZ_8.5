@@ -1,0 +1,259 @@
+external procedure ExtractObj(string,var Integer,var string);
+external procedure ExtractObjWithSeparator(string,string,Boolean,var Integer,var string);
+remote updating procedure RecalcORMn(record RcVc);
+
+SetLangMode(LangRussian,"RUS",0);
+
+global  // Edit ********** Ihor Trubachov 22*07*2021
+function boolean CompanyIsJWLikeCompany(Integer curcomp)
+begin
+  Boolean res;
+  
+    res = false;
+    switch (curcomp) begin
+	  //case 1: res=true;  // swarowski dobavil
+      case 3: res=true;
+      case 17: res=true;
+	  //case 16: res=true;  // xtravaganza dobavil
+      case 19: res=true;
+      case 20: res=true;
+      case 21: res=true;
+      case 22: res=true;
+      case 23: res=true;
+      case 24: res=true;
+      case 27: res=true;
+    end;
+  
+    CompanyIsJWLikeCompany = res;
+  return
+end; 
+
+
+
+global procedure LogProcTime(string procname, longint timems) // Edit ********** Ihor Trubachov 22*07*2021
+begin
+	area logfile;
+	
+	addtexttoarea(currentdate & chr(9) & currenttime & chr(9) & procname & chr(9) & currentcompany & chr(9) & timems & chr(13) & chr(10),logfile);
+	
+	writeareatofile(logfile,"ProcTimes.txt",1);
+	
+
+return;
+end;
+
+global updating procedure QdReserveRecalcMn (record ItemStatVc ISr)
+begin
+	recordStore (ISr,true);
+	return;
+end;
+
+
+
+global
+updating procedure ReserveblankRecalcMn(record RcVc RepSpec) // Edit ********** Ihor Trubachov 22*07*2021
+begin
+   record INVc INr;
+  record ORVc ORr;
+	row ORVc ORrw;
+	boolean TrHs,testf,testf1;
+	vector string 255 orders,loc,custName,OrdDate,reservDate;
+	vector val quantShip,rownr;
+  longint curtick;
+	integer rowcnt,i,j,c;
+	array string 255 tags,tags1;
+	integer itemall,pos,rwcnt,oldCompany;
+	string 255 orderNr;
+	record CompaniesBlock CBb;
+	row CompaniesBlock Comprw;
+	record ItemStatusVc ISr;
+	vector string 255 ordersSM,OrdDateSM;
+	vector val quantShipSM,rownrSM,quantShipSD,quantShipAll,quantAllShipAll;
+	record StockMovVc SMr;
+	row StockMovVc SMrw;
+	record SDVc SDr;
+	row SDVc SDrw;
+	string 225 isrcode, isrlocation;
+	record RcVc RepSpec2;
+	date sDate, eDate; /////////////////
+
+logtext(0,"Start - ReserveRecalcMn");
+
+	oldCompany = currentCompany;
+	blockload(CBb);
+  rwcnt = matrowcnt(CBb);
+	
+  for(j=0;j<rwcnt;j=j+1) begin
+    matrowget(CBb,j,Comprw);
+		SetCompany(j+1,false);
+		ISr.Code = RepSpec.f1;
+		TrHs = true;
+		while (loopmain(ISr,1,TrHs)) begin
+			if (ISr.RsrvQty == blankval) then begin
+				ISr.RsrvQty = 0;
+				RecordStore(ISr,true);
+			end;
+		end;
+		ResetLoop(ISr);
+	end;
+  return;
+end;
+
+
+
+
+
+
+global
+procedure ReserveRecalcMn(record RcVc RepSpec) // Edit ********** Ihor Trubachov 22*07*2021
+begin
+  record INVc INr;
+  record ORVc ORr;
+	row ORVc ORrw;
+	boolean TrHs,testf,testf1;
+	vector string 255 orders,loc,custName,OrdDate,reservDate;
+	vector val quantShip,rownr;
+  longint curtick;
+	integer rowcnt,i,j,c;
+	array string 255 tags,tags1;
+	integer itemall,pos,rwcnt,oldCompany;
+	string 255 orderNr;
+	record CompaniesBlock CBb;
+	row CompaniesBlock Comprw;
+	record ItemStatusVc ISr;
+	vector string 255 ordersSM,OrdDateSM;
+	vector val quantShipSM,rownrSM,quantShipSD,quantShipAll,quantAllShipAll;
+	record StockMovVc SMr;
+	row StockMovVc SMrw;
+	record SDVc SDr;
+	row SDVc SDrw;
+	string 225 isrcode, isrlocation;
+	record RcVc RepSpec2;
+	date sDate, eDate; /////////////////
+
+logtext(0,"Start - ReserveRecalcMn");
+
+	oldCompany = currentCompany;
+	blockload(CBb);
+  rwcnt = matrowcnt(CBb);
+	
+	sDate = RepSpec.sStartDate;
+	eDate = RepSpec.sEndDate;
+	
+  for(j=0;j<rwcnt;j=j+1) begin
+    matrowget(CBb,j,Comprw);
+		if(Comprw.ActiveStatus==0 and (!CompanyIsJWLikeCompany(j+1) or j+1==3) and j+1!=33 and j+1!=29)then begin
+			SetCompany(j+1,false);
+			testf1 = true;
+			if (nonblank(RepSpec.f2) and StringtoInt(RepSpec.f2)!=CurrentCompany) then begin testf1 = false; end;
+			if (testf1) then begin
+				RepSpec2.flags[2] = 1;
+				RepSpec2.flags[0] = 1;
+				RepSpec2.flags[1] = 1;
+				queued.RecalcORMn(RepSpec2);
+				ClearVector(quantShipAll);
+				ClearVector(quantAllShipAll);
+				ORr.Reserved = 1;
+				TrHs = true;
+				while(LoopKey("Reserved",ORr,1,TrHs)) begin
+					testf = true;
+					if(ORr.Reserved<1) then begin TrHs = false; testf = false; end;
+					if(ORr.Closed==1) then begin testf = false; end;
+					if(nonblankdate(sDate) and nonblankdate(eDate)) then begin
+						if(!DateInRange(ORr.OrdDate,sDate,eDate) and nonblankdate(ORr.OrdDate)) then begin 
+							testf = false;  ///////////
+						end;
+					end;
+					
+					if(testf) then begin
+						rowcnt = MatRowCnt(ORr);
+						for(i=0;i<rowcnt;i=i+1) begin
+							testf = true;
+							matrowget(ORr,i,ORrw);
+							if(nonblank(RepSpec.f1) and RepSpec.f1!=ORrw.ArtCode) then begin testf = false; end;
+							if(ORrw.Quant>0 and testf and ORrw.Quant>ORrw.Shipd2) then begin
+								if (blank(ORrw.Location)) then begin
+									ORrw.Location = ORr.Location;
+								end;
+								quantShipAll[ORrw.ArtCode & ORrw.Location] = quantShipAll[ORrw.ArtCode & ORrw.Location] + (ORrw.Quant-ORrw.Shipd2);
+								quantAllShipAll[ORrw.ArtCode] = quantAllShipAll[ORrw.ArtCode] + (ORrw.Quant-ORrw.Shipd2);
+							end;
+						end;
+					end;
+				end;
+				ResetLoop(ORr);
+				
+				
+				
+				SMr.OKFlag = 0;
+				TrHs = true;
+				while(LoopKey("OKFlag",SMr,1,TrHs)) begin
+					TrHs = true;
+					if(SMr.OKFlag>0) then begin TrHs = false; end;
+					if(TrHs and SMr.Reserved>0) then begin
+						rowcnt = MatRowCnt(SMr);
+						for(i=0;i<rowcnt;i=i+1) begin
+							testf = true;
+							matrowget(SMr,i,SMrw);
+							if(nonblank(RepSpec.f1) and RepSpec.f1!=SMrw.ArtCode) then begin testf = false; end;
+							if(nonblankdate(sDate) and nonblankdate(eDate)) then begin
+								if(!DateInRange(SMr.TransDate,sDate,eDate) and nonblankdate(SMr.TransDate)) then begin 
+									testf = false;  ///////////
+								end;
+							end;
+							
+							if(SMrw.Quant>0 and testf) then begin
+								quantShipAll[SMrw.ArtCode & SMr.FrLocation] = quantShipAll[SMrw.ArtCode & SMr.FrLocation] + SMrw.Quant;
+								quantAllShipAll[SMrw.ArtCode] = quantAllShipAll[SMrw.ArtCode] + SMrw.Quant;
+							end;
+						end;
+					end;
+				end;
+				ResetLoop(SMr);
+				
+				ISr.Code = RepSpec.f1;
+				TrHs = true;
+				while (loopmain(ISr,1,TrHs)) begin
+					if (nonblank(RepSpec.f1) and RepSpec.f1!=ISr.Code) then begin TrHs = false; end;
+					
+					if(ISr.Location!=";;;")then begin
+						if (quantShipAll[ISr.Code & ISr.Location]==blankval) then begin quantShipAll[ISr.Code & ISr.Location] = 0; end;
+						if(ISr.RsrvQty != quantShipAll[ISr.Code & ISr.Location] or ISr.RsrvQty == blankval) then begin
+							ISr.RsrvQty = quantShipAll[ISr.Code & ISr.Location];
+							queued.QdReserveRecalcMn(ISr); // _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_- Anton Preisinger 19:55 19.02.2021
+							MilliSleep(50);
+							//RecordStore(ISr,true);
+						end;
+					end;			
+					if(ISr.Location==";;;")then begin
+						if (quantAllShipAll[ISr.Code & ISr.Location]==blankval) then begin quantAllShipAll[ISr.Code & ISr.Location] = 0; end;
+						if(ISr.RsrvQty != quantAllShipAll[ISr.Code] or ISr.RsrvQty == blankval) then begin
+  						ISr.RsrvQty = quantAllShipAll[ISr.Code];
+							queued.QdReserveRecalcMn(ISr); // _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_- Anton Preisinger 19:55 19.02.2021
+							MilliSleep(50);
+							//RecordStore(ISr,true);
+						end;						
+					end;
+				end;
+				ResetLoop(ISr);
+			end;
+		end;
+		
+	end;
+logtext(0,"Finish - ReserveRecalcMn");
+	ResetCompany(oldCompany);
+	LogProcTime("ReserveRecalcMn",getcurtick() - curtick);
+  return;
+end;
+
+
+global
+procedure ReserveRecalcMnTime() // Edit ********** Ihor Trubachov 23*07*2021
+begin
+  record RcVc RepSpec;
+	RepSpec.f1 = "";
+	RepSpec.f2 = "";
+	
+	ReserveRecalcMn(RepSpec);
+  return;
+end;
