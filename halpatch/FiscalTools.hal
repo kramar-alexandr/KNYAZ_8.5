@@ -111,6 +111,9 @@ begin
 		      end;
 		    end;
 		  end;
+		  if(curNalogGroup!="0" and curNalogGroup!="2")then begin
+		    curNalogGroup = "0";
+		  end;
 		  	
 			if (IVCashrw.Quant>0) then begin
 				command = saleCommand;
