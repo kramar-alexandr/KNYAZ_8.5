@@ -1869,6 +1869,12 @@ begin
 			WindowFieldGoto(mwn,SMr,RowNumber,"SentQuant",true);
 			DeselectWindow(mwn,false);
 			RepSpec.f1 = RepSpec.f2;
+			
+			INr.Code = RepSpec.f1;
+			if(ReadFirstMain(INr,1,true))then begin
+				RepSpec.f1 = INr.Name;
+			end;
+			
 			matrowget(SMr,RowNumber,SMrw);
 			RepSpec.f4 = SMrw.SentQuant;
 			PutWindowRecord(wn,RepSpec);
@@ -1962,10 +1968,6 @@ begin
 		// StockMove_AddOneItemTo;
 		StockMove_AddOneItemTo2;
 		GetWindowRecord(wn,RepSpec);
-		INr.Code = RepSpec.f1;
-		if(ReadFirstMain(INr,1,true))then begin
-			RepSpec.f1 = INr.Name;
-		end;
 		RepSpec.f2 = "";
   	PutWindowRecord(wn,RepSpec);
 
