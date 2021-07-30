@@ -1985,6 +1985,7 @@ BEGIN
   res = OpenWindow("TableSearchAddition2IClass",0,wn,"","",RepSpec);
   millisleep(1000);
   selectwindow(res);
+	RepSpec.f1 = "";
   WindowFieldGoto(res,RepSpec,-1,"f1",true);
 
   RETURN;
