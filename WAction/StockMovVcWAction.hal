@@ -1954,13 +1954,18 @@ global	 // _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
 updating function Boolean TableSearchAddition2IClassOnEnterKey(Integer wn,string fieldname,Integer fn,Integer rownr)
 begin
   Boolean res;
-	record RcVc RepSpec;	
+	record RcVc RepSpec;
+	record INVc INr;
 
   res = true;
 	//DeselectWindow(wn,false);
 		// StockMove_AddOneItemTo;
 		StockMove_AddOneItemTo2;
 		GetWindowRecord(wn,RepSpec);
+		INr.Code = RepSpec.f1;
+		if(ReadFirstMain(INr,1,true))then begin
+			RepSpec.f1 = INr.Name;
+		end;
 		RepSpec.f2 = "";
   	PutWindowRecord(wn,RepSpec);
 
@@ -1985,7 +1990,7 @@ BEGIN
   res = OpenWindow("TableSearchAddition2IClass",0,wn,"","",RepSpec);
   millisleep(1000);
   selectwindow(res);
-	RepSpec.f1 = "";
+
   WindowFieldGoto(res,RepSpec,-1,"f1",true);
 
   RETURN;
