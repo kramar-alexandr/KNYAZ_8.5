@@ -219,7 +219,11 @@ logtext(0,"Start - ReserveRecalcMn");
 					if(ISr.Location!=";;;")then begin
 						if (quantShipAll[ISr.Code & ISr.Location]==blankval) then begin quantShipAll[ISr.Code & ISr.Location] = 0; end;
 						if(ISr.RsrvQty != quantShipAll[ISr.Code & ISr.Location] or ISr.RsrvQty == blankval) then begin
-							ISr.RsrvQty = quantShipAll[ISr.Code & ISr.Location];
+							if (quantShipAll[ISr.Code & ISr.Location]<=ISr.Instock) then begin
+								ISr.RsrvQty = quantShipAll[ISr.Code & ISr.Location];
+							end else begin
+								ISr.RsrvQty = ISr.Instock;
+							end;
 							queued.QdReserveRecalcMn(ISr); // _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_- Anton Preisinger 19:55 19.02.2021
 							MilliSleep(50);
 							//RecordStore(ISr,true);
@@ -228,7 +232,11 @@ logtext(0,"Start - ReserveRecalcMn");
 					if(ISr.Location==";;;")then begin
 						if (quantAllShipAll[ISr.Code & ISr.Location]==blankval) then begin quantAllShipAll[ISr.Code & ISr.Location] = 0; end;
 						if(ISr.RsrvQty != quantAllShipAll[ISr.Code] or ISr.RsrvQty == blankval) then begin
-  						ISr.RsrvQty = quantAllShipAll[ISr.Code];
+  						if (quantShipAll[ISr.Code & ISr.Location]<=ISr.Instock) then begin
+								ISr.RsrvQty = quantShipAll[ISr.Code & ISr.Location];
+							end else begin
+								ISr.RsrvQty = ISr.Instock;
+							end;
 							queued.QdReserveRecalcMn(ISr); // _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_- Anton Preisinger 19:55 19.02.2021
 							MilliSleep(50);
 							//RecordStore(ISr,true);
