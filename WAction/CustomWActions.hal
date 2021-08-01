@@ -446,7 +446,10 @@ begin
       money = -1;
       if (FileExists(inBoxFilePath)) then begin
         AddFileToArea(inBoxFilePath,inBoxArea,false);
-        money = StringToVal(GetStringFromArea(inBoxArea,0,255),M4Val)/100;
+        money = StringToVal(GetStringFromArea(inBoxArea,0,255),M4Val);
+        if(currentuser=="PER1")then begin
+          money = money/100;
+        end;
       end;
       PutWindowString(wn,"DisplayMoneyInBox",money); 
     end;

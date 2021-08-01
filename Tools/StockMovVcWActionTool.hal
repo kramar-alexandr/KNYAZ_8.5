@@ -624,6 +624,9 @@ begin
 				if(blank(SMrw.OrdQuant)) then begin
 					SMrw.OrdQuant = 0;
 				end;
+				if(blank(SMrw.SentQuant))then begin	//Edit **********************************************Vas-P	29/07/2021
+					SMrw.SentQuant = 0;
+				end;
 				if(blank(SMrw.Quant)) then begin
 					SMrw.Quant = 0;
 				end;

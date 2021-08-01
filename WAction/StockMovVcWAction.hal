@@ -1874,6 +1874,12 @@ begin
 			WindowFieldGoto(mwn,SMr,RowNumber,"SentQuant",true);
 			DeselectWindow(mwn,false);
 			RepSpec.f1 = RepSpec.f2;
+			
+			INr.Code = RepSpec.f1;
+			if(ReadFirstMain(INr,1,true))then begin
+				RepSpec.f1 = INr.Name;
+			end;
+			
 			matrowget(SMr,RowNumber,SMrw);
 			RepSpec.f4 = SMrw.SentQuant;
 			PutWindowRecord(wn,RepSpec);
@@ -1959,7 +1965,8 @@ global	 // _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
 updating function Boolean TableSearchAddition2IClassOnEnterKey(Integer wn,string fieldname,Integer fn,Integer rownr)
 begin
   Boolean res;
-	record RcVc RepSpec;	
+	record RcVc RepSpec;
+	record INVc INr;
 
   res = true;
 	//DeselectWindow(wn,false);
@@ -1990,6 +1997,7 @@ BEGIN
   res = OpenWindow("TableSearchAddition2IClass",0,wn,"","",RepSpec);
   millisleep(1000);
   selectwindow(res);
+
   WindowFieldGoto(res,RepSpec,-1,"f1",true);
 
   RETURN;
