@@ -1339,6 +1339,11 @@ begin
   if (UserCanAction("ChangeReserved",true)==false) then begin
     res = false;
   end;   
+	
+	if (CurrentUser=="SA") then begin
+		res = true;
+	end;
+	
   StockMovDClassReservedButtonAction = res;
   return;
 end;
