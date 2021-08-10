@@ -550,6 +550,8 @@ begin
   return;
 end;
 
+
+
 global
 updating procedure StockMovVcRecordUpdateClientRemote(record StockMovVc StockMovr,record StockMovVc StockMov2r,string TaxAdminServSeal)
 begin
@@ -560,11 +562,13 @@ begin
 end;
 
 
+SetLangMode(LangRussian,"RUS",0);
+
 global
 procedure MySortStringArray(var array string astr,integer cnt)
 begin
 	integer i,j;
-	string 100 tmp1,tmp2;
+	string 255 tmp1,tmp2;
 	
 	if(cnt>1)then begin
 		for(j=0;j<cnt;j=j+1)begin
