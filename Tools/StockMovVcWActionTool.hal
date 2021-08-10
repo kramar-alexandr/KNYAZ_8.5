@@ -562,30 +562,7 @@ begin
 end;
 
 
-SetLangMode(LangRussian,"RUS",0);
 
-global
-procedure MySortStringArray(var array string astr,integer cnt)
-begin
-	integer i,j;
-	string 255 tmp1,tmp2;
-	
-	if(cnt>1)then begin
-		for(j=0;j<cnt;j=j+1)begin
-			for(i=0;i<cnt-1;i=i+1)begin
-				if(uppercase(astr[i])>uppercase(astr[i+1]))then begin
-					tmp1 = astr[i];
-					tmp2 = astr[i+1];
-					astr[i] = tmp2;
-					astr[i+1] = tmp1;
-				end;
-			end;
-		end;
-	end;
-		
-
-return;
-end;
 
 
 // By Ira
@@ -663,19 +640,6 @@ begin
 				end;
 				MatRowPut(SMr, i, SMrw);
 				
-				// // vInvQty[SMrw.ArtCode] = SMrw.InvQty;
-				// // vOrdQuant[SMrw.ArtCode] = SMrw.OrdQuant;
-				// // vQuant[SMrw.ArtCode] = SMrw.Quant;
-				// // vInStock1[SMrw.ArtCode] = SMrw.InStock1;
-				// // vInStock2[SMrw.ArtCode] = SMrw.InStock2;
-				
-				// // vSpec[SMrw.ArtCode] = SMrw.Spec;
-				
-				// // vArtCode[SMrw.Spec & "_" & i] = SMrw.ArtCode;
-				
-				
-				
-				
 				StockMovVc_PasteArtCode(SMr,i,1,aWarning); 
 				
 				
@@ -686,24 +650,6 @@ begin
 	
 	SortRows(SMr,"Spec",true);
 	
-	// // GetVectorTags(vArtCode,aSpec);
-	// // MySortStringArray(aSpec,i);
-	
-	// // cnt = i;
-	// // for(i = 0; i < cnt; i=i+1)begin
-	
-		// // SMrw.ArtCode = vArtCode[aSpec[i]];
-		// // SMrw.Spec = vSpec[SMrw.ArtCode];
-		// // SMrw.InStock1 = vInStock1[SMrw.ArtCode];
-		// // SMrw.InStock2 = vInStock2[SMrw.ArtCode];
-		// // SMrw.Quant = vQuant[SMrw.ArtCode];
-		// // SMrw.OrdQuant = vOrdQuant[SMrw.ArtCode];
-		// // SMrw.InvQty = vInvQty[SMrw.ArtCode];
-
-		// // MatRowPut(SMr, i, SMrw);
-		
-		// // StockMovVc_PasteArtCode(SMr,i,1,aWarning); 
-	// // end;
 	
 end;
 
