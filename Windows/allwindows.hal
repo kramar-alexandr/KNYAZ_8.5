@@ -1944,14 +1944,14 @@ real h,v,vs;
 Integer i,mwn;
   WindowBegin("Поиск и добавление в таблице",TableSearchIClass,CGother,RcType);
 	//DynamicWindow;
-  SetWRect(3,140,350,300);
+  SetWRect(3,140,400,300);
   UseView(RcVc);
   Modality(2);
 
   v=30;
   h=40;
-	EditFieldTL(h+50,v+30 ,150,"Предыдущий",M4Str,ViewOnly,20,f1,true,0); // new search field
-	EditFieldTL(h+250,v+30 ,50,"Кол.",M4Str,ViewOnly,20,f4,true,0); // new search field
+	EditFieldTL(h+50,v+30 ,200,"Предыдущий",M4Str,ViewOnly,20,f1,true,0); // new search field
+	EditFieldTL(h+300,v+30 ,50,"Кол.",M4Str,ViewOnly,20,f4,true,0); // new search field
 
  	EditFieldTL(h+50,v+80 ,250,"СКАНИРОВАТЬ",M4Str,Normal,20,f2,true,0);
 	EnterSkip(f2);

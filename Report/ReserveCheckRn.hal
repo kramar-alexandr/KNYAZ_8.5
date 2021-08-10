@@ -48,6 +48,62 @@ begin
 	return;
 end;
 
+
+
+global
+updating procedure ReserveblankRecalcMn(record RcVc RepSpec) // Edit ********** Ihor Trubachov 22*07*2021
+begin
+   record INVc INr;
+  record ORVc ORr;
+	row ORVc ORrw;
+	boolean TrHs,testf,testf1;
+	vector string 255 orders,loc,custName,OrdDate,reservDate;
+	vector val quantShip,rownr;
+  longint curtick;
+	integer rowcnt,i,j,c;
+	array string 255 tags,tags1;
+	integer itemall,pos,rwcnt,oldCompany;
+	string 255 orderNr;
+	record CompaniesBlock CBb;
+	row CompaniesBlock Comprw;
+	record ItemStatusVc ISr;
+	vector string 255 ordersSM,OrdDateSM;
+	vector val quantShipSM,rownrSM,quantShipSD,quantShipAll,quantAllShipAll;
+	record StockMovVc SMr;
+	row StockMovVc SMrw;
+	record SDVc SDr;
+	row SDVc SDrw;
+	string 225 isrcode, isrlocation;
+	record RcVc RepSpec2;
+	date sDate, eDate; /////////////////
+
+logtext(0,"Start - ReserveRecalcMn");
+
+	oldCompany = currentCompany;
+	blockload(CBb);
+  rwcnt = matrowcnt(CBb);
+	
+  for(j=0;j<rwcnt;j=j+1) begin
+    matrowget(CBb,j,Comprw);
+		SetCompany(j+1,false);
+		ISr.Code = RepSpec.f1;
+		TrHs = true;
+		while (loopmain(ISr,1,TrHs)) begin
+			if (ISr.RsrvQty == blankval) then begin
+				ISr.RsrvQty = 0;
+				RecordStore(ISr,true);
+			end;
+		end;
+		ResetLoop(ISr);
+	end;
+  return;
+end;
+
+
+
+
+
+
 global
 procedure ReserveRecalcMn(record RcVc RepSpec) // Edit ********** Ihor Trubachov 22*07*2021
 begin
@@ -83,6 +139,11 @@ logtext(0,"Start - ReserveRecalcMn");
 	
 	sDate = RepSpec.sStartDate;
 	eDate = RepSpec.sEndDate;
+	
+	if (blankdate(sDate)) then begin
+		sDate = AddDay(CurrentDate,-31);
+		eDate = CurrentDate;
+	end;
 	
   for(j=0;j<rwcnt;j=j+1) begin
     matrowget(CBb,j,Comprw);
@@ -161,16 +222,26 @@ logtext(0,"Start - ReserveRecalcMn");
 					if (nonblank(RepSpec.f1) and RepSpec.f1!=ISr.Code) then begin TrHs = false; end;
 					
 					if(ISr.Location!=";;;")then begin
-						if(ISr.RsrvQty != quantShipAll[ISr.Code & ISr.Location]) then begin
-							ISr.RsrvQty = quantShipAll[ISr.Code & ISr.Location];
+						if (quantShipAll[ISr.Code & ISr.Location]==blankval) then begin quantShipAll[ISr.Code & ISr.Location] = 0; end;
+						if(ISr.RsrvQty != quantShipAll[ISr.Code & ISr.Location] or ISr.RsrvQty == blankval) then begin
+							if (quantShipAll[ISr.Code & ISr.Location]<=ISr.Instock) then begin
+								ISr.RsrvQty = quantShipAll[ISr.Code & ISr.Location];
+							end else begin
+								ISr.RsrvQty = ISr.Instock;
+							end;
 							queued.QdReserveRecalcMn(ISr); // _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_- Anton Preisinger 19:55 19.02.2021
 							MilliSleep(50);
 							//RecordStore(ISr,true);
 						end;
 					end;			
 					if(ISr.Location==";;;")then begin
-						if(ISr.RsrvQty != quantAllShipAll[ISr.Code]) then begin
-  						ISr.RsrvQty = quantAllShipAll[ISr.Code];
+						if (quantAllShipAll[ISr.Code & ISr.Location]==blankval) then begin quantAllShipAll[ISr.Code & ISr.Location] = 0; end;
+						if(ISr.RsrvQty != quantAllShipAll[ISr.Code] or ISr.RsrvQty == blankval) then begin
+  						if (quantShipAll[ISr.Code & ISr.Location]<=ISr.Instock) then begin
+								ISr.RsrvQty = quantShipAll[ISr.Code & ISr.Location];
+							end else begin
+								ISr.RsrvQty = ISr.Instock;
+							end;
 							queued.QdReserveRecalcMn(ISr); // _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_- Anton Preisinger 19:55 19.02.2021
 							MilliSleep(50);
 							//RecordStore(ISr,true);
