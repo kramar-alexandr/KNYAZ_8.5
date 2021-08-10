@@ -559,7 +559,30 @@ begin
   return;
 end;
 
-SetLangMode(LangRussian,"RUS",0);
+
+global
+procedure MySortStringArray(var array string astr,integer cnt)
+begin
+	integer i,j;
+	string 100 tmp1,tmp2;
+	
+	if(cnt>1)then begin
+		for(j=0;j<cnt;j=j+1)begin
+			for(i=0;i<cnt-1;i=i+1)begin
+				if(uppercase(astr[i])>uppercase(astr[i+1]))then begin
+					tmp1 = astr[i];
+					tmp2 = astr[i+1];
+					astr[i] = tmp2;
+					astr[i+1] = tmp1;
+				end;
+			end;
+		end;
+	end;
+		
+
+return;
+end;
+
 
 // By Ira
 global
@@ -655,7 +678,7 @@ begin
 	end; //while 
 	
 	GetVectorTags(vArtCode,aSpec);
-	SortStringArray(aSpec);
+	MySortStringArray(aSpec,i);
 	
 	cnt = i;
 	for(i = 0; i < cnt; i=i+1)begin
