@@ -193,6 +193,7 @@ if(WebLoginStatus==3)then begin
 			IHr.TransDate = CurrentDate;
 			TrHs = true;
 			while (LoopBackKey("ArtCodeLoc",IHr,3,TrHs)) begin
+				if (IHr.ArtCode!=INr.Code) then begin TrHs = false; end;
 				if (IHr.TransDate<addDay(CurrentDate,-5)) then begin TrHs = false; end;
 				if (IHr.Location!=location) then begin TrHs = false; end;
 				if (TrHs) then begin
