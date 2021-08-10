@@ -204,7 +204,7 @@ if(WebLoginStatus==3)then begin
 			ISr.Location = location;
 			if(INr.Terminated==0 and INr.NotForSales==0)then begin
 				if(readfirstmain(ISr,2,true) or moveQuant[INr.Code]>0)then begin
-					if (!saldf and ISr.Instock>0) then begin saldf = true; end;
+					if (!saldf and ISr.Instock-ISr.RsrvQty>0) then begin saldf = true; end;
 					if(saldf)then begin // _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_- Anton Preisinger 15:09 09.08.2021
 						price = INr.UPrice1;
 						if(nonblank(User.MinPLCode))then begin
