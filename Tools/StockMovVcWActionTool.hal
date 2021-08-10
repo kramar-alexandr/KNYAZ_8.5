@@ -663,17 +663,20 @@ begin
 				end;
 				MatRowPut(SMr, i, SMrw);
 				
-				vInvQty[SMrw.ArtCode] = SMrw.InvQty;
-				vOrdQuant[SMrw.ArtCode] = SMrw.OrdQuant;
-				vQuant[SMrw.ArtCode] = SMrw.Quant;
-				vInStock1[SMrw.ArtCode] = SMrw.InStock1;
-				vInStock2[SMrw.ArtCode] = SMrw.InStock2;
+				// // vInvQty[SMrw.ArtCode] = SMrw.InvQty;
+				// // vOrdQuant[SMrw.ArtCode] = SMrw.OrdQuant;
+				// // vQuant[SMrw.ArtCode] = SMrw.Quant;
+				// // vInStock1[SMrw.ArtCode] = SMrw.InStock1;
+				// // vInStock2[SMrw.ArtCode] = SMrw.InStock2;
 				
-				vSpec[SMrw.ArtCode] = SMrw.Spec;
+				// // vSpec[SMrw.ArtCode] = SMrw.Spec;
 				
-				vArtCode[SMrw.Spec & "_" & i] = SMrw.ArtCode;
+				// // vArtCode[SMrw.Spec & "_" & i] = SMrw.ArtCode;
 				
-				//StockMovVc_PasteArtCode(SMr,i,1,aWarning); 
+				
+				
+				
+				StockMovVc_PasteArtCode(SMr,i,1,aWarning); 
 				
 				
 				i = i + 1;
@@ -681,24 +684,26 @@ begin
 		end;
 	end; //while 
 	
-	GetVectorTags(vArtCode,aSpec);
-	MySortStringArray(aSpec,i);
+	SortRows(SMr,"Spec",true);
 	
-	cnt = i;
-	for(i = 0; i < cnt; i=i+1)begin
+	// // GetVectorTags(vArtCode,aSpec);
+	// // MySortStringArray(aSpec,i);
 	
-		SMrw.ArtCode = vArtCode[aSpec[i]];
-		SMrw.Spec = vSpec[SMrw.ArtCode];
-		SMrw.InStock1 = vInStock1[SMrw.ArtCode];
-		SMrw.InStock2 = vInStock2[SMrw.ArtCode];
-		SMrw.Quant = vQuant[SMrw.ArtCode];
-		SMrw.OrdQuant = vOrdQuant[SMrw.ArtCode];
-		SMrw.InvQty = vInvQty[SMrw.ArtCode];
+	// // cnt = i;
+	// // for(i = 0; i < cnt; i=i+1)begin
+	
+		// // SMrw.ArtCode = vArtCode[aSpec[i]];
+		// // SMrw.Spec = vSpec[SMrw.ArtCode];
+		// // SMrw.InStock1 = vInStock1[SMrw.ArtCode];
+		// // SMrw.InStock2 = vInStock2[SMrw.ArtCode];
+		// // SMrw.Quant = vQuant[SMrw.ArtCode];
+		// // SMrw.OrdQuant = vOrdQuant[SMrw.ArtCode];
+		// // SMrw.InvQty = vInvQty[SMrw.ArtCode];
 
-		MatRowPut(SMr, i, SMrw);
+		// // MatRowPut(SMr, i, SMrw);
 		
-		StockMovVc_PasteArtCode(SMr,i,1,aWarning); 
-	end;
+		// // StockMovVc_PasteArtCode(SMr,i,1,aWarning); 
+	// // end;
 	
 end;
 
