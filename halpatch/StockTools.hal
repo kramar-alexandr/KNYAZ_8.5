@@ -1687,3 +1687,22 @@ LSKIPPUROW2:;
   end;
   RETURN;
 END;
+
+
+
+global // Edit ***************** Ihor Trubachov 20*08*2021
+procedure DblStockMovRec(string dblstr,string l,Integer currepwn)
+begin
+  Integer wn;
+  record StockMovVc StockMovr;
+	
+  if (nonblank(l)) then begin
+    StockMovr.SerNr = FirstInRange(l,10);
+  end else begin
+    StockMovr.SerNr = FirstInRange(dblstr,10);
+  end;
+  if (ReadFirstMain(StockMovr,1,true)) then begin
+    wn = OpenWindow("StockMovDClass",1,0,"","",StockMovr);
+  end;     
+  return;
+end;

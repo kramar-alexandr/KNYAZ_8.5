@@ -1,0 +1,71 @@
+SetLangMode(LangRussian,"RUS",0); 
+
+
+function val GetMax(val firstVal,val secondVal)
+begin
+	val maxVal;
+	
+	if(firstVal > secondVal)then begin
+		maxVal = firstVal;
+	end else begin
+		maxVal = secondVal;
+	end;
+
+
+	GetMax = maxVal;
+	return;
+end;
+
+
+
+global
+procedure ResInDisplRn(record RcVc RepSpec)
+begin
+	record StockMovVc StockMovr;
+	row StockMovVc StockMovrw;
+	Integer crSM,i;
+	val difVal;
+	Boolean testf;
+
+  StartReportJob("Отчет по резервам в премещениях");
+
+  EndHeader;
+  
+	StartFormat(15);
+	OutString(20,0,"Код товара",false); 
+  OutString(100,0,"Номер перемещения",false); 
+  OutString(200,0,"Разница",false);
+	EndFormat;
+	
+  Black_Divider(0,1);
+	
+	
+  while(LoopMain(StockMovr,1,true)) begin
+		
+    testf = true;
+		
+		if (StockMovr.Reserved == 0) then begin testf = false; end;
+		
+		
+		if(testf)then begin
+		
+			crSM = MatRowCnt(StockMovr);
+			for(i = 0; i < crSM; i=i+1)begin
+				MatRowGet(StockMovr,i,StockMovrw);
+				difVal = GetMax(StockMovrw.SentQuant * StockMovr.SentOKFlag, StockMovrw.Quant * StockMovr.OKFlag) - StockMovrw.OrdQuant;
+				if(difVal != 0)then begin
+					StartFormat(15);
+					OutString(20,0,StockMovrw.ArtCode,false); 
+					//OutString(100,0,StockMovr.SerNr,false); 
+					OutStringID (100, "DblStockMovRec", StockMovr.SerNr, false, StockMovr.SerNr);				
+					OutString(150,0,difVal,false);
+					EndFormat;
+				end;
+			end;
+			
+		end;
+	end;
+
+  EndJob;
+  return;
+end;

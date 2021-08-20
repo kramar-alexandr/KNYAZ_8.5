@@ -19,7 +19,8 @@ begin
   Report("HAL Primitives",HalSpecRClass,HalSpecRn,0,modSY);
   Report("Отчет по кассе по дням",IVCashSummaryRClass,IVCashSummaryRn,0,modPOS);
   Report("Отчет по наценкам",MarkUpRClass,MarkUpRn,0,modSL);
-  
+  Report("Отчет по резервам в премещениях",ResInDisplRClass,ResInDisplRn,0,modIN);
+	
   Import("Импортировать товары",INImportFromFMFormatIClass,INImportFromFMFormatIn,modIN);
   Import("Импорт остатков",ImportStockRemains2IClass,ImportStockRemains2In,modIN);
   
