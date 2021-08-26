@@ -2160,7 +2160,7 @@ begin
 		rownr = MatRowCnt(SMp);
 		for(i=0;i<rownr;i=i+1)begin
 			MatRowGet(SMp,i,SMpw);
-			if(SMpw.SentQuant < SMpw.OrdQuant)then begin
+			if(SMpw.SentQuant != SMpw.OrdQuant)then begin
 				res = -1;
 				RecordCheckError(50024,"",i,SMpw.SentQuant);
 				SMp.SentOKFlag = 0;
