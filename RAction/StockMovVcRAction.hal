@@ -2129,9 +2129,10 @@ begin
   string 255 oldOfficialSerNr;
   LongInt error;
   string 255 errorstr,fieldstr;
-  Integer rownr;
+  Integer rownr, i;
   Boolean UnOKedCheckSerialf;
   record UserVc USr;// Edit ************************** BPI Ukraine - KramarAlexandr - 01, 26 10 2020 y. at 3:25:51 PM
+	row StockMovVc SMpw;
 		
   res = 0;
   oldnr = SMp.SerNr;
@@ -2151,6 +2152,19 @@ begin
 					SMp.SalesGroup = USr.SalesGroup;
 					logtext(0,"StockMovVcRecordCheck " & SMp.SalesGroup);
 				end;
+			end;
+		end;
+	end;
+	
+	if(SMp.SentOKFlag == 1 and SM2p.SentOKFlag == 0 and SMp.ThrouLocation == "TRANZ")then begin // Edit ************* Ihor Trubachov 23*08*2021
+		rownr = MatRowCnt(SMp);
+		for(i=0;i<rownr;i=i+1)begin
+			MatRowGet(SMp,i,SMpw);
+			if(SMpw.SentQuant < SMpw.OrdQuant)then begin
+				res = -1;
+				RecordCheckError(50024,"",i,SMpw.SentQuant);
+				SMp.SentOKFlag = 0;
+				goto LStockMovVcRecordCheck;
 			end;
 		end;
 	end;
