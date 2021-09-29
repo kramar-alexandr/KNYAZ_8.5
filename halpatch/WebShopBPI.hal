@@ -1121,6 +1121,7 @@ if(WebLoginStatus==3)then begin
 	end;
 	readfirstmain(USr,1,true);
 	location = USr.Location;
+	logtext(0,"USr.Location1 - " & USr.Location);
 	//location = webgetarg("location");
 	// location = "OSN";
 	WebSetContentType("application/json; charset=UTF-8");	
@@ -1133,12 +1134,12 @@ if(WebLoginStatus==3)then begin
 		TrHs = true;
 		while(loopmain(STr,1,TrHs))begin
 			if(STr.OKFlag!=0 and STr.Location!=location)then begin TrHs = false; end;
+			logtext(0,"STr.SerNr - " & STr.SerNr);
 			find = true;
 			AddTextToArea("{",resarea);
 				addParamToJSONArea("SerNr",NormalizeStrToJson(STr.SerNr),resarea);
 				addParamToJSONArea("OKFlag",NormalizeStrToJson(STr.OKFlag),resarea);
 				addParamToJSONArea("TransDate",NormalizeStrToJson(STr.TransDate),resarea);
-				addParamToJSONArea("Location",NormalizeStrToJson(STr.Location),resarea);
 				AddTextToArea("\"items\":[",resarea);
 					rwcnt = matrowcnt(STr);
 					for(i=0;i<rwcnt;i=i+1)begin
