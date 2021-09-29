@@ -398,18 +398,6 @@ return;
 end;
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 global webpublic updating procedure WebGetCreatedCLOutForCurUs()
 begin
 area resarea;
