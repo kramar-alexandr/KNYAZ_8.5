@@ -1128,28 +1128,34 @@ if(WebLoginStatus==3)then begin
 	if(nonblank(location))then begin
 		AddTextToArea("{",resarea);
 		AddTextToArea("\"invoice\":[",resarea);
-		STr.OKFlag = 0;
-		if(ReadLastkey("OKFlag",STr,1,true))begin
-			find = true;
-			AddTextToArea("{",resarea);
-				addParamToJSONArea("SerNr",NormalizeStrToJson(STr.SerNr),resarea);
-				addParamToJSONArea("OKFlag",NormalizeStrToJson(STr.OKFlag),resarea);
-				addParamToJSONArea("TransDate",NormalizeStrToJson(STr.TransDate),resarea);
-				AddTextToArea("\"items\":[",resarea);
-					rwcnt = matrowcnt(STr);
-					for(i=0;i<rwcnt;i=i+1)begin
-						matrowget(STr,i,STrw);
-            AddTextToArea("{",resarea);
-            addParamToJSONArea("ArtCode",NormalizeStrToJson(STrw.ArtCode),resarea);
-            addParamToJSONArea("Spec",NormalizeStrToJson(STrw.Spec),resarea);
-            addParamToJSONArea("Quant",NormalizeStrToJson(AbsoluteVal(STrw.Qty)),resarea);									
-            delLastComaInArea(resarea);
-            AddTextToArea("},",resarea);
-					end;
-				delLastComaInArea(resarea);
-				AddTextToArea("],",resarea);
-				delLastComaInArea(resarea);
-			AddTextToArea("}",resarea);
+		// if(ReadLastkey("OKFlag",STr,1,true))begin
+		STr.SerNr = "";
+		TrHs = true;
+		while(loopmain(STr,1,TrHs))begin
+			testf = true;
+			if(STr.OKFlag!=0 and STr.Location!=location)then begin testf = false; end;
+			if(testf)then begin
+				find = true;
+				AddTextToArea("{",resarea);
+					addParamToJSONArea("SerNr",NormalizeStrToJson(STr.SerNr),resarea);
+					addParamToJSONArea("OKFlag",NormalizeStrToJson(STr.OKFlag),resarea);
+					addParamToJSONArea("TransDate",NormalizeStrToJson(STr.TransDate),resarea);
+					AddTextToArea("\"items\":[",resarea);
+						rwcnt = matrowcnt(STr);
+						for(i=0;i<rwcnt;i=i+1)begin
+							matrowget(STr,i,STrw);
+							AddTextToArea("{",resarea);
+							addParamToJSONArea("ArtCode",NormalizeStrToJson(STrw.ArtCode),resarea);
+							addParamToJSONArea("Spec",NormalizeStrToJson(STrw.Spec),resarea);
+							addParamToJSONArea("Quant",NormalizeStrToJson(AbsoluteVal(STrw.Qty)),resarea);									
+							delLastComaInArea(resarea);
+							AddTextToArea("},",resarea);
+						end;
+					delLastComaInArea(resarea);
+					AddTextToArea("],",resarea);
+					delLastComaInArea(resarea);
+				AddTextToArea("}",resarea);
+			end;
 		end;
 	
 		AddTextToArea("],",resarea);
