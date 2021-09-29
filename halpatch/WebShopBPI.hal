@@ -7,11 +7,14 @@ external procedure CLInVc_PasteCurncyCode(var record CLInVc);
 external function val AbsoluteVal(val);;
 external function Boolean IVVc_PasteSum(var record IVVc,Integer,var Boolean,Integer);
 external updating function LongInt IVVcRecordCheck(record IVVc,record IVVc,LongInt,LongInt);
+external updating function LongInt StockTakeVcRecordCheck(record StockTakeVc,record StockTakeVc,LongInt,LongInt);
+
 external procedure IVDchsum(var record IVVc,Integer);
 external procedure IVSumup(var record IVVc,Boolean);
 remote procedure CLOutVc_PasteCurncyCode(var record CLOutVc);
 remote procedure CLOutVc_PasteCorspCode(var record CLOutVc,Integer);
 external function roundmode SetRoundModeD(Integer);
+external function Boolean StockTakeVc_PasteArtCode(var record StockTakeVc,Integer,Integer,var string);
 
 
 procedure addParamToJSONArea(string param, string value, var area req)
@@ -992,6 +995,7 @@ string 100 saler;
 	
 return;
 end;
+
 global webpublic updating procedure WebGetLastSale()
 begin
 string 50 location;
@@ -1087,4 +1091,170 @@ if(WebLoginStatus==3)then begin
 end;
 
 return;
+end;
+
+global webpublic updating procedure WebGetLastInvent()
+begin
+string 50 location;
+record INVc INr;
+area resarea;
+boolean TrHs,testf,find;
+integer i,rwcnt;
+record UserVc USr;
+string 50 delete,CredInv;
+record StockTakeVc STr;
+row StockTakeVc STrw;
+
+if(WebLoginStatus==3)then begin
+
+	SetCompany(5,false);
+	delete = WebGetArg("delete");
+	USr.Code = currentuser;
+	if(nonblank(webgetarg("foruser")))then begin
+		USr.Code = webgetarg("foruser");
+	end;
+	readfirstmain(USr,1,true);
+	location = USr.Location;
+	//location = webgetarg("location");
+	// location = "OSN";
+	WebSetContentType("application/json; charset=UTF-8");	
+	find = false;
+	if(nonblank(location))then begin
+		AddTextToArea("{",resarea);
+		AddTextToArea("\"invoice\":[",resarea);
+		STr.OKFlag = 0;
+		if(ReadLastkey("OKFlag",STr,1,true))begin
+			find = true;
+			AddTextToArea("{",resarea);
+				addParamToJSONArea("SerNr",NormalizeStrToJson(STr.SerNr),resarea);
+				addParamToJSONArea("OKFlag",NormalizeStrToJson(STr.OKFlag),resarea);
+				addParamToJSONArea("TransDate",NormalizeStrToJson(STr.TransDate),resarea);
+				AddTextToArea("\"items\":[",resarea);
+					rwcnt = matrowcnt(STr);
+					for(i=0;i<rwcnt;i=i+1)begin
+						matrowget(STr,i,STrw);
+            AddTextToArea("{",resarea);
+            addParamToJSONArea("ArtCode",NormalizeStrToJson(STrw.ArtCode),resarea);
+            addParamToJSONArea("Spec",NormalizeStrToJson(STrw.Spec),resarea);
+            addParamToJSONArea("Quant",NormalizeStrToJson(AbsoluteVal(STrw.Qty)),resarea);									
+            delLastComaInArea(resarea);
+            AddTextToArea("},",resarea);
+					end;
+				delLastComaInArea(resarea);
+				AddTextToArea("],",resarea);
+				delLastComaInArea(resarea);
+			AddTextToArea("}",resarea);
+		end;
+	
+		AddTextToArea("],",resarea);
+		if(delete=="true" and find) then begin
+			RecordDelete(STr);
+			addParamToJSONArea("Result",NormalizeStrToJson("1"),resarea);
+			delLastComaInArea(resarea);
+		end else begin
+			addParamToJSONArea("Result",NormalizeStrToJson("0"),resarea);
+			delLastComaInArea(resarea);
+		end;
+		AddTextToArea("}",resarea);
+	
+	end;
+
+	weboutarea2(resarea);
+end;
+
+return;
+end;
+
+
+global webpublic updating procedure WebSendInvent()
+begin
+	record StockTakeVc STr,oldSTr;
+	row StockTakeVc STrw;
+	integer i,rwcnt,k,sernrf;
+	area postdata;
+	json jsonobj;
+	record UserVc USr;
+	record LocalMachineBlock LMb;
+	string 100 warning,errstr,prepstr,invdatewarn,transdatewarn,tstr;
+	string 100 OKFlag;
+	string 50 CredInv;
+	Boolean chsum;
+	string 255 artCode;
+	longint res;
+	
+	//IVr IVrw
+	
+	if(WebLoginStatus==3)then begin
+		
+		SetCompany(5,false);
+	
+		logtext(0,"WebSendInvent");
+		logtext(0,"WebRemoteIPAddress " & WebRemoteIPAddress);
+		USr.Code = currentuser;
+		readfirstmain(USr,1,true);
+		webgetpostdata(postdata);
+		writeareatofile(postdata,"WebSendSale.txt",0);
+		jsonobj = ParseJSONArea(postdata);
+		if(nonblank(JSONGet(jsonobj,"SerNr")))then begin
+			STr.SerNr = stringtolongint(JSONGet(jsonobj,"SerNr"));
+			if(readfirstmain(STr,1,true))then begin
+				if(STr.OKFlag==1)then begin
+					res = 1115;
+					goto lendinventST;
+				end;
+			end else begin
+				recordnew(STr);
+				STr.SerNr = NextSerNr("IVVc",STr.TransDate,-1,false,"");
+			end;
+		
+			rwcnt = matrowcnt(STr);
+			if(rwcnt>0)then begin
+				for(i=0;i<rwcnt;i=i+1)begin
+					matrowdelete(STr,0);
+				end;
+			end;
+			
+			STr.Location = USr.Location;
+			rwcnt = JSONCountChildren(jsonobj,"items");
+			for(i=0;i<rwcnt;i=i+1)begin
+				clearrow(STr,STrw,1);
+				STrw.ArtCode = JSONGet(jsonobj,"items/[" & i & "]/ArtCode");
+				matrowput(STr,k,STrw);
+				StockTakeVc_PasteArtCode(STr,k,1,tstr);
+				matrowget(STr,k,STrw);
+
+        STrw.Qty = evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Quant"));
+        matrowput(STr,k,STrw);				
+				k=k+1;
+			end;
+		end;
+	
+		logtext(0,"STrw.SerNr " & STr.SerNr);
+		logtext(0,"WebRemoteIPAddress " & WebRemoteIPAddress);
+	
+		if(STr.SerNr>-1)then begin
+			OKFlag = JSONGet(jsonobj,"OKFlag");
+			recordstore(STr,true);
+			RecordCopy(oldSTr,STr);
+			if(OKFlag=="true") then begin
+				STr.OKFlag = 1;
+			end;
+				SetRecordCheckVc("StockTakeVc");
+				StockTakeVcRecordCheck(STr,oldSTr,2,3);
+				if(RECORDCHECKLASTERRORNO>0) then begin 
+					res = RECORDCHECKLASTERRORNO; 
+					matrowget(STr,RECORDCHECKLASTERRORROWNO,STrw);
+					artCode = STrw.Spec;
+				end;
+				RecordUpdate(oldSTr,STr,true);
+		end;
+lendinventST:;	
+		if(res>-1) then begin 
+			weboutstring("{\"result\":\"error\",\"SerNr\":\"" & STr.SerNr & "\",\"error\":\"" & USetStr(res) & " - " & artCode & "\"}");
+		end else begin
+			weboutstring("{\"result\":\"ok\",\"SerNr\":\"" & STr.SerNr & "\"}");
+		end;
+	end;
+	
+ return;
 end;
