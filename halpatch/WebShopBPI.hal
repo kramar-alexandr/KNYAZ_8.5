@@ -443,16 +443,6 @@ return;
 end;
 
 
-
-
-
-
-
-
-
-
-
-
 global webpublic updating procedure WebSendInvent()
 begin
 	record IVVc IVr,oldIVr;
