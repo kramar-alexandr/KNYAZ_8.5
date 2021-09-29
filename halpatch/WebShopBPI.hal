@@ -1131,10 +1131,9 @@ if(WebLoginStatus==3)then begin
 		AddTextToArea("\"invoice\":[",resarea);
 		// if(ReadLastkey("OKFlag",STr,1,true))begin
 		STr.SerNr = 9999999;
-		TrHs = true;
-		while(LoopBackKey("SerNr",STr,1,TrHs))begin
+		while(LoopBackKey("SerNr",STr,1,true))begin
 			testf = true;
-			if(STr.OKFlag!=0)then begin TrHs = false; end;
+			if(STr.OKFlag!=0)then begin testf = false; end;
 			if(STr.Location!=location)then begin testf = false; end;
 			if(testf)then begin
 				logtext(0,"STr.SerNr - " & STr.SerNr);
