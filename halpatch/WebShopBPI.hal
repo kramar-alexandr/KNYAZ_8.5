@@ -1138,6 +1138,7 @@ if(WebLoginStatus==3)then begin
 				addParamToJSONArea("SerNr",NormalizeStrToJson(STr.SerNr),resarea);
 				addParamToJSONArea("OKFlag",NormalizeStrToJson(STr.OKFlag),resarea);
 				addParamToJSONArea("TransDate",NormalizeStrToJson(STr.TransDate),resarea);
+				addParamToJSONArea("Location",NormalizeStrToJson(STr.Location),resarea);
 				AddTextToArea("\"items\":[",resarea);
 					rwcnt = matrowcnt(STr);
 					for(i=0;i<rwcnt;i=i+1)begin
