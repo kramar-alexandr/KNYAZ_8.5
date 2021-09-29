@@ -1181,7 +1181,7 @@ return;
 end;
 
 
-global webpublic updating procedure WebSendInvent()
+global webpublic updating procedure WebSendInventST()
 begin
 	record StockTakeVc STr,oldSTr;
 	row StockTakeVc STrw;
