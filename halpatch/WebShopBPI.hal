@@ -1139,7 +1139,8 @@ if(WebLoginStatus==3)then begin
 							AddTextToArea("{",resarea);
 							addParamToJSONArea("ArtCode",NormalizeStrToJson(STrw.ArtCode),resarea);
 							addParamToJSONArea("Spec",NormalizeStrToJson(STrw.Spec),resarea);
-							addParamToJSONArea("Quant",NormalizeStrToJson(AbsoluteVal(STrw.Qty)),resarea);									
+							addParamToJSONArea("Quant",NormalizeStrToJson(AbsoluteVal(STrw.Qty)),resarea);
+							addParamToJSONArea("InStock",NormalizeStrToJson(AbsoluteVal(STrw.InStock)),resarea);
 							delLastComaInArea(resarea);
 							AddTextToArea("},",resarea);
 						end;
