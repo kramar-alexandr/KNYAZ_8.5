@@ -547,3 +547,18 @@ begin
   PeriodField(h,v + 15,"Период");
   EndWindow;
 end;
+
+
+
+window ResInDisplRClass:1		// Edit ***************** Ihor Trubachov 19*08*2021
+  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  real h,v,vm,vs;
+  WindowBegin("Отчет по резервам в премещениях",ResInDisplRClass,CGRcW,RcType);
+  SetWRect(20,80,470,370);
+	vs = 20;h = 130; v = 26;
+
+
+
+  EndWindow;
+end;

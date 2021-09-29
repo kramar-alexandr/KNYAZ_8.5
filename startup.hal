@@ -2,6 +2,7 @@ event startup
 begin
   SetLangMode(LangRussian,"RUS",0);
   
+	
   Register("ARVc","ARVc",ARVc,modDBMain);
   
   Setting("Перепечатать чек",ReprintingFiscalReceiptTClass,modPOS);
@@ -18,7 +19,8 @@ begin
   Report("HAL Primitives",HalSpecRClass,HalSpecRn,0,modSY);
   Report("Отчет по кассе по дням",IVCashSummaryRClass,IVCashSummaryRn,0,modPOS);
   Report("Отчет по наценкам",MarkUpRClass,MarkUpRn,0,modSL);
-  
+  Report("Отчет по резервам в премещениях",ResInDisplRClass,ResInDisplRn,0,modIN); // Edit ************* Ihor Trubachov 20*08*2021
+	
   Import("Импортировать товары",INImportFromFMFormatIClass,INImportFromFMFormatIn,modIN);
   Import("Импорт остатков",ImportStockRemains2IClass,ImportStockRemains2In,modIN);
   
@@ -59,7 +61,7 @@ begin
 	SString(50021,"Объект");
 	SString(50022,"Недостаточно товаров на складе!");
 	SString(50023,"Такого товара нет на складе");
-	
+	SString(50024,"Отпр.кол. меньше Треб.кол.");
 	
 	
 	

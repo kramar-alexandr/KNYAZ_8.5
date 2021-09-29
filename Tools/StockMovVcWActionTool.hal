@@ -550,6 +550,8 @@ begin
   return;
 end;
 
+
+
 global
 updating procedure StockMovVcRecordUpdateClientRemote(record StockMovVc StockMovr,record StockMovVc StockMov2r,string TaxAdminServSeal)
 begin
@@ -558,6 +560,9 @@ begin
   end;
   return;
 end;
+
+
+
 
 
 // By Ira
@@ -572,6 +577,10 @@ begin
 	array string 255 aWarning;
 	boolean TrHs, testf;
 	val saleDayQty;
+	vector val  vInvQty, vOrdQuant, vQuant, vInStock1, vInStock2;
+	vector string 255 vArtCode, vSpec;
+	array string 255 aSpec;
+	record IVVc IVr;
 	
 	i = 0;
 
@@ -607,10 +616,18 @@ begin
 				IHr.TransDate = CurrentDate;
 				IHr.ArtCode = SMrw.ArtCode;
 				IHr.Location = SMr.ToLocation;
+				
+				IVr.Location = IHr.Location;
+				if(ReadLastKey("Location",IVr,1,true))then begin
+					IHr.TransDate = IVr.TransDate;
+				end;
+				
 				TrHs = true;
 				while (loopkey("ArtCodeLoc",IHr,3,TrHs)) begin
 					testf = true;
-					if IHr.TransDate!=CurrentDate then begin TrHs = false; end;
+					
+					//if IHr.TransDate!=CurrentDate then begin TrHs = false; end;
+					if IHr.TransDate!=IVr.TransDate then begin TrHs = false; end;
 					if IHr.ArtCode!=SMrw.ArtCode then begin TrHs = false; end;
 					if IHr.Location!=SMr.ToLocation then begin TrHs = false; end;
 					if IHr.FileName!="IVVc" or !TrHs then begin testf = false; end;
@@ -633,11 +650,16 @@ begin
 				MatRowPut(SMr, i, SMrw);
 				
 				StockMovVc_PasteArtCode(SMr,i,1,aWarning); 
-					
+				
+				
 				i = i + 1;
 			end;
 		end;
-	end;
+	end; //while 
+	
+	SortRows(SMr,"Spec",true);
+	
+	
 end;
 
 

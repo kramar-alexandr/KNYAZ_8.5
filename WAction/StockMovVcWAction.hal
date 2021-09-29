@@ -616,6 +616,7 @@ begin
 	record ItemHistVc IHr;
 	boolean TrHs, testf;
 	val saleDayQty;
+	record IVVc IVr;
  
  res = true;
  getwindowrecord(wn,SMr);
@@ -633,10 +634,17 @@ begin
 			IHr.TransDate = CurrentDate;
 			IHr.ArtCode = SMrw.ArtCode;
 			IHr.Location = SMr.ToLocation;
+			
+			IVr.Location = IHr.Location;
+			if(ReadLastKey("Location",IVr,1,true))then begin
+				IHr.TransDate = IVr.TransDate;
+			end;
+			
 			TrHs = true;
 			while (loopkey("ArtCodeLoc",IHr,3,TrHs)) begin
 				testf = true;
-				if IHr.TransDate!=CurrentDate then begin TrHs = false; end;
+				// if IHr.TransDate!=CurrentDate then begin TrHs = false; end;
+				if IHr.TransDate!=IVr.TransDate then begin TrHs = false; end;
 				if IHr.ArtCode!=SMrw.ArtCode then begin TrHs = false; end;
 				if IHr.Location!=SMr.ToLocation then begin TrHs = false; end;
 				if IHr.FileName!="IVVc" or !TrHs then begin testf = false; end;
@@ -644,7 +652,9 @@ begin
 					saleDayQty = saleDayQty + IHr.Qty * -1;
 				end;
 			end;
-			resetloop(IHr);
+			ResetLoop(IHr);
+			
+			
 			SMrw.InvQty = saleDayQty;
 			matrowput(SMr,rownr,SMrw);
 			PutWindowRecord(wn,SMr);
@@ -1339,6 +1349,11 @@ begin
   if (UserCanAction("ChangeReserved",true)==false) then begin
     res = false;
   end;   
+	
+	if (CurrentUser=="SA") then begin
+		res = true;
+	end;
+	
   StockMovDClassReservedButtonAction = res;
   return;
 end;
@@ -1869,6 +1884,12 @@ begin
 			WindowFieldGoto(mwn,SMr,RowNumber,"SentQuant",true);
 			DeselectWindow(mwn,false);
 			RepSpec.f1 = RepSpec.f2;
+			
+			INr.Code = RepSpec.f1;
+			if(ReadFirstMain(INr,1,true))then begin
+				RepSpec.f1 = INr.Name;
+			end;
+			
 			matrowget(SMr,RowNumber,SMrw);
 			RepSpec.f4 = SMrw.SentQuant;
 			PutWindowRecord(wn,RepSpec);
@@ -1954,7 +1975,8 @@ global	 // _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
 updating function Boolean TableSearchAddition2IClassOnEnterKey(Integer wn,string fieldname,Integer fn,Integer rownr)
 begin
   Boolean res;
-	record RcVc RepSpec;	
+	record RcVc RepSpec;
+	record INVc INr;
 
   res = true;
 	//DeselectWindow(wn,false);
@@ -1985,6 +2007,7 @@ BEGIN
   res = OpenWindow("TableSearchAddition2IClass",0,wn,"","",RepSpec);
   millisleep(1000);
   selectwindow(res);
+
   WindowFieldGoto(res,RepSpec,-1,"f1",true);
 
   RETURN;
