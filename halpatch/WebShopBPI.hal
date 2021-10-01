@@ -1209,7 +1209,7 @@ begin
 				end;
 			end else begin
 				recordnew(STr);
-				STr.SerNr = NextSerNr("IVVc",STr.TransDate,-1,false,"");
+				STr.SerNr = NextSerNr("StockTakeVc",STr.TransDate,-1,false,"");
 			end;
 		
 			rwcnt = matrowcnt(STr);
@@ -1234,7 +1234,7 @@ begin
 			end;
 		end;
 	
-		logtext(0,"STrw.SerNr " & STr.SerNr);
+		logtext(0,"STr.SerNr " & STr.SerNr);
 		logtext(0,"WebRemoteIPAddress " & WebRemoteIPAddress);
 	
 		if(STr.SerNr>-1)then begin
