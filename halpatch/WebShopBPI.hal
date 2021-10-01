@@ -1147,7 +1147,8 @@ if(WebLoginStatus==3)then begin
 					delLastComaInArea(resarea);
 					AddTextToArea("],",resarea);
 					delLastComaInArea(resarea);
-				AddTextToArea("}",resarea);
+				AddTextToArea("},",resarea);
+				delLastComaInArea(resarea);
 				TrHs = false;
 			end;
 		end;
