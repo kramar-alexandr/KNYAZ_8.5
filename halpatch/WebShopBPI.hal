@@ -189,7 +189,7 @@ if(WebLoginStatus==3)then begin
 				end;
 			end;
 		end;
-		while(loopmain(INr,1,true))begin
+		while(loopkey("Name",INr,1,true))begin
 			saldf = false;
 			IHr.ArtCode = INr.Code;
 			IHr.Location = location;
