@@ -3981,3 +3981,65 @@ begin
 	end;
   EndWindow;
 end;
+
+
+window IVLClass:8
+  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  real pos;
+  Boolean acptf;
+  
+  WindowBegin("Счета-фактуры",IVLClass,CGmlist,-);
+  pos = 820;
+  if (HasHotelInterface) then begin
+    pos = pos + 80;
+  end;
+  acptf = AcceptanceStatusColumnTest("IVVc"); 
+  if (acptf) then begin
+    pos = pos + 40;
+  end;
+  SetWRect(20,80,pos,298);
+  Sizeable(-1,-1,0,0);
+  SpawnClass(IVDClass);
+  UseView(IVVc);
+  FormName(PrintIVL);
+  RecordList(4,17,-21,-39);
+  RlColKey(4,4,"№",SerNr,false,SerNr);
+  RlColKey(79,79,"ОК",OKFlag,false,OKFlag);
+  RlColKey(111,111,"Дата сч/ф",InvDate,false,InvDate);
+  if (StandardHansa==false) then begin
+    RlColKey(191,191,"Склад",Location,false,Location);
+  end;
+  RlColKey(301,301,"Счёт Но.",OrderNr,false,OrderNr);
+  pos = 381;
+  if (HasHotelInterface) then begin
+    RlColKey(pos,pos,"Rsrv. No.",JobNr,false,JobNr); pos = pos + 80; 
+  end;
+  RlColKey(pos,pos,"Клиент",CustCode,false,CustCode); pos = pos + 60;
+  RlColKey(pos,pos,"Наим.",Addr0,false,Name);
+  if (acptf) then begin
+    CalculatedColumn(-170,-170,"Подтв.","IVLClassAcceptanceStatus",false);
+  end;
+  RlColKey(-130,-130,"Итого",Sum4,true,Sum4);
+  RlCol(-60,-60,"",CredMark,true);
+  if (HasMultiCurrency or HasBase2) then begin
+    RlCol(-40,-40,"Вал.",CurncyCode,true);
+  end;
+  RlCol(-1,-1,"",Invalid,true);
+  SearchField("Поиск");
+  if (HasLimitedAccess) then begin
+    BrowseSubsetButton(-40,-15);
+  end;
+  SpecialMenu("OK",'G',0,"OKIVLsm");
+  if (HasLocalization("PRT")==false) then begin
+  SpecialMenu("Печатать проформу cчета-фактуры",' ',1,"PrintIVLsm");
+  end;
+  SpecialMenu("Статус сч/ф",'r',2,"IVInfoIVLsm");
+  if (HasLocalization("ARG")) then begin
+    SpecialMenu("Send Argentinian E-Invoices",'n',3,"SendArgEInvIVLsm");
+  end;
+  if (HasLocalization("MEX")) then begin
+    SpecialMenu("Send Mexican E-Invoices",'n',3,"SendMexEInvIVLsm");
+  end;
+  EndWindow;
+end;
