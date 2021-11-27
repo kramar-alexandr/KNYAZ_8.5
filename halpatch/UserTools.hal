@@ -525,3 +525,75 @@ begin
   RHistVcRecordImportTest = res;
   RETURN;
 END;
+
+global
+function LongInt IVVcRecordImportTest(var record IVVc IVr,record IVVc IV2r,LongInt long3,LongInt long4)
+begin
+  LongInt res;
+  
+  res = 1;
+  if(currentcompany==1 or currentcompany==3)then begin
+    res = 0;
+  end;
+	
+  IVVcRecordImportTest = res;
+  RETURN;
+END;
+
+global
+function LongInt IVCashVcRecordImportTest(var record IVCashVc IVr,record IVCashVc IV2r,LongInt long3,LongInt long4)
+begin
+  LongInt res;
+  
+  res = 1;
+  if(currentcompany==1 or currentcompany==3)then begin
+    res = 0;
+  end;
+	
+  IVCashVcRecordImportTest = res;
+  RETURN;
+END;
+
+global
+function LongInt PUVcRecordImportTest(var record PUVc IVr,record PUVc IV2r,LongInt long3,LongInt long4)
+begin
+  LongInt res;
+  
+  res = 1;
+  if(currentcompany==1 or currentcompany==3)then begin
+    res = 0;
+  end;
+	
+  PUVcRecordImportTest = res;
+  RETURN;
+END;
+
+global
+function LongInt SDVcRecordImportTest(var record SDVc IVr,record SDVc IV2r,LongInt long3,LongInt long4)
+begin
+  LongInt res;
+  
+  res = 1;
+  if(currentcompany==1 or currentcompany==3)then begin
+    res = 0;
+  end;
+	
+  SDVcRecordImportTest = res;
+  RETURN;
+END;
+
+global
+function LongInt POVcRecordImportTest(var record POVc IVr,record POVc IV2r,LongInt long3,LongInt long4)
+begin
+  LongInt res;
+  
+  res = 1;
+  if(currentcompany==1 or currentcompany==3)then begin
+    res = 0;
+  end;
+	
+  POVcRecordImportTest = res;
+  RETURN;
+END;
+
+
