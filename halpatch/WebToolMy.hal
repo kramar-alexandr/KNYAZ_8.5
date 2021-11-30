@@ -119,15 +119,71 @@ begin
 return;
 end;
 
+global updating procedure IVCashDelete(record IVCashVc IVr)
+begin
+  
+  logtext(0,"IVCashDelete " & IVr.SerNr);
+  recorddelete(IVr);
+  
+return;
+end;
+
+global updating procedure TRDelete(record TRVc TRr)
+begin
+  
+  logtext(0,"TRDelete " & TRr.Number);
+  recorddelete(TRr);
+  
+return;
+end;
+
+global updating procedure IHDelete(record ItemHistVc IHr)
+begin
+  
+  logtext(0,"IHDelete " & IHr.ArtCode);
+  recorddelete(IHr);
+  
+return;
+end;
+
 global webpublic procedure WebDeleteOldRecord()
 begin
   record IVVc IVr;
+  record IVCashVc IVCr;
+  record TRVc TRr;
+  record ItemHistVc IHr;
+  
+  
   
   
   setcompany(1,false);
   while(loopmain(IVr,1,true))begin
     qupdating.IVDelete(IVr);
-    millisleep(100);
+    millisleep(5);
+    if(fileexists("stop"))then begin
+      goto lWebDeleteOldRecord;
+    end;
+  end;
+  
+  while(loopmain(IVCr,1,true))begin
+    qupdating.IVCashDelete(IVCr);
+    millisleep(5);
+    if(fileexists("stop"))then begin
+      goto lWebDeleteOldRecord;
+    end;
+  end;
+  
+  while(loopmain(TRr,1,true))begin
+    qupdating.TRDelete(TRr);
+    millisleep(5);
+    if(fileexists("stop"))then begin
+      goto lWebDeleteOldRecord;
+    end;
+  end;
+  
+  while(loopmain(IHr,1,true))begin
+    qupdating.IHDelete(IHr);
+    millisleep(5);
     if(fileexists("stop"))then begin
       goto lWebDeleteOldRecord;
     end;
@@ -140,7 +196,37 @@ begin
   IVr.SerNr = -1;
   while(loopmain(IVr,1,true))begin
     qupdating.IVDelete(IVr);
-    millisleep(100);
+    millisleep(5);
+    if(fileexists("stop"))then begin
+      goto lWebDeleteOldRecord;
+    end;
+  end;
+  
+  resetloop(IVCr);
+  IVCr.SerNr = -1;
+  while(loopmain(IVCr,1,true))begin
+    qupdating.IVCashDelete(IVCr);
+    millisleep(5);
+    if(fileexists("stop"))then begin
+      goto lWebDeleteOldRecord;
+    end;
+  end;
+  
+  resetloop(TRr);
+  TRr.Number = -1;
+  while(loopmain(TRr,1,true))begin
+    qupdating.TRDelete(TRr);
+    millisleep(5);
+    if(fileexists("stop"))then begin
+      goto lWebDeleteOldRecord;
+    end;
+  end;
+  
+  resetloop(IHr);
+  IHr.ArtCode = "";
+  while(loopmain(IHr,1,true))begin
+    qupdating.IHDelete(IHr);
+    millisleep(5);
     if(fileexists("stop"))then begin
       goto lWebDeleteOldRecord;
     end;
