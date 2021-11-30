@@ -119,7 +119,7 @@ begin
 return;
 end;
 
-global procedure WebDeleteOldRecord()
+global webpublic procedure WebDeleteOldRecord()
 begin
   record IVVc IVr;
   
