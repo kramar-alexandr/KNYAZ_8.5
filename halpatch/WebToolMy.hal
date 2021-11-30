@@ -109,3 +109,45 @@ record RHistVc RHistr;
 
 return;
 end;
+
+global updating procedure IVDelete(record IVVc IVr)
+begin
+  
+  logtext(0,"IVDelete " & IVr.SerNr);
+  recorddelete(IVr);
+  
+return;
+end;
+
+global procedure WebDeleteOldRecord()
+begin
+  record IVVc IVr;
+  
+  
+  setcompany(1,false);
+  while(loopmain(IVr,1,true))begin
+    qupdating.IVDelete(IVr);
+    millisleep(100);
+    if(fileexists("stop"))then begin
+      goto lWebDeleteOldRecord;
+    end;
+  end;
+  
+  
+  setcompany(3,false);
+  
+  resetloop(IVr);
+  IVr.SerNr = -1;
+  while(loopmain(IVr,1,true))begin
+    qupdating.IVDelete(IVr);
+    millisleep(100);
+    if(fileexists("stop"))then begin
+      goto lWebDeleteOldRecord;
+    end;
+  end;
+  
+  
+lWebDeleteOldRecord:;
+  
+return;
+end;
