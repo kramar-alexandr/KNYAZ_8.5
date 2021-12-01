@@ -596,4 +596,60 @@ begin
   RETURN;
 END;
 
+global
+function LongInt TRVcRecordImportTest(var record TRVc IVr,record TRVc IV2r,LongInt long3,LongInt long4)
+begin
+  LongInt res;
+  
+  res = 1;
+  if(currentcompany==1 or currentcompany==3)then begin
+    res = 0;
+  end;
+	
+  TRVcRecordImportTest = res;
+  RETURN;
+END;
+
+global
+function LongInt MainVcRecordImportTest(var record MainVc IVr,record MainVc IV2r,LongInt long3,LongInt long4)
+begin
+  LongInt res;
+  
+  res = 1;
+  if(currentcompany==1 or currentcompany==3)then begin
+    res = 0;
+  end;
+	
+  MainVcRecordImportTest = res;
+  RETURN;
+END;
+
+global
+function LongInt ItemHistVcRecordImportTest(var record ItemHistVc IVr,record ItemHistVc IV2r,LongInt long3,LongInt long4)
+begin
+  LongInt res;
+  
+  res = 1;
+  if(currentcompany==1 or currentcompany==3)then begin
+    res = 0;
+  end;
+	
+  ItemHistVcRecordImportTest = res;
+  RETURN;
+END;
+
+global
+function LongInt ItemStatusVcRecordImportTest(var record ItemStatusVc IVr,record ItemStatusVc IV2r,LongInt long3,LongInt long4)
+begin
+  LongInt res;
+  
+  res = 1;
+  if(currentcompany==1 or currentcompany==3)then begin
+    res = 0;
+  end;
+	
+  ItemStatusVcRecordImportTest = res;
+  RETURN;
+END;
+
 
