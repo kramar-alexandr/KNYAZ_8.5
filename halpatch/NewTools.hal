@@ -1278,7 +1278,7 @@ begin
         RECORDNEW(RepSpec);
         CalcCashierSalaryAndMakeTransaction(RepSpec);
       end;
-    SetCompany(9,false);
+    SetCompany(5,false);
 			if(getminute(currenttime)==0 and gethour(currenttime)<=23 and gethour(currenttime)>=17)then begin
 				SyncCurrWithNBUMn;
 			end;
