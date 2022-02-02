@@ -237,3 +237,36 @@ lWebDeleteOldRecord:;
   
 return;
 end;
+
+
+global updating procedure WebDeleteIN()
+begin
+  record INVc INr;
+  record PLVc PLr;
+  record ItemStatusVc ISr;
+  
+  setcompany(9,false);
+  
+  while(loopmain(INr,1,true))begin
+    ISr.Code = INr.Code;
+    ISr.Location = ";;;";
+    if(!readfirstmain(ISr,1,true))then begin
+      recorddelete(INr);
+      stepback(INr);
+    end;
+    
+  end;
+  
+  
+  while(loopmain(PLr,1,true))begin
+    ISr.Code = PLr.ArtCode;
+    ISr.Location = ";;;";
+    if(!readfirstmain(ISr,1,true))then begin
+      recorddelete(PLr);
+      stepback(PLr);
+    end;
+    
+  end;
+
+return;
+end;
