@@ -239,7 +239,7 @@ return;
 end;
 
 
-global updating procedure WebDeleteIN()
+global webpublic updating procedure WebDeleteIN()
 begin
   record INVc INr;
   record PLVc PLr;
@@ -252,6 +252,7 @@ begin
     ISr.Location = ";;;";
     if(!readfirstmain(ISr,1,true))then begin
       recorddelete(INr);
+      logtext(0,"Delete Item " & INr.Code);
       stepback(INr);
     end;
     
@@ -263,6 +264,7 @@ begin
     ISr.Location = ";;;";
     if(!readfirstmain(ISr,1,true))then begin
       recorddelete(PLr);
+      logtext(0,"Delete Price " & PLr.ArtCode);
       stepback(PLr);
     end;
     
