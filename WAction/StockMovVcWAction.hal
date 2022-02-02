@@ -621,7 +621,7 @@ begin
  res = true;
  getwindowrecord(wn,SMr);
  matrowget(SMr,rownr,SMrw);
-	if(nonblank(SMr.FrLocation) AND changed!=0 And CurrentCompany==5) then begin
+	if(nonblank(SMr.FrLocation) AND changed!=0 And CurrentCompany==9) then begin
 		ISr.Location = SMr.FrLocation;
 		ISr.Code = SMrw.ArtCode;
 		if(ReadfirstMain(ISr,2,true)) then begin
@@ -698,7 +698,7 @@ begin
  res = true;
  getwindowrecord(wn,SMr);
  matrowget(SMr,rownr,SMrw);
-	if(nonblank(SMr.FrLocation) AND changed!=0 And CurrentCompany==5) then begin
+	if(nonblank(SMr.FrLocation) AND changed!=0 And CurrentCompany==9) then begin
 		ISr.Location = SMr.FrLocation;
 		ISr.Code = SMrw.ArtCode;
 		if(ReadfirstMain(ISr,2,true)) then begin

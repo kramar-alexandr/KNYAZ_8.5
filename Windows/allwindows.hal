@@ -3679,7 +3679,7 @@ begin
   EditField(h3,v,80,"Дата получения",Normal,TransDate,false,PasteCurDate);
   if (HasMultiLocations) then begin
     EditField(h,v+=vs,80, "Со склада",Normal,FrLocation,false,LocationSClass);
-    if (IsEnterprise and currentcompany==5) then begin
+    if (IsEnterprise and currentcompany==9) then begin
 			EditField(h2,v,80,"через склад",Normal,ThrouLocation,false,LocationSClass);    //Edit*************************** Ira 18.11.20 
     end;
     EditField(h3,v,80,"на склад",Normal,ToLocation,false,LocationSClass);
@@ -3764,7 +3764,7 @@ begin
     Flip(flipnr);  flipnr = flipnr + 1;
 	
 		MatCol(1,170,"Наименование",0,Spec,false,0);  		//Edit*************************** Ira 18.11.20
-		if (currentcompany==5) then begin
+		if (currentcompany==9) then begin
 			if (HasVarieties) then begin
 				MatCol(1,-255,"Треб.кол.",0,OrdQuant,true,MATVARINSClass);
 			end else begin
@@ -3781,7 +3781,7 @@ begin
 		end;
 		end;
     end;
-		if (currentcompany==5) then begin
+		if (currentcompany==9) then begin
 			if (HasThrouLocation) then begin
 				MatCol(1,-205,"Отпр.кол.",0,SentQuant,true,0);			//Edit*************************** Ira 18.11.20
 			end;

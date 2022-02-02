@@ -10,7 +10,7 @@ begin
 	row POVc POrw;
 	integer i,rwcnt,k;
 	
-	if(currentcompany==5)then begin
+	if(currentcompany==9)then begin
 		if(IVr.CustCode=="COMP7" or IVr.CustCode=="COMP8")then begin
 			switch(IVr.CustCode)begin
 				case "COMP7":setcompany(7,false);
