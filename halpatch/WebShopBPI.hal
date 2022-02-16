@@ -51,10 +51,14 @@ begin
 	NormStr = "";
 	strln = len(Str);
 	for (i=0;i<strln;i=i+1)begin
-		if(mid(Str,i,1)==chr(34))then begin
-			NormStr = NormStr & chr(92) & mid(Str,i,1);
-		end else begin
-			NormStr = NormStr & mid(Str,i,1);
+	  if(mid(Str,i,1)==chr(92))then begin
+	    NormStr = NormStr & "";
+	  end else begin
+      if(mid(Str,i,1)==chr(34))then begin
+        NormStr = NormStr & chr(92) & mid(Str,i,1);
+      end else begin
+        NormStr = NormStr & mid(Str,i,1);
+      end;
 		end;
 	end;
 	
