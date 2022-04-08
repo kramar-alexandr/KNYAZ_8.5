@@ -379,6 +379,7 @@ area postdata;
 			CLOutr.PayMode = "O";
 			CLOutr.ARonTR = 1;
 			CLOutr.CurncyCode = "UAH";
+			CLOutr.Person = USr.Code;
 			CLOutVc_PasteCurncyCode(CLOutr);
 			CLOutr.Total = stringtoval(JSONGet(jsonobj,"Total"),m4val);
 			CLOutr.NetVal = stringtoval(JSONGet(jsonobj,"Total"),m4val);
