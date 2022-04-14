@@ -1,0 +1,13 @@
+global
+function LongInt StockMovVcRecordDefaults(var record StockMovVc StockMovr,record StockMovVc StockMov2r,LongInt stat,LongInt long4)
+BEGIN
+  LongInt res;
+  string 10 curcode;
+  val fr,to1,to2,br1,br2;
+  
+  res = inner.StockMovVcRecordDefaults(StockMovr,StockMov2r,stat,long4);
+  StockMovr.FrLocation = "SORTIROVOC";
+
+  StockMovVcRecordDefaults = res; 
+  RETURN;
+END;
