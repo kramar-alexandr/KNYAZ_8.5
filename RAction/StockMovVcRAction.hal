@@ -671,6 +671,7 @@ begin
   record CostAccBlock CAb;
   record ORVc ORr;
   row ORVc ORrw;
+  record UserVc USr;
 
   res = 0;
   insertmode = 1;//Rs_insert
@@ -868,6 +869,7 @@ begin
     if (SMp.SerNr==-1) then begin
       SMp.SerNr = NextSerNr("StockMovVc",SMp.SentTransDate,-1,false,"");
     end;
+    
     if (SerNrTestStockMovVc(SMp.SerNr,SMp.SentTransDate,gentrans)==false) then begin
       if (check>0) then begin
         error = 1557;
@@ -918,6 +920,19 @@ begin
       end;    
     end;
   end;
+  
+  
+   while(loopmain(USr,1,true))begin// Edit ************************** BPI Ukraine - KramarAlexandr - 01, 26 10 2020 y. at 3:26:00 PM
+    if(nonblank(USr.SalesGroup))then begin
+      if(nonblank(USr.Location))then begin
+        if(USr.Location==SMp.FrLocation or USr.Location==SMp.ToLocation)then begin
+          SMp.SalesGroup = USr.SalesGroup;
+        end;
+      end;
+    end;
+  end;
+  
+  
   if (nonblank(SMp.SentTransDate)) then begin
     if (HasLocalization("PRT")) then begin
       if (SMp.TransDate!=SMp.SentTransDate) then begin
@@ -2138,18 +2153,6 @@ begin
   oldnr = SMp.SerNr;
   oldOfficialSerNr = SMp.OfficialSerNr;
   UnOKedCheckSerialf = false;
-  
-  logtext(0,"StockMovVcRecordCheck");
-	while(loopmain(USr,1,true))begin// Edit ************************** BPI Ukraine - KramarAlexandr - 01, 26 10 2020 y. at 3:26:00 PM
-		if(nonblank(USr.SalesGroup))then begin
-			if(nonblank(USr.Location))then begin
-				if(USr.Location==SMp.FrLocation or USr.Location==SMp.ToLocation)then begin
-					SMp.SalesGroup = USr.SalesGroup;
-					logtext(0,"StockMovVcRecordCheck " & SMp.SalesGroup);
-				end;
-			end;
-		end;
-	end;
   
   if (CheckStockMovRecord(SMp,SM2p,stat,check,true,error,errorstr,rownr,fieldstr,UnOKedCheckSerialf)!=0) then begin
     res = -1;
