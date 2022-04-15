@@ -2138,11 +2138,6 @@ begin
   oldnr = SMp.SerNr;
   oldOfficialSerNr = SMp.OfficialSerNr;
   UnOKedCheckSerialf = false;
-  if (CheckStockMovRecord(SMp,SM2p,stat,check,true,error,errorstr,rownr,fieldstr,UnOKedCheckSerialf)!=0) then begin
-    res = -1;
-    RecordCheckError(error,errorstr,rownr,fieldstr);
-    goto LStockMovVcRecordCheck;
-  end;
   
   logtext(0,"StockMovVcRecordCheck");
 	while(loopmain(USr,1,true))begin// Edit ************************** BPI Ukraine - KramarAlexandr - 01, 26 10 2020 y. at 3:26:00 PM
@@ -2155,6 +2150,13 @@ begin
 			end;
 		end;
 	end;
+  
+  if (CheckStockMovRecord(SMp,SM2p,stat,check,true,error,errorstr,rownr,fieldstr,UnOKedCheckSerialf)!=0) then begin
+    res = -1;
+    RecordCheckError(error,errorstr,rownr,fieldstr);
+    goto LStockMovVcRecordCheck;
+  end;
+  
 	
 	if(SMp.SentOKFlag == 1 and SM2p.SentOKFlag == 0 and SMp.ThrouLocation == "TRANZ")then begin // Edit ************* Ihor Trubachov 23*08*2021
 		rownr = MatRowCnt(SMp);
