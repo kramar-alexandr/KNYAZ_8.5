@@ -3665,7 +3665,7 @@ begin
   Sizeable(-1,-1,0,0);
   UseView(StockMovVc);
   ActiveFieldOnNew("SentTransDate");
-  Tile(0,90,false,"",TransDate);
+  Tile(0,90,false,"",ToLocation);
   v = 6; vs = 20; h = 110; h2 = 300; h3 = 500; h4 = 620;
   EditField(h,v,80, "Номер",Normal,SerNr,false,TSerSClass);
   CheckBox(h2,v,0,"Зарезервировано",Reserved);
