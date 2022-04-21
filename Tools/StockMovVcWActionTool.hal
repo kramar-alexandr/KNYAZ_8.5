@@ -579,7 +579,7 @@ begin
 	logtext(0,"RA_StockMovDClassArtCode2EFAfter");
 	
 	res = -1;
-  
+  matrowget(SMr,rownr,SMrw);
   if(nonblank(SMr.FrLocation) AND changed!=0 And CurrentCompany==9) then begin
 		ISr.Location = SMr.FrLocation;
 		ISr.Code = SMrw.ArtCode;
