@@ -641,7 +641,9 @@ begin
 				
 				if(SMr.ToLocation=="SORTIROVOC")then begin
 				  SM2r.TransDate = addday(CurrentDate,-1);
-			    readfirstkey("TransDate",SM2r,1,false);
+          SM2r.OKFlag = 1;
+          SM2r.FrLocation = "SORTIROVOC";
+          readfirstkey("FrLocOK",SM2r,3,false);
           IHr.ArtCode = SMrw.ArtCode;
           IHr.Location = SMr.ToLocation;
           IHr.TransDate = SM2r.TransDate;
