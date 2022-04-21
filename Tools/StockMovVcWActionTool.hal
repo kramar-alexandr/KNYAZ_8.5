@@ -631,6 +631,7 @@ begin
           if IHr.FileName!="StockMovVc" or !TrHs then begin testf = false; end;
           if (testf and IHr.Qty<0) then begin
             saleDayQty = saleDayQty + IHr.Qty * -1;
+            logtext(0,"Moved from SORTIROVOC at " & IHr.TransDate & " " & IHr.Qty);
           end;
         end;
         ResetLoop(IHr);
