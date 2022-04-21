@@ -608,7 +608,7 @@ END;
 
 global function boolean StockMovDClassArtCode2EFAfter(integer wn,integer rownr,integer changed)
 begin
-	record StockMovVc SMr;
+	record StockMovVc SMr,SM2r;
 	row StockMovVc SMrw, SM2rw;
 	record ItemStatusVc ISr,ISr2;
 	boolean res;
@@ -654,6 +654,25 @@ begin
 			end;
 			ResetLoop(IHr);
 			
+			if(SMr.ToLocation=="SORTIROVOC")then begin
+			  SM2r.TransDate = addday(CurrentDate,-1);
+			  readfirstkey("TransDate",SM2r,1,false);
+			  IHr.ArtCode = SMrw.ArtCode;
+			  IHr.Location = SMr.ToLocation;
+			  IHr.TransDate = SM2r.TransDate;
+        TrHs = true;
+        while (loopkey("ArtCodeLoc",IHr,3,TrHs)) begin
+          testf = true;
+          if IHr.TransDate!=SM2r.TransDate then begin TrHs = false; end;
+          if IHr.ArtCode!=SMrw.ArtCode then begin TrHs = false; end;
+          if IHr.Location!=SMr.ToLocation then begin TrHs = false; end;
+          if IHr.FileName!="StockMovVc" or !TrHs then begin testf = false; end;
+          if (testf and IHr.Qty<0) then begin
+            saleDayQty = saleDayQty + IHr.Qty * -1;
+          end;
+        end;
+        ResetLoop(IHr);
+			end;
 			
 			SMrw.InvQty = saleDayQty;
 			matrowput(SMr,rownr,SMrw);
