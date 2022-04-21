@@ -563,7 +563,102 @@ end;
 
 
 
-
+global
+ function longint RA_StockMovDClassArtCode2EFAfter(var record StockMovVc SMr,integer rownr,integer changed)
+begin
+  record StockMovVc SM2r;
+	row StockMovVc SMrw, SM2rw;
+	record ItemStatusVc ISr,ISr2;
+	longint res;
+	integer i;
+	record ItemHistVc IHr;
+	boolean TrHs, testf;
+	val saleDayQty;
+	record IVVc IVr;
+	
+	logtext(0,"RA_StockMovDClassArtCode2EFAfter");
+	
+	res = -1;
+  
+  if(nonblank(SMr.FrLocation) AND changed!=0 And CurrentCompany==9) then begin
+		ISr.Location = SMr.FrLocation;
+		ISr.Code = SMrw.ArtCode;
+		if(ReadfirstMain(ISr,2,true)) then begin
+			ISr2.Location = SMr.ToLocation;
+			ISr2.Code = SMrw.ArtCode;
+			readfirstmain(ISr2,2,true);
+			SMrw.InStock1 = ISr.Instock - ISr.RsrvQty;
+			SMrw.InStock2 = ISr2.Instock - ISr2.RsrvQty;
+			saleDayQty = 0;
+			IHr.TransDate = CurrentDate;
+			IHr.ArtCode = SMrw.ArtCode;
+			IHr.Location = SMr.ToLocation;
+			
+			IVr.Location = IHr.Location;
+			if(ReadLastKey("Location",IVr,1,true))then begin
+				IHr.TransDate = IVr.TransDate;
+			end;
+			
+			TrHs = true;
+			while (loopkey("ArtCodeLoc",IHr,3,TrHs)) begin
+				testf = true;
+				// if IHr.TransDate!=CurrentDate then begin TrHs = false; end;
+				if IHr.TransDate!=IVr.TransDate then begin TrHs = false; end;
+				if IHr.ArtCode!=SMrw.ArtCode then begin TrHs = false; end;
+				if IHr.Location!=SMr.ToLocation then begin TrHs = false; end;
+				if IHr.FileName!="IVVc" or !TrHs then begin testf = false; end;
+				if (testf) then begin
+					saleDayQty = saleDayQty + IHr.Qty * -1;
+				end;
+			end;
+			ResetLoop(IHr);
+			
+			if(SMr.ToLocation=="SORTIROVOC")then begin
+			  SM2r.TransDate = addday(CurrentDate,-1);
+			  SM2r.OKFlag = 1;
+			  SM2r.FrLocation = "SORTIROVOC";
+			  readfirstkey("FrLocOK",SM2r,3,false);
+			  logtext(0,"Stock Mov Check " & SM2r.TransDate & "  " & SM2r.SerNr);
+			  IHr.ArtCode = SMrw.ArtCode;
+			  IHr.Location = SMr.ToLocation;
+			  IHr.TransDate = SM2r.TransDate;
+        TrHs = true;
+        while (loopkey("ArtCodeLoc",IHr,3,TrHs)) begin
+          testf = true;
+          if IHr.TransDate!=SM2r.TransDate then begin TrHs = false; end;
+          if IHr.ArtCode!=SMrw.ArtCode then begin TrHs = false; end;
+          if IHr.Location!=SMr.ToLocation then begin TrHs = false; end;
+          if IHr.FileName!="StockMovVc" or !TrHs then begin testf = false; end;
+          if (testf and IHr.Qty<0) then begin
+            saleDayQty = saleDayQty + IHr.Qty * -1;
+          end;
+        end;
+        ResetLoop(IHr);
+			end;
+			
+			SMrw.InvQty = saleDayQty;
+			matrowput(SMr,rownr,SMrw);
+			for (i=0;i<matrowcnt(SMr);i=i+1) begin
+				matrowget(SMr,i,SM2rw);
+				if (i!=rownr and SMrw.ArtCode==SM2rw.ArtCode) then begin
+					ISr.Instock = ISr.Instock-SM2rw.OrdQuant;
+				end;
+			end;
+			if(ISr.Instock-ISr.RsrvQty < SMrw.OrdQuant or ISr.Instock-ISr.RsrvQty<=0) then begin
+				SMrw.ArtCode = "";
+				matrowput(SMr,rownr,SMrw);
+				res = 50022;
+			end;
+		end else begin
+			res = 50023;
+			SMrw.ArtCode = "";
+			matrowput(SMr,rownr,SMrw);
+		end;	
+	end;	
+  
+  RA_StockMovDClassArtCode2EFAfter = res;
+return;
+end;
 
 // By Ira
 global
