@@ -3072,3 +3072,26 @@ begin
   SelectWindow(wn);
   return;
 end;
+
+
+global
+procedure PurRClassReportDefaults(Integer wn)
+begin
+  record RcVc RepSpec;
+  record VarietyBlock Varb;
+  
+  //BlockLoad(Varb);
+  DeselectWindow(wn,false);
+  GetWindowRecord(wn,RepSpec);
+  ReportDefaults(RepSpec,"PurRClass");  
+  RepSpec.FirstAcc = "OSN";
+  //RepSpec.flags[3] = 1;
+  //RepSpec.flags[4] = 1;
+  //RepSpec.flags[5] = 1;
+  //RepSpec.flags[6] = Varb.AutoVarietyDef;
+  if (UserHasLimitedAccess(RepSpec.AccStr,RepSpec.Stext)) then begin
+  end;
+  PutWindowRecord(wn,RepSpec);
+  SelectWindow(wn);
+  return;
+end;
