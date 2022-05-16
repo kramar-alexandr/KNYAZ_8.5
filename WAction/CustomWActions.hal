@@ -888,6 +888,33 @@ begin
 return;
 end;
 
+
+
+global procedure DelBlankRowSTDsm()
+begin
+	record StockTakeVc STr;
+	row StockTakeVc STrw;
+	integer wn,i,rwcnt;
+	
+	wn = curwindow;
+	getwindowrecord(wn,STr);
+	rwcnt = matrowcnt(STr);
+	
+	for(i=0;i<rwcnt;i=i+1)begin
+		matrowget(STr,i,STrw);
+		if(blank(STrw.ArtCode))then begin
+			matrowdelete(STr,i);
+			i=i-1;
+			rwcnt = rwcnt - 1;
+		end;
+	end;
+	putwindowrecord(wn,STr);
+return;
+end;
+
+
+
+
 global procedure DelBlankRowSDDsm()
 begin
 	record SDVc SDr;

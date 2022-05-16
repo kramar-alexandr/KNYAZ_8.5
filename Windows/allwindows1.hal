@@ -4024,6 +4024,7 @@ begin
     end;
     EditField(h=150,-30,-35,"Коммент.",Normal,Comment,false,0);
     if (IsEnterprise) then begin
+			SpecialMenu("Удалить пустые строки",'',4,"DelBlankRowSTDsm"); // _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_- Anton Preisinger 16:35 16.05.2022
       SpecialMenu("Заполнить текущую стоимость",' ',1,"StockTakeFillFIFODsm");
       SpecialMenu("Поиск товара",'f',1,"ItemSearchDsm");
   //  SpecialMenu("Import Data from Digitag",'f',1,"StockTakeDigitagDsm");
