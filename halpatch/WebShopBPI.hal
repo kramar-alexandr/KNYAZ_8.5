@@ -988,7 +988,7 @@ string 100 saler;
 			matrowget(CLInr,0,CLInrw);
 			RecordCopy(OldCLInr,CLInr);
 			CLInr.Objects = USr.PersObjx;
-			//CLInr.OKFlag = 1;Отменяем заокеивание
+			CLInr.OKFlag = 1;
 			if (RecordUpdate(OldCLInr,CLInr,true)==0) then begin end;
 		end;
 
