@@ -4011,20 +4011,20 @@ begin
   if (StandardHansa==false) then begin
     RlColKey(231,231,"Склад",Location,false,Location);
   end;
-  RlColKey(341,341,"Счёт Но.",OrderNr,false,OrderNr);
-  pos = 421;
+  RlColKey(301,301,"Счёт Но.",OrderNr,false,OrderNr);
+  pos = 381;
   if (HasHotelInterface) then begin
     RlColKey(pos,pos,"Rsrv. No.",JobNr,false,JobNr); pos = pos + 80; 
   end;
   RlColKey(pos,pos,"Клиент",CustCode,false,CustCode); pos = pos + 60;
   RlColKey(pos,pos,"Наим.",Addr0,false,Name);
   if (acptf) then begin
-    CalculatedColumn(-130,-130,"Подтв.","IVLClassAcceptanceStatus",false);
+    CalculatedColumn(-170,-170,"Подтв.","IVLClassAcceptanceStatus",false);
   end;
-  RlColKey(-90,-90,"Итого",Sum4,true,Sum4);
-  RlCol(-10,-10,"",CredMark,true);
+  RlColKey(-130,-130,"Итого",Sum4,true,Sum4);
+  RlCol(-50,-50,"",CredMark,true);
   if (HasMultiCurrency or HasBase2) then begin
-    RlCol(-10,-20,"Вал.",CurncyCode,true);
+    RlCol(-50,-50,"Вал.",CurncyCode,true);
   end;
   RlCol(-1,-1,"",Invalid,true);
   SearchField("Поиск");
