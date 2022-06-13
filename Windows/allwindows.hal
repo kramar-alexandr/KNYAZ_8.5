@@ -4006,7 +4006,7 @@ begin
   RecordList(4,17,-21,-39);
   RlColKey(4,4,"№",SerNr,false,SerNr);
   RlColKey(79,79,"ОК",OKFlag,false,OKFlag);
-  RlCol(100,100,"Прин",AcceptedFlag,false);
+  RlCol(100,100,"Принято",AcceptedFlag,false);
   RlColKey(141,141,"Дата сч/ф",InvDate,false,InvDate);
   if (StandardHansa==false) then begin
     RlColKey(221,221,"Склад",Location,false,Location);
@@ -4032,7 +4032,7 @@ begin
     BrowseSubsetButton(-40,-15);
   end;
   SpecialMenu("OK",'G',0,"OKIVLsm");
-  SpecialMenu("Прин",'G',0,"AcceptedIVLsm");
+  SpecialMenu("Принято",'G',0,"AcceptedIVLsm");
   if (HasLocalization("PRT")==false) then begin
   SpecialMenu("Печатать проформу cчета-фактуры",' ',1,"PrintIVLsm");
   end;
