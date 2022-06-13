@@ -4006,24 +4006,25 @@ begin
   RecordList(4,17,-21,-39);
   RlColKey(4,4,"№",SerNr,false,SerNr);
   RlColKey(79,79,"ОК",OKFlag,false,OKFlag);
-  RlColKey(111,111,"Дата сч/ф",InvDate,false,InvDate);
+  RlCol(100,100,"Прин",AcceptedFlag,false);
+  RlColKey(141,141,"Дата сч/ф",InvDate,false,InvDate);
   if (StandardHansa==false) then begin
-    RlColKey(191,191,"Склад",Location,false,Location);
+    RlColKey(221,221,"Склад",Location,false,Location);
   end;
-  RlColKey(301,301,"Счёт Но.",OrderNr,false,OrderNr);
-  pos = 381;
+  RlColKey(331,331,"Счёт Но.",OrderNr,false,OrderNr);
+  pos = 411;
   if (HasHotelInterface) then begin
     RlColKey(pos,pos,"Rsrv. No.",JobNr,false,JobNr); pos = pos + 80; 
   end;
   RlColKey(pos,pos,"Клиент",CustCode,false,CustCode); pos = pos + 60;
   RlColKey(pos,pos,"Наим.",Addr0,false,Name);
   if (acptf) then begin
-    CalculatedColumn(-170,-170,"Подтв.","IVLClassAcceptanceStatus",false);
+    CalculatedColumn(-140,-140,"Подтв.","IVLClassAcceptanceStatus",false);
   end;
-  RlColKey(-130,-130,"Итого",Sum4,true,Sum4);
-  RlCol(-60,-60,"",CredMark,true);
+  RlColKey(-100,-100,"Итого",Sum4,true,Sum4);
+  RlCol(-20,-20,"",CredMark,true);
   if (HasMultiCurrency or HasBase2) then begin
-    RlCol(-40,-40,"Вал.",CurncyCode,true);
+    RlCol(-20,-20,"Вал.",CurncyCode,true);
   end;
   RlCol(-1,-1,"",Invalid,true);
   SearchField("Поиск");
@@ -4031,6 +4032,7 @@ begin
     BrowseSubsetButton(-40,-15);
   end;
   SpecialMenu("OK",'G',0,"OKIVLsm");
+  SpecialMenu("Прин",'G',0,"AcceptedIVLsm");
   if (HasLocalization("PRT")==false) then begin
   SpecialMenu("Печатать проформу cчета-фактуры",' ',1,"PrintIVLsm");
   end;

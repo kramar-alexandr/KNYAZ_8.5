@@ -1085,3 +1085,27 @@ begin
 	Remote_StockMove_AddOneItemTo = res;
 return;  
 end;
+
+global
+updating procedure AcceptedIVLsm()
+BEGIN
+  Integer wn;
+  record IVVc IVr,oldIVr;
+  LongInt i;
+  record AutoActionBlock AAb;
+  Boolean tmpf;
+  string 20 docname;
+  
+  wn = CurWindow;
+  i = 1;
+  // GetRecordFromBrowse(IVr,wn,i);
+  while (GetRecordFromBrowse(IVr,wn,i)) begin
+	if (IVr.AcceptedFlag==0) then begin
+	  IVr.AcceptedFlag = 1;
+	  RecordStore(IVr,true);
+	end;
+	i = i + 1;
+  end;
+  UpdateBrowses("IVVc");
+  RETURN;
+END;
