@@ -3990,7 +3990,7 @@ begin
   Boolean acptf;
   
   WindowBegin("‘чета-фактуры",IVLClass,CGmlist,-);
-  pos = 820;
+  pos = 920;
   if (HasHotelInterface) then begin
     pos = pos + 80;
   end;
