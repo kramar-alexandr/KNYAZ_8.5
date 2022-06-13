@@ -1103,6 +1103,9 @@ BEGIN
 	if (IVr.AcceptedFlag==0) then begin
 	  IVr.AcceptedFlag = 1;
 	  RecordStore(IVr,true);
+	end else begin
+	  IVr.AcceptedFlag = 0;
+	  RecordStore(IVr,true);
 	end;
 	i = i + 1;
   end;
