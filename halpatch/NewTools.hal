@@ -613,6 +613,9 @@ begin
   MatRowPut(OPr,rownr,OPrw);
   OPVc_PasteVECode(OPr,rownr);
   MatRowGet(OPr,rownr,OPrw);
+  if (VIr.InvType==kInvoiceTypeCredit)then begin
+    bal = bal * -1;
+  end;
   OPrw.RecVal = bal;
   MatRowPut(OPr,rownr,OPrw);
   OPVc_PasteRecVal(OPr,rownr);
