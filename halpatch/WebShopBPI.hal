@@ -929,7 +929,7 @@ val sum,rashod;
 record Uservc USr;
 
 
-logtext(0,"WebGetCashDocs start " & WebGetArg("foruser");
+logtext(0,"WebGetCashDocs start " & WebGetArg("foruser"));
 
 if(WebLoginStatus==3)then begin
 
