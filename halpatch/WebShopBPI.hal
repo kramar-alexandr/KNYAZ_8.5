@@ -860,6 +860,8 @@ boolean testf;
 			while(loopmain(USr,1,true))begin
 					testf  = true;
 					if(USr.AccessGroup!="SALE")then begin testf = false; end;
+					if(USr.Closed!=0)then begin testf = false; end;
+					
 					if(nonblank(curUSr.SalesGroup) and USr.SalesGroup!=curUSr.SalesGroup)then begin testf = false; end;
 					
 					if(testf) then begin
