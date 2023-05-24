@@ -77,6 +77,8 @@ begin
   integer deltaMin,i,cti;
   boolean isLogedIn;
   
+  logtext(0,"WebIsLogIn start");
+  
   logtext(0,"WebIsLogIn before " & currentuser);
   logtext(0,"WebRemoteIPAddress " & WebRemoteIPAddress);
   isLogedIn = WebLoginStatus==3;
@@ -88,6 +90,8 @@ begin
   end else begin
   	WebOutString("false");
   end;
+  
+  logtext(0,"WebIsLogIn end");
   
   return;
 end;
@@ -103,6 +107,9 @@ row StockMovVc StockMovrw;
 vector integer moveQuant;
 boolean TrHs, testf;
 integer i;
+
+logtext(0,"WebMoveOk start");
+  
 
 if(WebLoginStatus==3)then begin
 
@@ -135,6 +142,8 @@ if(WebLoginStatus==3)then begin
 		weboutarea2(resarea);
 	end;
 	
+	logtext(0,"WebMoveOk end");
+	
 end;
 return;
 end;
@@ -156,7 +165,9 @@ begin
 	val price, Inst;
 	boolean saldf;
 
-if(WebLoginStatus==3)then begin
+  logtext(0,"WebGetInventStat start");
+
+  if(WebLoginStatus==3)then begin
 
 	SetCompany(9,false);
 	WebSetContentType("application/json; charset=UTF-8");	
@@ -249,6 +260,10 @@ if(WebLoginStatus==3)then begin
 end;
 
 weboutarea2(resarea);
+
+  logtext(0,"WebGetInventStat end");
+
+
 return;
 end;
 
@@ -261,6 +276,7 @@ area resarea;
 record UserVc User;
 record CLCorspVc CLCorspr;
 
+logtext(0,"WebGetCLCorsp start");
 
 if(WebLoginStatus==3)then begin
 
@@ -290,6 +306,9 @@ if(WebLoginStatus==3)then begin
 end;
 
 weboutarea2(resarea);
+
+logtext(0,"WebGetCLCorsp end");
+
 return;
 end;
 
@@ -347,14 +366,6 @@ return;
 end;
 
 
-
-
-
-
-
-
-
-
 global webpublic updating procedure WebSendCLOut()
 begin
 area resarea;
@@ -363,6 +374,8 @@ record UserVc USr;
 record CLOutVc CLOutr;
 row CLOutVc CLOutrw;
 area postdata;
+
+  logtext(0,"WebSendCLOut start");
 
 	if(WebLoginStatus==3)then begin
 		SetCompany(9,false);
@@ -399,6 +412,9 @@ area postdata;
 		logtext(0,"CLOutr.SerNr " & CLOutr.SerNr);
 		logtext(0,"WebRemoteIPAddress " & WebRemoteIPAddress);
 	end;
+	
+	logtext(0,"WebSendCLOut end");
+	
 return;
 end;
 
@@ -412,7 +428,9 @@ record CLOutVc CLOutr;
 row CLOutVc CLOutrw;
 area postdata;
 boolean TrHs,testf;
-
+  
+  logtext(0,"WebGetCreatedCLOutForCurUs start");
+  
 	if(WebLoginStatus==3)then begin
 		SetCompany(9,false);
 		logtext(0,"WebGetCreatedCLOutForCurUs");
@@ -444,6 +462,9 @@ boolean TrHs,testf;
 		end;
 	end;
 	weboutarea2(resarea);
+	
+	logtext(0,"WebGetCreatedCLOutForCurUs end");
+	
 return;
 end;
 
@@ -463,6 +484,8 @@ begin
 	Boolean chsum;
 	string 255 artCode;
 	longint res;
+	
+	logtext(0,"WebSendInvent start");
 	
 	if(WebLoginStatus==3)then begin
 		
@@ -549,6 +572,8 @@ lendinvent:;
 		end;
 	end;
 	
+	logtext(0,"WebSendInvent end");
+	
  return;
 end;
 
@@ -567,6 +592,8 @@ begin
 	Boolean chsum;
 	string 255 artCode;
 	longint res;
+	
+	logtext(0,"WebSendSale start");
 	
 	if(WebLoginStatus==3)then begin
 		
@@ -668,6 +695,9 @@ lendinvent:;
 		end;
 	end;
 	
+	
+	logtext(0,"WebSendSale end");
+	
  return;
 end;
 
@@ -683,6 +713,9 @@ boolean TrHs,testf;
 integer i,rwcnt;
 record UserVc USr;
 string 10 credinv;
+
+
+logtext(0,"WebGetDaySales start");
 
 if(WebLoginStatus==3)then begin
 
@@ -757,6 +790,8 @@ if(WebLoginStatus==3)then begin
 	weboutarea2(resarea);
 end;
 
+logtext(0,"WebGetDaySales end");
+
 return;
 end;
 
@@ -768,6 +803,8 @@ record INVc INr;
 record ItemStatusVc ISr;
 area resarea;
 record BarCodeVc BCr;
+
+logtext(0,"WebGetBarCodes start");
 
 	if(WebLoginStatus==3)then begin
 
@@ -794,6 +831,8 @@ record BarCodeVc BCr;
 
 	end;
 
+logtext(0,"WebGetBarCodes end");
+
 return;
 end;
 
@@ -806,6 +845,7 @@ record UserVc USr,curUSr;
 record DepVc Depr;
 boolean testf;
 
+  logtext(0,"WebGetUsers start");
 	if(WebLoginStatus==3)then begin
 
 		WebSetContentType("application/json; charset=UTF-8");	
@@ -842,7 +882,8 @@ boolean testf;
 	
 			weboutarea2(resarea);
 	end;
-
+  
+  logtext(0,"WebGetUsers end");
 return;
 end;
 
@@ -854,6 +895,8 @@ area resarea;
 record UserVc USr,curUSr;
 record DepVc Depr;
 boolean testf;
+
+logtext(0,"WebGetCurrentUsers start");
 
 	if(WebLoginStatus==3)then begin
 
@@ -867,6 +910,8 @@ boolean testf;
 			AddTextToArea("\"user\":\"" & curUSr.Code & "\"}",resarea);
 			weboutarea2(resarea);
 	end;
+
+logtext(0,"WebGetCurrentUsers end");
 
 return;
 end;
@@ -882,6 +927,9 @@ record IVVc IVr;
 boolean TrHs,testf;
 val sum,rashod;
 record Uservc USr;
+
+
+logtext(0,"WebGetCashDocs start");
 
 if(WebLoginStatus==3)then begin
 
@@ -929,6 +977,8 @@ if(WebLoginStatus==3)then begin
 	
 	
 	end;
+	logtext(0,"WebGetCashDocs end");
+	
 return;
 end;
 
@@ -947,6 +997,8 @@ area postdata;
 json jsonobj;
 record UserVc USr,US2r;
 string 100 saler;
+	
+	logtext(0,"WebPutCashDocs start");
 	
 	if(WebLoginStatus==3)then begin
 		
@@ -997,6 +1049,8 @@ string 100 saler;
 	
 	end;
 	
+	logtext(0,"WebPutCashDocs end");
+	
 return;
 end;
 
@@ -1012,6 +1066,9 @@ boolean TrHs,testf,find;
 integer i,rwcnt;
 record UserVc USr;
 string 50 delete,CredInv;
+
+
+logtext(0,"WebGetLastSale start");
 
 if(WebLoginStatus==3)then begin
 
@@ -1094,6 +1151,8 @@ if(WebLoginStatus==3)then begin
 	weboutarea2(resarea);
 end;
 
+logtext(0,"WebGetLastSale end");
+
 return;
 end;
 
@@ -1108,6 +1167,8 @@ record UserVc USr;
 string 50 delete,CredInv;
 record StockTakeVc STr;
 row StockTakeVc STrw;
+
+logtext(0,"WebGetLastInvent start");
 
 if(WebLoginStatus==3)then begin
 
@@ -1178,6 +1239,8 @@ if(WebLoginStatus==3)then begin
 	weboutarea2(resarea);
 end;
 
+logtext(0,"WebGetLastInvent end");
+
 return;
 end;
 
@@ -1199,7 +1262,7 @@ begin
 	longint res;
 	
 	//IVr IVrw
-	
+	logtext(0,"WebSendInventST start");
 	if(WebLoginStatus==3)then begin
 		
 		SetCompany(9,false);
@@ -1271,6 +1334,8 @@ lendinventST:;
 			weboutstring("{\"result\":\"ok\",\"SerNr\":\"" & STr.SerNr & "\"}");
 		end;
 	end;
+	
+	logtext(0,"WebSendInventST end");
 	
  return;
 end;
