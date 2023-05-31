@@ -63,8 +63,7 @@ boolean testf;
 
   SetCompany(9,false);
   
-  AddTextToArea("{",resarea);
-  AddTextToArea("\"users\":[",resarea);
+  AddTextToArea("[",resarea);
   while(loopmain(USr,1,true))begin
       testf  = true;
       if(USr.AccessGroup!="SALE")then begin testf = false; end;
@@ -91,7 +90,6 @@ boolean testf;
   end;
   delLastComaInArea(resarea);
   AddTextToArea("]",resarea);
-  AddTextToArea("}",resarea);
 
 
   weboutarea2(resarea);
