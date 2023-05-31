@@ -151,7 +151,7 @@ logtext(0,"WebGetLocationsTelegram start");
       AddTextToArea("{",resarea);
       addParamToJSONArea("code",NormalizeStrToJson(Locr.Code),resarea);
       addParamToJSONArea("name",NormalizeStrToJson(Locr.Name),resarea);
-      addParamToJSONArea("group",NormalizeStrToJson(Locr.Name),resarea);
+      addParamToJSONArea("group",NormalizeStrToJson(Locr.Group),resarea);
       delLastComaInArea(resarea);
       AddTextToArea("},",resarea);
     end;
