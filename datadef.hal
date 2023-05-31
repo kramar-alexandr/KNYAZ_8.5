@@ -11,7 +11,13 @@ SourceFile("halcust\\Level3",3);
 
 
 begin
-
+  
+  RecordAddBegin(UserVc,"Cust_UserVc");
+    RecordField(TelLocation,M4UStr,255,0);
+    RecordField(TelChatId,M4Str,255,0);
+    RecordField(TelIsBoss,M4Int,0,0);
+  endrecordadd;
+  
   RecordAddBegin(IVCashVc,"Cust_ivcash2");
 		RecordField(MakeFiscalReceiptF,M4Mark,0,0); //Edit***************************Sasha2,11:55 22.09.2016
 		RecordField(SalesGroup,M4Code,5,SalesGroupVc); //Edit***************************Sasha2,11:55 22.09.2016

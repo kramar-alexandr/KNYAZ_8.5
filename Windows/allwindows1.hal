@@ -334,6 +334,9 @@ external function Boolean HasNavCentreBanner();
 external function Boolean HasClockInClockOut();
 external function Boolean HasResetPassword();
 external outer function Boolean IsASPVersion();
+external outer function Boolean IsCloudControllerClient();
+external outer function Boolean IsClientOfInternalServer(Integer);
+
 
 procedure dummy()//##ii
 begin//##ii
@@ -4030,5 +4033,213 @@ begin
   //  SpecialMenu("Import Data from Digitag",'f',1,"StockTakeDigitagDsm");
     end;
   end;
+  EndWindow;
+end;
+
+window USDClass:5
+  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  real h,h1,h2,h3,v,v2,vm,vs,tilenr;
+  WindowBegin("Сотрудник",USDClass,CGview,UserView);
+  SetWRect(64,80,909,380);
+  Sizeable(-1,-1,0,0);
+  UseView(UserVc);
+  Tile(0,70,false,"",Code);
+  vs = 20; h=150; h2 = 290; h3 = 350;
+  EditField(h,v=6, 55,"Код",St_i,Code,false,0);
+  EditField(h,v+=vs,300,"ФИО",Normal,Name,false,0);
+  EditField(h,v+=vs,300,"Логин (эл. почта)",Normal,LoginEmailAddr,false,0);
+  EditField(h,v+=vs,300,"Произношение",Normal,Pronunciation,false,VoiceSynonymSClass);  
+  if (DisplayAdditionalFields) then begin
+    EditField(h,v+=vs,100,"Expires",ViewOnly,ExpiryDate,true,0);
+  end;
+  tilenr = 1;
+  TileButton(tilenr,"Доступ");  tilenr = tilenr + 1; // Not Found  
+  TileButton(tilenr,"Сер. номера");  tilenr = tilenr + 1; // Not Found  
+  TileButton(tilenr,"Продажи");  tilenr = tilenr + 1; // Not Found  
+  TileButton(tilenr,"Счета");  tilenr = tilenr + 1; // Not Found  
+  if (StandardHansa==false) then begin
+    TileButton(tilenr,"Калькуляция проектов");  tilenr = tilenr + 1; // Not Found  
+    TileButton(tilenr,"Веб");  tilenr = tilenr + 1; // Not Found  
+    TileButton(tilenr,"Ввод времени");  tilenr = tilenr + 1; // Not Found  
+  end;
+  TileButton(tilenr,"Дата и числа");  tilenr = tilenr + 1; // Not Found  
+  if (HasSIPServerConnection) then begin
+  TileButton(tilenr,"Asterisk");  tilenr = tilenr + 1; 
+  end;
+  TileButton(tilenr,"Telegram");  tilenr = tilenr + 1; 
+  CheckBox(h2,6,0,"Закрыт",Closed);
+  CheckBox(h2+100,6,0,"Без лицензии",Unlicensed);         
+  if (IsCloudControllerClient) then begin // Cloud Controller Specific
+    CheckBox(h2+200,6,0,"SSH закрыт",SSHClosed); 
+  end;
+  tilenr = 1;
+  Tile(tilenr,210,false,tilenr,AccessGroup);  tilenr = tilenr + 1;
+  EditField(h,v=6,300,"Группа доступа",Normal,AccessGroup,false,AccessSClass);
+  
+  v2 = 44;
+
+  EditField(h,v+=vs,100,"Нач. уровень доступа",Normal,StartLevel,false,SetSClass);
+  if (HasSalesGroup) then begin
+    EditField(h,v+=vs,100,"Простая функция",Normal,OneFunction,false,OneFunctionSClass);
+    EditField(h,v+=vs,100,"Группа продаж",Normal,SalesGroup,false,SalesGroupSClass);
+  end else begin
+    if (BuildProductCode=="PAYYAPERP") then begin
+      EditField(h,v+=vs,100,"Sales Group",Normal,SalesGroup,false,SalesGroupSClass); 
+    end;
+  end;
+  EditFieldTL(h,v+=vs,100,"Language",M4StrSet,Normal,344,LangCode,false,StrSetSClass);
+  if (StandardHansa==false) then begin
+    EditField(h,v+=vs,100,"Ограничение клиента",Normal,CanUseOS,false,SetSClass);
+  end;
+  EditField(h,v+=vs,100,"Кода контакта",Normal,CustCode,false,ContactCUSClass);
+  if (IsCloudControllerClient) then begin // Cloud Controller Specific
+    EditField(h,v+=vs,100,"SSH Имя пользователя",Normal,SSHUsername,false,0);  
+  end;
+//  EditField(h,v+=vs,100,"Discount Password",Normal,OldPassWord,false,0);
+  if (StandardHansa==false) then begin
+    ButtonFrame(h2,v=v2,165,3,"Ограниченный доступ");
+    RadioButton(h2,v,kLimitedAccessNoLimitation,0,"без ограничений",limitedAccess);
+    RadioButton(h2,v+=16,kLimitedAccessGroupOnly,0,"только группа",limitedAccess);
+    RadioButton(h2,v+=16,kLimitedAccessUserOnly,0,"только пользователь",limitedAccess);
+  end;
+if (HansaWorld) then begin
+  ButtonFrame(h2,v+=40,195,0,"Тип пользователя");
+  RadioButton(h2,v,0,kTypeOfUserNamed,"Именнованный",TypeOfUser);
+  RadioButton(h2,v+=16,kTypeOfUserConcurrent,0,"Конкурентный",TypeOfUser);
+//  RadioButton(h2,v+=16,kTypeOfUserBusinessCommunicator,0,"Business Communicator (named)",TypeOfUser);  
+  RadioButton(h2,v+=16,kTypeOfUserTimekeeper,0,"Контролёр времени",TypeOfUser);
+  RadioButton(h2,v+=16,kTypeOfUserPOS,0,"Пользователь POS",TypeOfUser); 
+  EndFrame;
+  CheckBox(h2,v+=25,0,"Срок действия пароля не ограничен",PasswordNeverExpires);
+  if (!blankUUID(GetServerUUIDRemote)) then begin
+  CheckBox(h2,v+=16,0,"Пользователь является Админом",AdminFlag);  
+  end;
+end;
+  Pict_Field(-175,8,-5,178,"");
+  if (GuiType==kGuiCocoa) then begin
+    PushButton(-160,182,-80,202,ToolImagePicker,"Доб. изобр");
+  end;
+//  CheckBox(h2,v+=25,0,"Allow FTP Access",FTPLogin);
+//  CheckBox(h2,v+=vs,0,"Only Voice Login",OnlyVoiceLogin); // No code for this
+  Tile(tilenr,150,false,tilenr,LastOrdNr);  tilenr = tilenr + 1;
+  EditField(h,vm=(v=6),65,"№ счетов кл.",Normal,LastOrdNr,false,0);
+  EditField(h,v+=vs,65,"№ отгрузки",Normal,LastShipNr,false,0);
+  EditField(h,v+=vs,65,"№ сч/ф кл.",Normal,LastInvNr,false,0);
+  EditField(h,v+=vs,65,"№ поступлений",Normal,LastPurNr,false,0);
+  EditField(h,v+=vs,65,"№ прих. орд.",Normal,LastCLInNr,false,0);
+  EditField(h,v+=vs,65,"№ сч/ф на нал.",Normal,LastIVCashNr,false,0);
+  if (StandardHansa==false) then begin
+    EditField(h,v+=vs,65,"Счёт ресторана",Normal,LastRestAccNr,false,0);
+  end;
+//  EditField(h,v+=vs,100,"Official Inv. No.",Normal,LastOfficialSerNr,false,0);
+  EditField(h3,v=vm,65,"№ платежей кл.",Normal,LastPayNr,false,0);
+  EditField(h3,v+=vs,65,"№ записей опер.",Normal,LastTRNr,false,0);
+  EditField(h3,v+=vs,65,"№ сч/ф пост.",Normal,LastVINr,false,0);
+  EditField(h3,v+=vs,65,"№ платежей пост.",Normal,LastOPNr,false,0);
+  EditField(h3,v+=vs,65,"№ заказа пост.",Normal,LastPONr,false,0);
+  EditField(h3,v+=vs,65,"№ расход. орд.",Normal,LastCLOutNr,false,0);
+  EditField(h3,v+=vs,120,"Лич. код",Normal,IDCode,false,0);
+  Tile(tilenr,170,false,tilenr,Bonus);  tilenr = tilenr + 1;
+  EditField(h,vm=(v=6),65,"Премия",Normal,Bonus,true,0);
+  EditField(h3,v,120,"Ссылка",Normal,CurOurContact,false,0);
+    EditField(h3+260,v,-20,"Миним. прейскурант",Normal,MinPLCode,false,PLDefSClass);
+  EditField(h,v+=vs,65,"Склад",Normal,Location,false,LocationSClass);
+  EditField(h3,v,120,"Отдел",Normal,Department,false,DepSClass);
+  EditField(h3+260,v,-20,"POS ID",Normal,POSOperatorID,false,0);  
+    EditField(h,v+=vs,65,"Склад обслуживания",Normal,ServLocation,false,LocationSClass);
+    EditField(h3,v,120,"Телефон 1",Normal,Phone1,false,0);
+    EditField(h,v+=vs,65,"Склад резерв. заказа",Normal,ReservLocation,false,LocationSClass);
+  EditField(h3,v,120,"Телефон 2",Normal,Phone2,false,0);
+  if (StandardHansa==false) then begin
+    EditField(h,v+=vs,-20,"Доступ резерв. заказа",Normal,ReservLocAccess,false,ReservLocAccessSClass);
+  end;
+  EditField(h,v+=vs,-20,"Электронная почта",Normal,emailAddr,false,0);
+  EditField(h,v+=vs,-20,"Спецификация",Normal,Spec,false,0);
+  EditField(h,v+=vs,-20,"Комментарий",Normal,Comment,false,0);
+//  EditField(h,v+=vs,65,"Expense A/C",Normal,CostAcc,false,AccSClass);
+  Tile(tilenr,50,false,tilenr,PersAcc);  tilenr = tilenr + 1;
+  EditField(h,vm=(v=6),65,"Счет",Normal,PersAcc,false,AccSClass);
+  EditField(h3,v,120,"Объект",Normal,PersObjx,false,ObjSClass);
+  EditField(h,v+=vs,65,"Код сорт.",Normal,SortCode,false,0);  
+  EditField(h3,v,-20,"Сч. банка",Normal,BankAcc,false,0);
+  EditField(h3,v+=vs,-20,"Название банка",Normal,BankName,false,BankSClass);  
+//  EditField(h,v+=vs,65,"Expense A/C",Normal,CostAcc,false,AccSClass);
+  if (StandardHansa==false) then begin
+    Tile(tilenr,170,true,tilenr,JobGroup);  tilenr = tilenr + 1;
+    EditField(h,vm=(v=6),55,"Рабочая группа",Normal,JobGroup,false,EGSClass);
+    EditField(h,v+=vs,100,"Описание работы",Normal,Job,false,0);
+    EditField(h,v+=vs,80,"Затраты в час",Normal,CostPrHour,false,0);
+    EditField(h,vm=(v+=vs),80,"Стоимость за час",Normal,PricePrHour,false,0);
+    EnterSkip(Math);
+    CheckBox(h2,v=20,0,"Разрешить только короткие коды",DisAllowOther);
+  //  CheckBox(h2,v,0,"Limited Access",limitedAccess);
+    v = v+50;
+    MatrixBegin(h-50,v=(vm+40),h+350,-7,-,99);
+    MatCol(1,24,"Код",0,Code,false,0);
+    MatCol(1,110,"Проект",0,PRCode,false,PRSClass);
+    MatCol(1,200,"Комментарий",0,Comment,false,0);
+    EndMatrix;
+    Tile(tilenr,30,false,tilenr,WebConf);  tilenr = tilenr + 1;
+    EditField(h,vm=(v=6),65,"Веб-конференция",Normal,WebConf,true,0);
+    EditField(h3,v,65,"Первая страница Web",Normal,WebStartPage,false,0);
+    Tile(tilenr,50,false,tilenr,Supervisor);  tilenr = tilenr + 1;
+    v = 6;
+    EditField(h,vm=v,80,"Руководитель",Normal,Supervisor,false,UserSClass);
+    EditField(h,v+=20,80,"Дата создания",ViewOnly,DateCreated,false,0);
+    CheckBox(h2,v=vm,0,"Требовать ввода времени",ForceTimeEntry);
+  end;
+  Tile(tilenr,210,false,tilenr,LeadingZDay);  tilenr = tilenr + 1;
+  h = 70; h1 = h + 210; h2 = h + 330;
+
+  if (GuiType==kGuiCocoa) then begin
+    CheckBox(h,v,0,"Использовать настройки пользователя",UserEditCtlf);
+  end else begin
+    StaticText(190,v+=11,"Стиль окна",true);
+    DropDownMenu(200,v=6,282,"WindowType",320);
+    CheckBox(h,v+=20,0,"Использовать настройки пользователя",UserEditCtlf);
+  end;
+  ButtonFrame(h,vm=(v+=42),200,5,"Формат даты");
+  RadioButton(h,v,0,0,"месяц, день, год",DateOrder);
+  RadioButton(h,v+=16,1,0,"день, месяц, год",DateOrder);
+  RadioButton(h,v+=16,2,0,"год, месяц, день",DateOrder);
+  if (StandardHansa==false and IsSberbankProduct==false) then begin
+    RadioButton(h,v+=16,m4_hijri,0,"Hijri",DateOrder); // We have some enum already in BCD that goes from 0 to 5..  
+    RadioButton(h,v+=16,m4_persian_date,0,"Persian",DateOrder);  
+  end;
+  EndFrame;
+  CheckBox(h,v+=24,0,"Две цифры даты",LeadingZDay);
+  CheckBox(h1,v,0,"Выводить разделитель тысяч",thousSepf);
+  CheckBox(h,v+=16,0,"Две цифры месяца",LeadingZMonth);
+  CheckBox(h,v+=16,0,"Четыре цифры года",LeadingCentury);
+  EditField(h2,v=vm,20,"Разделитель даты",Normal,DateSep,false,0);
+  EditField(h2,v+=20,20,"Разделитель целых",Normal,DecimalPt,false,0);
+  EditField(h2,v+=20,20,"Разделитель тысяч",Normal,ThousandSep,false,0);
+  if (HasSIPServerConnection) then begin
+  Tile(tilenr,210,false,tilenr,AstPBXConnection);  tilenr = tilenr + 1;
+  h=150;
+    CheckBox(h-22,v=6,0,"Откл. от резервной очереди",ExcludeQueueFallbackf); 
+    if (HasSoftphone) then begin
+      CheckBox(h-22,v+=vs,0,"Использовать встроенную линию",LinPhonef);  
+    end;
+    EditField(h,v+=vs,100,"Соединение PBX",Normal,AstPBXConnection,false,PBXConnectionSClass); 
+  EditField(h,v+=vs,100,"Имя пользователя",Normal,AstUserName,false,0); 
+  EditField(h,v+=vs,100,"Пароль",Normal,AstPassword,false,0); 
+  //EditField(h,v+=vs,100,"ID звонящего",Normal,AstCallerIdNumber,false,0); 
+  end;
+  
+  Tile(tilenr,210,false,tilenr,TelLocation);  tilenr = tilenr + 1;// Edit ************************** BPI Ukraine - KramarAlexandr - 03, 31 05 2023 y. at 9:35:16 PM
+  EditField(h,v=6,-20,"Склады Telegram",Normal,TelLocation,false,LocationSClass); 
+  EditField(h,v+=vs,100,"ChatId Telegram",Normal,TelChatId,false,0); 
+  v=v+40;
+  ButtonFrame(h,v,200,2,"Роль");
+  RadioButton(h,v,0,0,"Обычный",TelIsBoss);
+  RadioButton(h,v+=16,1,0,"Админ",TelIsBoss);// Edit ************************** BPI Ukraine - KramarAlexandr - 03, 31 05 2023 y. at 9:35:18 PM
+  
+  
+  SpecialMenu("Проверка эл. адреса",' ',0,"CheckUserEmailAddressDsm");
+  SpecMenuGroup("",kSpecMenuGroupTypeExtendedPlusMenu,0);         
+  SpecialMenu("Создать объект",'o',1,"CreateObjUserDsm");
+  SpecialMenu("Письмо валидации",'e',2,"ValidateUserEmailAddressDsm");
   EndWindow;
 end;

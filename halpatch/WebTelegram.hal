@@ -1,0 +1,137 @@
+procedure addParamToJSONArea(string param, string value, var area req)
+begin
+
+AddTextToArea("\"" & param & "\":" &  "\"" & value & "\",",req);
+
+return;
+end;
+
+procedure delLastComaInArea(var area req)
+begin
+	longint alen;
+	string 1 lastsymb;
+	area tmpar;
+	
+	alen = getarealength(req);
+	lastsymb = getstringfromarea(req,alen-1,1);
+	if(lastsymb==",")then begin
+		getareafromarea(req,0,alen-1,tmpar);
+		setareazerosize(req);
+		getareafromarea(tmpar,0,getarealength(tmpar),req);
+	end;
+
+return;
+end;
+
+global function string 255 NormalizeStrToJson (string Str)
+begin
+	integer strln,i;
+	string 255 NormStr;
+	
+
+	NormStr = "";
+	strln = len(Str);
+	for (i=0;i<strln;i=i+1)begin
+	  if(mid(Str,i,1)==chr(92))then begin
+	    NormStr = NormStr & "";
+	  end else begin
+      if(mid(Str,i,1)==chr(34))then begin
+        NormStr = NormStr & chr(92) & mid(Str,i,1);
+      end else begin
+        NormStr = NormStr & mid(Str,i,1);
+      end;
+		end;
+	end;
+	
+	
+	NormalizeStrToJson = NormStr;
+	
+	return;
+end;
+
+
+global webpublic procedure WebGetUsersTelegram()
+begin
+string 50 location;
+area resarea;
+record UserVc USr,curUSr;
+record DepVc Depr;
+boolean testf;
+
+  logtext(0,"WebGetUsersTelegram start");
+  WebSetContentType("application/json; charset=UTF-8");	
+
+  SetCompany(9,false);
+  
+  AddTextToArea("{",resarea);
+  AddTextToArea("\"users\":[",resarea);
+  while(loopmain(USr,1,true))begin
+      testf  = true;
+      if(USr.AccessGroup!="SALE")then begin testf = false; end;
+      if(USr.Closed!=0)then begin testf = false; end;
+      
+      if(nonblank(curUSr.SalesGroup) and USr.SalesGroup!=curUSr.SalesGroup)then begin testf = false; end;
+      
+      if(testf) then begin
+        Depr.Code = USr.Department;
+        readfirstmain(Depr,1,true);
+        AddTextToArea("{",resarea);
+        addParamToJSONArea("code",NormalizeStrToJson(USr.Code),resarea);
+        addParamToJSONArea("name",NormalizeStrToJson(USr.Name),resarea);
+        addParamToJSONArea("locations",NormalizeStrToJson(USr.TelLocation),resarea);
+        addParamToJSONArea("phone",NormalizeStrToJson(USr.TelChatId),resarea);
+        addParamToJSONArea("accessrules",NormalizeStrToJson(USr.TelIsBoss),resarea);
+        delLastComaInArea(resarea);
+        AddTextToArea("},",resarea);
+      end;
+  end;
+  delLastComaInArea(resarea);
+  AddTextToArea("]",resarea);
+  AddTextToArea("}",resarea);
+
+
+  weboutarea2(resarea);
+  
+  logtext(0,"WebGetUsersTelegram end");
+return;
+end;
+
+global webpublic procedure WebGetCLCorspTelegram()
+begin
+area resarea;
+record UserVc User;
+record CLCorspVc CLCorspr;
+
+logtext(0,"WebGetCLCorspTelegram start");
+
+
+	SetCompany(9,false);
+	WebSetContentType("application/json; charset=UTF-8");	
+
+	User.Code = WebGetArg("foruser");
+	logtext(0,"WebGetArg foruser " & WebGetArg("foruser"));
+	logtext(0,"WebRemoteIPAddress " & WebRemoteIPAddress);
+	if(ReadFirstMain(User,1,true)) then begin
+		AddTextToArea("{",resarea);
+		AddTextToArea("\"CorspCodes\":[",resarea);
+		while(loopmain(CLCorspr,1,true))begin
+			if (CLCorspr.Closed==0) then begin
+				AddTextToArea("{",resarea);
+				addParamToJSONArea("code",NormalizeStrToJson(CLCorspr.Code),resarea);
+				addParamToJSONArea("name",NormalizeStrToJson(CLCorspr.Comment),resarea);
+				delLastComaInArea(resarea);
+				AddTextToArea("},",resarea);
+			end;
+		end;
+		delLastComaInArea(resarea);
+		AddTextToArea("]",resarea);
+		AddTextToArea("}",resarea);
+	end;
+
+
+weboutarea2(resarea);
+
+logtext(0,"WebGetCLCorspTelegram end");
+
+return;
+end;
