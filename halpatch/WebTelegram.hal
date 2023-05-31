@@ -69,8 +69,11 @@ boolean testf;
       testf  = true;
       if(USr.AccessGroup!="SALE")then begin testf = false; end;
       if(USr.Closed!=0)then begin testf = false; end;
-      
       if(nonblank(curUSr.SalesGroup) and USr.SalesGroup!=curUSr.SalesGroup)then begin testf = false; end;
+      
+      if(USr.TelIsBoss==1 and USr.Closed==0)then begin
+        testf = true;
+      end;
       
       if(testf) then begin
         Depr.Code = USr.Department;
@@ -108,25 +111,18 @@ logtext(0,"WebGetCLCorspTelegram start");
 	SetCompany(9,false);
 	WebSetContentType("application/json; charset=UTF-8");	
 
-	User.Code = WebGetArg("foruser");
-	logtext(0,"WebGetArg foruser " & WebGetArg("foruser"));
-	logtext(0,"WebRemoteIPAddress " & WebRemoteIPAddress);
-	if(ReadFirstMain(User,1,true)) then begin
-		AddTextToArea("{",resarea);
-		AddTextToArea("\"CorspCodes\":[",resarea);
-		while(loopmain(CLCorspr,1,true))begin
-			if (CLCorspr.Closed==0) then begin
-				AddTextToArea("{",resarea);
-				addParamToJSONArea("code",NormalizeStrToJson(CLCorspr.Code),resarea);
-				addParamToJSONArea("name",NormalizeStrToJson(CLCorspr.Comment),resarea);
-				delLastComaInArea(resarea);
-				AddTextToArea("},",resarea);
-			end;
-		end;
-		delLastComaInArea(resarea);
-		AddTextToArea("]",resarea);
-		AddTextToArea("}",resarea);
-	end;
+  AddTextToArea("[",resarea);
+  while(loopmain(CLCorspr,1,true))begin
+    if (CLCorspr.Closed==0) then begin
+      AddTextToArea("{",resarea);
+      addParamToJSONArea("code",NormalizeStrToJson(CLCorspr.Code),resarea);
+      addParamToJSONArea("name",NormalizeStrToJson(CLCorspr.Comment),resarea);
+      delLastComaInArea(resarea);
+      AddTextToArea("},",resarea);
+    end;
+  end;
+  delLastComaInArea(resarea);
+  AddTextToArea("]",resarea);
 
 
 weboutarea2(resarea);
