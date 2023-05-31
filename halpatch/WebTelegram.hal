@@ -80,6 +80,7 @@ boolean testf;
         AddTextToArea("{",resarea);
         addParamToJSONArea("code",NormalizeStrToJson(USr.Code),resarea);
         addParamToJSONArea("name",NormalizeStrToJson(USr.Name),resarea);
+        addParamToJSONArea("salesgroup",NormalizeStrToJson(USr.SalesGroup),resarea);
         addParamToJSONArea("locations",NormalizeStrToJson(USr.TelLocation),resarea);
         addParamToJSONArea("phone",NormalizeStrToJson(USr.Phone1),resarea);
         addParamToJSONArea("chatid",NormalizeStrToJson(USr.TelChatId),resarea);
