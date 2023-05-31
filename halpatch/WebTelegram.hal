@@ -131,3 +131,38 @@ logtext(0,"WebGetCLCorspTelegram end");
 
 return;
 end;
+
+
+
+global webpublic procedure WebGetLocationsTelegram()
+begin
+area resarea;
+record LocationVc Locr;
+
+logtext(0,"WebGetLocationsTelegram start");
+
+
+	SetCompany(9,false);
+	WebSetContentType("application/json; charset=UTF-8");	
+
+  AddTextToArea("[",resarea);
+  while(loopmain(Locr,1,true))begin
+    if (nonblank(Locr.Group)) then begin
+      AddTextToArea("{",resarea);
+      addParamToJSONArea("code",NormalizeStrToJson(Locr.Code),resarea);
+      addParamToJSONArea("name",NormalizeStrToJson(Locr.Name),resarea);
+      addParamToJSONArea("group",NormalizeStrToJson(Locr.Name),resarea);
+      delLastComaInArea(resarea);
+      AddTextToArea("},",resarea);
+    end;
+  end;
+  delLastComaInArea(resarea);
+  AddTextToArea("]",resarea);
+
+
+weboutarea2(resarea);
+
+logtext(0,"WebGetLocationsTelegram end");
+
+return;
+end;
