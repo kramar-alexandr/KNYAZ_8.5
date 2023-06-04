@@ -217,7 +217,7 @@ return;
 end;
 
 
-global webpublic updating procedure WebDeleteLastExpTelegram()
+/*global webpublic updating procedure WebDeleteLastExpTelegram()
 begin
 area resarea;
 record CLOutVc CLOutr;
@@ -253,4 +253,4 @@ logtext(0,"WebGetLastExpTelegram start");
 logtext(0,"WebGetLastExpTelegram end");
 
 return;
-end;
+end;*/
