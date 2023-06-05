@@ -1,3 +1,5 @@
+external procedure CLOutVc_PasteCurncyCode(var record CLOutVc);
+
 procedure addParamToJSONArea(string param, string value, var area req)
 begin
 
@@ -213,6 +215,57 @@ weboutarea2(resarea);
 
 logtext(0,"WebGetLastExpTelegram end");
 
+return;
+end;
+
+global webpublic updating procedure WebGetCreatedCLOutTelegram()
+begin
+area resarea;
+json jsonobj;
+record UserVc USr;
+record CLOutVc CLOutr,OldCLOutr;
+row CLOutVc CLOutrw;
+area postdata;
+boolean TrHs,testf;
+val sum;
+string 255 user,comment,type,location;
+record UserVc US2r;
+  
+  logtext(0,"WebGetCreatedCLOutTelegram start");
+  
+  SetCompany(9,false);
+    webgetpostdata(postdata);
+    jsonobj = ParseJSONArea(postdata);
+    
+    user = JSONGet(jsonobj,"user");
+    location = JSONGet(jsonobj,"location");
+    sum = stringtoval(JSONGet(jsonobj,"sum"),m4val);
+    comment = JSONGet(jsonobj,"comment");
+    type = JSONGet(jsonobj,"type");
+    
+    if(sum>0)then begin
+			recordnew(CLOutr);
+			CLOutr.SerNr = NextSerNr("CLOutVc",currentdate,-1,false,"");
+			US2r.Code = user;
+			readfirstmain(US2r,1,true);
+			CLOutr.Person = US2r.Code;
+			CLOutr.CorspCode = type;
+			CLOutr.Total = sum;
+			CLOutr.CurncyCode = "UAH";
+			CLOutVc_PasteCurncyCode(CLOutr);
+			recordstore(CLOutr,true);
+			
+			RecordCopy(OldCLOutr,CLOutr);
+			CLOutr.Objects = US2r.PersObjx;
+			CLOutr.OKFlag = 1;
+			if (RecordUpdate(OldCLOutr,CLOutr,true)==0) then begin end;
+		end;
+
+		AddTextToArea("{\"result\":\"ok\"}",resarea);
+		weboutarea2(resarea);
+	
+	logtext(0,"WebGetCreatedCLOutTelegram end");
+	
 return;
 end;
 
