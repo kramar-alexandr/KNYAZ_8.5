@@ -1,4 +1,5 @@
 external procedure CLOutVc_PasteCurncyCode(var record CLOutVc);
+remote procedure CLOutVc_PasteCorspCode(var record CLOutVc,Integer);
 
 procedure addParamToJSONArea(string param, string value, var area req)
 begin
@@ -266,6 +267,8 @@ begin
 area resarea;
 json jsonobj;
 record UserVc USr;
+record CLInVc CLInr, OldCLInr;
+row CLInVc CLInrw;
 record CLOutVc CLOutr,OldCLOutr;
 row CLOutVc CLOutrw;
 area postdata;
@@ -288,20 +291,21 @@ record UserVc US2r;
     
     if(sum>0)then begin
 			recordnew(CLOutr);
-			CLOutr.SerNr = NextSerNr("CLOutVc",currentdate,-1,false,"");
-			US2r.Code = user;
-			readfirstmain(US2r,1,true);
-			CLOutr.Person = US2r.Code;
-			CLOutr.CorspCode = type;
-			CLOutr.Total = sum;
+			USr.Code = location;
+			readfirstmain(USr,1,true);
+			CLOutr.SerNr = NextSerNr("CLOutVc",CLOutr.TransDate,-1,false,"");
+			CLOutr.PayMode = "O";
+			CLOutr.ARonTR = 1;
 			CLOutr.CurncyCode = "UAH";
+			CLOutr.Person = user;
 			CLOutVc_PasteCurncyCode(CLOutr);
-			recordstore(CLOutr,true);
-			
-			RecordCopy(OldCLOutr,CLOutr);
-			CLOutr.Objects = US2r.PersObjx;
-			CLOutr.OKFlag = 1;
-			if (RecordUpdate(OldCLOutr,CLOutr,true)==0) then begin end;
+			CLOutr.Total = sum;
+			CLOutr.NetVal = sum;
+			CLOutr.TransDate = CurrentDate;
+			CLOutr.CorspCode = type;
+			CLOutVc_PasteCorspCode(CLOutr,-1);
+			CLOutr.Comment = comment;
+			CLOutr.Objects = USr.PersObjx;
 		end;
 
 		AddTextToArea("{\"result\":\"ok\"}",resarea);
