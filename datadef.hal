@@ -184,6 +184,10 @@ RecordAddBegin(IVVc,"IVVc_Custom");
   RecordField(AcceptedFlag,M4Mark,0,0);
 EndRecordAdd;
 
+RecordAddBegin(LocationVc,"LocationVc_Custom");
+  RecordField(BalanceSum,M4Val,0,0); // Edit ************************** BPI Ukraine - KramarAlexandr - 02, 06 06 2023 y. at 8:27:53 PM
+EndRecordAdd;
+
 // do not use _DefBlock unless it is a defblock
   BlockBegin(CashierDefBlock,-,"CashierDefBlock3");
   NewAutosyncBlock(kSyncDirectionToClient);

@@ -4243,3 +4243,111 @@ end;
   SpecialMenu("Письмо валидации",'e',2,"ValidateUserEmailAddressDsm");
   EndWindow;
 end;
+
+window LocationDClass:1
+  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  real h,h2,l,v,vm,vs;
+  Integer tilenr;
+
+  WindowBegin("Склад",LocationDClass,CGview,-);
+  SetWRect(64,80,570,520);
+  UseView(LocationVc);
+  v = 10; vs = 20; h = 120; h2 = 350; l = -60;
+  if (IsEnterprise) then begin
+    Tile(0,50+24,false,"",Code);
+  end;
+  EditField(h,v,120,"Код",Normal,Code,false,0);
+  if (IsEnterprise and StandardHansa==false) then begin
+    EditField(h2,v,l,"Группа",Normal,Group,false,LocGrSClass);
+  end;
+  EditField(h,v+=vs,l,"Наимен.",Normal,Name,false,0);
+  if (IsEnterprise) then begin
+    tilenr = 1;
+    TileButton(tilenr,"Адрес"); tilenr = tilenr + 1;
+    if (StandardHansa==false) then begin
+      TileButton(tilenr,"Склад"); tilenr = tilenr + 1;
+    end;
+    tilenr = 1;
+    Tile(tilenr,350,false,tilenr,Addr0); tilenr = tilenr + 1;
+    EditField(h,v=6,l,"Склад",Normal,Addr0,false,0);
+  end else begin
+    EditField(h,v+=vs,l,"Склад",Normal,Addr0,false,0);
+  end;
+  if (!HasLocalization("BRA") and !HasAvalara) then begin
+  EditField(h,v+=vs,l,"",Normal,Addr1,false,0);
+  EditField(h,v+=vs,l,"",Normal,Addr2,false,0);
+  EditField(h,v+=vs,l,"",Normal,Addr3,false,0);
+  EditField(h,v+=vs,l,"",Normal,Addr4,false,0);
+  end else begin
+    EditField(h,v+=vs,l,"House Number",Normal,Addr1,false,0); //!!TRANSLATE
+    EditField(h,v+=vs,100,"City",Normal,Addr2,false,0); //!!TRANSLATE
+    EditField(h,v+=vs,100,"Postal Code",Normal,Addr3,false,0); //!!TRANSLATE
+    EditField(h,v+=vs,100,"Country",Normal,Addr4,false,CountrySClass); //!!TRANSLATE
+  end;
+  EditField(h,v+=vs,l,"Контакт. лицо",Normal,Contact,false,0);
+  EditField(h,v+=vs,l,"Телефон",Normal,Phone,false,0);
+  EditField(h,v+=vs,l,"Факс",Normal,Fax,false,0);
+  EditField(h,v+=vs,l,"Электронная почта",Normal,Email,false,0);
+  if (IsEnterprise) then begin
+    if (StandardHansa==false) then begin
+      EditField(h,v+=vs,l,"Классификация",Normal,Classification,false,LocClSClass);
+    end;
+    EditField(h,v+=vs,100,"Ответственный",Normal,RespPerson,false,UserSClass);
+    EditField(h2,v,l,"Доступ резервир.",Normal,ReservLocAccess,false,ReservLocAccessSClass);
+  end;
+  if (HasModNL) then begin
+    EditField(h,v+=vs,100,"Счёт склада",Normal,StockAcc,false,AccSClass);
+  end;
+  if (HasObjects) then begin
+    EditField(h2,v,l,"Объект",Normal,Objects,false,ObjSClass);
+  end;
+  if (IsEnterprise) then begin
+  //  EditField(h,v+=vs,100,"Прейскурант",Normal,PriceList,false,PLDefSClass);//No Code
+    EditField(h,v+=vs,100,"Склад закупок",Normal,PurLoc,false,LocationSClass);
+      EditField(h2,v,l,"Отгр. на счет",Normal,ShipToAccount,false,0);
+      EditField(h,v+=vs,100,"Через склад",Normal,ThrouLocation,false,LocationSClass);
+    CheckBox(h,vm=(v+=30),0,"Игнорировать хронологию",IgnoreChronology);
+    CheckBox(h,v+=16,0,"Требовать место",RequirePos);
+    CheckBox(h,v+=16,0,"Закрыто",Closed);
+    if (HasLocalization("BRA") and HasAvalara) then begin
+      CheckBox(h,v+=16,0,"Public Way Service Location",PubWayServLoc); //!!TRANSLATE
+    end;
+    ButtonFrame(h2,v=vm+10,100,2,"Tип");
+    RadioButton(h2,v,0,0,"другое",Type);
+    RadioButton(h2,v+=16,1,0,"производство",Type);
+  end;
+  if (HasModWHM) then begin
+    Tile(tilenr,310,false,tilenr,WHMPalletArea); tilenr = tilenr + 1;
+    EditField(h=200,v=6,l=100,"Участок пустых паллет",Normal,WHMPalletArea,false,LocAreaSClass);
+    EditField(h,v+=vs,l,"Участок погрузки",Normal,WHMPickArea,false,LocAreaSClass);
+    EditField(h,v+=vs,l,"Место для поступлений",Normal,WHMDefPUPosCode,false,PosSClass);
+    EditField(h,v+=vs,l,"Место для производства",Normal,WHMDefProdPosCode,false,PosSClass);
+    EditField(h,v+=vs,l,"Место упаковочной машины",Normal,WHMWraperPosCode,false,PosSClass);
+    EditField(h,v+=vs,l,"Место передачи для погрузки",Normal,WHMDeliveryPosCode,false,PosSClass);//the same as WraperPosCode at ethe moment
+    EditField(h,v+=vs,l,"Участок доставки",Normal,WHMDeliveryArea,false,LocAreaSClass);
+    EditField(h,v+=vs,l,"Экспресс-счета",Normal,WHMExpressOrderClass,false,OrderClassSClass);
+    EditField(h,v+=vs,l,"Поставщик по умолчанию",Normal,WHMDefPUVECode,false,VESClass);
+    EditField(h,v+=vs,l,"Остаток",Normal,BalanceSum,false,0);// Edit ************************** BPI Ukraine - KramarAlexandr - 02, 06 06 2023 y. at 8:31:15 PM
+    CheckBox(h,v+=24,0,"Требовать место",RequirePos);
+    CheckBox(h,v+=16,0,"Начинать с наиболее высокого места",WHMHighestPosCodeFirst);
+    ButtonFrame(h,v+=40,140,3,"Система погрузчика");
+    RadioButton(h,v,0,0,"Выкл.",WHMForkLiftSystem);
+    RadioButton(h,v+=16,1,0,"Вкл.",WHMForkLiftSystem);
+    RadioButton(h,v+=16,2,0,"Вкл.,реж.погруз.выкл.",WHMForkLiftSystem);
+  end;
+  if (HasLocalization("BRA") and HasAvalara) then begin
+    TileButton(tilenr,"Company"); //!!TRANSLATE
+    Tile(tilenr,310,false,tilenr,CompName); tilenr = tilenr + 1;
+    EditField(h=130,v=6,-20,"Company Name",Normal,CompName,false,0); //!!TRANSLATE
+    EditField(h,v+=vs,-20,"Business Name",Normal,BusinessName,false,0); //!!TRANSLATE
+    EditField(h,v+=vs,140,"#VAT Reg. No.#",Normal,VATNr,false,0); //!!TRANSLATE
+    EditField(h,v+=vs,140,"#Reg. No.#",Normal,RegNr1,false,0); //!!TRANSLATE
+    EditField(h,v+=vs,140,"Sales Tax No.",Normal,RegNr2,false,RegDefSClass); //!!TRANSLATE
+    EditField(h,v+=vs,-20,"Suframa ID",Normal,SuframaID,false,0); //!!TRANSLATE
+    EditField(h,v+=vs,-20,"Tax Regime",Normal,TaxRegime,false,SetSClass); //!!TRANSLATE
+    EditField(h,v+=vs,-20,"Business Entity",Normal,BusinessEntity,false,SetSClass); //!!TRANSLATE
+  end;
+
+  EndWindow;
+end;
