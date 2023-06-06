@@ -799,12 +799,18 @@ global
 updating function LongInt CLInVcRecordSaveAfter(var record CLInVc CLInr,record CLInVc CLIn2r,LongInt stat,LongInt long4)
 BEGIN
   LongInt res;
+  record LocationVc Locr;
   
   UpdateCLInIV(CLInr,CLIn2r,0);
   if (CLInr.OKFlag!=0) then begin
     CLInUpdateStats(CLInr,false,false);
     CLInUpdatePlannedPayments(CLInr);
     AutomatedSalesOrderly("HasIntegratedNL");
+    Locr.Code = CLInr.Person;
+    if(readfirstmain(Locr,1,true))then begin
+      Locr.BalanceSum = Locr.BalanceSum + CLInr.Total;
+      recordstore(Locr,true);
+    end;
   end;
   CLInVcRecordSaveAfter = res;
   RETURN;
@@ -837,6 +843,8 @@ global
 updating function LongInt CLInVcRecordUpdateAfter(var record CLInVc CLInr,record CLInVc CLIn2r,LongInt stat,LongInt long4)
 BEGIN
   LongInt res;
+  record LocationVc Locr;
+  
   
   UpdateCLInIV(CLInr,CLIn2r,0);
   if ((CLInr.Invalid!=0) and (CLIn2r.Invalid==0)) then begin
@@ -850,11 +858,21 @@ BEGIN
     CLInUpdatePlannedPayments(CLInr);
     InvalidatePlannedPayment("CLInVc",CLInr.SerNr);
     AutomatedSalesOrderly("HasIntegratedNL");
+    Locr.Code = CLInr.Person;
+    if(readfirstmain(Locr,1,true))then begin
+      Locr.BalanceSum = Locr.BalanceSum + CLInr.Total;
+      recordstore(Locr,true);
+    end;
   end;    
   if ((CLInr.Invalid==0) and (CLIn2r.Invalid==0)) then begin//unok
     if ((CLInr.OKFlag==0) and (CLIn2r.OKFlag==1)) then begin
       InvalidateCLIn(CLInr);
       DeletePlannedPayment("CLInVc",CLInr.SerNr,-1);
+      Locr.Code = CLInr.Person;
+      if(readfirstmain(Locr,1,true))then begin
+        Locr.BalanceSum = Locr.BalanceSum - CLInr.Total;
+        recordstore(Locr,true);
+      end;
     end;
   end;
   CLInVcRecordUpdateAfter = res;
@@ -865,8 +883,14 @@ global
 updating function LongInt CLInVcRecordRemove(var record CLInVc CLInr,record CLInVc CLIn2r,LongInt long3,LongInt long4)
 begin
   LongInt res;
+  record LocationVc Locr;
   
   DeleteCLInIV(CLInr);
+  Locr.Code = CLInr.Person;
+  if(readfirstmain(Locr,1,true))then begin
+    Locr.BalanceSum = Locr.BalanceSum - CLInr.Total;
+    recordstore(Locr,true);
+  end;
   CLInVcRecordRemove = res;  
   RETURN;
 end;
