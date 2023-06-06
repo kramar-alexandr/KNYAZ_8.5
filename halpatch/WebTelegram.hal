@@ -377,6 +377,8 @@ begin
   vector val vBalance,vRashod;
   record LocationVc Locr;
   
+  
+  logtext(0,"WebUpdateBalanceForPoints start");
   SetCompany(9,false);
   code = WebGetArg("foruser");
   if(nonblank(code)) then begin
@@ -419,6 +421,7 @@ begin
     Locr.RashodSum = vRashod[Locr.Code];
     recordstore(Locr,true);
   end;
-
+  
+  logtext(0,"WebUpdateBalanceForPoints end");
 return;
 end;
