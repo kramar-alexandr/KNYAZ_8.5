@@ -387,23 +387,15 @@ begin
     USr.Code = currentuser;
   end;
   readfirstmain(USr,1,true);
-  TrHs = true;
   IVr.Location = USr.Location;
-  while(loopkey("Location",IVr,1,TrHs))begin
-    testf = true;
-    if(IVr.Location!=USr.Location)then begin TrHs = false; testf = false; end;
-    
-    if(testf)then begin 
-      vBalance[IVr.Location] = vBalance[IVr.Location] + IVr.Sum4;
-    end;
-
+  while(loopmain(IVr,1,true))begin
+    vBalance[IVr.Location] = vBalance[IVr.Location] + IVr.Sum4;
   end;
   
   CLInr.SerNr = -1;
   while(loopmain(CLInr,1,true))begin
     if(CLInr.OKFlag>0) then begin
       vBalance[CLInr.Person] = vBalance[CLInr.Person] + CLInr.Total;
-      sum = sum + CLInr.Total;
     end;
   end;
   CLOutr.SerNr = -1;
