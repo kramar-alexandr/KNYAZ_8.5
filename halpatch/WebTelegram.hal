@@ -262,7 +262,7 @@ logtext(0,"WebGetLastExpTelegram end");
 return;
 end;
 
-global webpublic updating procedure WebGetCreatedCLOutTelegram()
+global webpublic updating procedure WebPostCreatedCLOutTelegram()
 begin
 area resarea;
 json jsonobj;
@@ -277,7 +277,7 @@ val sum;
 string 255 user,comment,type,location;
 record UserVc US2r;
   
-  logtext(0,"WebGetCreatedCLOutTelegram start");
+  logtext(0,"WebPostCreatedCLOutTelegram start");
   
   SetCompany(9,false);
     webgetpostdata(postdata);
@@ -316,7 +316,7 @@ record UserVc US2r;
 		end;
 		weboutarea2(resarea);
 	
-	logtext(0,"WebGetCreatedCLOutTelegram end");
+	logtext(0,"WebPostCreatedCLOutTelegram end");
 	
 return;
 end;
