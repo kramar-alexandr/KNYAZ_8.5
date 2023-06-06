@@ -292,22 +292,25 @@ record UserVc US2r;
     if(sum>0)then begin
 			recordnew(CLOutr);
 			USr.Code = location;
-			readfirstmain(USr,1,true);
-			CLOutr.SerNr = NextSerNr("CLOutVc",CLOutr.TransDate,-1,false,"");
-			CLOutr.PayMode = "O";
-			CLOutr.ARonTR = 1;
-			CLOutr.CurncyCode = "UAH";
-			CLOutr.Person = user;
-			CLOutVc_PasteCurncyCode(CLOutr);
-			CLOutr.Total = sum;
-			CLOutr.NetVal = sum;
-			CLOutr.TransDate = CurrentDate;
-			CLOutr.CorspCode = type;
-			CLOutVc_PasteCorspCode(CLOutr,-1);
-			CLOutr.Comment = comment;
-			CLOutr.Objects = USr.PersObjx;
-			recordstore(CLOutr,true);
-			AddTextToArea("{\"result\":\"ok\"}",resarea);
+			if(readfirstmain(USr,1,true))then begin
+        CLOutr.SerNr = NextSerNr("CLOutVc",CLOutr.TransDate,-1,false,"");
+        CLOutr.PayMode = "O";
+        CLOutr.ARonTR = 1;
+        CLOutr.CurncyCode = "UAH";
+        CLOutr.Person = user;
+        CLOutVc_PasteCurncyCode(CLOutr);
+        CLOutr.Total = sum;
+        CLOutr.NetVal = sum;
+        CLOutr.TransDate = CurrentDate;
+        CLOutr.CorspCode = type;
+        CLOutVc_PasteCorspCode(CLOutr,-1);
+        CLOutr.Comment = comment;
+        CLOutr.Objects = USr.PersObjx;
+        recordstore(CLOutr,true);
+        AddTextToArea("{\"result\":\"ok\"}",resarea);
+			end else begin
+			  AddTextToArea("{\"result\":\"error\"}",resarea);
+			end;
 		end else begin
 		  AddTextToArea("{\"result\":\"error\"}",resarea);
 		end;
