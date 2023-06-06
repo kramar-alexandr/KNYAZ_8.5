@@ -133,6 +133,7 @@ json jsonobj;
     end;
     if(testf)then begin
       recordstore(USr,true);
+      weboutstring("{\"result\":\"ok\"}");
     end;
   end else begin
     weboutstring("{\"result\":\"error\"}");
