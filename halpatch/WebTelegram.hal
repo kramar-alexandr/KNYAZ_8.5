@@ -306,9 +306,11 @@ record UserVc US2r;
 			CLOutVc_PasteCorspCode(CLOutr,-1);
 			CLOutr.Comment = comment;
 			CLOutr.Objects = USr.PersObjx;
+			recordstore(CLOutr,true);
+			AddTextToArea("{\"result\":\"ok\"}",resarea);
+		end else begin
+		  AddTextToArea("{\"result\":\"error\"}",resarea);
 		end;
-
-		AddTextToArea("{\"result\":\"ok\"}",resarea);
 		weboutarea2(resarea);
 	
 	logtext(0,"WebGetCreatedCLOutTelegram end");
