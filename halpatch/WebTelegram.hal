@@ -362,3 +362,63 @@ logtext(0,"WebGetLastExpTelegram end");
 
 return;
 end;*/
+
+
+global webpublic updating procedure WebUpdateBalanceForPoints()
+begin
+  string 50 location,code;
+  area resarea;
+  record CLInVc CLInr;
+  record CLOutVc CLOutr;
+  record IVVc IVr;
+  boolean TrHs,testf;
+  val sum,rashod;
+  record Uservc USr;
+  vector val vBalance,vRashod;
+  record LocationVc Locr;
+  
+  SetCompany(9,false);
+  code = WebGetArg("foruser");
+  if(nonblank(code)) then begin
+    USr.Code = code;
+  end else begin
+    USr.Code = currentuser;
+  end;
+  readfirstmain(USr,1,true);
+  TrHs = true;
+  IVr.Location = USr.Location;
+  while(loopkey("Location",IVr,1,TrHs))begin
+    testf = true;
+    if(IVr.Location!=USr.Location)then begin TrHs = false; testf = false; end;
+    
+    if(testf)then begin 
+      vBalance[IVr.Location] = vBalance[IVr.Location] + IVr.Sum4;
+    end;
+
+  end;
+  
+  CLInr.SerNr = -1;
+  while(loopmain(CLInr,1,true))begin
+    if(CLInr.OKFlag>0) then begin
+      vBalance[CLInr.Person] = vBalance[CLInr.Person] + CLInr.Total;
+      sum = sum + CLInr.Total;
+    end;
+  end;
+  CLOutr.SerNr = -1;
+  while(loopmain(CLOutr,1,true))begin
+    if(CLOutr.OKFlag>0) then begin
+      vBalance[CLOutr.Person] = vBalance[CLOutr.Person] - CLOutr.Total;
+    end else begin
+      vRashod[CLOutr.Person] = vRashod[CLOutr.Person] + CLOutr.Total;
+    end;
+  end;
+  
+  Locr.Code = "";
+  while(loopmain(Locr,1,true))begin
+    Locr.BalanceSum = vBalance[Locr.Code];
+    Locr.RashodSum = vRashod[Locr.Code];
+    recordstore(Locr,true);
+  end;
+
+return;
+end;

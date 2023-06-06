@@ -4329,6 +4329,7 @@ begin
     EditField(h,v+=vs,l,"Экспресс-счета",Normal,WHMExpressOrderClass,false,OrderClassSClass);
     EditField(h,v+=vs,l,"Поставщик по умолчанию",Normal,WHMDefPUVECode,false,VESClass);
     EditField(h,v+=vs,l,"Остаток",Normal,BalanceSum,false,0);// Edit ************************** BPI Ukraine - KramarAlexandr - 02, 06 06 2023 y. at 8:31:15 PM
+    EditField(h,v+=vs,l,"Расход",Normal,RashodSum,false,0);// Edit ************************** BPI Ukraine - KramarAlexandr - 02, 06 06 2023 y. at 8:31:15 PM
     CheckBox(h,v+=24,0,"Требовать место",RequirePos);
     CheckBox(h,v+=16,0,"Начинать с наиболее высокого места",WHMHighestPosCodeFirst);
     ButtonFrame(h,v+=40,140,3,"Система погрузчика");

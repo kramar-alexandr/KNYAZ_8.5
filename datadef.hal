@@ -186,6 +186,7 @@ EndRecordAdd;
 
 RecordAddBegin(LocationVc,"LocationVc_Custom");
   RecordField(BalanceSum,M4Val,0,0); // Edit ************************** BPI Ukraine - KramarAlexandr - 02, 06 06 2023 y. at 8:27:53 PM
+  RecordField(RashodSum,M4Val,0,0); // Edit ************************** BPI Ukraine - KramarAlexandr - 02, 06 06 2023 y. at 8:27:53 PM
 EndRecordAdd;
 
 // do not use _DefBlock unless it is a defblock
