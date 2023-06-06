@@ -380,14 +380,8 @@ begin
   
   logtext(0,"WebUpdateBalanceForPoints start");
   SetCompany(9,false);
-  code = WebGetArg("foruser");
-  if(nonblank(code)) then begin
-    USr.Code = code;
-  end else begin
-    USr.Code = currentuser;
-  end;
-  readfirstmain(USr,1,true);
-  IVr.Location = USr.Location;
+  
+  IVr.SerNr = -1;
   while(loopmain(IVr,1,true))begin
     vBalance[IVr.Location] = vBalance[IVr.Location] + IVr.Sum4;
   end;
@@ -409,6 +403,7 @@ begin
   
   Locr.Code = "";
   while(loopmain(Locr,1,true))begin
+    logtext(0,Locr.Code & " vBalance " & vBalance[Locr.Code] & " vRashod " & vRashod[Locr.Code]);
     Locr.BalanceSum = vBalance[Locr.Code];
     Locr.RashodSum = vRashod[Locr.Code];
     recordstore(Locr,true);
