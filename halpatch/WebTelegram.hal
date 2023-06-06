@@ -102,6 +102,48 @@ boolean testf;
 return;
 end;
 
+
+global webpublic updating procedure WebPostUsersTelegram()
+begin
+string 50 location;
+area resarea;
+record UserVc USr,curUSr;
+record DepVc Depr;
+boolean testf;
+area postdata;
+json jsonobj;
+
+  logtext(0,"WebGetUsersTelegram start");
+  WebSetContentType("application/json; charset=UTF-8");	
+
+  SetCompany(9,false);
+  
+  webgetpostdata(postdata);
+  jsonobj = ParseJSONArea(postdata);
+  
+  USr.Code = JSONGet(jsonobj,"code");
+  if(readfirstmain(USr,1,true))then begin
+    if(nonblank(JSONGet(jsonobj,"chatid")))then begin
+      USr.TelChatId = JSONGet(jsonobj,"chatid");
+      testf = true;
+    end;
+    if(nonblank(JSONGet(jsonobj,"phone")))then begin
+      USr.Phone1 = JSONGet(jsonobj,"phone");
+      testf = true;
+    end;
+    if(testf)then begin
+      recordstore(USr,true);
+    end;
+  end else begin
+    weboutstring("{\"result\":\"error\"}");
+  end;
+  
+
+  
+  logtext(0,"WebGetUsersTelegram end");
+return;
+end;
+
 global webpublic procedure WebGetCLCorspTelegram()
 begin
 area resarea;
