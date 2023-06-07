@@ -407,9 +407,12 @@ begin
   Locr.Code = "";
   while(loopmain(Locr,1,true))begin
     logtext(0,Locr.Code & " vBalance " & vBalance[Locr.Code] & " vRashod " & vRashod[Locr.Code]);
-    Locr.BalanceSum = vBalance[Locr.Code];
-    Locr.RashodSum = vRashod[Locr.Code];
-    recordstore(Locr,true);
+    if(Locr.BalanceSum!=vBalance[Locr.Code] or Locr.RashodSum!=vRashod[Locr.Code])then begin
+      weboutstring(Locr.Code & " ___ " & Locr.BalanceSum & " !=" vBalance[Locr.Code]);
+      Locr.BalanceSum = vBalance[Locr.Code];
+      Locr.RashodSum = vRashod[Locr.Code];
+      recordstore(Locr,true);
+    end;
   end;
   
   logtext(0,"WebUpdateBalanceForPoints end");
