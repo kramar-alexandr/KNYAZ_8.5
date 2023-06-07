@@ -109,6 +109,15 @@ begin
     end;
   end;
   
+  if(IVr.OKFlag==0 and IV2r.OKFlag==0)then begin
+    Locr.Code = IVr.Location;
+  	if(readfirstmain(Locr,1,true))then begin
+      Locr.BalanceSum = Locr.BalanceSum - IV2r.Sum4 + IV2r.Sum4;
+      recordstore(Locr,true);
+    end;
+  end;
+  
+  
   IVVcRecordUpdateAfter = res; 
   return;
 end;

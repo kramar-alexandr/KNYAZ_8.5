@@ -875,6 +875,13 @@ BEGIN
       end;
     end;
   end;
+  if ((CLInr.OKFlag==0) and (CLIn2r.OKFlag==0)) then begin
+    Locr.Code = CLInr.Person;
+    if(readfirstmain(Locr,1,true))then begin
+      Locr.BalanceSum = Locr.BalanceSum - CLIn2r.Total + CLInr.Total;
+      recordstore(Locr,true);
+    end;
+  end;
   CLInVcRecordUpdateAfter = res;
   RETURN;
 END;
