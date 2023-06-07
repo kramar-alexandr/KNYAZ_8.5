@@ -408,7 +408,7 @@ begin
   while(loopmain(Locr,1,true))begin
     logtext(0,Locr.Code & " vBalance " & vBalance[Locr.Code] & " vRashod " & vRashod[Locr.Code]);
     if(Locr.BalanceSum!=vBalance[Locr.Code] or Locr.RashodSum!=vRashod[Locr.Code])then begin
-      weboutstring(Locr.Code & " ___ " & Locr.BalanceSum & " !=" vBalance[Locr.Code]);
+      weboutstring(Locr.Code & " ___ " & Locr.BalanceSum & " !=" vBalance[Locr.Code] & "<BR>");
       Locr.BalanceSum = vBalance[Locr.Code];
       Locr.RashodSum = vRashod[Locr.Code];
       recordstore(Locr,true);
