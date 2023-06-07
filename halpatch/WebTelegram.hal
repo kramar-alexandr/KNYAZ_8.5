@@ -300,7 +300,7 @@ record UserVc US2r;
         CLOutr.PayMode = "O";
         CLOutr.ARonTR = 1;
         CLOutr.CurncyCode = "UAH";
-        CLOutr.Person = user;
+        CLOutr.Person = location;
         CLOutVc_PasteCurncyCode(CLOutr);
         CLOutr.Total = sum;
         CLOutr.NetVal = sum;
