@@ -402,7 +402,7 @@ area postdata;
 			CLOutr.Comment = JSONGet(jsonobj,"Comment");
 			CLOutr.Objects = USr.PersObjx;
 			
-			if (RecordStore(CLOutr,true))then begin
+			if (Recordinsert(CLOutr,true))then begin
 				weboutstring("{\"result\":\"ok\",\"SerNr\":\"" & CLOutr.SerNr & "\"}");
 			end;
 		end else begin
@@ -555,7 +555,7 @@ begin
 			IVr.Objects = USr.PersObjx;
 			IVr.TransDate = currentdate;
 			IVr.InvDate = currentdate;
-			recordstore(IVr,true);
+			recordinsert(IVr,true);
 			
 			
 			if(OKFlag=="true")then begin
@@ -671,7 +671,7 @@ begin
 	
 		if(IVr.SerNr>-1)then begin
 			OKFlag = JSONGet(jsonobj,"OKFlag");
-			recordstore(IVr,true);
+			recordinsert(IVr,true);
 			RecordCopy(oldIVr,IVr);
 			if(OKFlag=="true") then begin
 				IVr.OKFlag = 1;
@@ -1023,7 +1023,7 @@ string 100 saler;
 			CLOutr.Total = stringtoval(JSONGet(jsonobj,"Sum"),m4val);
 			CLOutr.CurncyCode = "UAH";
 			CLOutVc_PasteCurncyCode(CLOutr);
-			recordstore(CLOutr,true);
+			recordinsert(CLOutr,true);
 			
 			RecordCopy(OldCLOutr,CLOutr);
 			CLOutr.Objects = US2r.PersObjx;
@@ -1038,7 +1038,7 @@ string 100 saler;
 			CLInr.Total = stringtoval(JSONGet(jsonobj,"Sum"),m4val);
 			CLInr.CurncyCode = "UAH";
 			CLInVc_PasteCurncyCode(CLInr);
-			recordstore(CLInr,true);
+			recordinsert(CLInr,true);
 			matrowget(CLInr,0,CLInrw);
 			RecordCopy(OldCLInr,CLInr);
 			CLInr.Objects = USr.PersObjx;
