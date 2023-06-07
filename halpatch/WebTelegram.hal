@@ -185,16 +185,23 @@ global webpublic procedure WebGetLocationsTelegram()
 begin
 area resarea;
 record LocationVc Locr;
+string 100 location;
+boolean TrHs;
 
 logtext(0,"WebGetLocationsTelegram start");
 
-
+  location = webgetarg("location");
 	SetCompany(9,false);
 	WebSetContentType("application/json; charset=UTF-8");	
 
   AddTextToArea("[",resarea);
-  while(loopmain(Locr,1,true))begin
-    if (nonblank(Locr.Group)) then begin
+  Locr.Code = location;
+  TrHs = true;
+  while(loopmain(Locr,1,TrHs))begin
+    if(nonblank(location) and location!=Locr.Code)then begin
+      TrHs = false;
+    end;
+    if (nonblank(Locr.Group) and TrHs) then begin
       AddTextToArea("{",resarea);
       addParamToJSONArea("code",NormalizeStrToJson(Locr.Code),resarea);
       addParamToJSONArea("name",NormalizeStrToJson(Locr.Name),resarea);
