@@ -309,7 +309,7 @@ record UserVc US2r;
         CLOutVc_PasteCorspCode(CLOutr,-1);
         CLOutr.Comment = comment;
         CLOutr.Objects = USr.PersObjx;
-        recordstore(CLOutr,true);
+        recordinsert(CLOutr,true);
         RecordCopy(OldCLOutr,CLOutr);
         CLOutr.OKFlag = 1;
         if (RecordUpdate(OldCLOutr,CLOutr,true)==0) then begin end;
