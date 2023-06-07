@@ -65,11 +65,19 @@ global
 updating function LongInt IVVcRecordSaveAfter(var record IVVc IVr,record IVVc IV2r,LongInt long3,LongInt long4)
 begin
   LongInt res;
-
+  record LocationVc Locr;
+  
 	res = inner.IVVcRecordSaveAfter(IVr,IV2r,long3,long4);
   
   if(IVr.OKFlag==1)then begin
   	CreatePOInOtherCom(IVr);
+  	
+  	Locr.Code = IVr.Location;
+  	if(readfirstmain(Locr,1,true))then begin
+      Locr.BalanceSum = Locr.BalanceSum + IVr.Sum4;
+      recordstore(Locr,true);
+    end;
+    
   end;
   
   IVVcRecordSaveAfter = res; 
@@ -81,11 +89,24 @@ global
 updating function LongInt IVVcRecordUpdateAfter(var record IVVc IVr,record IVVc IV2r,LongInt long3,LongInt long4)
 begin
   LongInt res;
+  record LocationVc Locr;
 
 	res = inner.IVVcRecordSaveAfter(IVr,IV2r,long3,long4);
   
   if(IVr.OKFlag==1 and IV2r.OKFlag==0)then begin
   	CreatePOInOtherCom(IVr);
+  	Locr.Code = IVr.Location;
+  	if(readfirstmain(Locr,1,true))then begin
+      Locr.BalanceSum = Locr.BalanceSum + IVr.Sum4;
+      recordstore(Locr,true);
+    end;
+  end;
+  if(IVr.OKFlag==0 and IV2r.OKFlag==1)then begin
+    Locr.Code = IVr.Location;
+  	if(readfirstmain(Locr,1,true))then begin
+      Locr.BalanceSum = Locr.BalanceSum - IVr.Sum4;
+      recordstore(Locr,true);
+    end;
   end;
   
   IVVcRecordUpdateAfter = res; 
