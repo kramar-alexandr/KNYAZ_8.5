@@ -689,6 +689,8 @@ BEGIN
   LongInt res;
   record LocationVc Locr;
   
+  logtext(0,"CLOutVcRecordSaveAfter");
+  
 //  if (CLOutr.OKFlag!=0) then begin
     UpdateCLOutVI(CLOutr,CLOut2r,0);
 //  end;  
@@ -787,11 +789,13 @@ BEGIN
     end;  
   end;
   if (transf) then begin
-    if (UserCanAction("OKCashOut",true)==false) then begin
-      RecordCheckError(1274,StringFromStringSet(3,"OKCashOut"),-1,"SerNr");      
-      res = -1;
-      goto L99CLOutVcRecordCheck; 
-    end;  
+    if(nonblank(currentuser))then begin
+      if (UserCanAction("OKCashOut",true)==false) then begin
+        RecordCheckError(1274,StringFromStringSet(3,"OKCashOut"),-1,"SerNr");      
+        res = -1;
+        goto L99CLOutVcRecordCheck; 
+      end;  
+    end;
   end;
   if (CLOutp.SerNr<=0) then begin
     newnr = GetCurUserLastNr("CLOutVc");

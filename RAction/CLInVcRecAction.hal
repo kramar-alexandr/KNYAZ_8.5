@@ -982,11 +982,13 @@ BEGIN
     end;  
   end;
   if (transf) then begin
-    if (UserCanAction("OKCashIn",true)==false) then begin
-      RecordCheckError(1274,StringFromStringSet(3,"OKCashIn"),-1,"SerNr");      
-      res = -1;
-      goto L99CLInVcRecordCheck;
-    end;  
+    if(nonblank(currentuser))then begin
+      if (UserCanAction("OKCashIn",true)==false) then begin
+        RecordCheckError(1274,StringFromStringSet(3,"OKCashIn"),-1,"SerNr");      
+        res = -1;
+        goto L99CLInVcRecordCheck;
+      end;  
+    end;
   end;
   if (CLInp.SerNr<=0) then begin
     newnr = GetCurUserLastNr("CLInVc");
