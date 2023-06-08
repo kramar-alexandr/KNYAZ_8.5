@@ -364,11 +364,14 @@ record UserVc US2r;
         if(CLOutr.OKFlag==0) then begin
           recordcopy(OldCLOutr,CLOutr);
           CLOutr.OKFlag = 1;
-          recordupdate(OldCLOutr,CLOutr,true);
+          if(recordupdate(OldCLOutr,CLOutr,true)==0)then begin
+            
+          end;
         end else begin
           TrHs = false;
         end;
       end;
+      AddTextToArea("{\"result\":\"error\"}",resarea);
 		end else begin
 		  AddTextToArea("{\"result\":\"error\"}",resarea);
 		end;
