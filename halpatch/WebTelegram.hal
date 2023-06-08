@@ -352,7 +352,7 @@ val sum;
 string 255 user,comment,type,location;
 record UserVc US2r;
   
-  logtext(0,"WebPostCreatedCLOutTelegram start");
+  logtext(0,"WebConfirmLastExpTelegram start");
   
   SetCompany(9,false);
     location = webgetarg("object");
@@ -362,6 +362,7 @@ record UserVc US2r;
       CLOutr.OKFlag = 0;
       while(loopkey("SerNr:" & location,CLOutr,1,TrHs))begin
         if(CLOutr.OKFlag==0) then begin
+          logtext(0,"WebConfirmLastExpTelegram " & CLOutr.SerNr);
           recordcopy(OldCLOutr,CLOutr);
           CLOutr.OKFlag = 1;
           if(recordupdate(OldCLOutr,CLOutr,true)==0)then begin
@@ -377,7 +378,7 @@ record UserVc US2r;
 		end;
 		weboutarea2(resarea);
 	
-	logtext(0,"WebPostCreatedCLOutTelegram end");
+	logtext(0,"WebConfirmLastExpTelegram end");
 	
 return;
 end;
