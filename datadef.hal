@@ -189,6 +189,10 @@ RecordAddBegin(LocationVc,"LocationVc_Custom");
   RecordField(RashodSum,M4Val,0,0); // Edit ************************** BPI Ukraine - KramarAlexandr - 02, 06 06 2023 y. at 8:27:53 PM
 EndRecordAdd;
 
+RecordAddBegin(CLCorspVc,"CLCorspVc_Custom");
+  RecordField(Class,M4Code,20,0); // Edit ************************** BPI Ukraine - KramarAlexandr - 02, 06 06 2023 y. at 8:27:53 PM
+EndRecordAdd;
+
 // do not use _DefBlock unless it is a defblock
   BlockBegin(CashierDefBlock,-,"CashierDefBlock3");
   NewAutosyncBlock(kSyncDirectionToClient);

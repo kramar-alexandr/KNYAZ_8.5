@@ -4352,3 +4352,18 @@ begin
 
   EndWindow;
 end;
+
+window CLCorspDClass:1
+  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  real v;
+  WindowBegin("Счёт расходов",CLCorspDClass,CGview,CLCorspView);
+  SetWRect(64,80,509,150);
+  UseView(CLCorspVc);
+  EditField(120,v=6,140,"Код",St_i,Code,false,0);
+  CheckBox(300,v,0,"Закрыто",Closed);         
+  EditField(120,v+=20,300,"Комментарий",Normal,Comment,false,0);
+  EditField(120,v+=20,80,"Счет",Normal,AccNumber,false,AccSClass);
+  EditField(120,v+=20,80,"ТИП",Normal,Class,false,0);
+  EndWindow;
+end;
