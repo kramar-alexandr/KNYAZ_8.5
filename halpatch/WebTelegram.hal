@@ -432,7 +432,7 @@ string 100 saler;
 			readfirstmain(USr,1,true);
 			CLOutr.SerNr = NextSerNr("CLOutVc",currentdate,-1,false,"");
 			CLOutr.Person = USr.Code;
-			CLInr.RefStr = user;
+			CLOutr.RefStr = USr.Code;
 			CLOutr.CorspCode = "CASH_OUT";
 			CLOutr.Total = sum;
 			CLOutr.NetVal = sum;
@@ -440,7 +440,7 @@ string 100 saler;
 			CLOutVc_PasteCurncyCode(CLOutr);
 			recordinsert(CLOutr,true);
 			RecordCopy(OldCLOutr,CLOutr);
-			CLOutr.Objects = US2r.PersObjx;
+			CLOutr.Objects = USr.PersObjx;
 			CLOutr.OKFlag = 1;
 			if (RecordUpdate(OldCLOutr,CLOutr,true)==0) then begin end;
 			
