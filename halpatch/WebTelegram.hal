@@ -1,5 +1,7 @@
 external procedure CLOutVc_PasteCurncyCode(var record CLOutVc);
-remote procedure CLOutVc_PasteCorspCode(var record CLOutVc,Integer);
+external procedure CLOutVc_PasteCorspCode(var record CLOutVc,Integer);
+external procedure CLOutVc_PasteCurncyCode(var record CLOutVc);
+external procedure CLInVc_PasteCurncyCode(var record CLInVc);
 
 procedure addParamToJSONArea(string param, string value, var area req)
 begin
@@ -379,6 +381,95 @@ record UserVc US2r;
 		weboutarea2(resarea);
 	
 	logtext(0,"WebConfirmLastExpTelegram end");
+	
+return;
+end;
+
+
+//http://65.109.135.110:1080/WebPostCreatedIncasationTelegram.hal
+
+
+global webpublic updating procedure WebPostCreatedIncasationTelegram()
+begin
+string 50 location,user;
+area resarea;
+record CLInVc CLInr, OldCLInr;
+row CLInVc CLInrw;
+record CLOutVc CLOutr,OldCLOutr;
+row CLOutVc CLOutrw;
+record IVVc IVr;
+boolean TrHs,testf;
+val sum;
+area postdata;
+json jsonobj;
+record UserVc USr,US2r;
+string 100 saler;
+	
+	logtext(0,"WebPostCreatedIncasationTelegram start");
+	  
+	  /*
+	  
+	  {
+    "user":"SA",
+    "location":"BROVARY",
+    "sum":"1000",
+}
+	  */
+		
+		WebSetContentType("application/json; charset=UTF-8");	
+		SetCompany(9,false);	
+
+		webgetpostdata(postdata);
+		jsonobj = ParseJSONArea(postdata);
+		
+		user = JSONGet(jsonobj,"user");
+		sum = stringtoval(JSONGet(jsonobj,"sum"),m4val);
+		location = JSONGet(jsonobj,"location");
+				
+		if(sum>0 and nonblank(user) and nonblank(location))then begin
+			recordnew(CLOutr);
+			USr.Code = location;
+			readfirstmain(USr,1,true);
+			CLOutr.SerNr = NextSerNr("CLOutVc",currentdate,-1,false,"");
+			CLOutr.Person = USr.Code;
+			CLInr.RefStr = user;
+			CLOutr.CorspCode = "CASH_OUT";
+			CLOutr.Total = sum;
+			CLOutr.NetVal = sum;
+			CLOutr.CurncyCode = "UAH";
+			CLOutVc_PasteCurncyCode(CLOutr);
+			recordinsert(CLOutr,true);
+			RecordCopy(OldCLOutr,CLOutr);
+			CLOutr.Objects = US2r.PersObjx;
+			CLOutr.OKFlag = 1;
+			if (RecordUpdate(OldCLOutr,CLOutr,true)==0) then begin end;
+			
+			recordnew(CLInr);
+			USr.Code = user;
+			readfirstmain(USr,1,true);
+			CLInr.SerNr = NextSerNr("CLInVc",currentdate,-1,false,"");
+			CLInr.Person = USr.Code;
+			CLInr.RefStr = USr.Code;
+			CLInr.CorspCode = "CASH_OUT";
+			CLInr.Total = sum;
+			CLInr.CurncyCode = "UAH";
+			CLInVc_PasteCurncyCode(CLInr);
+			recordinsert(CLInr,true);
+			matrowget(CLInr,0,CLInrw);
+			RecordCopy(OldCLInr,CLInr);
+			CLInr.Objects = USr.PersObjx;
+			CLInr.OKFlag = 1;
+			if (RecordUpdate(OldCLInr,CLInr,true)==0) then begin end;
+			AddTextToArea("{\"result\":\"ok\"}",resarea);
+		end else begin
+		  AddTextToArea("{\"result\":\"error\"}",resarea);
+		end;
+
+		
+		weboutarea2(resarea);
+	
+	
+	logtext(0,"WebPostCreatedIncasationTelegram end");
 	
 return;
 end;
