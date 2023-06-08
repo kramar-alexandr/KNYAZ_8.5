@@ -360,7 +360,7 @@ record UserVc US2r;
       
       TrHs = true;
       CLOutr.OKFlag = 0;
-      while(loopkey("SerNr:" & location,CLOutr,1,TrHs))begin
+      while(loopkey("OKFlag:" & location,CLOutr,1,TrHs))begin
         if(CLOutr.OKFlag==0) then begin
           logtext(0,"WebConfirmLastExpTelegram " & CLOutr.SerNr);
           recordcopy(OldCLOutr,CLOutr);
