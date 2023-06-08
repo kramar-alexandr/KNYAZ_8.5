@@ -374,7 +374,7 @@ record UserVc US2r;
           TrHs = false;
         end;
       end;
-      AddTextToArea("{\"result\":\"error\"}",resarea);
+      AddTextToArea("{\"result\":\"ok\"}",resarea);
 		end else begin
 		  AddTextToArea("{\"result\":\"error\"}",resarea);
 		end;
