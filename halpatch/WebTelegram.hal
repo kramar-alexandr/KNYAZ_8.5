@@ -3,6 +3,9 @@ external procedure CLOutVc_PasteCorspCode(var record CLOutVc,Integer);
 external procedure CLOutVc_PasteCurncyCode(var record CLOutVc);
 external procedure CLInVc_PasteCurncyCode(var record CLInVc);
 
+SetLangMode(LangRussian,"RUS",0);
+
+
 procedure addParamToJSONArea(string param, string value, var area req)
 begin
 
@@ -434,6 +437,7 @@ string 100 saler;
 			CLOutr.Person = USr.Code;
 			CLOutr.RefStr = user;
 			CLOutr.CorspCode = "CASH_OUT";
+			CLOutr.Comment = "Инкассация";
 			CLOutr.Total = sum;
 			CLOutr.NetVal = sum;
 			CLOutr.CurncyCode = "UAH";
@@ -451,6 +455,7 @@ string 100 saler;
 			CLInr.Person = USr.Code;
 			CLInr.RefStr = USr.Code;
 			CLInr.CorspCode = "CASH_OUT";
+			CLInr.Comment = "Инкассация";
 			CLInr.Total = sum;
 			CLInr.CurncyCode = "UAH";
 			CLInVc_PasteCurncyCode(CLInr);
