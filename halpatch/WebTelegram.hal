@@ -437,7 +437,7 @@ string 100 saler;
 			CLOutr.Person = USr.Code;
 			CLOutr.RefStr = user;
 			CLOutr.CorspCode = "CASH_OUT";
-			CLOutr.Comment = "Инкассация " & currentdate & " " user;
+			CLOutr.Comment = "Инкассация " & currentdate & " " & user;
 			CLOutr.Total = sum;
 			CLOutr.NetVal = sum;
 			CLOutr.CurncyCode = "UAH";
