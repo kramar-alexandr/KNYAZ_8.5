@@ -700,7 +700,7 @@ BEGIN
     AutomatedSalesOrderly("HasIntegratedNL");
     Locr.Code = CLOutr.Person;
     if(readfirstmain(Locr,1,true))then begin
-      Locr.BalanceSum = Locr.BalanceSum + CLOutr.Total;
+      Locr.BalanceSum = Locr.BalanceSum - CLOutr.Total;
       recordstore(Locr,true);
     end;
   end else begin
