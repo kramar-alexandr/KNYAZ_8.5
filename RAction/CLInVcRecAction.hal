@@ -890,14 +890,14 @@ global
 updating function LongInt CLInVcRecordRemove(var record CLInVc CLInr,record CLInVc CLIn2r,LongInt long3,LongInt long4)
 begin
   LongInt res;
-  record LocationVc Locr;
+  //record LocationVc Locr;
   
   DeleteCLInIV(CLInr);
-  Locr.Code = CLInr.Person;
+  /*Locr.Code = CLInr.Person;
   if(readfirstmain(Locr,1,true))then begin
     Locr.BalanceSum = Locr.BalanceSum - CLInr.Total;
     recordstore(Locr,true);
-  end;
+  end;*/
   CLInVcRecordRemove = res;  
   RETURN;
 end;
