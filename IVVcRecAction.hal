@@ -66,21 +66,19 @@ updating function LongInt IVVcRecordSaveAfter(var record IVVc IVr,record IVVc IV
 begin
   LongInt res;
   record LocationVc Locr;
+  integer curcomp;
   
   logtext(0,"IVVcRecordSaveAfter");
   
 	res = inner.IVVcRecordSaveAfter(IVr,IV2r,long3,long4);
-  
+  curcomp = currentcompany;
   if(IVr.OKFlag==1)then begin
   	CreatePOInOtherCom(IVr);
-  	logtext(0,"IVVcRecordSaveAfter OKFlag");
+  	setcompany(curcomp,false);
   	Locr.Code = IVr.Location;
   	if(readfirstmain(Locr,1,true))then begin
-  	  logtext(0,"IVVcRecordSaveAfter Locr");
-  	  logtext(0,"Locr.BalanceSum before " & Locr.BalanceSum);
       Locr.BalanceSum = Locr.BalanceSum + IVr.Sum4;
       recordstore(Locr,true);
-      logtext(0,"Locr.BalanceSum after " & Locr.BalanceSum);
     end;
     
   end;
@@ -95,11 +93,13 @@ updating function LongInt IVVcRecordUpdateAfter(var record IVVc IVr,record IVVc 
 begin
   LongInt res;
   record LocationVc Locr;
+  integer curcomp;
 
 	res = inner.IVVcRecordSaveAfter(IVr,IV2r,long3,long4);
-  
+  curcomp = currentcompany;
   if(IVr.OKFlag==1 and IV2r.OKFlag==0)then begin
   	CreatePOInOtherCom(IVr);
+  	setcompany(curcomp,false);
   	Locr.Code = IVr.Location;
   	if(readfirstmain(Locr,1,true))then begin
       Locr.BalanceSum = Locr.BalanceSum + IVr.Sum4;
