@@ -67,13 +67,16 @@ begin
   LongInt res;
   record LocationVc Locr;
   
+  logtext(0,"IVVcRecordSaveAfter");
+  
 	res = inner.IVVcRecordSaveAfter(IVr,IV2r,long3,long4);
   
   if(IVr.OKFlag==1)then begin
   	CreatePOInOtherCom(IVr);
-  	
+  	logtext(0,"IVVcRecordSaveAfter OKFlag");
   	Locr.Code = IVr.Location;
   	if(readfirstmain(Locr,1,true))then begin
+  	  logtext(0,"IVVcRecordSaveAfter Locr");
       Locr.BalanceSum = Locr.BalanceSum + IVr.Sum4;
       recordstore(Locr,true);
     end;
