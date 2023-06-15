@@ -77,8 +77,10 @@ begin
   	Locr.Code = IVr.Location;
   	if(readfirstmain(Locr,1,true))then begin
   	  logtext(0,"IVVcRecordSaveAfter Locr");
+  	  logtext(0,"Locr.BalanceSum before " & Locr.BalanceSum);
       Locr.BalanceSum = Locr.BalanceSum + IVr.Sum4;
       recordstore(Locr,true);
+      logtext(0,"Locr.BalanceSum after " & Locr.BalanceSum);
     end;
     
   end;
