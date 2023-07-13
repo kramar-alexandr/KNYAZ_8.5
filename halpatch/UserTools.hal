@@ -520,12 +520,17 @@ function LongInt RHistVcRecordImportTest(var record RHistVc RHr,record RHistVc R
 begin
   LongInt res;
   
-  res = 0;
+  res = 1;
+	
+	//compnr = mid(RHr.RecidStr,1,asc(c));
+	if(RHr.TransDate<stringtodate("01/03/2023"))then begin
+	  res = 1;
+	end;
 	
   RHistVcRecordImportTest = res;
   RETURN;
 END;
-
+/*
 global
 function LongInt IVVcRecordImportTest(var record IVVc IVr,record IVVc IV2r,LongInt long3,LongInt long4)
 begin
@@ -653,3 +658,4 @@ begin
 END;
 
 
+*/
