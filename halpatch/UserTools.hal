@@ -524,7 +524,7 @@ begin
 	
 	//compnr = mid(RHr.RecidStr,1,asc(c));
 	if(RHr.TransDate<stringtodate("01/03/2023"))then begin
-	  res = 1;
+	  res = 0;
 	end;
 	
   RHistVcRecordImportTest = res;
