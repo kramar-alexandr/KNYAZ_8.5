@@ -324,9 +324,9 @@ record UserVc US2r;
         CLOutr.Comment = comment;
         CLOutr.Objects = USr.PersObjx;
         recordinsert(CLOutr,true);
-        //RecordCopy(OldCLOutr,CLOutr);
-        //CLOutr.OKFlag = 1;
-        //if (RecordUpdate(OldCLOutr,CLOutr,true)==0) then begin end;
+        RecordCopy(OldCLOutr,CLOutr);
+        CLOutr.OKFlag = 1;
+        if (RecordUpdate(OldCLOutr,CLOutr,true)==0) then begin end;
         AddTextToArea("{\"result\":\"ok\"}",resarea);
 			end else begin
 			  AddTextToArea("{\"result\":\"error\"}",resarea);
