@@ -360,6 +360,29 @@ begin
 			ERr.ToRate1 = 1;
 			recordStore (ERr,true);
 		end;
+		
+		if(fileexists("/usr/local/bin/FinanceUaParser/rateFromUSD.json"))then begin
+		  setareazerosize(replyPr);
+		  addfiletoarea("/usr/local/bin/FinanceUaParser/rateFromUSD.json",replyPr,0);
+		  jsonobj = ParseJSONArea(replyPr);
+		  if(nonblank(JSONGet(jsonobj,"date")))then begin
+		    if(currentdate==stringtodate(JSONGet(jsonobj,"date")))then begin
+		      ERr.CurncyCode = "UAH";
+          ERr.Date = addDay(CurrentDate,1);
+          if (!ReadFirstMain(ERr,2,true)) then begin 
+            RecordNew(ERr);
+            ERr.CurncyCode = "UAH";
+            ERr.Date = addDay(CurrentDate,1);
+            ERr.FrRate = stringtoval(JSONGet(jsonobj,"value"),m4val);
+            ERr.ToRate1 = 1;
+            recordStore (ERr,true);
+          end else begin
+            ERr.FrRate = stringtoval(JSONGet(jsonobj,"value"),m4val);
+            recordStore (ERr,true);
+          end;
+		    end;
+		  end;
+		end;
 	
 		logtext(0,"WebRemoteIPAddress " & WebRemoteIPAddress);
 return;
