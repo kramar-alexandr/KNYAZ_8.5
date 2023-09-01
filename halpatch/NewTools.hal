@@ -1282,7 +1282,7 @@ begin
         CalcCashierSalaryAndMakeTransaction(RepSpec);
       end;
     SetCompany(9,false);
-			if(getminute(currenttime)==0 and gethour(currenttime)<=23 and gethour(currenttime)>=17)then begin
+			if(getminute(currenttime)==5 and gethour(currenttime)<=23 and gethour(currenttime)>=17)then begin
 				SyncCurrWithNBUMn;
 			end;
 			if((getminute(currenttime)==0 and gethour(currenttime)==7) or (getminute(currenttime)==0 and gethour(currenttime)==9))then begin
