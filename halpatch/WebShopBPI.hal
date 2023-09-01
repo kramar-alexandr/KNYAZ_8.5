@@ -350,7 +350,7 @@ begin
 		
 		
 	
-		ERr.CurncyCode = "UAH";
+		/*ERr.CurncyCode = "UAH";
 		ERr.Date = addDay(CurrentDate,1);
 		if (!ReadFirstMain(ERr,2,true)) then begin 
 			RecordNew(ERr);
@@ -359,7 +359,7 @@ begin
 			ERr.FrRate = rate;
 			ERr.ToRate1 = 1;
 			recordStore (ERr,true);
-		end;
+		end;*/
 		
 		if(fileexists("/usr/local/bin/FinanceUaParser/rateFromUSD.json"))then begin
 		  setareazerosize(replyPr);
