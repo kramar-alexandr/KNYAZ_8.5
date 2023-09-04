@@ -4367,3 +4367,30 @@ begin
   EditField(120,v+=20,80,"ТИП",Normal,Class,false,0);
   EndWindow;
 end;
+
+window CLOutLClass:1
+  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  WindowBegin("Расход из кассы",CLOutLClass,CGmlist,-);
+  SpawnClass(CLOutDClass);
+  Sizeable(-1,-1,0,0);
+  SetWRect(64,80,600,298);
+  UseView(CLOutVc);
+  FormName(PrintCLOutL);
+  RecordList(4,17,-21,-39);
+  RlColKey(4,4,"Номер",SerNr,false,SerNr);
+  RlColKey(84,84,"OK",OKFlag,false,OKFlag);
+  RlColKey(114,114,"Дата",TransDate,false,TransDate);
+  RlColKey(194,194,"Основание",Comment,false,Comment);
+  RlCol(-200,-200,"Точка",Person,true);
+  RlCol(-100,-100,"Сумма",Total,true);
+  if (HasMultiCurrency or HasBase2) then begin
+  RlCol(-30,-30,"Вал.",CurncyCode,true);
+  end;
+  RlCol(-1,-1,"",Invalid,true);
+  SearchField("Поиск");
+  if (HasLimitedAccess) then begin
+    BrowseSubsetButton(-40,-15);
+  end;
+  EndWindow;
+end;
