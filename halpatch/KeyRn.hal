@@ -1142,7 +1142,7 @@ begin
     if (found) then begin
       testf = true;
       if (HasLocalization("POL")) then begin
-        if (IVr.FiscalFlag==0 and IVr.POLVATExpDocType==kPOLVATExpDocTypeInvReceipt) then begin testf = false; end;
+        //if (IVr.FiscalFlag==0 and IVr.POLVATExpDocType==kPOLVATExpDocTypeInvReceipt) then begin testf = false; end;
       end;
       if (IVr.OKFlag==0) then begin testf = false; end;
       if (IVr.Invalid!=0) then begin testf = false; end;
