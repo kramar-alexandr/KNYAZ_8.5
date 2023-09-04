@@ -1,0 +1,2338 @@
+external procedure AutomatedSalesOrderly(string);
+external function Boolean FindStringInString(string,string);
+external function string 60 AddObjectToObjectList(string,string);
+external procedure HTOT(string,var string);
+external procedure HTNot(Integer,var string);
+external procedure FindFiscalYear(Date,var Date,var Date);
+external function Boolean IsDigit(string);
+external procedure Base1ToBase2(var val,Date,var val);
+external procedure HT2Per(Date, Date , var string);
+external procedure LstRegDat(var string);
+external procedure HTObj(string,var string);
+external function Boolean DatePrel(Date);
+external procedure ListPerTrans(record RcVc);
+external function Boolean IsChart(string);
+external procedure InitVector(vector val);
+external function Integer CalculateInvoiceVector2(record RcVc,record VATCodeBlock,record IVVc,vector val,var Boolean);
+external procedure CalculateExpenseVector(record RcVc,record VATCodeBlock,record ExpVc,row ExpVc,vector val,var val);
+external procedure PrepareExpenseArray(record ExpVc,array record ExpVc);
+external procedure CalculatePurchaseInternalInvoiceVector(record RcVc,record VATCodeBlock,record IntIVVc,vector val);
+external function Boolean CalculateVATVIVector(record RcVc,record VATCodeBlock,record VATVIVc,vector val);
+external function Boolean CalculatePurchaseInvoiceVector(record RcVc,record VATCodeBlock,record VIVc,vector val);
+external function Integer CalculateInternalInvoiceVector2(record RcVc,record VATCodeBlock,record IntIVVc,vector val);
+external function Integer CalculateVATCorrectionVector2(record RcVc,record VATCodeBlock,record VATIVVc,vector val);
+external procedure IVSumup(var record IVVc,Boolean);
+external function roundmode SetRoundModeD(Integer);
+
+enum kUserDefRepLineHide begin
+  kUserDefRepLineHideNo = 0
+end;
+
+function string 100 KeyValToString(val v,Integer ValType,string pref,string suff)
+begin
+  string 100 res;
+//  record SysFormatBlock SysFormatRec;
+  
+//  BlockLoad(SysFormatRec);
+  res = ValToString(v,ValType,ThousandSeparator,DecimalSeparator,0);
+  if (nonblank(res)) then begin
+    res = pref & res & suff;
+  end;
+  
+  KeyValToString = res;
+  return;
+end;
+
+procedure PrintKeyHeader(record RcVc RepSpec)
+BEGIN
+  string 255 tstr;
+  Integer rw;
+  
+  rw = 1;
+  HT2Per(RepSpec.sStartDate,RepSpec.sEndDate,tstr);
+  Header(rw,tstr,1);
+  rw = rw + 1;    
+  LstRegDat(tstr);
+  Header(rw,tstr,0);
+  if (nonblank(RepSpec.ObjStr)) then begin
+    HTObj(RepSpec.ObjStr,tstr);
+    Header(rw,tstr,1);
+    rw = rw + 1;    
+  end;
+  if (RepSpec.SimVerf==1) then begin
+    tstr = USetStr(3019);
+    Header(rw,tstr,1);
+    rw = rw + 1;    
+  end;
+  if (RepSpec.flags[4]==1) then begin
+    tstr = USetStr(5212);
+    Header(rw,tstr,1);
+    rw = rw + 1;    
+  end;
+  if (DatePrel(RepSpec.sEndDate)) begin
+    tstr = USetStr(3023);
+    Header(rw,tstr,1);
+    rw = rw + 1;    
+  end;
+  if (RepSpec.IncDaughter!=0) then begin
+    tstr = USetStr(3027);
+    Header(rw,tstr,1);
+    rw = rw + 1;
+  end;
+  HTNot(RepSpec.Notation,tstr);
+  Header(rw,tstr,1);
+  rw = rw + 1;
+  if (nonblank(RepSpec.ObjType)) then begin
+    HTOT(RepSpec.ObjType,tstr);
+    Header(rw,tstr,0);
+  end;
+  tstr = "";
+  switch (RepSpec.AccSpec) begin
+    case 2: tstr = USetStr(3021);
+    case 4: 
+      if (RepSpec.flags[19]==0) then begin
+        tstr = USetStr(3028);
+      end else begin
+        tstr = USetStr(3005);
+      end;
+    otherwise 
+      tstr = "";
+  end;
+  if (nonblank(tstr)) then begin
+    if (IsStandardProduct==false) then begin
+      Header(rw,tstr,1);
+      rw = rw + 1;
+    end;
+  end;
+  RETURN;
+END;
+
+global
+procedure KeyRnHeader(record RcVc RepSpec,Integer sid)
+begin
+  transaction record RcVc KeyRepSpec;
+  Boolean headerf;
+
+  RecordCopy(KeyRepSpec,RepSpec);
+  headerf = true;
+  if (RepSpec.flags[5]!=0) then begin
+    headerf = false;
+  end;
+  if (nonblank(RepSpec.f1)) then begin
+    StartReportJob(RepSpec.f1);
+  end else begin
+    StartReportJob(USetStr(sid));
+  end;
+  if (headerf) then begin
+    PrintKeyHeader(RepSpec);
+  end;
+  EndHeader;
+  SetRepCol(2,50);
+  return;
+end;
+
+global
+function val KeyRnDaughterVals(string defstr)
+BEGIN
+  record DaughterCompBlock DaughterCompRec;
+  row DaughterCompBlock DaughterComprw;
+  record ConsolidationBlock Consb;
+  Integer i,rwcnt;
+  Integer oldcomp;
+  val res,temp;
+  transaction record RcVc KeyRepSpec;
+
+  oldcomp = CurrentCompany; 
+  BlockLoad(DaughterCompRec);
+  rwcnt = MatRowCnt(DaughterCompRec);
+  for (i=0;i<rwcnt;i=i+1) begin
+    MatRowGet(DaughterCompRec,i,DaughterComprw);
+    if (SetCompanyCode(DaughterComprw.CompCode,false)) then begin
+      BlockLoad(Consb);
+      KeyRepSpec.basecurncy = Consb.ConsCrncy;
+      if (nonblank(defstr)) then begin
+        temp = EvalToVal(defstr);
+        res = res + temp;
+        
+        res = res + KeyRnDaughterVals(defstr);
+      end;
+    end;
+  end;
+  ResetCompany(oldcomp);
+  KeyRnDaughterVals = res;
+  RETURN;
+END;
+
+global
+function Boolean StringContainsAlpha(string tstr)
+begin
+  Boolean res;
+  Integer i,l;
+  string 1 c;
+  
+  res = 0;
+  l = len(tstr);  
+  for (i=0;i<l;i=i+1) begin
+    c = Mid(tstr,i,1);
+    if (IsDigit(c)==false) then begin
+      res = true;
+      goto LStringContainsAlpha;
+    end;
+  end;
+LStringContainsAlpha:;  
+  StringContainsAlpha = res;
+  return;
+end;
+
+procedure DoColumnSumupPerRow(string cod,string colcode,string AddInfo)
+begin
+  vector boolean accdonef;
+  transaction record TRVc gKeyRn_TRr;
+  transaction string 255 gAccountForSumup;
+  row TRVc TRrw;
+  integer i,trrwcnt,origtrrwcnt;
+  val tmp;
+  
+  origtrrwcnt = MatRowCnt(gKeyRn_TRr);
+  trrwcnt = origtrrwcnt;
+  for (i=0;i<origtrrwcnt;i=i+1) begin
+    MatRowGet(gKeyRn_TRr,i,TRrw);
+    if (nonblank(TRrw.AccNumber)) then begin
+      if (accdonef[TRrw.AccNumber]==false) then begin
+        accdonef[TRrw.AccNumber] = true;
+        gAccountForSumup = TRrw.AccNumber;
+        tmp = EvalToVal(AddInfo);
+        TRrw.Comment = "";
+        TRrw.Objects = "";//objstr; //TODO??
+        //TRrw.VATCode = vatcode;
+        TRrw.DebVal = tmp;
+        TRrw.TFromFileName = colcode;
+        TRrw.Typ = kUserDefRepColumnTypeColumnsSumup;
+        MatRowPut(gKeyRn_TRr,trrwcnt,TRrw);
+        trrwcnt = trrwcnt+1;
+      end;
+    end;
+  end;
+  gAccountForSumup = "";
+  
+  return;
+end;
+
+global
+procedure CalcKeyRn(string cod,string ldefstr,Integer IncDaughter,Integer basecurncy,string colcode,Integer ColType,Integer PeriodType,Integer PeriodOffset,Integer PeriodLength,string ObjStr,string AddInfo,string CompCode,var val sum)
+begin
+  transaction record RcVc KeyRepSpec;
+  transaction string 5 keycurcod;
+  transaction Integer keyconscompany;
+  transaction string 5 keycurcol;
+  transaction Integer keycoltype;
+  Date oldStartDate,oldEndDate;
+  Date curYearstartdate,curYearenddate;
+  String 60 oldObjStr;
+  val tmp;
+  Boolean valf;
+  Integer oldcomp;
+  Integer oldbasecurncy;
+  record ConsolidationBlock Consb;
+  string 100 defstr;
+  
+  defstr = ldefstr;
+
+  oldcomp = CurrentCompany;
+  if (nonblank(CompCode)) then begin
+    if (SetCompanyCode(CompCode,false)==false) then begin
+      ResetCompany(oldcomp);
+    end;
+  end;  
+  oldbasecurncy = KeyRepSpec.basecurncy;
+  if (IncDaughter!=0) then begin
+    BlockLoad(Consb);
+    KeyRepSpec.basecurncy = Consb.ConsCrncy;
+  end else begin  
+    KeyRepSpec.basecurncy = basecurncy;
+  end;
+  keyconscompany = CurrentCompany;
+  keycoltype = ColType;
+  keycurcol = colcode;
+  keycurcod = cod;
+  if (PeriodType>kUserDefRepPeriodTypeSelectedPeriod) then begin
+    oldStartDate = KeyRepSpec.sStartDate;
+    oldEndDate = KeyRepSpec.sEndDate;
+    switch (PeriodType) begin
+      case kUserDefRepPeriodTypeMonth:
+        KeyRepSpec.sStartDate = AddMonth(KeyRepSpec.sStartDate,PeriodOffset);
+        KeyRepSpec.sEndDate = AddDay(AddMonth(KeyRepSpec.sStartDate,PeriodLength),-1);
+      case kUserDefRepPeriodTypeYear:
+        KeyRepSpec.sStartDate = AddYear(KeyRepSpec.sStartDate,PeriodOffset);
+        KeyRepSpec.sEndDate = AddDay(AddYear(KeyRepSpec.sStartDate,PeriodLength),-1);
+      case kUserDefRepPeriodTypeFiscalYearToDate:
+        KeyRepSpec.sStartDate = AddYear(KeyRepSpec.sStartDate,PeriodOffset);
+        FindFiscalYear(KeyRepSpec.sStartDate,curYearstartdate,curYearenddate);
+        KeyRepSpec.sStartDate = curYearstartdate;
+      case kUserDefRepPeriodTypeFiscalYear:
+        KeyRepSpec.sStartDate = AddYear(KeyRepSpec.sStartDate,PeriodOffset);
+        FindFiscalYear(KeyRepSpec.sStartDate,curYearstartdate,curYearenddate);
+        KeyRepSpec.sStartDate = curYearstartdate;
+        KeyRepSpec.sEndDate = curYearenddate;
+        KeyRepSpec.sEndDate = AddYear(KeyRepSpec.sEndDate,PeriodLength);
+    end;
+    if (KeyRepSpec.sEndDate<KeyRepSpec.sStartDate) then begin
+      KeyRepSpec.sEndDate = KeyRepSpec.sStartDate;
+    end;
+  end;
+  /*if (nonblank(ObjStr)) then begin
+    oldObjStr = KeyRepSpec.ObjStr;
+    KeyRepSpec.ObjStr = AddObjectToObjectList(KeyRepSpec.ObjStr,ObjStr);        
+  end;*/
+  if (nonblank(defstr)) then begin
+    logtext(0,"ColType " & ColType);
+logtext(0,"cod " & cod);
+
+    switch (ColType) begin
+      case kUserDefRepColumnTypeColumnsSumup:
+        DoColumnSumupPerRow(cod,colcode,AddInfo);
+        tmp = EvalToVal(AddInfo);
+      case kUserDefRepColumnTypeBudget:
+        tmp = EvalToVal(defstr);
+        valf = StringContainsAlpha(defstr)==false;
+      case kUserDefRepColumnTypeRevBudget:
+        tmp = EvalToVal(defstr);
+        valf = StringContainsAlpha(defstr)==false;
+      otherwise
+        
+        
+        if (!InString(defstr,"KSUM") and !InString(defstr,"K(")) then begin
+          if(defstr=="TOCHKA")then begin
+            defstr = "ObjResult(\"" & ObjStr & "\",\"" & cod & "\")";
+          end;
+          logtext(0,"defstr " & defstr);
+          
+          
+          tmp = EvalToVal(defstr);
+          logtext(0,"EvalToVal(defstr) " & EvalToVal(defstr));
+
+          valf = StringContainsAlpha(defstr)==false;
+          
+          if (IncDaughter!=0) and (valf==false) then begin
+            tmp = tmp + KeyRnDaughterVals(defstr);
+            KeyRepSpec.basecurncy = basecurncy;
+          end;
+        end;
+    end;
+    if (nonblank(colcode)) then begin
+      //SetTransVal(cod & "," & colcode,tmp);
+    end else begin
+      //SetTransVal(cod,tmp);
+    end;
+  end;
+  if (PeriodType>kUserDefRepPeriodTypeSelectedPeriod) then begin
+    KeyRepSpec.sStartDate = oldStartDate;
+    KeyRepSpec.sEndDate = oldEndDate;
+  end;
+  if (nonblank(ObjStr)) then begin
+    KeyRepSpec.ObjStr = oldObjStr;
+  end;
+  sum = tmp;
+  if (nonblank(CompCode)) then begin
+    ResetCompany(oldcomp);
+  end;
+  KeyRepSpec.basecurncy = oldbasecurncy;
+  
+  logtext(0,"tmp " & tmp);
+
+  
+  return;
+end;
+
+global
+procedure PreRunReportRows(record RcVc RepSpec,string shortname)
+begin
+  record UserDefRepVc UserDefRepr;
+  row UserDefRepVc UDRrw;
+  Integer rwcnt,i;
+  val v;
+  
+  UserDefRepr.shortname = shortname;
+  if (ReadFirstMain(UserDefRepr,1,true)) then begin
+    rwcnt = MatRowCnt(UserDefRepr);
+    for (i=0; i<rwcnt; i=i+1) begin
+      MatRowGet(UserDefRepr,i,UDRrw);
+      CalcKeyRn(UDRrw.Code,UDRrw.defstr,RepSpec.IncDaughter,RepSpec.basecurncy,"",0,UDRrw.PeriodType,UDRrw.PeriodOffset,UDRrw.PeriodLength,"","","",v);
+    end;
+  end;
+end;
+
+procedure PrintAccountCodeAndComment(var Boolean accnameprntf,row TRVc TRrw)
+begin
+  if (accnameprntf==false) then begin
+    OutStringID(0,"DblKeyNL",TRrw.AccNumber,false,TRrw.Objects & ";" & TRrw.VATCode);
+    OutString(50,0,TRrw.Comment,false);
+    accnameprntf = true;
+  end;
+  return;
+end;
+
+procedure PrintHeader_WithBalance_WithColumns(Integer HideRow,record UserDefRepColumnsVc UserDefRepColumnsr,string cod,string comment)
+begin
+  Boolean startprintf;
+  Integer onemore;
+  row UserDefRepColumnsVc UDRCsrw;
+  Integer i,colrcwcnt;
+  Integer pos,posused;
+        
+  colrcwcnt = MatRowCnt(UserDefRepColumnsr);
+  startprintf = true;
+  onemore = 0;
+  for (i=0;i<colrcwcnt;i=i+1) begin
+    MatRowGet(UserDefRepColumnsr,i,UDRCsrw);
+    if (i==0) then begin
+      if (UDRCsrw.ColType!=-1) then begin
+        onemore = 1;
+      end;
+    end;
+    if (UDRCsrw.Hide==kUserDefRepLineHideNo) then begin
+      if (UDRCsrw.ReportPosition>=0) then begin
+        pos = UDRCsrw.ReportPosition;
+      end else begin
+        if (UDRCsrw.Hide==kUserDefRepLineHideNo) and (HideRow==kUserDefRepLineHideNo) then begin
+          pos = posused + (((480-posused)/colrcwcnt)*(i+onemore));
+        end;
+      end;
+    end;
+    switch (UDRCsrw.ColType) begin
+      case kUserDefRepColumnTypeCode:
+        if (UDRCsrw.Hide==kUserDefRepLineHideNo) and (HideRow==kUserDefRepLineHideNo) then begin
+          if (startprintf) then begin
+            StartFormat(15);
+            startprintf = false;
+          end;
+          OutString(pos,0,UDRCsrw.Prefix & cod & UDRCsrw.Suffix,false);
+        end;
+      case kUserDefRepColumnTypeComment:
+        if (UDRCsrw.Hide==kUserDefRepLineHideNo) and (HideRow==kUserDefRepLineHideNo) then begin
+          if (startprintf) then begin
+            StartFormat(15);
+            startprintf = false;
+          end;
+          OutString(pos,0,UDRCsrw.Prefix & comment & UDRCsrw.Suffix,false);
+        end;
+        onemore = 1;
+    end;
+  end;
+  if (startprintf==false) then begin
+    EndFormat;
+  end;
+  return;
+end;
+
+function Boolean PrintDetails_WithBalance_WithColumns(Integer HideRow,record UserDefRepColumnsVc UserDefRepColumnsr,record TRVc gKeyRn_TRr,Integer ValType,string cod,string comment)
+begin   
+  Integer tri,trrwcnt;
+  Boolean startprintf,printf;
+  Integer onemore;
+  row UserDefRepColumnsVc UDRCsrw;
+  Integer i,colrcwcnt,visiblecolrcwcnt,hidden;
+  Integer pos,posused;
+  row TRVc TRrw;
+  string 255 dblstr,text,id;
+  Boolean accnameprntf;
+  Integer ai,acnt;
+  Array string 255 aaccnumber;
+  vector Boolean aaccnumberprntdf;
+  transaction string 10 gKeyRn_TRr_AccNumber;
+  transaction string 5 keycurcod;
+  val tmp;
+  string 20 pref,suff;
+
+  colrcwcnt = MatRowCnt(UserDefRepColumnsr);
+
+  trrwcnt = MatRowCnt(gKeyRn_TRr);           
+  for (tri=0;tri<trrwcnt;tri=tri+1) begin
+    MatRowGet(gKeyRn_TRr,tri,TRrw);
+    if (nonblank(TRrw.AccNumber)) then begin
+      aaccnumber[acnt] = TRrw.AccNumber;
+      acnt = acnt + 1;
+    end;
+  end;
+
+  /* UST: this gives double lines for calculated columns, commented out now
+  for (ai=0;ai<acnt;ai=ai+1) begin
+    if (aaccnumberprntdf[aaccnumber[ai]]==false) then begin
+      aaccnumberprntdf[aaccnumber[ai]] = true;
+      for (i=0;i<colrcwcnt;i=i+1) begin
+        MatRowGet(UserDefRepColumnsr,i,UDRCsrw);
+        switch (UDRCsrw.ColType) begin
+          case kUserDefRepColumnTypeColumnsSumup:
+            gKeyRn_TRr_AccNumber = aaccnumber[ai];
+            keycurcod = gKeyRn_TRr.Comment;
+            tmp = EvalToVal(UDRCsrw.AddInfo);
+            TRrw.TFromFileName = UDRCsrw.ColCode;
+            TRrw.AccNumber = aaccnumber[ai];
+            TRrw.DebVal = -tmp;
+            MatRowPut(gKeyRn_TRr,MatRowCnt(gKeyRn_TRr),TRrw);
+            SetTransVal(TRrw.AccNumber & "," & keycurcod & "," & UDRCsrw.ColCode,tmp);
+        end;
+      end;
+    end;
+  end;
+  */
+  
+  visiblecolrcwcnt = colrcwcnt;
+  for (i=0;i<colrcwcnt;i=i+1) begin
+    MatRowGet(UserDefRepColumnsr,i,UDRCsrw);
+    if (UDRCsrw.Hide!=kUserDefRepLineHideNo) then begin visiblecolrcwcnt = visiblecolrcwcnt - 1; end;
+  end;
+
+  startprintf = true;
+  onemore = 0;
+  for (i=0;i<colrcwcnt;i=i+1) begin
+    MatRowGet(UserDefRepColumnsr,i,UDRCsrw);
+    if (i==0) then begin
+      if (UDRCsrw.ColType!=-1) then begin
+        onemore = 1;
+      end;
+    end;
+    if (UDRCsrw.Hide==kUserDefRepLineHideNo) then begin
+      if (UDRCsrw.ReportPosition>=0) then begin
+        pos = UDRCsrw.ReportPosition;
+      end else begin
+        if (UDRCsrw.Hide==kUserDefRepLineHideNo) and (HideRow==kUserDefRepLineHideNo) then begin
+          pos = posused + (((480-posused)/visiblecolrcwcnt)*((i-hidden)+onemore));
+        end;
+      end;
+    end else begin
+      hidden = hidden + 1;
+    end;
+    switch (UDRCsrw.ColType) begin
+      case kUserDefRepColumnTypeCode:
+        if (UDRCsrw.Hide==kUserDefRepLineHideNo) and (HideRow==kUserDefRepLineHideNo) then begin
+          if (startprintf) then begin
+            startprintf = false;
+          end;
+        end;
+      case kUserDefRepColumnTypeComment:
+        if (UDRCsrw.Hide==kUserDefRepLineHideNo) and (HideRow==kUserDefRepLineHideNo) then begin
+          if (startprintf) then begin
+            startprintf = false;
+          end;
+        end;
+        onemore = 1;
+      otherwise
+        if (UDRCsrw.Hide==kUserDefRepLineHideNo) and (HideRow==kUserDefRepLineHideNo) then begin
+          if (startprintf) then begin
+            startprintf = false;
+          end;          
+          trrwcnt = MatRowCnt(gKeyRn_TRr);
+          for (tri=0;tri<trrwcnt;tri=tri+1) begin
+            MatRowGet(gKeyRn_TRr,tri,TRrw);
+            if (TRrw.TFromFileName==UDRCsrw.ColCode) then begin
+              TRrw.Reconsf = pos;
+              MatRowPut(gKeyRn_TRr,tri,TRrw);
+            end;
+          end;
+        end;
+    end;
+  end;
+    
+  trrwcnt = MatRowCnt(gKeyRn_TRr);
+  for (ai=0;ai<acnt;ai=ai+1) begin
+    aaccnumberprntdf[aaccnumber[ai]] = false;
+  end;
+
+  for (ai=0;ai<acnt;ai=ai+1) begin
+    if (aaccnumberprntdf[aaccnumber[ai]]==false) then begin
+      aaccnumberprntdf[aaccnumber[ai]] = true;
+      
+      if (HideRow==kUserDefRepLineHideNo) then begin
+        if (!printf) then begin
+          PrintHeader_WithBalance_WithColumns(HideRow,UserDefRepColumnsr,cod,comment);
+          Gray_Divider(0,1);
+          printf = true;
+        end;
+        StartFormat(15);
+        accnameprntf = false;
+        for (tri=0;tri<trrwcnt;tri=tri+1) begin
+          MatRowGet(gKeyRn_TRr,tri,TRrw);
+          if (TRrw.AccNumber==aaccnumber[ai]) then begin
+            for (i=0;i<colrcwcnt;i=i+1) begin
+              MatRowGet(UserDefRepColumnsr,i,UDRCsrw);
+              if (UDRCsrw.Hide==kUserDefRepLineHideNo) then begin
+                pref = UDRCsrw.Prefix;
+                suff = UDRCsrw.Suffix;
+                if (TRrw.TFromFileName==UDRCsrw.ColCode) then begin
+                  switch (UDRCsrw.ColType) begin
+                    case kUserDefRepColumnTypeActuals:
+                      PrintAccountCodeAndComment(accnameprntf,TRrw);
+                      OutString(TRrw.Reconsf,0,KeyValToString(-TRrw.DebVal,ValType,pref,suff),true);
+                    case kUserDefRepColumnTypeBudget:
+                      PrintAccountCodeAndComment(accnameprntf,TRrw);
+                      OutString(TRrw.Reconsf,0,KeyValToString(-TRrw.DebVal,ValType,pref,suff),true);
+                    case kUserDefRepColumnTypeRevBudget:
+                      PrintAccountCodeAndComment(accnameprntf,TRrw);
+                      OutString(TRrw.Reconsf,0,KeyValToString(-TRrw.DebVal,ValType,pref,suff),true);
+                    case kUserDefRepColumnTypePOCommitments:
+                      PrintAccountCodeAndComment(accnameprntf,TRrw);
+                      OutString(TRrw.Reconsf,0,KeyValToString(TRrw.DebVal,ValType,pref,suff),true);
+                    case kUserDefRepColumnTypePUAccruals:
+                      PrintAccountCodeAndComment(accnameprntf,TRrw);
+                      OutString(TRrw.Reconsf,0,KeyValToString(TRrw.DebVal,ValType,pref,suff),true);
+                    case kUserDefRepColumnTypeColumnsSumup:
+                      PrintAccountCodeAndComment(accnameprntf,TRrw);
+                      OutString(TRrw.Reconsf,0,KeyValToString(TRrw.DebVal,ValType,pref,suff),true);
+                  end;
+                end;
+              end;
+            end;
+          end;
+        end;
+        EndFormat;
+      end;
+    end;
+  end;
+  if (printf) then begin
+    Gray_Divider(0,1);
+  end;
+  PrintDetails_WithBalance_WithColumns = printf;
+  return;
+end;
+
+procedure PrintHeader_WithBalance(string cod,string comment,Integer HideRow,record TRVc gKeyRn_TRr)
+begin
+  row TRVc TRrw;
+  Integer tri,trrwcnt;
+  transaction string 255 gKeyRn_columncod;
+  
+  if (HideRow==kUserDefRepLineHideNo) then begin
+    StartFormat(15);
+    OutString(0,0,cod,false);
+    OutString(2,0,comment,false);
+    EndFormat;
+    Gray_Divider(0,1);
+  end;
+  return;
+end;
+
+procedure PrintDetails_WithBalance(string cod,string comment,Integer HideRow,record TRVc gKeyRn_TRr,Integer ValType,val sum)
+begin
+  row TRVc TRrw;
+  Integer tri,trrwcnt;
+  Boolean printf;
+
+  if (HideRow==kUserDefRepLineHideNo) then begin
+    trrwcnt = MatRowCnt(gKeyRn_TRr);
+    for (tri=0;tri<trrwcnt;tri=tri+1) begin
+      MatRowGet(gKeyRn_TRr,tri,TRrw);
+      if (nonblank(TRrw.AccNumber)) then begin
+        if (!printf) then begin
+          PrintHeader_WithBalance(cod,comment,HideRow,gKeyRn_TRr);
+          printf = true;
+        end;
+        StartFormat(15);
+        OutStringID(15,"DblKeyNL",TRrw.AccNumber,false,TRrw.Objects & ";" & TRrw.VATCode);
+        OutString(80,0,TRrw.Comment,false);
+        OutVal(1,0,TRrw.DebVal,ValType,true);
+        EndFormat;
+      end;
+    end;
+  end;
+  if (printf) then begin
+    Gray_Divider(0,1);
+    StartFormat(15);
+    OutString(0,0,USetStr(3222) & " " & comment,false);
+    OutVal(1,0,sum,ValType,true);
+    EndFormat;
+  end else begin
+    StartFormat(15);
+    OutString(0,0,cod,false);
+    OutString(2,0,comment,false);
+    OutVal(1,0,sum,ValType,true);
+    EndFormat;
+  end;
+  return;
+end;
+
+procedure KeyRnSort()
+begin
+  transaction record TRVc gKeyRn_TRr;
+  row TRVc TRrw1,TRrw2;
+  Boolean Sorted;
+  Integer i,rwcnt;
+  
+  rwcnt = MatRowCnt(gKeyRn_TRr);
+  while (!Sorted) begin
+    Sorted = true;
+    for (i=0;i<rwcnt-1;i=i+1) begin
+      MatRowGet(gKeyRn_TRr,i,TRrw1);
+      MatRowGet(gKeyRn_TRr,i+1,TRrw2);
+      if (TRrw1.AccNumber>TRrw2.AccNumber) then begin
+        MatRowPut(gKeyRn_TRr,i+1,TRrw1);
+        MatRowPut(gKeyRn_TRr,i,TRrw2);
+        Sorted = false;
+      end;
+    end;
+  end;
+  return;
+end;
+
+procedure KeyRnPrint(Integer Notation,Integer AccSpec,string ObjStr,string shortname,row UserDefRepVc UDRrw,Integer IncDaughter,Integer basecurncy,record UserDefRepColumnsVc UserDefRepColumnsr)
+begin
+  row UserDefRepColumnsVc UDRCsrw;
+  val tmp;
+  string 200 dblstr;
+  Integer colrcwcnt,i,visiblecolrcwcnt;
+  Integer posused,onemore,hidden;
+  Integer ValType;
+  Integer pos,basecurncytype;
+  Boolean startprintf,detailsprintf;
+  vector val vtmp;
+  transaction string 255 gKeyRn_columncod;
+  transaction integer gKeyRn_columntype;
+  transaction record TRVc gKeyRn_TRr;
+  row TRVc TRrw;
+  Integer tri,trrwcnt;
+  string 20 pref,suff;
+  
+  if (IncDaughter==1) then begin
+    if (InString(UDRrw.defstr,"KEY")==0) then begin
+      dblstr = "DblKeyComp";
+    end else begin
+      dblstr = "DblKeyCompKEY";
+    end;
+  end;
+//  gKeyRn_linecod = UDRrw.Code;  
+//  gKeyRn_columncod = ""; 
+ 
+  RecordClear(gKeyRn_TRr);
+  gKeyRn_TRr.Comment = UDRrw.Code;
+  
+  switch (Notation) begin
+    case 0: ValType = M4Val;
+    case 1: ValType = M4TVal;
+    case 2: ValType = M4MVal;
+    case 3: ValType = M4Val;
+    case 4: ValType = M40Val;
+    otherwise ValType = M4Val;
+  end;    
+  colrcwcnt = MatRowCnt(UserDefRepColumnsr);
+  if (colrcwcnt<=0) then begin
+    switch (AccSpec) begin
+      case 4:
+        if (nonblank(UDRrw.Code)) then begin
+          gKeyRn_columncod = UDRrw.Code;  
+          ClearRow(gKeyRn_TRr,TRrw,1);
+          TRrw.TFromFileName = UDRrw.Code;
+          MatRowPut(gKeyRn_TRr,MatRowCnt(gKeyRn_TRr),TRrw);
+        end;
+    end;        
+    if (IsChart(UDRrw.defstr)) then begin
+      StartFormatChart(150);
+    end;
+    CalcKeyRn(UDRrw.Code,UDRrw.defstr,IncDaughter,basecurncy,"",0,UDRrw.PeriodType,UDRrw.PeriodOffset,UDRrw.PeriodLength,ObjStr,"","",tmp);
+    if (IsChart(UDRrw.defstr)) then begin
+      EndFormat;
+    end;
+    switch (AccSpec) begin
+      case 4:
+        if (nonblank(UDRrw.Code)) then begin
+          PrintDetails_WithBalance(UDRrw.Code,UDRrw.Comment,UDRrw.Hide,gKeyRn_TRr,ValType,tmp);
+        end else begin
+          goto LKeyRnPrintLine;
+        end;
+      otherwise
+LKeyRnPrintLine:;      
+        if (UDRrw.Hide==kUserDefRepLineHideNo) then begin
+          StartFormat(15);
+          OutStringID(0,dblstr,UDRrw.Code,false,shortname);
+          OutString(2,0,UDRrw.Comment,false);
+          OutVal(1,0,tmp,ValType,true);
+          EndFormat;
+        end;
+    end;
+  end else begin
+    startprintf = true;
+    for (i=0;i<colrcwcnt;i=i+1) begin
+      MatRowGet(UserDefRepColumnsr,i,UDRCsrw);
+      logtext(0,"    UDRCsrw " & UDRCsrw.ColCode);
+
+      switch (UDRCsrw.ColType) begin
+        case kUserDefRepColumnTypeCode:
+        case kUserDefRepColumnTypeComment:
+        otherwise
+          logtext(0,"AccSpec " & AccSpec);
+
+          switch (AccSpec) begin
+            case 4:
+              if (nonblank(UDRrw.Code)) then begin
+                gKeyRn_columncod = UDRCsrw.ColCode;  
+                gKeyRn_columntype = UDRCsrw.ColType;
+                ClearRow(gKeyRn_TRr,TRrw,1);
+                TRrw.TFromFileName = UDRCsrw.ColCode;
+                TRrw.Typ = UDRCsrw.ColType;
+                MatRowPut(gKeyRn_TRr,MatRowCnt(gKeyRn_TRr),TRrw);
+              end;
+          end;
+          if (IsChart(UDRrw.defstr)) then begin
+            if (startprintf) then begin
+              StartFormatChart(150);
+              startprintf = false;
+            end;
+          end;
+          basecurncytype = UDRCsrw.CurrencyType;
+          if (basecurncytype==kBaseCurrencySpecified) then begin
+            basecurncytype = basecurncy;
+          end;
+          logtext(0,"UDRrw.PeriodType " & UDRrw.PeriodType);
+
+          switch (UDRrw.PeriodType) begin
+            case kUserDefRepPeriodTypeFromColumnsDefintion:
+              CalcKeyRn(UDRrw.Code,UDRrw.defstr,IncDaughter,basecurncytype,UDRCsrw.ColCode,UDRCsrw.ColType,UDRCsrw.PeriodType,UDRCsrw.PeriodOffset,UDRCsrw.PeriodLength,UDRCsrw.Objects,UDRCsrw.AddInfo,UDRCsrw.CompCode,tmp);
+            otherwise
+              CalcKeyRn(UDRrw.Code,UDRrw.defstr,IncDaughter,basecurncytype,UDRCsrw.ColCode,UDRCsrw.ColType,UDRrw.PeriodType,UDRrw.PeriodOffset,UDRrw.PeriodLength,UDRCsrw.Objects,UDRCsrw.AddInfo,UDRCsrw.CompCode,tmp);
+          end;
+          logtext(0,"UDRrw.Code & UDRCsrw.ColCode " & UDRrw.Code & UDRCsrw.ColCode);
+
+          vtmp[UDRrw.Code & UDRCsrw.ColCode] = tmp;
+      end;
+    end;
+    
+    if (startprintf==false) then begin
+      EndFormat;
+    end;
+    
+    KeyRnSort;
+    switch (AccSpec) begin
+      case 4:
+        if (nonblank(UDRrw.Code)) then begin
+          detailsprintf = PrintDetails_WithBalance_WithColumns(UDRrw.Hide,UserDefRepColumnsr,gKeyRn_TRr,ValType,UDRrw.Code,UDRrw.Comment);              
+        end;
+    end;
+
+    visiblecolrcwcnt = colrcwcnt;
+    for (i=0;i<colrcwcnt;i=i+1) begin
+      MatRowGet(UserDefRepColumnsr,i,UDRCsrw);
+      if (UDRCsrw.Hide!=kUserDefRepLineHideNo) then begin visiblecolrcwcnt = visiblecolrcwcnt - 1; end;
+    end;
+
+    hidden = 0;
+    startprintf = true;
+    onemore = 0;
+    for (i=0;i<colrcwcnt;i=i+1) begin
+      MatRowGet(UserDefRepColumnsr,i,UDRCsrw);
+      pref = UDRCsrw.Prefix;
+      suff = UDRCsrw.Suffix;
+      if (nonblank(UDRrw.defstr)) or (AccSpec!=4) or true then begin
+        if (i==0) then begin
+          if (UDRCsrw.ColType!=-1) then begin
+            onemore = 1;
+          end;
+        end;
+        if (UDRCsrw.Hide==kUserDefRepLineHideNo) then begin
+          if (UDRCsrw.ReportPosition>=0) then begin
+            pos = UDRCsrw.ReportPosition;
+          end else begin
+            if (UDRCsrw.Hide==kUserDefRepLineHideNo) and (UDRrw.Hide==kUserDefRepLineHideNo) then begin
+              pos = posused + (((480-posused)/visiblecolrcwcnt)*((i-hidden)+onemore));
+            end;
+          end;
+        end else begin
+          hidden = hidden + 1;
+        end;
+
+        switch (UDRCsrw.ColType) begin
+          case kUserDefRepColumnTypeCode:
+            if (UDRCsrw.Hide==kUserDefRepLineHideNo) and (UDRrw.Hide==kUserDefRepLineHideNo) then begin
+              if (startprintf) then begin
+                StartFormat(15);
+                startprintf = false;
+              end;
+              switch (AccSpec) begin
+                case 4:
+                  if (!detailsprintf) then begin
+                    OutStringID(pos,dblstr,UDRrw.Code,false,shortname);
+                  end;
+                otherwise
+                  OutStringID(pos,dblstr,UDRrw.Code,false,shortname);
+              end;
+            end;
+          case kUserDefRepColumnTypeComment:
+            if (UDRCsrw.Hide==kUserDefRepLineHideNo) and (UDRrw.Hide==kUserDefRepLineHideNo) then begin
+              if (startprintf) then begin
+                StartFormat(15);
+                startprintf = false;
+              end;
+              switch (AccSpec) begin
+                case 4:
+                  if (detailsprintf) then begin
+                    if (nonblank(UDRrw.Code)) then begin
+                      OutString(0,0,USetStr(3222) & " " & UDRrw.Comment,false);
+                    end else begin
+                      OutString(pos,0,UDRrw.Comment,false);
+                    end;
+                  end else begin
+                    OutString(pos,0,UDRrw.Comment,false);
+                  end;
+                otherwise
+                  OutString(pos,0,UDRrw.Comment,false);
+              end;
+            end;
+            onemore = 1;
+          otherwise
+            if (UDRCsrw.Hide==kUserDefRepLineHideNo) and (UDRrw.Hide==kUserDefRepLineHideNo) then begin
+              if (startprintf) then begin
+                StartFormat(15);
+                startprintf = false;
+              end;
+              OutString(pos,0,KeyValToString(vtmp[UDRrw.Code & UDRCsrw.ColCode],ValType,pref,suff),true);            
+            end;
+        end;
+      end;
+    end;
+    if (startprintf==false) then begin
+      EndFormat;
+    end;
+  end;
+  return;
+end;
+
+global
+procedure KeyRnBottom(record RcVc RepSpec)
+begin
+  if (RepSpec.flags[4]!=0) then begin
+    ListPerTrans(RepSpec);
+  end;
+  return;
+end;
+
+procedure KeyRnColHeader(record UserDefRepColumnsVc UserDefRepColumnsr)
+begin
+  row UserDefRepColumnsVc UDRCsrw;
+  Integer colrcwcnt,i,visiblecolrcwcnt,hidden;
+  Integer posused,onemore;
+  Integer pos;
+
+  colrcwcnt = MatRowCnt(UserDefRepColumnsr);
+  if (colrcwcnt>0) then begin
+    StartFormat(15);
+//    OutString(0,0,USetStr(3282),false);
+//    OutString(2,0,USetStr(3283),false);
+    visiblecolrcwcnt = colrcwcnt;
+    for (i=0;i<colrcwcnt;i=i+1) begin
+      MatRowGet(UserDefRepColumnsr,i,UDRCsrw);
+      if (UDRCsrw.Hide!=kUserDefRepLineHideNo) then begin visiblecolrcwcnt = visiblecolrcwcnt - 1; end;
+    end;
+
+    for (i=0; i<colrcwcnt; i=i+1) begin
+      MatRowGet(UserDefRepColumnsr,i,UDRCsrw);
+      if (i==0) then begin
+        if (UDRCsrw.ColType!=-1) then begin
+          onemore = 1;
+        end;
+      end;
+      if (UDRCsrw.Hide==kUserDefRepLineHideNo) then begin
+        if (UDRCsrw.ReportPosition>=0) then begin
+          pos = UDRCsrw.ReportPosition;
+        end else begin
+          pos = posused + (((480-posused)/visiblecolrcwcnt)*((i-hidden)+onemore));
+        end;
+      end else begin
+        hidden = hidden + 1;
+      end;
+      switch (UDRCsrw.ColType) begin
+        case -2:
+          if (UDRCsrw.Hide==kUserDefRepLineHideNo) then begin
+            OutString(pos,0,UDRCsrw.Comment,false);
+          end;
+        case -1:
+          if (UDRCsrw.Hide==kUserDefRepLineHideNo) then begin
+            OutString(pos,0,UDRCsrw.Comment,false);
+          end;
+          onemore = 1;
+        otherwise
+          if (UDRCsrw.Hide==kUserDefRepLineHideNo) then begin
+            OutString(pos,0,UDRCsrw.Comment,true);
+          end;
+      end;
+    end;
+    EndFormat;
+    Gray_Divider(0,1);
+  end;
+  return;
+end;
+
+procedure DoKeyRn_ObjType(record UserDefRepVc UserDefRepr,record UserDefRepColumnsVc UserDefRepColumnsr,record RcVc RepSpec)
+begin
+  Integer gKsprwcnt,i;
+  row UserDefRepVc UDRrw;
+  Boolean testf;
+  Boolean found,FirstPage;
+  record ObjVc Objr;
+  record RcVc specifiedRepSpec;
+  transaction record RcVc KeyRepSpec;
+  Boolean firstf;
+
+  firstf = true;
+  gKsprwcnt = MatRowCnt(UserDefRepr);
+  RecordCopy(specifiedRepSpec,KeyRepSpec);
+  Objr.OTCode = RepSpec.ObjType;
+  found = true;
+  FirstPage = true;
+  while (LoopKey("OTCode",Objr,1,found)) begin  
+    if (Objr.OTCode!=RepSpec.ObjType) then begin found = false; end;
+    if (found) then begin
+      testf = true;
+      if (nonblank(specifiedRepSpec.ObjStr)) then begin
+        if (Objr.Code!=specifiedRepSpec.ObjStr) then begin testf = false; end;
+      end;
+      if (nonblank(specifiedRepSpec.f6)) then begin
+        if (Objr.Code==specifiedRepSpec.f6) then begin testf = false; end;
+      end;
+      if (testf) then begin
+        if (RepSpec.flags[0]!=0) then begin
+          if (!FirstPage) then begin
+            NewPage(false);
+          end;
+          FirstPage = false;
+        end;
+        StartFormat(15);
+         OutString(0,0,Objr.Code,false);
+         OutString(100,0,Objr.Comment,false);
+        EndFormat;
+        Gray_Divider(0,1);
+        RecordCopy(RepSpec,specifiedRepSpec);        
+        RepSpec.ObjStr = Objr.Code;
+        RecordCopy(KeyRepSpec,RepSpec);        
+        for (i=0; i<gKsprwcnt; i=i+1) begin
+          MatRowGet(UserDefRepr,i,UDRrw);
+          testf = true;
+          if (nonblank(RepSpec.f3)) then begin
+            if (SetInSet(UDRrw.Code,RepSpec.f3)==false) then begin testf = false; end;
+          end;
+          if (testf) then begin
+            if (RepSpec.AccSpec==4) then begin
+              if (!firstf) then begin
+                StartFormat(15);
+                EndFormat;
+              end;
+              firstf = false;
+            end;
+            KeyRnPrint(RepSpec.Notation,RepSpec.AccSpec,RepSpec.ObjStr,UserDefRepr.shortname,UDRrw,RepSpec.IncDaughter,RepSpec.basecurncy,UserDefRepColumnsr);
+          end;
+        end;
+        StartFormat(15);
+        EndFormat;
+      end;
+    end;
+  end;
+  return;
+end;
+
+procedure DoKeyRn(record UserDefRepVc UserDefRepr,record UserDefRepColumnsVc UserDefRepColumnsr,record RcVc RepSpec)
+begin
+  row UserDefRepVc UDRrw;
+  Integer gKsprwcnt,i;
+  Boolean testf;
+  Boolean firstf;
+  transaction record UserDefRepVc gKeyRn_UserDefRepr;
+  transaction record UserDefRepColumnsVc gKeyRn_UserDefRepColumnsr;
+
+  firstf = true;
+  KeyRnHeader(RepSpec,3221);
+  KeyRnColHeader(UserDefRepColumnsr);
+  if (nonblank(RepSpec.ObjType)) then begin
+    DoKeyRn_ObjType(UserDefRepr,UserDefRepColumnsr,RepSpec);
+  end else begin  
+    gKeyRn_UserDefRepr = UserDefRepr;
+    gKeyRn_UserDefRepColumnsr = UserDefRepColumnsr;
+    gKsprwcnt = MatRowCnt(UserDefRepr);
+    for (i=0; i<gKsprwcnt; i=i+1) begin
+      MatRowGet(UserDefRepr,i,UDRrw);
+      logtext(0,"UDRrw" & UDRrw.Code);
+
+      testf = true;
+      if (nonblank(RepSpec.f3)) then begin
+        if (SetInSet(UDRrw.Code,RepSpec.f3)==false) then begin testf = false; end;
+        if (blank(UDRrw.Code)) then begin testf = false; end;
+      end;
+      if (testf) then begin
+        if (RepSpec.AccSpec==4) then begin
+          if (!firstf) then begin
+            StartFormat(15);
+            EndFormat;
+          end;
+          firstf = false;
+        end;
+        KeyRnPrint(RepSpec.Notation,RepSpec.AccSpec,RepSpec.ObjStr,UserDefRepr.shortname,UDRrw,RepSpec.IncDaughter,RepSpec.basecurncy,UserDefRepColumnsr);
+      end;
+    end;
+  end;
+  KeyRnBottom(RepSpec);
+  EndJob;
+  return;
+end;
+
+global
+procedure KeyRn(record RcVc RepSpec)
+begin
+  record UserDefRepVc UserDefRepr;
+  record UserDefRepColumnsVc UserDefRepColumnsr;
+  
+logtext(0,"KeyRn");
+
+  if (blank(RepSpec.shortname)) then begin
+    UserDefRepr.shortname = RepSpec.repname;
+  end else begin
+    UserDefRepr.shortname = RepSpec.shortname;
+  end;
+  if (ReadFirstMain(UserDefRepr,1,true)==false) then begin
+    UserDefRepr.shortname = RepSpec.repname;
+    if (ReadFirstMain(UserDefRepr,1,true)==false) then begin
+      MessageBox(3167,"");
+      goto LKeyRn;
+    end;
+  end;  
+  UserDefRepColumnsr.shortname = RepSpec.shortname;
+  if (ReadFirstMain(UserDefRepColumnsr,1,true)==false) then begin
+    UserDefRepColumnsr.shortname = RepSpec.repname;
+    ReadFirstMain(UserDefRepColumnsr,1,true);
+  end;
+  if (RepSpec.AccSpec==6) then begin
+    RepSpec.AccSpec = 4;
+    RepSpec.flags[19] = 1;
+  end;
+  DoKeyRn(UserDefRepr,UserDefRepColumnsr,RepSpec);
+LKeyRn:;  
+  return;
+end;
+
+procedure CalcExportVAT(record RcVc RepSpec,var vector val v_vatsum)
+begin
+  Boolean found,testf,vatcalculated,firstf;
+  record IVVc IVr;
+  record VATIVVc VATIVr;
+  record VATCodeBlock VATCodeb;
+  vector val vK;
+  array string 255 a_tags;
+  Integer i,rwcnt,ai;
+  record IPVc IPr;
+  row IPVc IPrw;
+  record IPrsVc IPrsr;
+  record IVVc ipIVr;
+  row IVVc ipIVrw;
+  vector Boolean vinvoiceprntdf;
+  record VIVc VIr;
+  record VATVIVc VATVIr;
+  record IntIVVc IntIVr;
+  record ExpVc Expr;
+  record ExpVc tmpExpr;
+  row ExpVc Exprw;
+  array record ExpVc aExpr;
+  val expvat;
+  record RcVc RepSpec2;
+
+  RecordCopy(RepSpec2,RepSpec);
+  RepSpec2.flags[20] = 3;
+  found = true;
+  BlockLoad(VATCodeb);
+  ResetLoop(IVr);
+  IVr.TransDate = RepSpec2.sStartDate;
+  while (LoopKey("TransDate",IVr,1,found)) begin
+    if (DateInRange(IVr.TransDate,RepSpec2.sStartDate,RepSpec2.sEndDate)==false) then begin
+      found = false;
+    end;
+    if (found) then begin
+      testf = true;
+      if (HasLocalization("POL")) then begin
+        if (IVr.FiscalFlag==0 and IVr.POLVATExpDocType==kPOLVATExpDocTypeInvReceipt) then begin testf = false; end;
+      end;
+      if (IVr.OKFlag==0) then begin testf = false; end;
+      if (IVr.Invalid!=0) then begin testf = false; end;
+      if (IVr.IPBookVAT!=0) then begin
+        testf = false;
+      end;
+      if (testf) then begin
+        VATIVr.IVNr = IVr.SerNr;
+        if (ReadFirstKey("IVNr",VATIVr,1,true)) then begin
+          if (VATIVr.OKFlag!=0) then begin testf = false; end;
+        end;
+      end;
+      if (testf) then begin
+        ClearVector(vK);
+        InitVector(vK);
+        CalculateInvoiceVector2(RepSpec2,VATCodeb,IVr,vK,vatcalculated);
+        GetVectorTags(vK,a_tags);
+        SortStringArray(a_tags);
+        for (i=0;i<a_tags.length;i=i+1) begin
+          v_vatsum[a_tags[i]] = v_vatsum[a_tags[i]] + vK[a_tags[i]];
+        end;
+      end;
+    end;
+  end;
+
+  found = true;
+  ResetLoop(VATIVr);
+  VATIVr.TransDate = RepSpec2.sStartDate;
+  while (LoopKey("TransDate",VATIVr,1,found)) begin
+    if (DateInRange(VATIVr.TransDate,RepSpec2.sStartDate,RepSpec2.sEndDate)==false) then begin
+      found = false;
+    end;
+    if (found) then begin
+      testf = true;
+      if (VATIVr.OKFlag==0) then begin testf = false; end;
+      if (VATIVr.Invalid!=0) then begin testf = false; end;
+      if (testf) then begin      
+        ClearVector(vK);
+        InitVector(vK);
+        CalculateVATCorrectionVector2(RepSpec2,VATCodeb,VATIVr,vK);
+        GetVectorTags(vK,a_tags);
+        SortStringArray(a_tags);
+        for (i=0;i<a_tags.length;i=i+1) begin
+          v_vatsum[a_tags[i]] = v_vatsum[a_tags[i]] + vK[a_tags[i]];
+        end;
+      end;
+    end;
+  end;
+
+  found = true;
+  ResetLoop(IPrsr);
+  IPrsr.TransDate = RepSpec2.sStartDate;
+  while (LoopKey("TransDate",IPrsr,1,found)) begin
+    if (DateInRange(IPrsr.TransDate,RepSpec2.sStartDate,RepSpec2.sEndDate)==false) then begin found = false; end;
+    if (found) then begin
+      testf = true;
+      if (IPrsr.TransType!=kIPrsTransTypeReceipt) then begin testf = false; end;
+      if (IPrsr.IVNr<=0) then begin testf = false; end;
+      if (testf) then begin
+        IPr.SerNr = IPrsr.TransNr;
+        if (ReadFirstMain(IPr,1,true)) then begin
+          firstf = true;
+          rwcnt = MatRowCnt(IPr);
+          for (i=0;i<rwcnt;i=i+1) begin
+            MatRowGet(IPr,i,IPrw);
+            testf = true;
+            if (IPrw.InvoiceNr<=0) then begin testf = false; end;
+            if (vinvoiceprntdf[IPrw.InvoiceNr]) then begin testf = false; end;
+            if (testf) then begin
+              IVr.SerNr = IPrw.InvoiceNr;
+              ReadFirstMain(IVr,1,true);
+              if (IVr.IPBookVAT==0) then begin testf = false; end;
+            end;
+            if (testf) then begin
+              if (firstf) then begin
+                RecordCopy(ipIVr,IVr);
+                ipIVr.InclVAT = 2;
+                while (MatRowCnt(ipIVr)>0) begin
+                  MatRowDelete(ipIVr,0);
+                end;
+                firstf = false;
+              end;
+              ClearRow(ipIVr,ipIVrw,kInvoiceRowTypeNormal);
+              ipIVrw.VATCode = IPrw.VATCode;
+              ipIVrw.Sum = IPrw.InvVal;
+              ipIVrw.Quant = 1;
+              MatRowPut(ipIVr,MatRowCnt(ipIVr),ipIVrw);
+              IVSumup(ipIVr,true);  
+            end;
+          end;
+          if (MatRowCnt(ipIVr)>0) then begin
+            ClearVector(vK);
+            InitVector(vK);
+            CalculateInvoiceVector2(RepSpec2,VATCodeb,ipIVr,vK,vatcalculated);
+            GetVectorTags(vK,a_tags);
+            SortStringArray(a_tags);
+            for (i=0;i<a_tags.length;i=i+1) begin
+              v_vatsum[a_tags[i]] = v_vatsum[a_tags[i]] + vK[a_tags[i]];
+            end;
+          end;
+        end;
+      end;
+    end;
+  end;
+
+  found = true;
+  ResetLoop(IntIVr);
+  IntIVr.TransDate = RepSpec2.sStartDate;
+  while (LoopKey("TransDate",IntIVr,1,found)) begin
+    if (DateInRange(IntIVr.TransDate,RepSpec2.sStartDate,RepSpec2.sEndDate)==false) then begin
+      found = false;
+    end;
+    if (found) then begin
+      testf = true;
+      if (IntIVr.OKFlag==0) then begin testf = false; end;
+      if (IntIVr.Invalid!=0) then begin testf = false; end;
+      if (IntIVr.VATInfluence==kVATInfluencePL) then begin testf = false; end;
+      if (testf) then begin
+        ClearVector(vK);
+        InitVector(vK);
+        CalculateInternalInvoiceVector2(RepSpec2,VATCodeb,IntIVr,vK);
+        GetVectorTags(vK,a_tags);
+        SortStringArray(a_tags);
+        for (i=0;i<a_tags.length;i=i+1) begin
+          v_vatsum[a_tags[i]] = v_vatsum[a_tags[i]] + vK[a_tags[i]];
+        end;
+      end;
+    end;
+  end;
+
+  found = true;
+  ResetLoop(VIr);
+  VIr.TransDate = RepSpec2.sStartDate;
+  while (LoopKey("TransDate",VIr,1,found)) begin
+    if (DateInRange(VIr.TransDate,RepSpec2.sStartDate,RepSpec2.sEndDate)==false) then begin
+      found = false;
+    end;
+    if (found) then begin
+      testf = true;
+      if (VIr.OKFlag==0) then begin testf = false; end;
+      if (VIr.Invalid!=0) then begin testf = false; end;
+      if (VIr.OPBookVAT!=0) then begin 
+        testf = false; 
+      end;
+      if (testf) then begin        
+        VATVIr.VINr = VIr.SerNr;
+        if (ReadFirstKey("VINr",VATVIr,1,true)) then begin
+          if (VATVIr.OKFlag!=0) then begin testf = false; end;
+        end;
+      end;
+      if (testf) then begin        
+        ClearVector(vK);
+        InitVector(vK);
+        CalculatePurchaseInvoiceVector(RepSpec2,VATCodeb,VIr,vK);
+        GetVectorTags(vK,a_tags);
+        SortStringArray(a_tags);
+        for (i=0;i<a_tags.length;i=i+1) begin
+          v_vatsum[a_tags[i]] = v_vatsum[a_tags[i]] + vK[a_tags[i]];
+        end;
+      end;
+    end;
+  end;
+
+  found = true;
+  ResetLoop(VATVIr);
+  VATVIr.TransDate = RepSpec2.sStartDate;
+  while (LoopKey("TransDate",VATVIr,1,found)) begin
+    if (DateInRange(VATVIr.TransDate,RepSpec2.sStartDate,RepSpec2.sEndDate)==false) then begin
+      found = false;
+    end;
+    if (found) then begin
+      testf = true;
+      if (VATVIr.OKFlag==0) then begin testf = false; end;
+      if (VATVIr.Invalid!=0) then begin testf = false; end;
+      if (testf) then begin        
+        ClearVector(vK);
+        InitVector(vK);
+        CalculateVATVIVector(RepSpec2,VATCodeb,VATVIr,vK);
+        GetVectorTags(vK,a_tags);
+        SortStringArray(a_tags);
+        for (i=0;i<a_tags.length;i=i+1) begin
+          v_vatsum[a_tags[i]] = v_vatsum[a_tags[i]] + vK[a_tags[i]];
+        end;
+      end;
+    end;
+  end;
+
+  found = true;
+  ResetLoop(IntIVr);
+  IntIVr.TransDate = RepSpec2.sStartDate;
+  while (LoopKey("TransDate",IntIVr,1,found)) begin
+    if (DateInRange(IntIVr.TransDate,RepSpec2.sStartDate,RepSpec2.sEndDate)==false) then begin
+      found = false;
+    end;
+    if (found) then begin
+      testf = true;
+      if (IntIVr.OKFlag==0) then begin testf = false; end;
+      if (IntIVr.Invalid!=0) then begin testf = false; end;
+      if (IntIVr.VATInfluence==kVATInfluenceSL) then begin testf = false; end;
+      if (testf) then begin
+        ClearVector(vK);
+        InitVector(vK);
+        CalculatePurchaseInternalInvoiceVector(RepSpec2,VATCodeb,IntIVr,vK);
+        GetVectorTags(vK,a_tags);
+        SortStringArray(a_tags);
+        for (i=0;i<a_tags.length;i=i+1) begin
+          v_vatsum[a_tags[i]] = v_vatsum[a_tags[i]] + vK[a_tags[i]];
+        end;
+      end;
+    end;
+  end;
+
+  found = true;
+  ResetLoop(Expr);
+  Expr.TransDate = RepSpec2.sStartDate;
+  while (LoopKey("TransDate",Expr,1,found)) begin
+    if (DateInRange(Expr.TransDate,RepSpec2.sStartDate,RepSpec2.sEndDate)==false) then begin
+      found = false;
+    end;
+    if (found) then begin
+      testf = true;
+      if (Expr.OKFlag==0) then begin testf = false; end;
+      if (Expr.Invalid!=0) then begin testf = false; end;
+      if (testf) then begin        
+        ClearArray(aExpr);
+        PrepareExpenseArray(Expr,aExpr);
+        for (ai=0;ai<aExpr.length;ai=ai+1) begin
+          tmpExpr = aExpr[ai];
+          ClearVector(vK);
+          InitVector(vK);
+          rwcnt = MatRowCnt(tmpExpr);
+          for (i=0;i<rwcnt;i=i+1) begin
+            MatRowGet(tmpExpr,i,Exprw);
+            CalculateExpenseVector(RepSpec2,VATCodeb,tmpExpr,Exprw,vK,expvat);
+          end;
+          GetVectorTags(vK,a_tags);
+          SortStringArray(a_tags);
+          for (i=0;i<a_tags.length;i=i+1) begin
+            v_vatsum[a_tags[i]] = v_vatsum[a_tags[i]] + vK[a_tags[i]];
+          end;
+        end;
+      end;
+    end;
+  end;
+
+  return;
+end;
+
+procedure CalcPOLKey(record UserDefRepVc UDRr,string defstr,var val tmp,vector val v_vatsum)
+begin
+  LongInt pos,pos2;
+  string 255 tstr,code,op;
+  val oneval;
+
+  tmp = 0;
+  pos = 0;
+  pos2 = pos;
+  GetNextSubstring(defstr,pos,")",tstr);
+  while (tstr!="") begin
+    GetNextSubstring(defstr,pos2,"""",code);
+    GetNextSubstring(defstr,pos2,"""",code);
+    oneval = round(v_vatsum["K_" & code],SetRoundModeD(0));
+    op = left(tstr,1);
+    switch (op) begin
+      case "+": oneval = oneval;
+      case "-": oneval =  -oneval;
+      otherwise oneval = oneval;
+    end;
+    tmp = tmp + oneval;
+    pos2 = pos;
+    GetNextSubstring(defstr,pos,")",tstr);
+  end;
+
+  return;
+end;
+
+global
+procedure CalculateVATRn(record RcVc RepSpec,record UserDefRepVc UDRr,record UserDefRepColumnsVc UDRCsr,vector val vtmp)
+begin
+  Integer gKsprwcnt,i;
+  Integer colrcwcnt,ci;
+  Integer basecurncytype;
+  row UserDefRepVc UDRrw;
+  row UserDefRepColumnsVc UDRCsrw;
+  val tmp;
+
+  colrcwcnt = MatRowCnt(UDRCsr);
+  
+  gKsprwcnt = MatRowCnt(UDRr);
+/*  
+  for (i=0; i<gKsprwcnt; i=i+1) begin
+    MatRowGet(UDRr,i,UDRrw);
+    if (RepSpec.AccSpec==6) then begin
+      RepSpec.AccSpec = 4;
+      RepSpec.flags[19] = 1;
+    end;
+    if (InString(UDRrw.defstr,"KEY")==0) then begin
+    
+      if (colrcwcnt<=0) then begin
+        CalcKeyRn(UDRrw.Code,UDRrw.defstr,RepSpec.IncDaughter,RepSpec.basecurncy,"",0,UDRrw.PeriodType,UDRrw.PeriodOffset,UDRrw.PeriodLength,RepSpec.ObjStr,"","",tmp);    
+        vtmp[UDRrw.Code] = tmp;
+      end else begin
+        for (ci=0;ci<colrcwcnt;ci=ci+1) begin
+          MatRowGet(UDRCsr,ci,UDRCsrw);
+          switch (UDRCsrw.ColType) begin
+            case kUserDefRepColumnTypeCode:
+            case kUserDefRepColumnTypeComment:
+            otherwise
+              basecurncytype = UDRCsrw.CurrencyType;
+              if (basecurncytype==kBaseCurrencySpecified) then begin
+                basecurncytype = RepSpec.basecurncy;
+              end;
+              switch (UDRrw.PeriodType) begin
+                case kUserDefRepPeriodTypeFromColumnsDefintion:
+                  CalcKeyRn(UDRrw.Code,UDRrw.defstr,RepSpec.IncDaughter,basecurncytype,UDRCsrw.ColCode,UDRCsrw.ColType,UDRCsrw.PeriodType,UDRCsrw.PeriodOffset,UDRCsrw.PeriodLength,UDRCsrw.Objects,UDRCsrw.AddInfo,UDRCsrw.CompCode,tmp);
+                otherwise
+                  CalcKeyRn(UDRrw.Code,UDRrw.defstr,RepSpec.IncDaughter,basecurncytype,UDRCsrw.ColCode,UDRCsrw.ColType,UDRrw.PeriodType,UDRrw.PeriodOffset,UDRrw.PeriodLength,UDRCsrw.Objects,UDRCsrw.AddInfo,UDRCsrw.CompCode,tmp);
+              end;
+              vtmp[UDRrw.Code & UDRCsrw.ColCode] = tmp;
+          end;
+        end;
+      end;
+    end;
+  end;
+*/  
+
+  for (i=0; i<gKsprwcnt; i=i+1) begin
+    MatRowGet(UDRr,i,UDRrw);
+    if (InString(UDRrw.defstr,"KEY")<=0) then begin
+      if (colrcwcnt<=0) then begin
+        CalcKeyRn(UDRrw.Code,UDRrw.defstr,RepSpec.IncDaughter,RepSpec.basecurncy,"",0,UDRrw.PeriodType,UDRrw.PeriodOffset,UDRrw.PeriodLength,RepSpec.ObjStr,"","",tmp);
+        vtmp[UDRrw.Code] = tmp;
+      end else begin
+        for (ci=0;ci<colrcwcnt;ci=ci+1) begin
+          MatRowGet(UDRCsr,ci,UDRCsrw);
+          switch (UDRCsrw.ColType) begin
+            case kUserDefRepColumnTypeCode:
+            case kUserDefRepColumnTypeComment:
+            otherwise
+              basecurncytype = UDRCsrw.CurrencyType;
+              if (basecurncytype==kBaseCurrencySpecified) then begin
+                basecurncytype = RepSpec.basecurncy;
+              end;
+              switch (UDRrw.PeriodType) begin
+                case kUserDefRepPeriodTypeFromColumnsDefintion:
+                  CalcKeyRn(UDRrw.Code,UDRrw.defstr,RepSpec.IncDaughter,basecurncytype,UDRCsrw.ColCode,UDRCsrw.ColType,UDRCsrw.PeriodType,UDRCsrw.PeriodOffset,UDRCsrw.PeriodLength,UDRCsrw.Objects,UDRCsrw.AddInfo,UDRCsrw.CompCode,tmp);
+                otherwise
+                  CalcKeyRn(UDRrw.Code,UDRrw.defstr,RepSpec.IncDaughter,basecurncytype,UDRCsrw.ColCode,UDRCsrw.ColType,UDRrw.PeriodType,UDRrw.PeriodOffset,UDRrw.PeriodLength,UDRCsrw.Objects,UDRCsrw.AddInfo,UDRCsrw.CompCode,tmp);
+              end;
+              vtmp[UDRrw.Code & UDRCsrw.ColCode] = tmp;
+          end;
+        end;
+      end;
+    end;
+  end;
+
+  for (i=0; i<gKsprwcnt; i=i+1) begin
+    MatRowGet(UDRr,i,UDRrw);
+    if (InString(UDRrw.defstr,"KEY")>0) then begin
+      if (colrcwcnt<=0) then begin
+        CalcKeyRn(UDRrw.Code,UDRrw.defstr,RepSpec.IncDaughter,RepSpec.basecurncy,"",0,UDRrw.PeriodType,UDRrw.PeriodOffset,UDRrw.PeriodLength,RepSpec.ObjStr,"","",tmp);
+        vtmp[UDRrw.Code] = tmp;
+      end else begin
+        for (ci=0;ci<colrcwcnt;ci=ci+1) begin
+          MatRowGet(UDRCsr,ci,UDRCsrw);
+          switch (UDRCsrw.ColType) begin
+            case kUserDefRepColumnTypeCode:
+            case kUserDefRepColumnTypeComment:
+            otherwise
+              basecurncytype = UDRCsrw.CurrencyType;
+              if (basecurncytype==kBaseCurrencySpecified) then begin
+                basecurncytype = RepSpec.basecurncy;
+              end;
+              switch (UDRrw.PeriodType) begin
+                case kUserDefRepPeriodTypeFromColumnsDefintion:
+                  CalcKeyRn(UDRrw.Code,UDRrw.defstr,RepSpec.IncDaughter,basecurncytype,UDRCsrw.ColCode,UDRCsrw.ColType,UDRCsrw.PeriodType,UDRCsrw.PeriodOffset,UDRCsrw.PeriodLength,UDRCsrw.Objects,UDRCsrw.AddInfo,UDRCsrw.CompCode,tmp);
+                otherwise
+                  CalcKeyRn(UDRrw.Code,UDRrw.defstr,RepSpec.IncDaughter,basecurncytype,UDRCsrw.ColCode,UDRCsrw.ColType,UDRrw.PeriodType,UDRrw.PeriodOffset,UDRrw.PeriodLength,UDRCsrw.Objects,UDRCsrw.AddInfo,UDRCsrw.CompCode,tmp);
+              end;
+              vtmp[UDRrw.Code & UDRCsrw.ColCode] = tmp;
+          end;
+        end;
+      end;
+    end;
+  end;
+  return;
+end;
+
+global
+procedure PrintVATRn2(record RcVc RepSpec,record UserDefRepVc UDRr,record UserDefRepColumnsVc UDRCsr,vector val vtmp,Boolean reportf,record VATDeclVc VATDeclr,vector val v_vatsum)
+begin
+  Integer gKsprwcnt,i;
+  Integer colrcwcnt,ci,visiblecolrcwcnt,hidden,onemore,pos,posused;
+  Integer basecurncytype;
+  row UserDefRepVc UDRrw;
+  row UserDefRepColumnsVc UDRCsrw;
+  Integer ValType;
+  string 20 pref,suff,dblstr;
+  Boolean startprintf,detailsprintf;
+  val tmp,tval;
+  row VATDeclVc VATDeclrw;
+
+  switch (RepSpec.Notation) begin
+    case 0: ValType = M4Val;
+    case 1: ValType = M4TVal;
+    case 2: ValType = M4MVal;
+    case 3: ValType = M4Val;
+    case 4: ValType = M40Val;
+    otherwise ValType = M4Val;
+  end;
+
+  colrcwcnt = MatRowCnt(UDRCsr);
+  
+  gKsprwcnt = MatRowCnt(UDRr);
+  for (i=0; i<gKsprwcnt; i=i+1) begin
+    MatRowGet(UDRr,i,UDRrw);
+    if (RepSpec.AccSpec==6) then begin
+      RepSpec.AccSpec = 4;
+      RepSpec.flags[19] = 1;
+    end;
+    if (RepSpec.IncDaughter==1) then begin
+      if (InString(UDRrw.defstr,"KEY")==0) then begin
+        dblstr = "DblKeyComp";
+      end else begin
+        dblstr = "DblKeyCompKEY";
+      end;
+    end;
+
+    if (colrcwcnt<=0) then begin
+      if (IsChart(UDRrw.defstr)) then begin
+        if (reportf) then begin
+          StartFormatChart(150);
+        end;
+      end;
+      
+      if (!InString(UDRrw.defstr,"KSUM")) then begin
+        tmp = GetTransVal(UDRrw.Code);
+        if (InString(UDRrw.defstr,"KEY")==0) then begin
+          if (tmp==0) then begin
+            if (left(UDRrw.defstr,2)=="K(") then begin
+              tval = v_vatsum["K_" & mid(UDRrw.defstr,3,2)];
+              if (tval!=blankval) then begin
+                tmp = Round(tval,SetRoundModeD(0));
+              end else begin
+                tmp = blankval;
+              end;
+            end else begin
+              CalcKeyRn(UDRrw.Code,UDRrw.defstr,RepSpec.IncDaughter,RepSpec.basecurncy,"",0,UDRrw.PeriodType,UDRrw.PeriodOffset,UDRrw.PeriodLength,RepSpec.ObjStr,"","",tmp);
+            end;
+          end;
+        end;
+      end else begin
+        tmp = v_vatsum[UDRrw.defstr];
+      end;
+      if (IsChart(UDRrw.defstr)) then begin
+        if (reportf) then begin
+          EndFormat;
+        end;
+      end;
+      if (UDRrw.Hide==kUserDefRepLineHideNo) then begin
+        if (reportf) then begin
+          StartFormat(15);
+          OutStringID(0,dblstr,UDRrw.Code,false,UDRr.shortname);
+          OutString(2,0,UDRrw.Comment,false);
+          if (HasLocalization("POL")) then begin
+            OutString(1,0,ValToString(tmp,M4Val,"",".",1),true);
+          end else begin
+            OutVal(1,0,tmp,ValType,true);
+          end;
+          EndFormat;
+        end else begin
+          VATDeclrw.ElementCode = UDRrw.Code;
+          VATDeclrw.Comment = UDRrw.Comment;
+          VATDeclrw.Value = ValToString(tmp,M4Val,"",".",1);
+          MatRowPut(VATDeclr,i,VATDeclrw);
+        end;
+      end;
+
+    end else begin
+      startprintf = true;
+      for (ci=0;ci<colrcwcnt;ci=ci+1) begin
+        MatRowGet(UDRCsr,ci,UDRCsrw);
+        switch (UDRCsrw.ColType) begin
+          case kUserDefRepColumnTypeCode:
+          case kUserDefRepColumnTypeComment:
+          otherwise
+            basecurncytype = UDRCsrw.CurrencyType;
+            if (basecurncytype==kBaseCurrencySpecified) then begin
+              basecurncytype = RepSpec.basecurncy;
+            end;
+
+            if (IsChart(UDRrw.defstr)) then begin
+              if (startprintf) then begin
+                if (reportf) then begin
+                  StartFormatChart(150);
+                end;
+                startprintf = false;
+              end;
+            end;  
+//??                      
+        end;
+      end;
+      if (startprintf==false) then begin
+        if (reportf) then begin
+          EndFormat;
+        end;
+      end;
+
+      visiblecolrcwcnt = colrcwcnt;
+      for (ci=0;ci<colrcwcnt;ci=ci+1) begin
+        MatRowGet(UDRCsr,ci,UDRCsrw);
+        if (UDRCsrw.Hide!=kUserDefRepLineHideNo) then begin visiblecolrcwcnt = visiblecolrcwcnt - 1; end;
+      end;
+
+      hidden = 0;
+      startprintf = true;
+      onemore = 0;
+      for (ci=0;ci<colrcwcnt;ci=ci+1) begin
+        MatRowGet(UDRCsr,ci,UDRCsrw);
+        pref = UDRCsrw.Prefix;
+        suff = UDRCsrw.Suffix;
+        if (nonblank(UDRrw.defstr)) or (RepSpec.AccSpec!=4) or (true) then begin
+          if (i==0) then begin
+            if (UDRCsrw.ColType!=-1) then begin
+              onemore = 1;
+            end;
+          end;
+          if (UDRCsrw.Hide==kUserDefRepLineHideNo) then begin
+            if (UDRCsrw.ReportPosition>=0) then begin
+              pos = UDRCsrw.ReportPosition;
+            end else begin
+              if (UDRCsrw.Hide==kUserDefRepLineHideNo) and (UDRrw.Hide==kUserDefRepLineHideNo) then begin
+                pos = posused + (((480-posused)/visiblecolrcwcnt)*((i-hidden)+onemore));
+              end;
+            end;
+          end else begin
+            hidden = hidden + 1;
+          end;
+          switch (UDRCsrw.ColType) begin
+            case kUserDefRepColumnTypeCode:
+              if (UDRCsrw.Hide==kUserDefRepLineHideNo) and (UDRrw.Hide==kUserDefRepLineHideNo) then begin
+                if (startprintf) then begin
+                  if (reportf) then begin
+                    StartFormat(15);
+                  end;
+                  startprintf = false;
+                end;
+                if (reportf) then begin
+                  OutStringID(pos,dblstr,UDRrw.Code,false,UDRr.shortname);
+                end;
+              end;
+            case kUserDefRepColumnTypeComment:
+              if (UDRCsrw.Hide==kUserDefRepLineHideNo) and (UDRrw.Hide==kUserDefRepLineHideNo) then begin
+                if (startprintf) then begin
+                  if (reportf) then begin
+                    StartFormat(15);
+                  end;
+                  startprintf = false;
+                end;
+                if (reportf) then begin
+                  OutString(pos,0,UDRrw.Comment,false);
+                end;
+              end;
+              onemore = 1;
+            otherwise
+              if (UDRCsrw.Hide==kUserDefRepLineHideNo) and (UDRrw.Hide==kUserDefRepLineHideNo) then begin
+                if (startprintf) then begin
+                  if (reportf) then begin
+                    StartFormat(15);
+                  end;
+                  startprintf = false;
+                end;
+                if (reportf) then begin
+                  OutString(pos,0,KeyValToString(vtmp[UDRrw.Code & UDRCsrw.ColCode],ValType,pref,suff),true);
+                end;
+              end;
+          end;
+        end;
+      end;
+      if (startprintf==false) then begin
+        if (reportf) then begin
+          EndFormat;
+        end;
+      end;
+    end;
+  end;
+  return;
+end;
+
+global
+procedure PrintVATRn(record RcVc RepSpec,record UserDefRepVc UDRr,record UserDefRepColumnsVc UDRCsr,vector val vtmp,Boolean reportf,record VATDeclVc VATDeclr)
+begin
+  vector val v_vatsum;
+
+  PrintVATRn2(RepSpec,UDRr,UDRCsr,vtmp,reportf,VATDeclr,v_vatsum);
+
+  return;
+end;
+
+global
+procedure CalcVATRnVector(record RcVc RepSpec,record UserDefRepVc UDRr,record UserDefRepColumnsVc UDRCsr,var vector val v_vatsum)
+begin
+  Integer i,rwcnt;
+  row UserDefRepVc UDRrw;
+  val tmp;
+  Boolean firstf;
+
+  firstf = true;
+  rwcnt = MatRowCnt(UDRr);
+  for (i=0;i<rwcnt;i=i+1) begin
+    MatRowGet(UDRr,i,UDRrw);
+    if ((left(UDRrw.defstr,2)=="K(" or InString(UDRrw.defstr,"KSUM")) and firstf) then begin
+      CalcExportVAT(RepSpec,v_vatsum);
+      firstf = false;
+    end;
+    if (InString(UDRrw.defstr,"KSUM")) then begin
+      CalcPOLKey(UDRr,UDRrw.defstr,tmp,v_vatsum);
+      v_vatsum[UDRrw.defstr] = tmp;
+    end;
+    if (RepSpec.AccSpec==6) then begin
+      RepSpec.AccSpec = 4;
+      RepSpec.flags[19] = 1;
+    end;
+  end;
+  
+  return;
+end;
+
+global
+procedure VAT2Rn(record RcVc RepSpec)
+BEGIN
+  record UserDefRepVc UserDefRepr;
+  record UserDefRepColumnsVc UserDefRepColumnsr;
+  row UserDefRepVc UDRrw;
+  Integer gKsprwcnt,i;
+  val tmp;
+  vector val vtmp;
+  string 255 tstr,dblstr,tstr1;
+  record VATDeclVc VATDeclr;
+  vector val v_vatsum;
+
+  if (blank(RepSpec.shortname)) then begin
+    UserDefRepr.shortname = RepSpec.repname;
+  end else begin
+    UserDefRepr.shortname = RepSpec.shortname;
+  end;
+  if (ReadFirstMain(UserDefRepr,1,true)==false) then begin
+    UserDefRepr.shortname = RepSpec.repname;
+    if (ReadFirstMain(UserDefRepr,1,true)==false) then begin
+      MessageBox(3167,"");
+      goto LVAT2Rn;
+    end;
+  end;  
+
+  UserDefRepColumnsr.shortname = RepSpec.shortname;
+  if (ReadFirstMain(UserDefRepColumnsr,1,true)) then begin
+  end;
+  KeyRnHeader(RepSpec,3421);
+  KeyRnColHeader(UserDefRepColumnsr);
+  gKsprwcnt = MatRowCnt(UserDefRepr);
+  if (gKsprwcnt>0 and RepSpec.SimVerf==0) then begin
+    if (IsStandardProduct==false or HasLocalization("LTU,NOR,GBR,POL")) then begin
+      tstr = USetStr(16642);
+      dblstr = "DblSubmitVAT";
+      tstr1 = "";
+      if (HasLocalization("POL")) then begin
+        tstr = USetStr(16657);
+        dblstr = "DblCreateVATDecl";
+        tstr1 = UserDefRepr.shortname & "|" & RepSpec.sStartDate & "|" & RepSpec.sEndDate & "|" & RepSpec.IncDaughter
+                & "|" & RepSpec.basecurncy & "|" & RepSpec.ObjStr & "|" & RepSpec.AccSpec;
+      end;
+      StartFormat(15);
+      OutStringID(480,dblstr,tstr,true,tstr1);
+      EndFormat;
+    end;
+  end;
+  CalcVATRnVector(RepSpec,UserDefRepr,UserDefRepColumnsr,v_vatsum);
+  CalculateVATRn(RepSpec,UserDefRepr,UserDefRepColumnsr,vtmp);
+  PrintVATRn2(RepSpec,UserDefRepr,UserDefRepColumnsr,vtmp,true,VATDeclr,v_vatsum);
+    
+  KeyRnBottom(RepSpec);
+  EndJob;
+LVAT2Rn:;
+  AutomatedSalesOrderly("HasIntegratedNL+Run_VAT2Rn");
+  RETURN;
+END;
+
+function val KeyCompRnDaughterVals(record RcVc RepSpec,Integer ValType,string dblstr,string dblid,string comment,string defstr)
+begin
+  record DaughterCompBlock DaughterCompRec;
+  row DaughterCompBlock DaughterComprw;
+  record ConsolidationBlock Consb;
+  Integer i,rwcnt;
+  Integer oldcomp;
+  val res,tmp;
+  transaction record RcVc KeyRepSpec;
+    
+  oldcomp = CurrentCompany; 
+  BlockLoad(DaughterCompRec);
+  rwcnt = MatRowCnt(DaughterCompRec);
+  for (i=0;i<rwcnt;i=i+1) begin
+    MatRowGet(DaughterCompRec,i,DaughterComprw);
+    if (SetCompanyCode(DaughterComprw.CompCode,false)) then begin
+      if ((RepSpec.long2<0) or (RepSpec.long2==CurrentCompany)) then begin
+        BlockLoad(Consb);
+        KeyRepSpec.basecurncy = Consb.ConsCrncy;
+        if (nonblank(defstr)) then begin
+          if (RepSpec.ArtMode==1) then begin
+            StartFormat(15);
+            OutString(0,0,RepSpec.TransStr,false);
+            OutString(2,0,comment,false);
+            EndFormat;
+            Gray_Divider(0,1);
+          end;
+          tmp = EvalToVal(defstr);
+          if (RepSpec.ArtMode==1) then begin
+            Gray_Divider(0,1);
+          end;
+          StartFormat(15);
+          if (RepSpec.ArtMode==0) then begin
+            OutStringID(0,dblstr,RepSpec.TransStr,false,dblID);
+            OutString(2,0,DaughterComprw.CompName,false);
+          end;
+          OutVal(1,0,tmp,ValType,true);
+          EndFormat;
+          if (RepSpec.ArtMode==1) then begin
+            StartFormat(15);
+            EndFormat;
+          end;
+          res = res + tmp;
+        end;
+      end;
+    end;
+  end;
+  ResetCompany(oldcomp);
+  
+  KeyCompRnDaughterVals = res;
+  return;
+end;
+
+global
+procedure KeyCompRn(record RcVc RepSpec)
+begin
+  record DaughterCompBlock DaughterCompRec;
+  row DaughterCompBlock DaughterComprw;
+  record ConsolidationBlock Consb;
+  string 255 comment;
+  string 255 defstr;
+  string 200 dblstr;
+  string 200 dblID;
+  Integer i,rwcnt;
+  Integer oldcomp;
+  val tmp,tot;
+  Boolean valf;
+  transaction record RcVc KeyRepSpec;
+  transaction Integer keyconscompany;
+  record UserDefRepVc UserDefRepr;
+  row UserDefRepVc UDRrw;
+  Integer ValType,oldbasecurncy;
+  
+  logtext(0,"KeyCompRn");
+
+  
+  KeyRnHeader(RepSpec,3221);
+  keyconscompany = CurrentCompany;
+
+  if (RepSpec.AccSpec==6) then begin
+    RepSpec.AccSpec = 4;
+    RepSpec.flags[19] = 1;
+  end;
+  if (blank(RepSpec.shortname)) then begin
+    UserDefRepr.shortname = RepSpec.repname;
+  end else begin
+    UserDefRepr.shortname = RepSpec.shortname;
+  end;
+  if (ReadFirstMain(UserDefRepr,1,true)==false) then begin
+    UserDefRepr.shortname = RepSpec.repname;
+    if (ReadFirstMain(UserDefRepr,1,true)==false) then begin
+      MessageBox(3167,"");
+      goto LKeyCompRn;
+    end;
+  end;  
+  
+  rwcnt = MatRowCnt(UserDefRepr);
+  for (i=0; i<rwcnt; i=i+1) begin
+    MatRowGet(UserDefRepr,i,UDRrw);
+    if (RepSpec.TransStr==UDRrw.Code) then begin
+      comment = UDRrw.Comment;
+      defstr = UDRrw.defstr;
+      i = rwcnt;
+    end;
+  end;
+
+  switch (RepSpec.Notation) begin
+    case 0: ValType = M4Val;
+    case 1: ValType = M4TVal;
+    case 2: ValType = M4MVal;
+    case 3: ValType = M4Val;
+    case 4: ValType = M40Val;
+    otherwise ValType = M4Val;
+  end;    
+  oldbasecurncy = RepSpec.basecurncy;
+  if (RepSpec.IncDaughter!=0) then begin
+    BlockLoad(Consb);
+    KeyRepSpec.basecurncy = Consb.ConsCrncy;
+  end;
+  if (nonblank(defstr)) then begin
+    if ((RepSpec.long2<0) or (RepSpec.long2==CurrentCompany)) then begin
+      if (RepSpec.ArtMode==1) then begin
+        StartFormat(15);
+        OutString(0,0,RepSpec.TransStr,false);
+        OutString(2,0,comment,false);
+        EndFormat;
+        Gray_Divider(0,1);
+      end;
+      tmp = EvalToVal(defstr);
+      
+      dblID = "" & RepSpec.shortname & ":" & CurrentCompany;
+      if (InString(defstr,"APDUE")!=0 or InString(defstr,"ARDUE")!=0 or InString(defstr,"ARNRDUE")!=0 or InString(defstr,"ARDPDUE")!=0) then begin
+        dblstr = "DblKeyCompDetail";
+      end;
+      if (RepSpec.ArtMode==1) then begin
+        Gray_Divider(0,1);
+      end;
+      StartFormat(15);
+      if (RepSpec.ArtMode==0) then begin
+        OutStringID(0,dblstr,RepSpec.TransStr,false,dblID);
+        OutString(2,0,comment,false);
+      end;
+      OutVal(1,0,tmp,ValType,true);
+      EndFormat;
+      if (RepSpec.ArtMode==1) then begin
+        StartFormat(15);
+        EndFormat;
+      end;
+      tot = tot  + tmp;
+    end;
+    valf = StringContainsAlpha(defstr)==false;
+    if (RepSpec.IncDaughter!=0) and (valf==false) then begin
+      oldcomp = CurrentCompany; 
+      BlockLoad(DaughterCompRec);
+      rwcnt = MatRowCnt(DaughterCompRec);
+      for (i=0;i<rwcnt;i=i+1) begin
+        MatRowGet(DaughterCompRec,i,DaughterComprw);
+        if (SetCompanyCode(DaughterComprw.CompCode,false)) then begin
+          if ((RepSpec.long2<0) or (RepSpec.long2==CurrentCompany)) then begin
+            BlockLoad(Consb);
+            KeyRepSpec.basecurncy = Consb.ConsCrncy;
+            if (nonblank(defstr)) then begin
+              if (RepSpec.ArtMode==1) then begin
+                StartFormat(15);
+                OutString(0,0,RepSpec.TransStr,false);
+                OutString(2,0,comment,false);
+                EndFormat;
+                Gray_Divider(0,1);
+              end;
+              tmp = EvalToVal(defstr);
+              if (RepSpec.ArtMode==1) then begin
+                Gray_Divider(0,1);
+              end;
+              StartFormat(15);
+              if (RepSpec.ArtMode==0) then begin
+                OutStringID(0,dblstr,RepSpec.TransStr,false,dblID);
+                OutString(2,0,DaughterComprw.CompName,false);
+              end;
+              OutVal(1,0,tmp,ValType,true);
+              EndFormat;
+              if (RepSpec.ArtMode==1) then begin
+                StartFormat(15);
+                EndFormat;
+              end;
+              tot = tot  + tmp;
+              tot = tot + KeyCompRnDaughterVals(RepSpec,ValType,dblstr,dblid,comment,defstr);
+            end;
+          end;
+        end;
+      end;
+      ResetCompany(oldcomp);
+    end;
+    SetTransVal(RepSpec.TransStr,tmp);
+  end;
+  KeyRepSpec.basecurncy = oldbasecurncy;
+  Gray_Divider(400,1);
+  StartFormat(15);
+  OutVal(1,0,tot,ValType,true);
+  EndFormat;
+  KeyRnBottom(RepSpec);
+  EndJob;
+LKeyCompRn:;  
+  return;
+end;
+
+procedure CashFlowRnPrint(Integer Notation,Integer AccSpec,string ObjStr,string shortname,row UserDefRepVc UDRrw,Integer IncDaughter,Integer basecurncy,record UserDefRepColumnsVc UDRCr)
+begin
+  row UserDefRepColumnsVc UDRCrw;
+  val tmp;
+  string 200 dblstr;
+  Integer colrcwcnt,i,visiblecolrcwcnt;
+  Integer posused,onemore,hidden;
+  Integer ValType;
+  Integer pos,basecurncytype;
+  Boolean startprintf,detailsprintf;
+  vector val vtmp;
+  transaction string 255 gKeyRn_columncod;
+  transaction integer gKeyRn_columntype;
+  transaction record TRVc gKeyRn_TRr;
+  row TRVc TRrw;
+  Integer tri,trrwcnt;
+  string 20 pref,suff;
+  
+  if (IncDaughter==1) then begin
+    if (InString(UDRrw.defstr,"KEY")==0) then begin
+      dblstr = "DblKeyComp";
+    end else begin
+      dblstr = "DblKeyCompKEY";
+    end;
+  end;
+//  gKeyRn_linecod = UDRrw.Code;  
+//  gKeyRn_columncod = ""; 
+ 
+  RecordClear(gKeyRn_TRr);
+  gKeyRn_TRr.Comment = UDRrw.Code;
+  
+  switch (Notation) begin
+    case 0: ValType = M4Val;
+    case 1: ValType = M4TVal;
+    case 2: ValType = M4MVal;
+    case 3: ValType = M4Val;
+    case 4: ValType = M40Val;
+    otherwise ValType = M4Val;
+  end;    
+  colrcwcnt = MatRowCnt(UDRCr);
+  if (colrcwcnt<=0) then begin
+    switch (AccSpec) begin
+      case 4:
+        if (nonblank(UDRrw.Code)) then begin
+          gKeyRn_columncod = UDRrw.Code;  
+          ClearRow(gKeyRn_TRr,TRrw,1);
+          TRrw.TFromFileName = UDRrw.Code;
+          MatRowPut(gKeyRn_TRr,MatRowCnt(gKeyRn_TRr),TRrw);
+        end;
+    end;        
+    if (IsChart(UDRrw.defstr)) then begin
+      StartFormatChart(150);
+    end;
+    CalcKeyRn(UDRrw.Code,UDRrw.defstr,IncDaughter,basecurncy,"",0,UDRrw.PeriodType,UDRrw.PeriodOffset,UDRrw.PeriodLength,ObjStr,"","",tmp);
+    if (IsChart(UDRrw.defstr)) then begin
+      EndFormat;
+    end;
+    switch (AccSpec) begin
+      case 4:
+        if (nonblank(UDRrw.Code)) then begin
+          PrintDetails_WithBalance(UDRrw.Code,UDRrw.Comment,UDRrw.Hide,gKeyRn_TRr,ValType,tmp);
+        end else begin
+          goto LKeyRnPrintLine;
+        end;
+      otherwise
+LKeyRnPrintLine:;      
+        if (UDRrw.Hide==kUserDefRepLineHideNo) then begin
+          StartFormat(15);
+          OutStringID(0,dblstr,UDRrw.Code,false,shortname);
+          OutString(2,0,UDRrw.Comment,false);
+          OutVal(1,0,tmp,ValType,true);
+          EndFormat;
+        end;
+    end;
+  end else begin
+    startprintf = true;
+    for (i=0;i<colrcwcnt;i=i+1) begin
+      MatRowGet(UDRCr,i,UDRCrw);
+      switch (UDRCrw.ColType) begin
+        case kUserDefRepColumnTypeCode:
+        case kUserDefRepColumnTypeComment:
+        otherwise
+          switch (AccSpec) begin
+            case 4:
+              if (nonblank(UDRrw.Code)) then begin
+                gKeyRn_columncod = UDRCrw.ColCode;  
+                gKeyRn_columntype = UDRCrw.ColType;
+                ClearRow(gKeyRn_TRr,TRrw,1);
+                TRrw.TFromFileName = UDRCrw.ColCode;
+                TRrw.Typ = UDRCrw.ColType;
+                MatRowPut(gKeyRn_TRr,MatRowCnt(gKeyRn_TRr),TRrw);
+              end;
+          end;
+          if (IsChart(UDRrw.defstr)) then begin
+            if (startprintf) then begin
+              StartFormatChart(150);
+              startprintf = false;
+            end;
+          end;
+          basecurncytype = UDRCrw.CurrencyType;
+          if (basecurncytype==kBaseCurrencySpecified) then begin
+            basecurncytype = basecurncy;
+          end;
+
+          switch (UDRrw.PeriodType) begin
+            case kUserDefRepPeriodTypeFromColumnsDefintion:
+              CalcKeyRn(UDRrw.Code,UDRrw.defstr,IncDaughter,basecurncytype,UDRCrw.ColCode,UDRCrw.ColType,UDRCrw.PeriodType,UDRCrw.PeriodOffset,UDRCrw.PeriodLength,UDRCrw.Objects,UDRCrw.AddInfo,UDRCrw.CompCode,tmp);
+            otherwise
+              CalcKeyRn(UDRrw.Code,UDRrw.defstr,IncDaughter,basecurncytype,UDRCrw.ColCode,UDRCrw.ColType,UDRrw.PeriodType,UDRrw.PeriodOffset,UDRrw.PeriodLength,UDRCrw.Objects,UDRCrw.AddInfo,UDRCrw.CompCode,tmp);
+          end;
+          vtmp[UDRrw.Code & UDRCrw.ColCode] = tmp;
+      end;
+    end;
+    
+    if (startprintf==false) then begin
+      EndFormat;
+    end;
+    
+    KeyRnSort;
+    switch (AccSpec) begin
+      case 4:
+        if (nonblank(UDRrw.Code)) then begin
+          detailsprintf = PrintDetails_WithBalance_WithColumns(UDRrw.Hide,UDRCr,gKeyRn_TRr,ValType,UDRrw.Code,UDRrw.Comment);              
+        end;
+    end;
+
+    visiblecolrcwcnt = colrcwcnt;
+    for (i=0;i<colrcwcnt;i=i+1) begin
+      MatRowGet(UDRCr,i,UDRCrw);
+      if (UDRCrw.Hide!=kUserDefRepLineHideNo) then begin visiblecolrcwcnt = visiblecolrcwcnt - 1; end;
+    end;
+
+    hidden = 0;
+    startprintf = true;
+    onemore = 0;
+    for (i=0;i<colrcwcnt;i=i+1) begin
+      MatRowGet(UDRCr,i,UDRCrw);
+      pref = UDRCrw.Prefix;
+      suff = UDRCrw.Suffix;
+      if (nonblank(UDRrw.defstr)) or (AccSpec!=4) or true then begin
+        if (i==0) then begin
+          if (UDRCrw.ColType!=-1) then begin
+            onemore = 1;
+          end;
+        end;
+        if (UDRCrw.Hide==kUserDefRepLineHideNo) then begin
+          if (UDRCrw.ReportPosition>=0) then begin
+            pos = UDRCrw.ReportPosition;
+          end else begin
+            if (UDRCrw.Hide==kUserDefRepLineHideNo) and (UDRrw.Hide==kUserDefRepLineHideNo) then begin
+              pos = posused + (((480-posused)/visiblecolrcwcnt)*((i-hidden)+onemore));
+            end;
+          end;
+        end else begin
+          hidden = hidden + 1;
+        end;
+
+        switch (UDRCrw.ColType) begin
+          case kUserDefRepColumnTypeCode:
+            if (UDRCrw.Hide==kUserDefRepLineHideNo) and (UDRrw.Hide==kUserDefRepLineHideNo) then begin
+              if (startprintf) then begin
+                StartFormat(15);
+                startprintf = false;
+              end;
+              switch (AccSpec) begin
+                case 4:
+                  if (!detailsprintf) then begin
+                    OutStringID(pos,dblstr,UDRrw.Code,false,shortname);
+                  end;
+                otherwise
+                  OutStringID(pos,dblstr,UDRrw.Code,false,shortname);
+              end;
+            end;
+          case kUserDefRepColumnTypeComment:
+            if (UDRCrw.Hide==kUserDefRepLineHideNo) and (UDRrw.Hide==kUserDefRepLineHideNo) then begin
+              if (startprintf) then begin
+                StartFormat(15);
+                startprintf = false;
+              end;
+              switch (AccSpec) begin
+                case 4:
+                  if (detailsprintf) then begin
+                    if (nonblank(UDRrw.Code)) then begin
+                      OutString(0,0,USetStr(3222) & " " & UDRrw.Comment,false);
+                    end else begin
+                      OutString(pos,0,UDRrw.Comment,false);
+                    end;
+                  end else begin
+                    OutString(pos,0,UDRrw.Comment,false);
+                  end;
+                otherwise
+                  OutString(pos,0,UDRrw.Comment,false);
+              end;
+            end;
+            onemore = 1;
+          otherwise
+            if (UDRCrw.Hide==kUserDefRepLineHideNo) and (UDRrw.Hide==kUserDefRepLineHideNo) then begin
+              if (startprintf) then begin
+                StartFormat(15);
+                startprintf = false;
+              end;
+              OutString(pos,0,KeyValToString(vtmp[UDRrw.Code & UDRCrw.ColCode],ValType,pref,suff),true);            
+            end;
+        end;
+      end;
+    end;
+    if (startprintf==false) then begin
+      EndFormat;
+    end;
+  end;
+  return;
+end;
+
+procedure PrintCashFlowRn(record RcVc RepSpec,record UserDefRepVc UDRr,record UserDefRepColumnsVc UDRCr,vector val vtmp)
+begin
+  Integer gKsprwcnt,i;
+  row UserDefRepVc UDRrw;
+  Boolean testf,firstf;
+
+  gKsprwcnt = MatRowCnt(UDRr);
+  for (i=0; i<gKsprwcnt; i=i+1) begin
+    MatRowGet(UDRr,i,UDRrw);
+    testf = true;
+    if (nonblank(RepSpec.f3)) then begin
+      if (SetInSet(UDRrw.Code,RepSpec.f3)==false) then begin testf = false; end;
+      if (blank(UDRrw.Code)) then begin testf = false; end;
+    end;
+    if (testf) then begin
+      if (RepSpec.AccSpec==4) then begin
+        if (!firstf) then begin
+          StartFormat(15);
+          EndFormat;
+        end;
+        firstf = false;
+      end;
+      CashFlowRnPrint(RepSpec.Notation,RepSpec.AccSpec,RepSpec.ObjStr,UDRr.shortname,UDRrw,RepSpec.IncDaughter,RepSpec.basecurncy,UDRCr);
+    end;
+  end;
+  return;
+end;
+
+
+procedure DoCashFlowRn(record RcVc RepSpec,record UserDefRepVc UDRr,record UserDefRepColumnsVc UDRCr)
+begin
+  row UserDefRepVc UDRrw;
+  Integer gKsprwcnt,i;
+  Boolean testf;
+  Boolean firstf;
+  vector val vtmp;
+  transaction record UserDefRepVc gKeyRn_UserDefRepr;
+  transaction record UserDefRepColumnsVc gKeyRn_UserDefRepColumnsr;
+
+  firstf = true;
+  KeyRnHeader(RepSpec,3221);
+  KeyRnColHeader(UDRCr);
+  if (nonblank(RepSpec.ObjType)) then begin
+    DoKeyRn_ObjType(UDRr,UDRCr,RepSpec);
+  end else begin  
+    gKeyRn_UserDefRepr = UDRr;
+    gKeyRn_UserDefRepColumnsr = UDRCr;
+
+    CalculateVATRn(RepSpec,UDRr,UDRCr,vtmp);
+    PrintCashFlowRn(RepSpec,UDRr,UDRCr,vtmp);
+
+  end;
+  KeyRnBottom(RepSpec);
+  EndJob;
+  return;
+end;
+
+global
+procedure CashFlowRn(record RcVc RepSpec)
+begin
+  record UserDefRepVc UDRr;
+  record UserDefRepColumnsVc UDRCr;
+  
+  if (blank(RepSpec.shortname)) then begin
+    UDRr.shortname = RepSpec.repname;
+  end else begin
+    UDRr.shortname = RepSpec.shortname;
+  end;
+  if (ReadFirstMain(UDRr,1,true)==false) then begin
+    UDRr.shortname = RepSpec.repname;
+    if (ReadFirstMain(UDRr,1,true)==false) then begin
+      MessageBox(3167,"");
+      goto LCashFlowRn;
+    end;
+  end;  
+  UDRCr.shortname = RepSpec.shortname;
+  if (ReadFirstMain(UDRCr,1,true)==false) then begin
+    UDRCr.shortname = RepSpec.repname;
+    ReadFirstMain(UDRCr,1,true);
+  end;
+  if (RepSpec.AccSpec==6) then begin
+    RepSpec.AccSpec = 4;
+    RepSpec.flags[19] = 1;
+  end;
+  DoCashFlowRn(RepSpec,UDRr,UDRCr);
+LCashFlowRn:;  
+  return;
+end;
