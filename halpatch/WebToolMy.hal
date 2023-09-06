@@ -287,6 +287,36 @@ begin
 return;
 end;
 
+global webpublic updating procedure WebDeleteUserDefRepVc()
+begin
+  record UserDefRepVc UserDefRepr;
+  integer i,CompQty;
+	record CompaniesBlock Compb;
+	row CompaniesBlock Comprw;
+
+  logtext(0,"WebDeleteUserDefRepVc");
+
+  BlockLoad(Compb);	
+  
+  CompQty = matrowcnt(Compb);
+  for (i=0;i<CompQty;i=i+1) begin
+    SetCompany(i+1,false);
+    logtext(0,"Deleting in company " & i+1);
+
+    resetloop(UserDefRepr);
+    UserDefRepr.shortname = "";
+    while(loopmain(UserDefRepr,1,true))begin
+      logtext(0,"   Deleted record " & UserDefRepr.repname);
+
+      recorddelete(UserDefRepr);
+      stepback(UserDefRepr);
+    end;
+  end;
+  
+return;
+end;
+
+
 global webpublic procedure WebExportAnyReg()
 begin
 	string 100 regname,blockname,dirrname;
