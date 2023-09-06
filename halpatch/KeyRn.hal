@@ -201,6 +201,8 @@ begin
       if (accdonef[TRrw.AccNumber]==false) then begin
         accdonef[TRrw.AccNumber] = true;
         gAccountForSumup = TRrw.AccNumber;
+        logtext(0,"AddInfo " & AddInfo);
+
         tmp = EvalToVal(AddInfo);
         TRrw.Comment = "";
         TRrw.Objects = "";//objstr; //TODO??
