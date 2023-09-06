@@ -694,7 +694,7 @@ begin
   return;
 end;
 
-procedure KeyRnPrint(Integer Notation,Integer AccSpec,string ObjStr,string shortname,row UserDefRepVc UDRrw,Integer IncDaughter,Integer basecurncy,record UserDefRepColumnsVc UserDefRepColumnsr)
+procedure KeyRnPrint(Integer Notation,Integer AccSpec,string ObjStr,string shortname,row UserDefRepVc UDRrw,Integer IncDaughter,Integer basecurncy,record UserDefRepColumnsVc UserDefRepColumnsr,var vector val rs)
 begin
   row UserDefRepColumnsVc UDRCsrw;
   val tmp;
@@ -711,7 +711,6 @@ begin
   row TRVc TRrw;
   Integer tri,trrwcnt;
   string 20 pref,suff;
-  vector val rs;
   
   if (IncDaughter==1) then begin
     if (InString(UDRrw.defstr,"KEY")==0) then begin
@@ -980,7 +979,7 @@ begin
   return;
 end;
 
-procedure DoKeyRn_ObjType(record UserDefRepVc UserDefRepr,record UserDefRepColumnsVc UserDefRepColumnsr,record RcVc RepSpec)
+procedure DoKeyRn_ObjType(record UserDefRepVc UserDefRepr,record UserDefRepColumnsVc UserDefRepColumnsr,record RcVc RepSpec,var vector val rs)
 begin
   Integer gKsprwcnt,i;
   row UserDefRepVc UDRrw;
@@ -1036,7 +1035,7 @@ begin
               end;
               firstf = false;
             end;
-            KeyRnPrint(RepSpec.Notation,RepSpec.AccSpec,RepSpec.ObjStr,UserDefRepr.shortname,UDRrw,RepSpec.IncDaughter,RepSpec.basecurncy,UserDefRepColumnsr);
+            KeyRnPrint(RepSpec.Notation,RepSpec.AccSpec,RepSpec.ObjStr,UserDefRepr.shortname,UDRrw,RepSpec.IncDaughter,RepSpec.basecurncy,UserDefRepColumnsr,rs);
           end;
         end;
         StartFormat(15);
@@ -1047,7 +1046,7 @@ begin
   return;
 end;
 
-procedure DoKeyRn(record UserDefRepVc UserDefRepr,record UserDefRepColumnsVc UserDefRepColumnsr,record RcVc RepSpec)
+procedure DoKeyRn(record UserDefRepVc UserDefRepr,record UserDefRepColumnsVc UserDefRepColumnsr,record RcVc RepSpec,var vector val rs)
 begin
   row UserDefRepVc UDRrw;
   Integer gKsprwcnt,i;
@@ -1060,7 +1059,7 @@ begin
   KeyRnHeader(RepSpec,3221);
   KeyRnColHeader(UserDefRepColumnsr);
   if (nonblank(RepSpec.ObjType)) then begin
-    DoKeyRn_ObjType(UserDefRepr,UserDefRepColumnsr,RepSpec);
+    DoKeyRn_ObjType(UserDefRepr,UserDefRepColumnsr,RepSpec,rs);
   end else begin  
     gKeyRn_UserDefRepr = UserDefRepr;
     gKeyRn_UserDefRepColumnsr = UserDefRepColumnsr;
@@ -1082,7 +1081,7 @@ begin
           end;
           firstf = false;
         end;
-        KeyRnPrint(RepSpec.Notation,RepSpec.AccSpec,RepSpec.ObjStr,UserDefRepr.shortname,UDRrw,RepSpec.IncDaughter,RepSpec.basecurncy,UserDefRepColumnsr);
+        KeyRnPrint(RepSpec.Notation,RepSpec.AccSpec,RepSpec.ObjStr,UserDefRepr.shortname,UDRrw,RepSpec.IncDaughter,RepSpec.basecurncy,UserDefRepColumnsr,rs);
       end;
     end;
   end;
@@ -1096,7 +1095,7 @@ procedure KeyRn(record RcVc RepSpec)
 begin
   record UserDefRepVc UserDefRepr;
   record UserDefRepColumnsVc UserDefRepColumnsr;
-  
+  vector val rs;
 
 
   if (blank(RepSpec.shortname)) then begin
@@ -1120,7 +1119,7 @@ begin
     RepSpec.AccSpec = 4;
     RepSpec.flags[19] = 1;
   end;
-  DoKeyRn(UserDefRepr,UserDefRepColumnsr,RepSpec);
+  DoKeyRn(UserDefRepr,UserDefRepColumnsr,RepSpec,rs);
 LKeyRn:;  
   return;
 end;
@@ -2310,12 +2309,13 @@ begin
   vector val vtmp;
   transaction record UserDefRepVc gKeyRn_UserDefRepr;
   transaction record UserDefRepColumnsVc gKeyRn_UserDefRepColumnsr;
-
+  vector val rs;
+  
   firstf = true;
   KeyRnHeader(RepSpec,3221);
   KeyRnColHeader(UDRCr);
   if (nonblank(RepSpec.ObjType)) then begin
-    DoKeyRn_ObjType(UDRr,UDRCr,RepSpec);
+    DoKeyRn_ObjType(UDRr,UDRCr,RepSpec,rs);
   end else begin  
     gKeyRn_UserDefRepr = UDRr;
     gKeyRn_UserDefRepColumnsr = UDRCr;
