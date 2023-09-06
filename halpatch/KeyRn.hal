@@ -313,9 +313,10 @@ begin
           if(defstr=="TOCHKA")then begin
             defstr = "ObjResult(\"" & ObjStr & "\",\"" & cod & "\")";
           end;
-
-          tmp = -EvalToVal(defstr);
           
+          if(defstr!="TOTAL")then begin
+            tmp = -EvalToVal(defstr);
+          end;
           rowsum[cod] = rowsum[cod] + tmp;
           logtext(0,"ObjStr " & ObjStr &  " cod " & cod);
 
