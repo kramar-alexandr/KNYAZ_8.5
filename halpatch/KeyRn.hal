@@ -315,7 +315,7 @@ begin
           
           rowsum[cod] = rowsum[cod] + tmp;
           
-          if(cod=="TOTAL")then begin
+          if(ObjStr=="TOTAL")then begin
             tmp = rowsum[ObjStr];
             logtext(0,"rowsum[ObjStr " & rowsum[ObjStr);
 
