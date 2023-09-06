@@ -220,8 +220,7 @@ begin
   return;
 end;
 
-global
-procedure CalcKeyRn(string cod,string ldefstr,Integer IncDaughter,Integer basecurncy,string colcode,Integer ColType,Integer PeriodType,Integer PeriodOffset,Integer PeriodLength,string ObjStr,string AddInfo,string CompCode,var val sum)
+procedure CalcKeyRn(string cod,string ldefstr,Integer IncDaughter,Integer basecurncy,string colcode,Integer ColType,Integer PeriodType,Integer PeriodOffset,Integer PeriodLength,string ObjStr,string AddInfo,string CompCode,var val sum,var vector val rowsum)
 begin
   transaction record RcVc KeyRepSpec;
   transaction string 5 keycurcod;
@@ -237,6 +236,7 @@ begin
   Integer oldbasecurncy;
   record ConsolidationBlock Consb;
   string 100 defstr;
+  
   
   defstr = ldefstr;
 
@@ -294,6 +294,7 @@ begin
       case kUserDefRepColumnTypeColumnsSumup:
         DoColumnSumupPerRow(cod,colcode,AddInfo);
         tmp = EvalToVal(AddInfo);
+        tmp = rowsum[cod];
       case kUserDefRepColumnTypeBudget:
         tmp = EvalToVal(defstr);
         valf = StringContainsAlpha(defstr)==false;
@@ -311,7 +312,8 @@ begin
           
           
           tmp = -EvalToVal(defstr);
-
+          
+          rowsum[cod] = rowsum[cod] + tmp;
 
           valf = StringContainsAlpha(defstr)==false;
           
@@ -353,13 +355,14 @@ begin
   row UserDefRepVc UDRrw;
   Integer rwcnt,i;
   val v;
+  vector val rs;
   
   UserDefRepr.shortname = shortname;
   if (ReadFirstMain(UserDefRepr,1,true)) then begin
     rwcnt = MatRowCnt(UserDefRepr);
     for (i=0; i<rwcnt; i=i+1) begin
       MatRowGet(UserDefRepr,i,UDRrw);
-      CalcKeyRn(UDRrw.Code,UDRrw.defstr,RepSpec.IncDaughter,RepSpec.basecurncy,"",0,UDRrw.PeriodType,UDRrw.PeriodOffset,UDRrw.PeriodLength,"","","",v);
+      CalcKeyRn(UDRrw.Code,UDRrw.defstr,RepSpec.IncDaughter,RepSpec.basecurncy,"",0,UDRrw.PeriodType,UDRrw.PeriodOffset,UDRrw.PeriodLength,"","","",v,rs);
     end;
   end;
 end;
@@ -693,6 +696,7 @@ begin
   row TRVc TRrw;
   Integer tri,trrwcnt;
   string 20 pref,suff;
+  vector val rs;
   
   if (IncDaughter==1) then begin
     if (InString(UDRrw.defstr,"KEY")==0) then begin
@@ -729,7 +733,7 @@ begin
     if (IsChart(UDRrw.defstr)) then begin
       StartFormatChart(150);
     end;
-    CalcKeyRn(UDRrw.Code,UDRrw.defstr,IncDaughter,basecurncy,"",0,UDRrw.PeriodType,UDRrw.PeriodOffset,UDRrw.PeriodLength,ObjStr,"","",tmp);
+    CalcKeyRn(UDRrw.Code,UDRrw.defstr,IncDaughter,basecurncy,"",0,UDRrw.PeriodType,UDRrw.PeriodOffset,UDRrw.PeriodLength,ObjStr,"","",tmp,rs);
     if (IsChart(UDRrw.defstr)) then begin
       EndFormat;
     end;
@@ -787,9 +791,9 @@ LKeyRnPrintLine:;
 
           switch (UDRrw.PeriodType) begin
             case kUserDefRepPeriodTypeFromColumnsDefintion:
-              CalcKeyRn(UDRrw.Code,UDRrw.defstr,IncDaughter,basecurncytype,UDRCsrw.ColCode,UDRCsrw.ColType,UDRCsrw.PeriodType,UDRCsrw.PeriodOffset,UDRCsrw.PeriodLength,UDRCsrw.Objects,UDRCsrw.AddInfo,UDRCsrw.CompCode,tmp);
+              CalcKeyRn(UDRrw.Code,UDRrw.defstr,IncDaughter,basecurncytype,UDRCsrw.ColCode,UDRCsrw.ColType,UDRCsrw.PeriodType,UDRCsrw.PeriodOffset,UDRCsrw.PeriodLength,UDRCsrw.Objects,UDRCsrw.AddInfo,UDRCsrw.CompCode,tmp,rs);
             otherwise
-              CalcKeyRn(UDRrw.Code,UDRrw.defstr,IncDaughter,basecurncytype,UDRCsrw.ColCode,UDRCsrw.ColType,UDRrw.PeriodType,UDRrw.PeriodOffset,UDRrw.PeriodLength,UDRCsrw.Objects,UDRCsrw.AddInfo,UDRCsrw.CompCode,tmp);
+              CalcKeyRn(UDRrw.Code,UDRrw.defstr,IncDaughter,basecurncytype,UDRCsrw.ColCode,UDRCsrw.ColType,UDRrw.PeriodType,UDRrw.PeriodOffset,UDRrw.PeriodLength,UDRCsrw.Objects,UDRCsrw.AddInfo,UDRCsrw.CompCode,tmp,rs);
           end;
 
 
@@ -1430,6 +1434,7 @@ begin
   row UserDefRepVc UDRrw;
   row UserDefRepColumnsVc UDRCsrw;
   val tmp;
+  vector val rs;
 
   colrcwcnt = MatRowCnt(UDRCsr);
   
@@ -1475,7 +1480,7 @@ begin
     MatRowGet(UDRr,i,UDRrw);
     if (InString(UDRrw.defstr,"KEY")<=0) then begin
       if (colrcwcnt<=0) then begin
-        CalcKeyRn(UDRrw.Code,UDRrw.defstr,RepSpec.IncDaughter,RepSpec.basecurncy,"",0,UDRrw.PeriodType,UDRrw.PeriodOffset,UDRrw.PeriodLength,RepSpec.ObjStr,"","",tmp);
+        CalcKeyRn(UDRrw.Code,UDRrw.defstr,RepSpec.IncDaughter,RepSpec.basecurncy,"",0,UDRrw.PeriodType,UDRrw.PeriodOffset,UDRrw.PeriodLength,RepSpec.ObjStr,"","",tmp,rs);
         vtmp[UDRrw.Code] = tmp;
       end else begin
         for (ci=0;ci<colrcwcnt;ci=ci+1) begin
@@ -1490,9 +1495,9 @@ begin
               end;
               switch (UDRrw.PeriodType) begin
                 case kUserDefRepPeriodTypeFromColumnsDefintion:
-                  CalcKeyRn(UDRrw.Code,UDRrw.defstr,RepSpec.IncDaughter,basecurncytype,UDRCsrw.ColCode,UDRCsrw.ColType,UDRCsrw.PeriodType,UDRCsrw.PeriodOffset,UDRCsrw.PeriodLength,UDRCsrw.Objects,UDRCsrw.AddInfo,UDRCsrw.CompCode,tmp);
+                  CalcKeyRn(UDRrw.Code,UDRrw.defstr,RepSpec.IncDaughter,basecurncytype,UDRCsrw.ColCode,UDRCsrw.ColType,UDRCsrw.PeriodType,UDRCsrw.PeriodOffset,UDRCsrw.PeriodLength,UDRCsrw.Objects,UDRCsrw.AddInfo,UDRCsrw.CompCode,tmp,rs);
                 otherwise
-                  CalcKeyRn(UDRrw.Code,UDRrw.defstr,RepSpec.IncDaughter,basecurncytype,UDRCsrw.ColCode,UDRCsrw.ColType,UDRrw.PeriodType,UDRrw.PeriodOffset,UDRrw.PeriodLength,UDRCsrw.Objects,UDRCsrw.AddInfo,UDRCsrw.CompCode,tmp);
+                  CalcKeyRn(UDRrw.Code,UDRrw.defstr,RepSpec.IncDaughter,basecurncytype,UDRCsrw.ColCode,UDRCsrw.ColType,UDRrw.PeriodType,UDRrw.PeriodOffset,UDRrw.PeriodLength,UDRCsrw.Objects,UDRCsrw.AddInfo,UDRCsrw.CompCode,tmp,rs);
               end;
               vtmp[UDRrw.Code & UDRCsrw.ColCode] = tmp;
           end;
@@ -1505,7 +1510,7 @@ begin
     MatRowGet(UDRr,i,UDRrw);
     if (InString(UDRrw.defstr,"KEY")>0) then begin
       if (colrcwcnt<=0) then begin
-        CalcKeyRn(UDRrw.Code,UDRrw.defstr,RepSpec.IncDaughter,RepSpec.basecurncy,"",0,UDRrw.PeriodType,UDRrw.PeriodOffset,UDRrw.PeriodLength,RepSpec.ObjStr,"","",tmp);
+        CalcKeyRn(UDRrw.Code,UDRrw.defstr,RepSpec.IncDaughter,RepSpec.basecurncy,"",0,UDRrw.PeriodType,UDRrw.PeriodOffset,UDRrw.PeriodLength,RepSpec.ObjStr,"","",tmp,rs);
         vtmp[UDRrw.Code] = tmp;
       end else begin
         for (ci=0;ci<colrcwcnt;ci=ci+1) begin
@@ -1520,9 +1525,9 @@ begin
               end;
               switch (UDRrw.PeriodType) begin
                 case kUserDefRepPeriodTypeFromColumnsDefintion:
-                  CalcKeyRn(UDRrw.Code,UDRrw.defstr,RepSpec.IncDaughter,basecurncytype,UDRCsrw.ColCode,UDRCsrw.ColType,UDRCsrw.PeriodType,UDRCsrw.PeriodOffset,UDRCsrw.PeriodLength,UDRCsrw.Objects,UDRCsrw.AddInfo,UDRCsrw.CompCode,tmp);
+                  CalcKeyRn(UDRrw.Code,UDRrw.defstr,RepSpec.IncDaughter,basecurncytype,UDRCsrw.ColCode,UDRCsrw.ColType,UDRCsrw.PeriodType,UDRCsrw.PeriodOffset,UDRCsrw.PeriodLength,UDRCsrw.Objects,UDRCsrw.AddInfo,UDRCsrw.CompCode,tmp,rs);
                 otherwise
-                  CalcKeyRn(UDRrw.Code,UDRrw.defstr,RepSpec.IncDaughter,basecurncytype,UDRCsrw.ColCode,UDRCsrw.ColType,UDRrw.PeriodType,UDRrw.PeriodOffset,UDRrw.PeriodLength,UDRCsrw.Objects,UDRCsrw.AddInfo,UDRCsrw.CompCode,tmp);
+                  CalcKeyRn(UDRrw.Code,UDRrw.defstr,RepSpec.IncDaughter,basecurncytype,UDRCsrw.ColCode,UDRCsrw.ColType,UDRrw.PeriodType,UDRrw.PeriodOffset,UDRrw.PeriodLength,UDRCsrw.Objects,UDRCsrw.AddInfo,UDRCsrw.CompCode,tmp,rs);
               end;
               vtmp[UDRrw.Code & UDRCsrw.ColCode] = tmp;
           end;
@@ -1546,6 +1551,7 @@ begin
   Boolean startprintf,detailsprintf;
   val tmp,tval;
   row VATDeclVc VATDeclrw;
+  vector val rs;
 
   switch (RepSpec.Notation) begin
     case 0: ValType = M4Val;
@@ -1592,7 +1598,7 @@ begin
                 tmp = blankval;
               end;
             end else begin
-              CalcKeyRn(UDRrw.Code,UDRrw.defstr,RepSpec.IncDaughter,RepSpec.basecurncy,"",0,UDRrw.PeriodType,UDRrw.PeriodOffset,UDRrw.PeriodLength,RepSpec.ObjStr,"","",tmp);
+              CalcKeyRn(UDRrw.Code,UDRrw.defstr,RepSpec.IncDaughter,RepSpec.basecurncy,"",0,UDRrw.PeriodType,UDRrw.PeriodOffset,UDRrw.PeriodLength,RepSpec.ObjStr,"","",tmp,rs);
             end;
           end;
         end;
@@ -2054,6 +2060,7 @@ begin
   row TRVc TRrw;
   Integer tri,trrwcnt;
   string 20 pref,suff;
+  vector val rs;
   
   if (IncDaughter==1) then begin
     if (InString(UDRrw.defstr,"KEY")==0) then begin
@@ -2090,7 +2097,7 @@ begin
     if (IsChart(UDRrw.defstr)) then begin
       StartFormatChart(150);
     end;
-    CalcKeyRn(UDRrw.Code,UDRrw.defstr,IncDaughter,basecurncy,"",0,UDRrw.PeriodType,UDRrw.PeriodOffset,UDRrw.PeriodLength,ObjStr,"","",tmp);
+    CalcKeyRn(UDRrw.Code,UDRrw.defstr,IncDaughter,basecurncy,"",0,UDRrw.PeriodType,UDRrw.PeriodOffset,UDRrw.PeriodLength,ObjStr,"","",tmp,rs);
     if (IsChart(UDRrw.defstr)) then begin
       EndFormat;
     end;
@@ -2143,9 +2150,9 @@ LKeyRnPrintLine:;
 
           switch (UDRrw.PeriodType) begin
             case kUserDefRepPeriodTypeFromColumnsDefintion:
-              CalcKeyRn(UDRrw.Code,UDRrw.defstr,IncDaughter,basecurncytype,UDRCrw.ColCode,UDRCrw.ColType,UDRCrw.PeriodType,UDRCrw.PeriodOffset,UDRCrw.PeriodLength,UDRCrw.Objects,UDRCrw.AddInfo,UDRCrw.CompCode,tmp);
+              CalcKeyRn(UDRrw.Code,UDRrw.defstr,IncDaughter,basecurncytype,UDRCrw.ColCode,UDRCrw.ColType,UDRCrw.PeriodType,UDRCrw.PeriodOffset,UDRCrw.PeriodLength,UDRCrw.Objects,UDRCrw.AddInfo,UDRCrw.CompCode,tmp,rs);
             otherwise
-              CalcKeyRn(UDRrw.Code,UDRrw.defstr,IncDaughter,basecurncytype,UDRCrw.ColCode,UDRCrw.ColType,UDRrw.PeriodType,UDRrw.PeriodOffset,UDRrw.PeriodLength,UDRCrw.Objects,UDRCrw.AddInfo,UDRCrw.CompCode,tmp);
+              CalcKeyRn(UDRrw.Code,UDRrw.defstr,IncDaughter,basecurncytype,UDRCrw.ColCode,UDRCrw.ColType,UDRrw.PeriodType,UDRrw.PeriodOffset,UDRrw.PeriodLength,UDRCrw.Objects,UDRCrw.AddInfo,UDRCrw.CompCode,tmp,rs);
           end;
           vtmp[UDRrw.Code & UDRCrw.ColCode] = tmp;
       end;
