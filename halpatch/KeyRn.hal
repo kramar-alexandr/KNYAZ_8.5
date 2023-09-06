@@ -295,6 +295,11 @@ begin
         DoColumnSumupPerRow(cod,colcode,AddInfo);
         tmp = EvalToVal(AddInfo);
         tmp = rowsum[cod];
+        if(defstr!="TOTAL")then begin
+          rowsum["TOTAL"] = rowsum["TOTAL"] + tmp;
+        end else begin
+          tmp = rowsum["TOTAL"];
+        end;
       case kUserDefRepColumnTypeBudget:
         tmp = EvalToVal(defstr);
         valf = StringContainsAlpha(defstr)==false;
@@ -314,7 +319,7 @@ begin
           rowsum[cod] = rowsum[cod] + tmp;
           logtext(0,"ObjStr " & ObjStr &  " cod " & cod);
 
-          if(ObjStr=="TOTAL")then begin
+          if(defstr=="TOTAL")then begin
             tmp = rowsum[ObjStr];
           end else begin
             rowsum[ObjStr] = rowsum[ObjStr] + tmp;
