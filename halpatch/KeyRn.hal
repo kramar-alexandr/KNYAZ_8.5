@@ -325,6 +325,8 @@ begin
           end else begin
             rowsum[ObjStr] = rowsum[ObjStr] + tmp;
           end;
+          logtext(0,"tmp " & tmp);
+
 
           valf = StringContainsAlpha(defstr)==false;
           
