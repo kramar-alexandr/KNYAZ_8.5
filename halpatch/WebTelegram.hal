@@ -193,6 +193,7 @@ area resarea;
 record LocationVc Locr;
 string 100 location;
 boolean TrHs;
+record UserVc USr;
 
 logtext(0,"WebGetLocationsTelegram start");
 
@@ -207,7 +208,9 @@ logtext(0,"WebGetLocationsTelegram start");
     if(nonblank(location) and location!=Locr.Code)then begin
       TrHs = false;
     end;
-    if (nonblank(Locr.Group) and TrHs) then begin
+    USr.Code = Locr.Code;
+    readfirstmain(USr,1,true);
+    if (nonblank(Locr.Group) and TrHs and USr.Closed==0) then begin
       AddTextToArea("{",resarea);
       addParamToJSONArea("code",NormalizeStrToJson(Locr.Code),resarea);
       addParamToJSONArea("name",NormalizeStrToJson(Locr.Name),resarea);
