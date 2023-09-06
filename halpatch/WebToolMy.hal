@@ -287,7 +287,7 @@ begin
 return;
 end;
 
-global webpublic updating procedure WebDeleteUserDefRepVc()
+/*global webpublic updating procedure WebDeleteUserDefRepVc()
 begin
   record UserDefRepVc UserDefRepr;
   integer i,CompQty;
@@ -314,7 +314,7 @@ begin
   end;
   
 return;
-end;
+end;*/
 
 
 global webpublic procedure WebExportAnyReg()
