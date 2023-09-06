@@ -317,7 +317,11 @@ begin
           
           if(cod=="TOTAL")then begin
             tmp = rowsum[ObjStr];
+            logtext(0,"rowsum[ObjStr " & rowsum[ObjStr);
+
           end else begin
+            logtext(0,"tmp " & tmp);
+
             rowsum[ObjStr] = rowsum[ObjStr] + tmp;
           end;
 
