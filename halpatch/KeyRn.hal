@@ -193,6 +193,10 @@ begin
   integer i,trrwcnt,origtrrwcnt;
   val tmp;
   
+  
+  logtext(0,"DoColumnSumupPerRow " & MatRowCnt(gKeyRn_TRr));
+
+  
   origtrrwcnt = MatRowCnt(gKeyRn_TRr);
   trrwcnt = origtrrwcnt;
   for (i=0;i<origtrrwcnt;i=i+1) begin
@@ -201,7 +205,7 @@ begin
       if (accdonef[TRrw.AccNumber]==false) then begin
         accdonef[TRrw.AccNumber] = true;
         gAccountForSumup = TRrw.AccNumber;
-        logtext(0,"AddInfo " & AddInfo);
+
 
         tmp = EvalToVal(AddInfo);
         TRrw.Comment = "";
@@ -287,8 +291,8 @@ begin
     KeyRepSpec.ObjStr = AddObjectToObjectList(KeyRepSpec.ObjStr,ObjStr);        
   end;*/
   if (nonblank(defstr)) then begin
-    logtext(0,"ColType " & ColType);
-logtext(0,"cod " & cod);
+
+
 
     switch (ColType) begin
       case kUserDefRepColumnTypeColumnsSumup:
@@ -307,11 +311,11 @@ logtext(0,"cod " & cod);
           if(defstr=="TOCHKA")then begin
             defstr = "ObjResult(\"" & ObjStr & "\",\"" & cod & "\")";
           end;
-          logtext(0,"defstr " & defstr);
+
           
           
           tmp = EvalToVal(defstr);
-          logtext(0,"EvalToVal(defstr) " & EvalToVal(defstr));
+
 
           valf = StringContainsAlpha(defstr)==false;
           
@@ -340,7 +344,7 @@ logtext(0,"cod " & cod);
   end;
   KeyRepSpec.basecurncy = oldbasecurncy;
   
-  logtext(0,"tmp " & tmp);
+
 
   
   return;
@@ -754,13 +758,13 @@ LKeyRnPrintLine:;
     startprintf = true;
     for (i=0;i<colrcwcnt;i=i+1) begin
       MatRowGet(UserDefRepColumnsr,i,UDRCsrw);
-      logtext(0,"    UDRCsrw " & UDRCsrw.ColCode);
+
 
       switch (UDRCsrw.ColType) begin
         case kUserDefRepColumnTypeCode:
         case kUserDefRepColumnTypeComment:
         otherwise
-          logtext(0,"AccSpec " & AccSpec);
+
 
           switch (AccSpec) begin
             case 4:
@@ -783,7 +787,7 @@ LKeyRnPrintLine:;
           if (basecurncytype==kBaseCurrencySpecified) then begin
             basecurncytype = basecurncy;
           end;
-          logtext(0,"UDRrw.PeriodType " & UDRrw.PeriodType);
+
 
           switch (UDRrw.PeriodType) begin
             case kUserDefRepPeriodTypeFromColumnsDefintion:
@@ -791,7 +795,7 @@ LKeyRnPrintLine:;
             otherwise
               CalcKeyRn(UDRrw.Code,UDRrw.defstr,IncDaughter,basecurncytype,UDRCsrw.ColCode,UDRCsrw.ColType,UDRrw.PeriodType,UDRrw.PeriodOffset,UDRrw.PeriodLength,UDRCsrw.Objects,UDRCsrw.AddInfo,UDRCsrw.CompCode,tmp);
           end;
-          logtext(0,"UDRrw.Code & UDRCsrw.ColCode " & UDRrw.Code & UDRCsrw.ColCode);
+
 
           vtmp[UDRrw.Code & UDRCsrw.ColCode] = tmp;
       end;
@@ -1048,7 +1052,7 @@ begin
     gKsprwcnt = MatRowCnt(UserDefRepr);
     for (i=0; i<gKsprwcnt; i=i+1) begin
       MatRowGet(UserDefRepr,i,UDRrw);
-      logtext(0,"UDRrw" & UDRrw.Code);
+
 
       testf = true;
       if (nonblank(RepSpec.f3)) then begin
@@ -1078,7 +1082,7 @@ begin
   record UserDefRepVc UserDefRepr;
   record UserDefRepColumnsVc UserDefRepColumnsr;
   
-logtext(0,"KeyRn");
+
 
   if (blank(RepSpec.shortname)) then begin
     UserDefRepr.shortname = RepSpec.repname;
@@ -1905,7 +1909,7 @@ begin
   row UserDefRepVc UDRrw;
   Integer ValType,oldbasecurncy;
   
-  logtext(0,"KeyCompRn");
+
 
   
   KeyRnHeader(RepSpec,3221);
