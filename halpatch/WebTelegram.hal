@@ -210,7 +210,7 @@ logtext(0,"WebGetLocationsTelegram start");
     end;
     USr.Code = Locr.Code;
     readfirstmain(USr,1,true);
-    if (nonblank(Locr.Group) and TrHs and USr.Closed==0) then begin
+    if (nonblank(Locr.Group) and TrHs and USr.Closed==0 and nonblank(USr.Code)) then begin
       AddTextToArea("{",resarea);
       addParamToJSONArea("code",NormalizeStrToJson(Locr.Code),resarea);
       addParamToJSONArea("name",NormalizeStrToJson(Locr.Name),resarea);
