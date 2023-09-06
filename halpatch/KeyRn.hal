@@ -193,10 +193,6 @@ begin
   integer i,trrwcnt,origtrrwcnt;
   val tmp;
   
-  
-  logtext(0,"DoColumnSumupPerRow " & MatRowCnt(gKeyRn_TRr));
-
-  
   origtrrwcnt = MatRowCnt(gKeyRn_TRr);
   trrwcnt = origtrrwcnt;
   for (i=0;i<origtrrwcnt;i=i+1) begin
@@ -314,7 +310,7 @@ begin
 
           
           
-          tmp = EvalToVal(defstr);
+          tmp = -EvalToVal(defstr);
 
 
           valf = StringContainsAlpha(defstr)==false;
