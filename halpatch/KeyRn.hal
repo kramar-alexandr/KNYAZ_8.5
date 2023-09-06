@@ -323,6 +323,8 @@ begin
           if(defstr=="TOTAL")then begin
             tmp = rowsum[ObjStr];
           end else begin
+            logtext(0,"rowsum[ObjStr] " & ObjStr & " = " & rowsum[ObjStr]);
+
             rowsum[ObjStr] = rowsum[ObjStr] + tmp;
           end;
           logtext(0,"tmp " & tmp);
