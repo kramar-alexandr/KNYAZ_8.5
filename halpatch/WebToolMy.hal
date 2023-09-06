@@ -272,3 +272,80 @@ begin
 
 return;
 end;
+procedure addheadertoexport(integer i)
+begin
+	
+	exportstring("compnr");
+	ExportPadString(i & chr(13) & chr(10),len(i & chr(13) & chr(9)),"",false);
+	ExportPadString(chr(13) & chr(10),2,"",false);
+	ExportPadString("format" & chr(13) & chr(10),len("format")+2,"",false);
+	ExportPadString("1	46	1	1	0	0	0	/	" & chr(13) & chr(10),len("1	46	1	1	0	0	0	/	")+2,"",false);
+	ExportPadString(chr(13) & chr(10),2,"",false);
+	ExportPadString("codepage	UTF-8	" & chr(13) & chr(10),len("codepage	UTF-8	")+2,"",false);
+	ExportPadString(chr(13) & chr(10),2,"",false);
+
+return;
+end;
+
+global webpublic procedure WebExportAnyReg()
+begin
+	string 100 regname,blockname,dirrname;
+	integer i,CompQty;
+	record CompaniesBlock Compb;
+	row CompaniesBlock Comprw;
+	
+		logtext(0,"================================================ WebExportAnyReg");
+
+	
+	BlockLoad(Compb);	
+	
+	regname = WebGetArg("regname");
+	blockname = WebGetArg("blockname");
+	
+	
+	if(blank(regname) and blank(blockname))then begin
+		WebOutString("regname or blockname");
+	end else begin	
+		if(nonblank(regname))then begin
+			CompQty = matrowcnt(Compb);
+			dirrname = "ExportData";
+			if (!DirExists(dirrname)) then begin
+				CreateFolder(dirrname);
+			end;
+			for (i=0;i<CompQty;i=i+1) begin
+				matrowget(Compb,i,Comprw);
+				if(Comprw.ActiveStatus==0) then begin
+					SetCompany(i+1,false);
+					createfile(dirrname & "\\" & regname & i+1 & ".txt");
+					// logtext(0,dirrname & "\\" & regname & i+1 & ".txt");
+					CloseFile;
+					openexportfile(dirrname & "\\" & regname & i+1 & ".txt",true);
+					addheadertoexport(i+1);
+					RegisterExport(regname);
+					CloseFile;
+				end;
+			end;
+		end;
+		if(nonblank(blockname))then begin
+			CompQty = matrowcnt(Compb);
+			dirrname = "ExportData";
+			if (!DirExists(dirrname)) then begin
+				CreateFolder(dirrname);
+			end;
+			for (i=0;i<CompQty;i=i+1) begin
+				matrowget(Compb,i,Comprw);
+				if(Comprw.ActiveStatus==0) then begin
+					SetCompany(i+1,false);
+					createfile(dirrname & "\\" & blockname & i+1 & ".txt");
+					CloseFile;
+					openexportfile(dirrname & "\\" & blockname & i+1 & ".txt",true);
+					addheadertoexport(i+1);
+					BlockExport(blockname);
+					CloseFile;
+				end;
+			end;
+		end;
+	end;
+	runprogram("chmod","-R a+rw ExportData");
+return;
+end;
