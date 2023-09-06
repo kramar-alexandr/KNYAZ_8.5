@@ -314,6 +314,12 @@ begin
           tmp = -EvalToVal(defstr);
           
           rowsum[cod] = rowsum[cod] + tmp;
+          
+          if(cod=="TOTAL")then begin
+            tmp = rowsum[ObjStr];
+          end else begin
+            rowsum[ObjStr] = rowsum[ObjStr] + tmp;
+          end;
 
           valf = StringContainsAlpha(defstr)==false;
           
