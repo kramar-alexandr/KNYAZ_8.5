@@ -1054,7 +1054,9 @@ begin
   Boolean firstf;
   transaction record UserDefRepVc gKeyRn_UserDefRepr;
   transaction record UserDefRepColumnsVc gKeyRn_UserDefRepColumnsr;
-
+  record UserDefRepColumnsVc UserDefRepColumns2r,blankUserDefRepColumns2r;
+  
+  
   firstf = true;
   KeyRnHeader(RepSpec,3221);
   KeyRnColHeader(UserDefRepColumnsr);
@@ -1081,7 +1083,11 @@ begin
           end;
           firstf = false;
         end;
-        KeyRnPrint(RepSpec.Notation,RepSpec.AccSpec,RepSpec.ObjStr,UserDefRepr.shortname,UDRrw,RepSpec.IncDaughter,RepSpec.basecurncy,UserDefRepColumnsr,rs);
+        recordcopy(UserDefRepColumns2r,UserDefRepColumnsr);
+        if(UDRrw.Code=="===")then begin
+          recordcopy(UserDefRepColumns2r,blankUserDefRepColumns2r);
+        end;
+        KeyRnPrint(RepSpec.Notation,RepSpec.AccSpec,RepSpec.ObjStr,UserDefRepr.shortname,UDRrw,RepSpec.IncDaughter,RepSpec.basecurncy,UserDefRepColumns2r,rs);
       end;
     end;
   end;
