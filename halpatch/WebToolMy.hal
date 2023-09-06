@@ -346,6 +346,6 @@ begin
 			end;
 		end;
 	end;
-	runprogram("chmod","-R a+rw ExportData");
+	//runprogram("chmod","-R a+rw ExportData");
 return;
 end;
