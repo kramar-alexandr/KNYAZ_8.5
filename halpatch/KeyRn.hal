@@ -314,7 +314,8 @@ begin
           tmp = -EvalToVal(defstr);
           
           rowsum[cod] = rowsum[cod] + tmp;
-          
+          logtext(0,"ObjStr " & ObjStr &  " cod " & cod);
+
           if(ObjStr=="TOTAL")then begin
             tmp = rowsum[ObjStr];
             logtext(0,"rowsum[ObjStr " & rowsum[ObjStr);
