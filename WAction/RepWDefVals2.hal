@@ -1399,7 +1399,7 @@ begin
   FindRepDefHeader(RepSpec.repname,RepSpec.shortname,tstr);
   RepSpec.f1 = tstr;
   RepSpec.AccSpec = 2;
-  RepSpec.CurncyCode = "UAH";
+  //RepSpec.CurncyCode = "UAH";
   PutWindowRecord(wn,RepSpec);
   SelectWindow(wn);
   return;
