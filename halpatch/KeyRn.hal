@@ -309,8 +309,6 @@ begin
             defstr = "ObjResult(\"" & ObjStr & "\",\"" & cod & "\")";
           end;
 
-          
-          
           tmp = -EvalToVal(defstr);
           
           rowsum[cod] = rowsum[cod] + tmp;
@@ -318,11 +316,7 @@ begin
 
           if(ObjStr=="TOTAL")then begin
             tmp = rowsum[ObjStr];
-            logtext(0,"rowsum[ObjStr " & rowsum[ObjStr);
-
           end else begin
-            logtext(0,"tmp " & tmp);
-
             rowsum[ObjStr] = rowsum[ObjStr] + tmp;
           end;
 
