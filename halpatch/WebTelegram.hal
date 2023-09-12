@@ -192,8 +192,9 @@ begin
 area resarea;
 record LocationVc Locr;
 string 100 location;
-boolean TrHs;
+boolean TrHs,TrHs2,testf;
 record UserVc USr;
+record CLOutVc CLOutr;
 
 logtext(0,"WebGetLocationsTelegram start");
 
@@ -219,7 +220,30 @@ logtext(0,"WebGetLocationsTelegram start");
       addParamToJSONArea("balance",NormalizeStrToJson(Locr.BalanceSum),resarea);
       addParamToJSONArea("expenses",NormalizeStrToJson(Locr.RashodSum),resarea);
       addParamToJSONArea("total",NormalizeStrToJson(Locr.BalanceSum - Locr.RashodSum),resarea);
-      delLastComaInArea(resarea);
+      if(nonblank(location))then begin
+        AddTextToArea(" \"daylyExpenses\":[",resarea);
+          CLOutr.TransDate = currentdate;
+          TrHs = true;
+          while(loopkey("TransDate",CLOutr,1,TrHs))begin
+            testf = true;
+            if(CLOutr.Objects!=USr.PersObjx)then begin testf = false; end;
+    
+            if(testf)then begin
+              AddTextToArea("{",resarea);
+              addParamToJSONArea("code",NormalizeStrToJson(CLOutr.SerNr),resarea);
+              addParamToJSONArea("type",NormalizeStrToJson(CLOutr.CorspCode),resarea);
+              addParamToJSONArea("comment",NormalizeStrToJson(CLOutr.Comment),resarea);
+              addParamToJSONArea("sum",NormalizeStrToJson(CLOutr.Total),resarea);
+              addParamToJSONArea("date",NormalizeStrToJson(CLOutr.TransDate),resarea);
+              delLastComaInArea(resarea);
+              AddTextToArea("},",resarea);
+            end;
+          end;
+      
+        AddTextToArea("]",resarea);
+      end else begin
+        delLastComaInArea(resarea);
+      end;
       AddTextToArea("},",resarea);
     end;
   end;
