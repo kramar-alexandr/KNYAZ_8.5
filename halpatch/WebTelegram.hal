@@ -239,6 +239,7 @@ logtext(0,"WebGetLocationsTelegram start");
               AddTextToArea("},",resarea);
             end;
           end;
+          delLastComaInArea(resarea);
       
         AddTextToArea("]",resarea);
       end else begin
