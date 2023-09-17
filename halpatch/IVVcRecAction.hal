@@ -1460,11 +1460,11 @@ L12:;
       end;
     end;
   end;
-  if (ValidEInvoiceData3(IVp,CUr,errcode2,errstr,tstr)==false) then begin
+  /*if (ValidEInvoiceData3(IVp,CUr,errcode2,errstr,tstr)==false) then begin
     RecordCheckError(errcode2,errstr,-1,tstr);      
     res = -1; 
     goto L99;
-  end;
+  end;*/
   
   if (HasLocalization("MEX")) then begin
     if (IVp.OKFlag!=0 and IV2p.OKFlag==0) then begin
