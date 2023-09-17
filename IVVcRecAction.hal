@@ -121,7 +121,7 @@ begin
     Locr.Code = IVr.Location;
   	if(readfirstmain(Locr,1,true))then begin
       Locr.BalanceSum = Locr.BalanceSum - IV2r.Sum4 + IVr.Sum4;
-      logtext(0,"Change balance from IVVcRecordUpdateAfter 03 " & IVr.SerNr & " " & IVr.Sum4);
+      logtext(0,"Change balance from IVVcRecordUpdateAfter 03 " & IVr.SerNr & " " & -IV2r.Sum4 + IVr.Sum4);
       recordstore(Locr,true);
     end;
   end;
