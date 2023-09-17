@@ -72,7 +72,7 @@ begin
   
 	res = inner.IVVcRecordSaveAfter(IVr,IV2r,long3,long4);
   curcomp = currentcompany;
-  if(IVr.OKFlag==1)then begin
+  //if(IVr.OKFlag==1)then begin
   	CreatePOInOtherCom(IVr);
   	setcompany(curcomp,false);
   	Locr.Code = IVr.Location;
@@ -82,7 +82,7 @@ begin
       recordstore(Locr,true);
     end;
     
-  end;
+  //end;
   
   IVVcRecordSaveAfter = res; 
   return;
@@ -98,7 +98,7 @@ begin
 
 	res = inner.IVVcRecordSaveAfter(IVr,IV2r,long3,long4);
   curcomp = currentcompany;
-  if(IVr.OKFlag==1 and IV2r.OKFlag==0)then begin
+  /*if(IVr.OKFlag==1 and IV2r.OKFlag==0)then begin
   	CreatePOInOtherCom(IVr);
   	setcompany(curcomp,false);
   	Locr.Code = IVr.Location;
@@ -115,9 +115,9 @@ begin
       logtext(0,"Change balance from IVVcRecordUpdateAfter 02 " & IVr.SerNr & " " & IVr.Sum4);
       recordstore(Locr,true);
     end;
-  end;
+  end;*/
   
-  if(IVr.OKFlag==0 and IV2r.OKFlag==0)then begin
+  //if(IVr.OKFlag==0 and IV2r.OKFlag==0)then begin
     Locr.Code = IVr.Location;
   	if(readfirstmain(Locr,1,true))then begin
       Locr.BalanceSum = Locr.BalanceSum - IV2r.Sum4 + IVr.Sum4;
@@ -126,7 +126,7 @@ begin
       logtext(0,"Change balance from IVVcRecordUpdateAfter 03 " & IVr.SerNr & " " & -IV2r.Sum4 + IVr.Sum4);
       recordstore(Locr,true);
     end;
-  end;
+  //end;
   
   
   IVVcRecordUpdateAfter = res; 
