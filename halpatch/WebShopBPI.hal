@@ -883,6 +883,7 @@ val dif;
 			js = ParseJSONArea(resarea);
 			dif = AbsoluteVal(gethour(currenttime)-stringtoval(JSONGET(js,"hour"),M4Val));
 			if(dif>0)then begin
+			  setareazerosize(resarea);
         AddTextToArea("{",resarea);
         AddTextToArea("\"hour\": " & gethour(currenttime) & ",",resarea);
         AddTextToArea("\"users\":[",resarea);
