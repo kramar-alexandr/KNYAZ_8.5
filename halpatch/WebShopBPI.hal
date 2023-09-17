@@ -16,7 +16,6 @@ remote procedure CLOutVc_PasteCorspCode(var record CLOutVc,Integer);
 external function roundmode SetRoundModeD(Integer);
 external function Boolean StockTakeVc_PasteArtCode(var record StockTakeVc,Integer,Integer,var string);
 
-
 procedure addParamToJSONArea(string param, string value, var area req)
 begin
 
@@ -867,6 +866,8 @@ area resarea;
 record UserVc USr,curUSr;
 record DepVc Depr;
 boolean testf;
+json js;
+val dif;
 
   logtext(0,"WebGetUsers start");
 	if(WebLoginStatus==3)then begin
@@ -878,33 +879,39 @@ boolean testf;
 			curUSr.Code = currentuser;
 			readfirstmain(curUSr,1,true);
 			
-			AddTextToArea("{",resarea);
-			AddTextToArea("\"users\":[",resarea);
-			while(loopmain(USr,1,true))begin
-					testf  = true;
-					if(USr.AccessGroup!="SALE")then begin testf = false; end;
-					if(USr.Closed!=0)then begin testf = false; end;
-					
-					if(nonblank(curUSr.SalesGroup) and USr.SalesGroup!=curUSr.SalesGroup)then begin testf = false; end;
-					
-					if(testf) then begin
-						Depr.Code = USr.Department;
-						readfirstmain(Depr,1,true);
-						AddTextToArea("{",resarea);
-						addParamToJSONArea("login",NormalizeStrToJson(USr.Code),resarea);
-						addParamToJSONArea("name",NormalizeStrToJson(USr.Name),resarea);
-						addParamToJSONArea("address",NormalizeStrToJson(Depr.Addr0),resarea);
-						addParamToJSONArea("location",NormalizeStrToJson(USr.Location),resarea);
-						addParamToJSONArea("phone",NormalizeStrToJson(USr.Phone1),resarea);
-						delLastComaInArea(resarea);
-						AddTextToArea("},",resarea);
-					end;
-			end;
-			delLastComaInArea(resarea);
-			AddTextToArea("]",resarea);
-			AddTextToArea("}",resarea);
-	
-	
+			addfiletoarea("JSON/WebGetUsers_" & currentuser & ".json",resarea,false);
+			js = ParseJSONArea(resarea);
+			dif = AbsoluteVal(gethour(currenttime)-stringtoval(JSONGET(js,"hour"),M4Val));
+			if(dif>0)then begin
+        AddTextToArea("{",resarea);
+        AddTextToArea("\"hour\": " & gethour(currenttime) & ",",resarea);
+        AddTextToArea("\"users\":[",resarea);
+        while(loopmain(USr,1,true))begin
+            testf  = true;
+            if(USr.AccessGroup!="SALE")then begin testf = false; end;
+            if(USr.Closed!=0)then begin testf = false; end;
+          
+            if(nonblank(curUSr.SalesGroup) and USr.SalesGroup!=curUSr.SalesGroup)then begin testf = false; end;
+          
+            if(testf) then begin
+              Depr.Code = USr.Department;
+              readfirstmain(Depr,1,true);
+              AddTextToArea("{",resarea);
+              addParamToJSONArea("login",NormalizeStrToJson(USr.Code),resarea);
+              addParamToJSONArea("name",NormalizeStrToJson(USr.Name),resarea);
+              addParamToJSONArea("address",NormalizeStrToJson(Depr.Addr0),resarea);
+              addParamToJSONArea("location",NormalizeStrToJson(USr.Location),resarea);
+              addParamToJSONArea("phone",NormalizeStrToJson(USr.Phone1),resarea);
+              delLastComaInArea(resarea);
+              AddTextToArea("},",resarea);
+            end;
+        end;
+        delLastComaInArea(resarea);
+        AddTextToArea("]",resarea);
+        AddTextToArea("}",resarea);
+      
+        writeareatofile(resarea,"JSON/WebGetUsers_" & currentuser & ".json",0);
+	    end;
 			weboutarea2(resarea);
 	end;
   
@@ -952,6 +959,7 @@ record IVVc IVr;
 boolean TrHs,testf;
 val sum,rashod;
 record Uservc USr;
+record LocationVc Locr;
 
 
 logtext(0,"WebGetCashDocs start " & WebGetArg("foruser"));
@@ -962,13 +970,15 @@ if(WebLoginStatus==3)then begin
 
 	SetCompany(9,false);
 		code = WebGetArg("foruser");
+		Locr.Code = code;
+		readfirstmain(Locr,1,true);
 		if(nonblank(code)) then begin
 			USr.Code = code;
 		end else begin
 			USr.Code = currentuser;
 		end;
-		readfirstmain(USr,1,true);
-		TrHs = true;
+		//readfirstmain(USr,1,true);
+		/*TrHs = true;
 		IVr.Location = USr.Location;
 		while(loopkey("Location",IVr,1,TrHs))begin
 			testf = true;
@@ -991,13 +1001,18 @@ if(WebLoginStatus==3)then begin
 			end else begin
 			  rashod = rashod + CLOutr.Total;
 			end;
-			
 		end;
 	
 		AddTextToArea("{",resarea);
       AddTextToArea("\"balance\":\"" & sum & "\",",resarea);
       AddTextToArea("\"rashod\":\"" & rashod & "\"",resarea);
+		AddTextToArea("}",resarea);*/
+		
+		AddTextToArea("{",resarea);
+      AddTextToArea("\"balance\":\"" & Locr.BalanceSum & "\",",resarea);
+      AddTextToArea("\"rashod\":\"" & Locr.RashodSum & "\"",resarea);
 		AddTextToArea("}",resarea);
+		
 		weboutarea2(resarea);
 	
 	

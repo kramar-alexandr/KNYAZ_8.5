@@ -5,6 +5,7 @@ external procedure MessageBoxToUser(string,integer,string,string);
 external function Boolean LoggedInTest();
 external procedure FindAndStoreINVcImgLink(record INVc,integer,var string,var string);
 external procedure ExtractObj(string,var Integer,var string);
+external updating procedure WebUpdateBalanceForPoints;
 
 SetLangMode(LangRussian,"RUS",0);
 
@@ -82,10 +83,14 @@ record RHistVc RHistr;
 	boolean TrHs;
 	integer cnt;
 
-	setcompany(1,false);
+	//setcompany(1,false);
 	logtext(0,"WebDeleteRHistr begin");
 	
-	TrHs = true;
+	setcompany(9,false);
+	WebUpdateBalanceForPoints;
+
+	
+	/*TrHs = true;
 	RHistr.TransDate = stringtodate("1/1/2011");
 	while(loopkey("RecidStr",RHistr,1,TrHs)) begin
 		if(RHistr.TransDate>stringtodate("31/12/2019"))then begin TrHs = false; end;
@@ -103,7 +108,7 @@ record RHistVc RHistr;
 				logtext(0,"WebDeleteRHistr");
 			end;
 		end;
-	end;
+	end;*/
 
 	logtext(0,"WebDeleteRHistr end");
 
