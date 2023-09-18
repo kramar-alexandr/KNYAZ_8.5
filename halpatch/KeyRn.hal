@@ -287,9 +287,6 @@ begin
     KeyRepSpec.ObjStr = AddObjectToObjectList(KeyRepSpec.ObjStr,ObjStr);        
   end;*/
   if (nonblank(defstr)) then begin
-
-
-
     switch (ColType) begin
       case kUserDefRepColumnTypeColumnsSumup:
         DoColumnSumupPerRow(cod,colcode,AddInfo);
@@ -318,17 +315,11 @@ begin
             tmp = -EvalToVal(defstr);
           end;
           rowsum[cod] = rowsum[cod] + tmp;
-          logtext(0,"ObjStr " & ObjStr &  " cod " & cod);
-
           if(defstr=="TOTAL")then begin
             tmp = rowsum[ObjStr];
           end else begin
-            logtext(0,"rowsum[ObjStr] " & ObjStr & " = " & rowsum[ObjStr]);
-
             rowsum[ObjStr] = rowsum[ObjStr] + tmp;
           end;
-          logtext(0,"tmp " & tmp);
-
 
           valf = StringContainsAlpha(defstr)==false;
           
@@ -356,9 +347,6 @@ begin
     ResetCompany(oldcomp);
   end;
   KeyRepSpec.basecurncy = oldbasecurncy;
-  
-
-
   
   return;
 end;

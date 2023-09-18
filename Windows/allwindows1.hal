@@ -4394,3 +4394,523 @@ begin
   end;
   EndWindow;
 end;
+
+
+
+window ORDClass:2
+  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  real h,h1,h2,h3,h4,t,v,vm,vs,h5,flipnr,width;
+  string 255 label;
+  Integer rn;
+  
+  WindowBegin("Счёт клиенту",ORDClass,CGview,-);
+  if (HasLocalization("BRA") and HasAvalara) then begin
+    SetWRect(20,80,900,460);
+  end else begin
+  SetWRect(20,80,750,460);
+  end;
+  Sizeable(-1,-1,0,0);
+  UseView(ORVc);
+  ActiveFieldOnNew("CustCode");
+  CommunicateButton;
+  Tile(0,74,false,"",CustCode);
+  EditField(75,vm=(v=6),95,"Номер",Normal,SerNr,false,TSerSClass);
+  EditField(75,v+=20,95,"Получатель",Normal,CustCode,false,CUSClass);
+  EnterSkip(PayDeal);
+  EditField(h=255,v=vm,-120,"Наим.",Normal,Addr0,false,0);
+  if (StandardHansa==false) then begin
+    EditField(h,vm=(v+=20),135,"Офиц. Но.",Normal,OfficialSerNr,false,LegalInvNrSClass);
+    CheckBox(h4=-100,v=6,0,"OK",OKFlag);
+  end else begin
+    CheckBox(h4=-100,vm=(v+=20),0,"OK",OKFlag);   // From dict
+  end;
+  CheckBox(h4,v+=16,0,"Закрыт",Closed);
+  CheckBox(h4,v+=16,0,"Зарезервир.",Reserved);
+  TileButton(1,"Условия");
+  TileButton(2,"Товары");
+
+  Tile(1,110,false,"1",OrdDate);
+  vs = 20; h1 = 110; h2 = 290; h3 = 530; h4 = -100;
+  EditField(h1,vm=(v=6),82,"Дата",Normal,OrdDate,false,PasteCurDate);
+  EditField(h1,v+=vs,35,"Условия оплаты",Normal,PayDeal,false,PDSClass);
+//  EditField(h1,v+=vs,82,"Заплан. отгрузка",Normal,PlanShip,false,PasteCurDate);
+//  EditField(h1,v+=vs,82,"Дата отправки",Normal,DespatchDate,false,PasteCurDate);
+//  EditField(h1,v+=vs,82,"Время отправки",Normal,DespatchTime,false,PasteCurTime);
+//  EditField(h2,v=vm,135,"Ответственный",Normal,OurContact,false,0);
+//  EditField(h2,v+=vs,135,"Внимание",Normal,CustContact,false,ContactSClass);
+  EditField(h2,v=vm,135,"Объекты",Normal,Objects,false,ObjSClass);
+  EditField(h2,v+=vs,135,"Ссылка",Normal,RefStr,false,0);
+  EditField(h2,v+=vs,135,"№ счета кл.",Normal,CustOrdNr,false,0);
+  EditField(h1,v+=vs,-20,"Коммент",Normal,Comment,false,0);
+  EditField(h3,v=vm,80,"Продавец",Normal,SalesMan,false,UserSClass);
+  EditField(h3,v+=vs,80,"Вид счёта",Normal,OrderClass,false,OrderClassSClass);
+
+  EnterSkip(Math);
+  Tile(2,220,true,"2",Math);
+//  CheckBox(20,-20,0,"OK",OKFlag);
+  EditField(55,-41,50,"Валюта",Normal,CurncyCode,false,CurncyCodeSClass);
+  if (UseTaxTemplatesforTaxCalc==false) then begin
+    if (UserCanAction("ViewCostPrice",true)) then begin
+      EditField(165,-41,65,"Приб. %",Normal,GPProc,true,0);
+      EditField(165,-21,65,"Итоговая прибыль",ViewOnly,TotGP,true,0);
+    end;
+    if (HasLocalization("GBR,LTU,POL,LVA")) then begin
+      EditField(310,-41,50,"Обратный #VAT#",ViewOnly,RvrsVAT,true,0);
+      EditField(310,-21,50,"Без налога",ViewOnly,TAX1Sum,true,0);
+    end else begin
+    //EditField(290,-41,70,"Налог",ViewOnly,TAX2Sum,true,0);
+    //EditField(290,-21,70,"Вн.налог",ViewOnly,TAX1Sum,true,0);
+    end;
+    //EditField(410,-41,100,"НДС",ViewOnly ,Sum3,true,0);
+  end else begin
+    if (UserCanAction("ViewCostPrice",true)) then begin
+      EditField(290,-41,70,"Приб. %",Normal,GPProc,true,0);
+      EditField(290,-21,70,"Итоговая прибыль",ViewOnly,TotGP,true,0);
+    end;
+    EditField(410,-41,100,"НДС",ViewOnly ,Sum3,true,0);  
+  end;
+  EditField(410,-21,100,"База",ViewOnly,BaseSum4,true,0);
+  EditField(-150,-41,100,"Подытог",ViewOnly ,Sum1,true,0);
+  EditField(-150,-21,100,"ИТОГО",ViewOnly ,Sum4,true,0);
+  v = 24;
+  MatrixBegin(3,v,-50,-49,-,200);
+  MatTypedRow(stp);
+  flipnr = 0;
+  Flip(flipnr); flipnr = flipnr + 1;
+  MatText(t=9,32,"Итого",true);
+  MatCol(t,100,"",0,Spec,false,0);
+  MatColTL(t,-80,"Сумма",0,-1,ViewOnly,0,Sum,true,0);
+  MatText(t=17,32,"Заголовок",true);
+  MatCol(t,100,"",0,Spec,false,0);
+  MatCol(t=1,32,"Товар",0,ArtCode,false,ForSaleINSClass);
+//  MatCol(t,94,"Var",0,VARList,true,VARSClass);
+//  MatCol(t,144,"Qty",0,Quant,true,0);
+  t = 1;
+  if (HasVarieties) then begin
+    MatCol(t,94,"К-во",0,Quant,true,MATVARINSClass);
+  end else begin
+    MatCol(t,94,"К-во",0,Quant,true,0);
+  end;
+  EnterSkip(ArtCode);
+  MatCol(t=kInvoiceRowTypeStructuredItemComponent,32,"Товар",0,ArtCode,false,ForSaleINSClass);
+//  MatCol(t,94,"Var",0,VARList,true,VARSClass);
+//  MatCol(t,144,"Qty",0,Quant,true,0);
+  if (HasVarieties) then begin
+    MatCol(t,94,"К-во",0,Quant,true,MATVARINSClass);
+  end else begin
+    MatCol(t,94,"К-во",0,Quant,true,0);
+  end;
+  EnterSkip(ArtCode);
+  MatText(t=10,32,"Эта и нижележащие строки не будут печататься",false);
+  MatText(t=kInvoiceRowTypePerceptionTax,32,"Налоговый сбор",true);
+  MatCol(t,132,"",0,Region,false,0);
+  MatCol(t,252,"",0,TAX2Prc,true,0);
+  MatCol(t,292,"",0,Sum,true,0);
+  MatCol(t,372,"",0,SalesAcc,false,0);
+  MatCol(t,452,"",0,Spec,false,0);
+  Flip(flipnr); flipnr = flipnr + 1;
+//  MatCol(t=1,194,"Описание",0,Spec,false,0);
+  t = 1;
+  MatCol(t,144,"Описание",0,Spec,false,0);
+  MatCol(t,-235,"Цена",0,Price,true,0);  // use PL2SClass for filtered datalist
+  MatCol(t,-135,"%",0,vRebate,true,0);
+  MatCol(t,-100,"Сумма",0,Sum,true,0);
+  MatCol(t=kInvoiceRowTypeStructuredItemComponent,144,"Описание",0,Spec,false,0);
+  MatCol(t,-235,"Цена",0,Price,true,0);  // use PL2SClass for filtered datalist
+  MatCol(t,-135,"%",0,vRebate,true,0);
+  MatCol(t,-100,"Сумма",0,Sum,true,0);
+  Flip(flipnr); flipnr = flipnr + 1;
+  t = 1;
+  MatCol(t,144,"Описание",0,Spec,false,0);
+  if (UseTaxTemplatesforTaxCalc) then begin
+    MatCol(t,-284,"Код товара клиента",0,CustArtCode,false,CUINSClass);
+    MatCol(t,-224,"Счет",0,SalesAcc,false,AccSClass);
+    MatCol(t,-164,"Объект",0,Objects,false,ObjSClass);
+    MatCol(t,-70,"Ш-н",0,TaxTemplateCode,false,TaxTemplateSClass);
+  end else begin
+    MatCol(t,-264,"Код товара клиента",0,CustArtCode,false,CUINSClass);
+    MatCol(t,-204,"Счет",0,SalesAcc,false,AccSClass);
+    MatCol(t,-154,"Объект",0,Objects,false,ObjSClass);
+    if ((HasLocalization("GBR,LTU,POL") and IsEnterprise) or HasLocalization("LVA")) then begin
+      MatCol(t,-90,"#V-Cd#",0,VATCode,false,VATCodeSClass);
+      MatCol(t,-45,"Обртн",0,RvrsVATCode,false,VATCodeSClass);
+    end else begin
+      MatCol(t,-45,"#V-Cd#",0,VATCode,false,VATCodeSClass);
+    end;
+  end;
+  MatCol(t=kInvoiceRowTypeStructuredItemComponent,144,"Описание",0,Spec,false,0);
+  if (UseTaxTemplatesforTaxCalc) then begin
+    MatCol(t,-284,"Код товара клиента",0,CustArtCode,false,CUINSClass);
+    MatCol(t,-224,"Счет",0,SalesAcc,false,AccSClass);
+    MatCol(t,-164,"Объект",0,Objects,false,ObjSClass);
+    MatCol(t,-70,"Ш-н",0,TaxTemplateCode,false,TaxTemplateSClass);
+  end else begin
+    MatCol(t,-264,"Код товара клиента",0,CustArtCode,false,CUINSClass);
+    MatCol(t,-204,"Счет",0,SalesAcc,false,AccSClass);
+    MatCol(t,-154,"Объект",0,Objects,false,ObjSClass);
+    if ((HasLocalization("GBR,LTU,POL") and IsEnterprise) or HasLocalization("LVA")) then begin
+      MatCol(t,-90,"#V-Cd#",0,VATCode,false,VATCodeSClass);
+      MatCol(t,-45,"Обртн",0,RvrsVATCode,false,VATCodeSClass);
+    end else begin
+      MatCol(t,-45,"#V-Cd#",0,VATCode,false,VATCodeSClass);
+    end;
+  end;
+  Flip(flipnr); flipnr = flipnr + 1;
+  t = 1;
+  MatCol(t,144,"Описание",0,Spec,false,0);
+  MatCol(t,-350,"Тип заказа",0,OrderType,false,SetSClass);
+  if (UserCanAction("ViewCostPrice",true)) then begin
+    MatCol(t,-245,"Цена",0,Price,true,0); // use PL2SClass for filtered datalist
+    MatCol(t,-175,"%",0,vRebate,true,0);
+    MatCol(t,-140,"Стоимость",0,BasePrice,true,0);
+    MatCol(t,-70,"Прибыль",0,rowGP,true,0);
+  end else begin
+    MatCol(t,-235,"Цена за шт.",0,Price,true,0); // use PL2SClass for filtered datalist
+    MatCol(t,-135,"%",0,vRebate,true,0);
+    MatCol(t,-100,"Сумма",0,Sum,true,0);
+  end;
+  MatCol(t=kInvoiceRowTypeStructuredItemComponent,144,"Описание",0,Spec,false,0);
+  if (UserCanAction("ViewCostPrice",true)) then begin
+    MatCol(t,-245,"Цена",0,Price,true,0); // use PL2SClass for filtered datalist
+    MatCol(t,-175,"%",0,vRebate,true,0);
+    MatCol(t,-140,"Стоимость",0,BasePrice,true,0);
+    MatCol(t,-70,"Прибыль",0,rowGP,true,0);
+  end else begin
+    MatCol(t,-235,"Цена",0,Price,true,0); // use PL2SClass for filtered datalist
+    MatCol(t,-135,"%",0,vRebate,true,0);
+    MatCol(t,-100,"Сумма",0,Sum,true,0);
+  end;
+  Flip(flipnr); flipnr = flipnr + 1;
+  t = 1;
+  MatCol(t,144,"Описание",0,Spec,false,0);
+  MatCol(t,-300,"Продавцы",0,Salesmen,false,UserSClass);
+  MatCol(t,-236,"Отгруж.",0,Shipd1,true,0);
+  MatCol(t,-184,"Отгруж. Ок",0,Shipd2,true,0);
+  MatCol(t,-132,"Отфактурир.",0,Invd,true,0);
+  MatCol(t,-80,"Структура",0,Recepy,false,RecSClass);
+  MatCol(t=kInvoiceRowTypeStructuredItemComponent,144,"Описание",0,Spec,false,0);
+  MatCol(t,-290,"Предвар.",0,Shipd1,true,0);
+  MatCol(t,-220,"Отгрузка",0,Shipd2,true,0);
+  MatCol(t,-150,"Счёт-фактура",0,Invd,true,0);
+  MatCol(t,-80,"Структура",0,Recepy,false,RecSClass);
+  Flip(flipnr); flipnr = flipnr + 1;
+  t = 1;
+  if (HasLocalization("BRA") and HasAvalara) then begin
+    MatCol(t,144,"Description",0,Spec,false,0); //!!TRANSLATE
+    MatCol(t,-540,"Serial No.",0,SerialNr,false,SerialNrSClass); //!!TRANSLATE
+    MatCol(t,-420,"Plan. Del.",0,PlanShipRow,true,PasteCurDate); //!!TRANSLATE
+    MatCol(t,-355,"Price Factor",0,PriceFactor,true,0); //!!TRANSLATE
+    MatCol(t,-285,"Other Cost",0,OtherCost,false,0); //!!TRANSLATE
+    MatCol(t,-225,"Freight Cost",0,FreightCost,false,0); //!!TRANSLATE
+    MatCol(t,-155,"Insurance",0,Insurance,false,0); //!!TRANSLATE
+    MatCol(t,-100,"Untax. Other Cost",0,UntaxedOtherCost,false,0); //!!TRANSLATE
+  end else begin
+  MatCol(t,144,"Описание",0,Spec,false,0);
+  MatCol(t,-290,"Серийный номер",0,SerialNr,false,SerialNrSClass);
+  MatCol(t,-150,"Запланированная отгрузка",0,PlanShipRow,true,PasteCurDate);
+  MatCol(t,-70,"Фактор цены",0,PriceFactor,true,0);
+  end;
+  MatCol(t=kInvoiceRowTypeStructuredItemComponent,144,"Описание",0,Spec,false,0);
+  MatCol(t,-290,"Серийный номер",0,SerialNr,false,SerialNrSClass);
+  MatCol(t,-150,"Запланированная отгрузка",0,PlanShipRow,true,PasteCurDate);
+  MatCol(t,-70,"Фактор цены",0,PriceFactor,true,0);
+  Flip(flipnr); flipnr = flipnr + 1;
+  t = 1;
+  MatCol(t,144,"Описание",0,Spec,false,0);
+  MatCol(t,-315,"Накладная",0,ShipNote,false,0);
+  MatCol(t,-210,"Склад",0,Location,false,LocationSClass);
+  if (StandardHansa==false) then begin
+    MatCol(t,-145,"Место",0,Position,true,UsedPosSClass);
+  end;
+  MatCol(t,-90,"Источник",0,Source,true,SourceSClass);
+  MatCol(t=kInvoiceRowTypeStructuredItemComponent,144,"Описание",0,Spec,false,0);
+  MatCol(t,-315,"Накладная",0,ShipNote,false,0);
+  MatCol(t,-210,"Склад",0,Location,false,LocationSClass);
+  if (StandardHansa==false) then begin
+    MatCol(t,-145,"Место",0,Position,true,UsedPosSClass);
+  end;
+  MatCol(t,-90,"Источник",0,Source,true,SourceSClass);
+  if (StandardHansa==false) then begin
+    Flip(flipnr); flipnr = flipnr + 1;
+    MatCol(t=1,144,"Дата получения",0,PickingDate,false,PasteCurDate);
+    MatCol(t,-390,"Время пол.",0,PickingTime,false,PasteCurTime);
+    MatCol(t,-320,"Дата погр.",0,InloadingDate,true,PasteCurDate);
+    MatCol(t,-230,"Время погр.",0,InloadingTime,true,PasteCurTime);
+    MatCol(t,-160,"Дата отправ.",0,DespatchRowDate,true,PasteCurDate);
+    MatCol(t,-70,"Время отпр.",0,DespatchRowTime,true,PasteCurTime);
+    MatCol(t=kInvoiceRowTypeStructuredItemComponent,144,"Дата получения",0,PickingDate,false,PasteCurDate);
+    MatCol(t,-390,"Время пол.",0,PickingTime,false,PasteCurTime);
+    MatCol(t,-320,"Дата погр.",0,InloadingDate,true,PasteCurDate);
+    MatCol(t,-230,"Время погр.",0,InloadingTime,true,PasteCurTime);
+    MatCol(t,-160,"Дата отправ.",0,DespatchRowDate,true,PasteCurDate);
+    MatCol(t,-70,"Время отпр.",0,DespatchRowTime,true,PasteCurTime);
+  end;
+  Flip(flipnr); flipnr = flipnr + 1;
+  t = 1;
+  MatCol(t,144,"Описание",0,Spec,false,0);
+  MatCol(t,-315,"Ед.",0,UnitCode,false,UnitSClass);
+  MatCol(t,-260,"Кол-во ед.",0,UnitFactQuant,true,0);
+  MatCol(t,-200,"Ширина",0,UnitXval,true,0);
+  MatCol(t,-160,"Высота",0,UnitYval,true,0);
+  MatCol(t,-120,"Глубина",0,UnitZval,true,0);
+  MatCol(t,-80,"Цена ед.",0,UnitFactPrice,true,0);
+  MatCol(t=kInvoiceRowTypeStructuredItemComponent,144,"Описание",0,Spec,false,0);
+  MatCol(t,-315,"Ед.",0,UnitCode,false,UnitSClass);
+  MatCol(t,-260,"Кол-во ед.",0,UnitFactQuant,true,0);
+  MatCol(t,-200,"Ширина",0,UnitXval,true,0);
+  MatCol(t,-160,"Высота",0,UnitYval,true,0);
+  MatCol(t,-120,"Глубина",0,UnitZval,true,0);
+  MatCol(t,-80,"Цена ед.",0,UnitFactPrice,true,0);
+  InsertRowTest;
+  DeleteRowTest;
+  RowMenuBegin("");         
+  RowMenuItem(0,"Статус товара",'I','I',0,"ItemStatusORDsm");         
+  if (StandardHansa==false) then begin
+    RowMenuItem(0,"Предыдущие цены на продажу",' ',' ',0,"ORLastSPrsm");         
+  end;
+  RowMenuItem(0,"Добавить заголовок",' ',' ',0,"ORAddHeaderLine");         
+  RowMenuItem(0,"Добавить скрытую строку",' ',' ',0,"ORAddHidLine");         
+  RowMenuItem(0,"Добавить строку с промежуточным результатом",' ',' ',0,"SubtotalORDsm");         
+  if (StandardHansa==false) then begin
+    RowMenuItem(0,"Изменение скидки менеджером",' ',' ',0,"MgrsDiscOverrideORDsm"); 
+  end;
+  EndRowMenu;
+  EndMatrix;
+  vs = 20;
+  v = 18; VTab(-35,v,-16,v+vs,ToolFlip,1,"A");
+  v=v+vs;  VTab(-35,v,-16,v+vs,ToolFlip,2,"B");
+  v=v+vs;  VTab(-35,v,-16,v+vs,ToolFlip,3,"C");
+  v=v+vs;  VTab(-35,v,-16,v+vs,ToolFlip,4,"D");
+  v=v+vs;  VTab(-35,v,-16,v+vs,ToolFlip,5,"E");
+  v=v+vs;  VTab(-35,v,-16,v+vs,ToolFlip,6,"F");
+  v=v+vs;  VTab(-35,v,-16,v+vs,ToolFlip,7,"G");
+  if (StandardHansa==false) then begin
+    v=v+vs;  VTab(-35,v,-16,v+vs,ToolFlip,8,"H");
+  end;
+  /*Tile(3,70,false,"3",FrRate);
+  vs = 20;
+  EditField(h=110,v=6,50,"Валюта",Normal,CurncyCode,false,CurncyCodeSClass);
+  EditField(h,v+vs,50,"Основная валюта 1",Normal,BaseRate1,true,0);  
+  EditField(h,v+(vs*2),50,"Основная валюта 2",Normal,BaseRate2,true,0);    
+  EditField(h2=295,v,50,"Курс",Normal,FrRate,true,0);  
+  RateField(h3=360,v,50,":",Normal,"ToRateB1",true,h3+60,v+14,"Основная валюта 1",false);  
+  RateField(h3,v+=vs,50,":",Normal,"ToRateB2",true,h3+60,v+14,"Основная валюта 2",false);     
+  Tile(4,110,false,"4",ShipDeal);
+  vs = 20; h1 = 110; h2 = 290; h3 = 530; h4 = -100;
+  EditField(h1,v=6,80,"Условия отгрузки",Normal,ShipDeal,false,ShipDealSClass);
+  EditField(h1,v+=vs,80,"Метод отгрузки",Normal,ShipMode,false,DMSClass);
+  if (StandardHansa==false) then begin
+    EditField(h1,v+=vs,80,"Маршрут",Normal,Sorting,false,DelRouteSClass);
+  end;
+  EditField(h1,v+=vs,80,"Склад",Normal,Location,false,LocationSClass);
+  if (StandardHansa==false) then begin
+    EditField(h1,v+=vs,80,"Подразделение",Normal,BranchID,false,AllCUSClass);
+  end;
+  EditField(h2,v=vm,80,"Итого кол-во",ViewOnly,TotQty,true,0);
+  EditField(h2,v+=vs,80,"Итого вес",ViewOnly,TotWeight,true,0);
+  EditField(h2,v+=vs,80,"Итого объем",ViewOnly,TotVolume,true,0);
+  EditField(h2,v+=vs,80,"Фрахт",Normal,FrPrice,true,0);
+  EditField(h2,v+=vs,80,"Код интрастата",Normal,IntrastatTransCode,true,IntrastatTransCodeSClass);  
+  if (StandardHansa==false) then begin
+    EditField(h3,v,80,"Код НДС фрахта",Normal,FrVATCode,true,VATCodeSClass);
+  end;
+  CheckBox(473,v=vm,0,"Сч/ф перед отгрузкой",InvBeforeShip);
+  ButtonFrame(473,vm=(v+=20),240,3,""); //!!TRANSLATE
+  RadioButton(473,v,0,0,"Default",SHShipSetToZero); //!!TRANSLATE
+  RadioButton(473,v+=16,1,0,"Set delivered quantity to Zero",SHShipSetToZero); //!!TRANSLATE
+  RadioButton(473,v+=16,2,0,"Set delivered quantity to Invoiced quantity",SHShipSetToZero); //!!TRANSLATE
+  Tile(5,130,false,"5",PriceList);
+  h3 = 530;
+  EditField(h1,v=vm,80,"Прайс-лист",Normal,PriceList,false,PLDefSClass);
+  EditField(h1,v+=vs,80,"Таблица скидок",Normal,RebCode,false,RebSClass);
+//  EditField(h2,v+=vs,80,"Disc %",ViewOnly,DiscPerc,false,0);
+//  EditField(h2,v+=vs,80,"Disc Amnt",ViewOnly,DiscSum,false,0);
+  EditField(h1,v+=vs,80,"Плательщик",Normal,InvoiceToCode,false,CUSClass);
+  if (StandardHansa==false) then begin
+    EditField(h1,v+=vs,80,"Кредитная карта",Normal,CreditCard,false,CreditCardSClass);
+    EditField(h1,v+=vs,80,"Авторизация",Normal,AuthorizationCode,false,0);
+  end;
+  EditField(h1,v+=vs,-20,"Комментарий",Normal,Comment,false,0);
+  EditField(h1,v+=vs,-20,"",Normal,Comment2,false,0);
+  EditField(h1,v+=vs,-20,"",Normal,Comment3,false,0);
+  EditField(h1,v+=vs,-20,"",Normal,Comment4,false,0);
+  EditField(h1,v+=vs,-20,"Банк",Normal,BankCode,false,BankSClass);
+  if (HasLocalization("BRA") and HasAvalara) then begin
+    EditField(h1,v+=vs,80,"Spec. Situation",Normal,SpecSituation,false,StrSetSClass); //!!TRANSLATE
+    CheckBox(h3,v,0,"Public Highway Service",PubHighwayServ); //!!TRANSLATE
+    EditField(h1,v+=vs,80,"Admin Process No",Normal,AdminProcessNo,false,0); //!!TRANSLATE
+  end;
+  v = vm;
+  if (HasSalesGroup) then begin
+    EditField(h2,v,80,"Группа по продажам",Normal,SalesGroup,false,SalesGroupSClass);
+    v = v + vs;
+  end;
+  EditField(h2,v,80,"Язык",Normal,LangCode,false,LangSClass);
+  if (StandardHansa==false) then begin
+    EditField(h2,v+=vs,80,"Комиссия",Normal,Commision,true,0);
+    EditField(h2,v+=vs,80,"Итого вкл ком.",ViewOnly,SumIncCom,true,0);
+  end;
+  if (HasTREO) then begin
+    EditField(h3,v=vm,80,"TREO №",Normal,TREONr,false,0);
+    EditField(h3,v+=vs,80,"TREO дата зверш.",Normal,TREOExpDate,false,PasteCurDate);
+  end;
+  if (HasLocalization("FIN")) then begin
+    EditField(h3,v+=vs,80,"Account Dimension",Normal,AccountDimension,false,0); //!!TRANSLATE
+    EditField(h3,v+=vs,80,"Tender Reference",Normal,TenderReference,false,0); //!!TRANSLATE
+    EditField(h3,v+=vs,80,"Contract",Normal,ContractNr,false,0); //!!TRANSLATE
+  end;
+  Tile(6,250,false,"6",Addr1);
+  label = UserDefined("CUVc","InvAddr0");
+  if (blank(label)) then begin label = "Счёт-фактура"; end;
+  EditField(h=110,v=6,-20,label,Normal,Addr1,false,0);
+  label = UserDefined("CUVc","InvAddr1");
+  if (blank(label)) then begin label = "Адрес"; end;
+  EditField(h,v+=vs, -20,label,Normal,Addr2,false,0);
+  label = UserDefined("CUVc","InvAddr2");
+  EditField(h,v+=vs, -20,label,Normal,Addr3,false,0);
+  label = UserDefined("CUVc","InvAddr3");
+  if (HasLocalization("BRA") and HasAvalara) then begin
+    EditField(h,v+=vs,150,label,Normal,InvAddr3,false,0);
+    EditField(h2+200,v,-20,"City Code",Normal,AvalaraCityCode,false,0);
+  end else begin
+   EditField(h,v+=vs, -20,label,Normal,InvAddr3,false,0);
+  end;
+  label = UserDefined("CUVc","InvAddr4");
+  if (HasLocalization("BRA") and HasAvalara) then begin
+    EditField(h,v+=vs,150,label,Normal,InvAddr4,false,0);
+    EditField(h2+200,v,-20,"State Code",Normal,AvalaraStateCode,false,0);
+  end else begin
+   EditField(h,v+=vs, -20,label,Normal,InvAddr4,false,0);
+  end;
+  EditField(h,vm=(v+=vs),80,"Страна",Normal,InvCountry,false,CountrySClass);
+  if (HasLocalization("BRA") and HasAvalara) then begin
+    EditField(h2+200,v,-20,"Country Code",Normal,AvalaraCountryCode,false,0);
+  end;
+  if (HasLocalization("BRA")) then begin 
+    EditField(h2-89,v,200,"",ViewOnly,InvCountryName,false,0);
+    h5 = -140;
+    width = 150;
+  end else begin
+    h5 = -270;
+    width = 135;
+  end;
+  if (HasApprovals) then begin
+    SoftEditField(h3=h+4,v=(vm+=40),123,"Статус утверждения",ViewOnly,"AcceptanceStatusFlag",false,0,M4Str,255);  
+    v = VATZoneButtonsLabelsRUS(h3=290,v=vm,170,16);
+  end else begin
+    v = VATZoneButtonsLabelsRUS(h3=290,v=vm+20,170,16);
+  end;
+  EditField(h2=-170,v=vm,150,"Регион",Normal,Region,false,RegionSClass);
+  EditField(h2,v+=vs,150,"ИНН",Normal,VATNr,false,0);
+  EditField(h2,v+=vs,150,"GLN",ViewOnly,RecipientGLN,false,0);  
+  EditField(h2,v+=vs,150,"Телефон",Normal,Phone,false,0);
+  EditField(h2,v+=vs,150,"Факс",Normal,Fax,false,0);
+  Tile(7,170,false,"7",ShipAddr0);
+    EditField(h1,v=6,80,"Код адреса",Normal,DelAddrCode,false,DelAddr3SClass);
+    
+    EditField(h1,v+=vs,-20,"Отгрузка",Normal,ShipAddr0,false,0);
+  label = UserDefined("CUVc","DelAddr0");
+  EditField(h,v+=vs,-20,label,Normal,ShipAddr1,false,0);
+  label = UserDefined("CUVc","DelAddr1");
+  EditField(h,v+=vs,-20,label,Normal,ShipAddr2,false,0);
+  label = UserDefined("CUVc","DelAddr2");
+  EditField(h,v+=vs,-20,label,Normal,ShipAddr3,false,0);
+  label = UserDefined("CUVc","DelAddr3");
+  if (HasLocalization("BRA") and HasAvalara) then begin
+    EditField(h,v+=vs,200,label,Normal,DelAddr3,false,0);
+    EditField(h+350,v,-20,"City Code",Normal,DelAvalaraCityCode,false,0);
+  end else begin
+   EditField(h,v+=vs,-20,label,Normal,DelAddr3,false,0);
+  end;
+  label = UserDefined("CUVc","DelAddr4");
+  if (HasLocalization("BRA") and HasAvalara) then begin
+    EditField(h,v+=vs,200,label,Normal,DelAddr4,false,0);
+    EditField(h+350,v,-20,"State code",Normal,DelAvalaraStateCode,false,0);
+  end else begin
+   EditField(h,v+=vs,-20,label,Normal,DelAddr4,false,0);
+  end;
+  
+  EditField(h1,v+=vs,80,"Страна",Normal,DelCountry,false,CountrySClass);
+  if (HasLocalization("BRA")) then begin 
+    EditField(h1+90,v,170,"",ViewOnly,DelCountryName,false,0);
+    if (HasAvalara) then begin
+      EditField(h1+350,v,-20,"Country Code",Normal,DelAvalaraCountryCode,false,0);
+      EditField(h1,v+=vs,200,"Phone",Normal,DelPhone,false,0);
+      EditField(h1+350,v,-20,"Email",Normal,DelEmail,false,0);
+      v = v+vs;
+    end;
+    h5 = -170;
+    width = -20;
+  end;  
+  EditField(h1+350,v,-20,"Delivery GLN",ViewOnly,DelRecipientGLN,false,0);  
+
+  EnterSkip(OrdDate);
+  */
+  if (GuiType==kGuiMetro) then begin // Temporarily disabled on Windows 8
+    SpecialMenu("Статус счета",'r',5,"ORInfoRnORDsm");
+    SpecialMenu("Статус товара",'I',2,"ItemStatusORDsm");
+    SpecialMenu("Создать отгрузку",'L',0,"SHFromORDsm");
+    SpecialMenu("Создать сч/ф",'F',1,"IVFromORDsm");
+    SpecialMenu("Добавить подытог",' ',14,"SubtotalORDsm");
+
+  end else begin
+  SpecialMenu("Пересчитать скидку",' ',11,"RecalcDiscountORDsm");
+  if (StandardHansa==false) then begin
+    SpecialMenu("Пересчитать вес и объем",' ',10,"RecalculateWeightORDsm");
+  end;
+  if (HasLocalization("CAN,USA")) then begin
+    SpecialMenu("Получите налоговые ставки",' ',0,"ORGetTaxRates2Dsm");
+  end;
+
+  SpecialMenu("Обновить товары валютного прейскуранта",' ',7,"UpdatePricesORDsm");
+  if (HasModProd) then begin
+    SpecialMenu("Update Cost from Production Orders",' ',14,"UpdORCstFromProdOrdDsm"); //!!TRANSLATE
+  end;
+  SpecialMenu("Поиск товара",'f',1,"ItemSearchDsm");
+  SpecialMenu("Статус счета",'r',5,"ORInfoRnORDsm");
+  if (HasTaxMatrix) then begin
+    SpecialMenu("Открыть налоговую матрицу",' ',25,"OpenVatMatrixORDsm");
+  end;
+  if (StandardHansa==false) then begin
+    SpecialMenu("Распечатать внутренний заказ",' ',4,"Or2FormORDsm");
+  end;
+  SpecialMenu("Резервирования",' ',15,"OrderReservORDsm");
+  if (HasApprovals) then begin
+    SpecialMenu("Запросить утверждение",' ',6,"ORSendforAcceptanceORDsm");
+    SpecialMenu("Отменить запрос утверждения",' ',2,"CancelApprovalRequestDsm");
+  end;
+  if (GuiType==kGuiiPhone) then begin
+    SpecialMenu("Подписать",' ',10,"SignORDsm");         
+  end;
+  if (HasLocalization("BRA") and HasAvalara) then begin
+    SpecialMenu("Calculate Avalara Brazilian Taxes",'',17,"BrazilAvalaraJsonFileForSendingORDsm"); //!!TRANSLATE
+  end;
+  SpecMenuGroup("",kSpecMenuGroupTypeExtendedPlusMenu,0);         
+//  SpecialMenu("Activity",'c',9,"CreateActFromORDsm");
+  SpecialMenu("Создать отгрузку",'L',0,"SHFromORDsm");         
+  if (HasDownpayments) then begin
+  SpecialMenu("Создать сч для предв. платежа",' ',3,"DownPayFromORDsm");         
+  end;
+  if (HaseMail or IsEnterprise) then begin
+  SpecialMenu("Создать эл. письмо",'m',11,"CreateMailFromORDsm");
+  end;
+  SpecialMenu("Создать реализацию",'F',1,"IVFromORDsm");
+  if (HasModTS or IsEnterprise) then begin
+    SpecialMenu("Создать проект",' ',9,"CreatePRFromORDsm");
+    SpecialMenu("Создать бюджет проекта",' ',10,"CreateTBBUFromORDsm");
+  end;
+    SpecialMenu("Создать заказ поставщику",' ',4,"POFromORDsm");  
+  SpecialMenu("Создать возврат товаров",'B',6,"RetFromORsm");
+  if (HasModProd) then begin
+    SpecialMenu("Production Order",' ',7,"ProdOrderFromORDsm"); //!!TRANSLATE
+  end;
+  SpecialMenu("Создать перемещение по складу",' ',8,"StockMovFromORDsm");
+  SpecialMenu("Добавить клиента",' ',0,"AddCustomerORDsm");         
+  SpecialMenu("Добавить товар",' ',0,"AddItemORDsm");           
+  if (HasModPOS) then begin
+    SpecialMenu("POS Invoice",' ',11,"IVCashFromORDsm"); //!!TRANSLATE
+  end;
+  end;
+  EndWindow;
+end;

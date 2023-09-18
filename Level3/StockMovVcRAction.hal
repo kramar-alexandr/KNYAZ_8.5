@@ -1,3 +1,5 @@
+external inner procedure GetFullCurncyRate (var string,Date,var val,var val,var val,var val,var val);
+
 global
 function LongInt StockMovVcRecordDefaults(var record StockMovVc StockMovr,record StockMovVc StockMov2r,LongInt stat,LongInt long4)
 BEGIN
@@ -11,3 +13,26 @@ BEGIN
   StockMovVcRecordDefaults = res; 
   RETURN;
 END;
+
+global
+function LongInt ORVcRecordDefaults(var record ORVc ORr,record ORVc OR2r,LongInt long3,LongInt long4)
+begin
+  LongInt res;
+  string 20 curcode;
+  val fr,to1,to2,br1,br2;
+  
+  res = inner.ORVcRecordDefaults(ORr,OR2r,long3,long4);
+  
+  curcode = "UAH";
+  GetFullCurncyRate(curcode,ORr.OrdDate,fr,to1,to2,br1,br2);
+  ORr.CurncyCode = curcode;
+  ORr.FrRate = fr;
+  ORr.ToRateB1 = to1; 
+  ORr.ToRateB2 = to2;
+  ORr.BaseRate1 = br1;
+  ORr.BaseRate2 = br2;  
+  
+  
+  ORVcRecordDefaults = res;  
+  return;
+end;
