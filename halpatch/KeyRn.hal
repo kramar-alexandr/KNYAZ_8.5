@@ -319,10 +319,11 @@ begin
             case "BOSS":  defstr = "ObjResult(\"922\",\"BOSS\")";
                           tmp = EvalToVal(defstr);
                           rowsum[cod] = rowsum[cod] + tmp;
+                          rowsum["BOSS"] = tmp;
             case "TOTAL": tmp = rowsum[ObjStr];
                           rowsum[cod] = rowsum[cod] + tmp;
                           
-            //case "GRANDTOTAL":rowsum[cod] = 
+            case "GRANDTOTAL":rowsum["GRANDTOTAL"] = rowsum["TOTAL"] - rowsum["BOSS"];
             
           end;
           
