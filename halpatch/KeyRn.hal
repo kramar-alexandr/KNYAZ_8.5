@@ -311,15 +311,23 @@ begin
             defstr = "ObjResult(\"" & ObjStr & "\",\"" & cod & "\")";
           end;
           
-          if(defstr!="TOTAL")then begin
-            tmp = -EvalToVal(defstr);
+          switch(defstr)begin
+            case "TOCHKA":defstr = "ObjResult(\"" & ObjStr & "\",\"" & cod & "\")";
+                          tmp = -EvalToVal(defstr);
+                          rowsum[cod] = rowsum[cod] + tmp;
+            case "TOTAL": tmp = rowsum[ObjStr];
+          end;
+          
+          
+          /*if(defstr!="TOTAL")then begin
+            //tmp = -EvalToVal(defstr);
           end;
           rowsum[cod] = rowsum[cod] + tmp;
           if(defstr=="TOTAL")then begin
             tmp = rowsum[ObjStr];
           end else begin
             rowsum[ObjStr] = rowsum[ObjStr] + tmp;
-          end;
+          end;*/
 
           valf = StringContainsAlpha(defstr)==false;
           
