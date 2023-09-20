@@ -315,10 +315,13 @@ begin
             case "TOCHKA":defstr = "ObjResult(\"" & ObjStr & "\",\"" & cod & "\")";
                           tmp = -EvalToVal(defstr);
                           rowsum[cod] = rowsum[cod] + tmp;
-            case "BOSS":defstr = "ObjResult(\"922\",\"BOSS\")";
-                          tmp = -EvalToVal(defstr);
+            case "BOSS":  defstr = "ObjResult(\"922\",\"BOSS\")";
+                          tmp = EvalToVal(defstr);
                           rowsum[cod] = rowsum[cod] + tmp;
             case "TOTAL": tmp = rowsum[ObjStr];
+                          
+            case "GRANDTOTAL":rowsum[cod] = 
+            
           end;
           
           
