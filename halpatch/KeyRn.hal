@@ -307,9 +307,9 @@ begin
         
         
         if (!InString(defstr,"KSUM") and !InString(defstr,"K(")) then begin
-          if(defstr=="TOCHKA")then begin
+          /*if(defstr=="TOCHKA")then begin
             defstr = "ObjResult(\"" & ObjStr & "\",\"" & cod & "\")";
-          end;
+          end;*/
           
           switch(defstr)begin
             case "TOCHKA":defstr = "ObjResult(\"" & ObjStr & "\",\"" & cod & "\")";
