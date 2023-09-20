@@ -325,8 +325,10 @@ begin
                           
             case "GRANDTOTAL":rowsum["GRANDTOTAL"] = rowsum["TOTAL"] - rowsum["BOSS"];
                               tmp = rowsum["GRANDTOTAL"];
-            otherwise 
-                              tmp = -EvalToVal(defstr);
+            otherwise         
+                              logtext(0,"defstr " & defstr);
+
+                              tmp = EvalToVal(defstr);
             
           end;
           
