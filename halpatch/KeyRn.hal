@@ -319,6 +319,7 @@ begin
                           tmp = EvalToVal(defstr);
                           rowsum[cod] = rowsum[cod] + tmp;
             case "TOTAL": tmp = rowsum[ObjStr];
+                          rowsum[cod] = rowsum[cod] + tmp;
                           
             //case "GRANDTOTAL":rowsum[cod] = 
             
