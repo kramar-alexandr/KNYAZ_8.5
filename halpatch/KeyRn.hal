@@ -320,7 +320,7 @@ begin
                           rowsum[cod] = rowsum[cod] + tmp;
             case "TOTAL": tmp = rowsum[ObjStr];
                           
-            case "GRANDTOTAL":rowsum[cod] = 
+            //case "GRANDTOTAL":rowsum[cod] = 
             
           end;
           
