@@ -321,7 +321,7 @@ begin
                           rowsum[cod] = rowsum[cod] + tmp;
                           rowsum["BOSS"] = tmp;
             case "TOTAL": tmp = rowsum[ObjStr];
-                          rowsum[cod] = rowsum[cod] + tmp;
+                          //rowsum[cod] = rowsum[cod] + tmp;
                           
             case "GRANDTOTAL":rowsum["GRANDTOTAL"] = rowsum["TOTAL"] - rowsum["BOSS"];
                               tmp = rowsum["GRANDTOTAL"];
