@@ -324,6 +324,7 @@ begin
                           rowsum[cod] = rowsum[cod] + tmp;
                           
             case "GRANDTOTAL":rowsum["GRANDTOTAL"] = rowsum["TOTAL"] - rowsum["BOSS"];
+                              tmp = rowsum["GRANDTOTAL"];
             
           end;
           
