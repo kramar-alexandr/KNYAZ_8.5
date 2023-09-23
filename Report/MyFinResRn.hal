@@ -14,7 +14,7 @@ begin
   val rate,gp;
   record LocationVc Locr;
   Record ObjVc Objr;
-  array string 100 akeysLoc,akeysCust,akeysSpend;
+  array string 100 akeysLoc,akeysCust,akeysSpend,akeysVend;
   record CLOutVc CLOutr;
   record CUVc CUr;
   val total1,total2,total3,total4,total5,total6,total7,total8;
@@ -23,6 +23,7 @@ begin
   row IPVc IPrw;
   val fr,to1,to2,br1,br2;
   record ARVc ARr;
+  record APVc APr;
   string 20 curcust;
   record OPVc OPr;
   row OPVc OPrw;
@@ -396,11 +397,44 @@ begin
         rwcnt = matrowcnt(OPr);
         for(i=0;i<rwcnt;i=i+1)begin
           matrowget(OPr,i,OPrw);
+          akeysVend[OPrw.VECode] = true;
           vPayData[OPrw.VECode] = vPayData[OPrw.VECode] + OPrw.BankVal;
         end;
       end;
     end;
     
+    while(loopmain(APr,1,true))begin
+      vPayData["DOLG:" & APr.VECode] = vPayData["DOLG:" & APr.VECode] + APr.RVal;
+    end;
+    
+    total1 = blankval;
+    total2 = blankval;
+    total3 = blankval;
+    startformat(15);
+      outstring(0,0,"Поставщик",false);
+      outstring(200,0,"Долг на сегодня",false);
+      outstring(1,0,"Оплата за период(USD)",true);
+    endformat;
+    
+    getvectortags(vPayData,akeysVend);
+    for(i=0;i<akeysVend.length;i=i+1)begin
+      CUr.Code = akeysVend[i];
+      readfirstmain(CUr,1,true);
+      startformat(15);
+        outstring(0,0,CUr.Name,false);
+        outstring(200,0,vPayData["DOLG:" & akeysVend[i]],false);
+        outstring(1,0,vPayData[akeysVend[i]],true);
+      endformat;
+      total1 = total1 + vPayData["DOLG:" & akeysVend[i]];
+      total2 = total2 + vPayData[akeysVend[i]];
+      
+    end;
+    gray_divider(0,1);
+    startformat(15);
+      outstring(0,0,"Итого",false);
+      outstring(200,0,total1,false);
+      outstring(1,0,total2,true);
+    endformat;
     
   endjob;
   
