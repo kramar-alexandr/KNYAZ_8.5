@@ -367,7 +367,7 @@ begin
       outstring(0,0,"‡àòğàòà",false);
       outstring(150,0,"ƒ",true);
       outstring(300,0,"USD",true);
-      outstring(1,0,"ˆòîãî(USD)",true);
+      outstring(1,0,"ˆòîãî(ïî êóğñó â USD)",true);
     endformat;
     total1 = blankval;
     total2 = blankval;
@@ -386,8 +386,8 @@ begin
       total1 = total1 + vFinData["SPEND:" & CLCorspr.Code & ":UAH"];
       total2 = total2 + vFinData["SPEND:" & CLCorspr.Code & ":USD"];
       total3 = total3 + round(vFinData["SPEND:" & CLCorspr.Code & ":BSUM"],DEFAULTCURROUNDOFF);
-      
     end;
+    Gray_Divider(0,1);
     startformat(15);
       outstring(0,0,"ˆòîãî",false);
       outval(150,0,total1,m4val,true);
@@ -469,36 +469,35 @@ begin
     outstring(200,0,"ˆ’ƒ",true);
     outstring(300,0,"ƒ",true);
     outstring(400,0,"USD",true);
-    
     outstring(1,0,"î Šóğñó â USD",true);
   endformat;
   
   startformat(15);
-    outstring(100,0,"ˆ•„ „……ƒ  ’—Š€Œ €‹.",true);
+    outstring(200,0,"ˆ•„ „……ƒ  ’—Š€Œ €‹.",true);
     outstring(300,0,UAH1,true);
     outstring(400,0,USD1,true);
     outstring(1,0,USDTOT1,true);
   endformat;
   startformat(15);
-    outstring(100,0,"‡€’€’› € ’—Šˆ",true);
+    outstring(200,0,"‡€’€’› € ’—Šˆ",true);
     outstring(300,0,-UAH5,true);
     outstring(400,0,-USD5,true);
     outstring(1,0,-USDTOT5,true);
   endformat;
   startformat(15);
-    outstring(100,0,"‚‡‚€’ „‹ƒ‚ Š‹ˆ…’‚",true);
+    outstring(200,0,"‚‡‚€’ „‹ƒ‚ Š‹ˆ…’‚",true);
     outstring(300,0,UAH2,true);
     outstring(400,0,USD2,true);
     outstring(1,0,USDTOT2,true);
   endformat;
   startformat(15);
-    outstring(100,0,"™ˆ… ‡€’€’›",true);
+    outstring(200,0,"™ˆ… ‡€’€’›",true);
     outstring(300,0,-UAH3,true);
     outstring(400,0,-USD3,true);
     outstring(1,0,-USDTOT3,true);
   endformat;
   startformat(15);
-    outstring(100,0,"‹€’› ‘’€‚™ˆŠ€Œ",true);
+    outstring(200,0,"‹€’› ‘’€‚™ˆŠ€Œ",true);
     outstring(300,0,-UAH4,true);
     outstring(400,0,-USD4,true);
     outstring(1,0,-USDTOT4,true);
