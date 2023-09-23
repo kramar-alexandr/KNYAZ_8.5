@@ -18,6 +18,8 @@ begin
   record CUVc CUr;
   val total1,total2,total3,total4,total5,total6,total7;
   record CLCorspVc CLCorspr;
+  record IPVc IPr;
+  row IPVc IPrw;
   
   startreportnoheaderjob("Финансовый отчет");
     
@@ -41,18 +43,18 @@ begin
         rwcnt = matrowcnt(IVr);
         for(i=0;i<rwcnt;i=i+1)begin
           matrowget(IVr,i,IVrw);
-          if(IVrw.stp==1 and nonblank(IVrw.ArtCode) and IVrw.Quant!=0)then begin
-            vFinData[IVr.Location & ":" & IVr.CurncyCode & ":SUM"] = vFinData[IVr.Location & ":" & IVr.CurncyCode & ":SUM"] + IVrw.Sum;
-            vFinData[IVr.Location & ":FIFO"] = vFinData[IVr.Location & ":FIFO"] + IVrw.FIFORowVal;
-            vFinData[IVr.Location & ":BSUM"] = vFinData[IVr.Location & ":BSUM"] + IVrw.Sum/rate;
-            
+          if(IVrw.stp==1 and nonblank(IVrw.ArtCode) and IVrw.Quant!=0)then begin            
             if(IVr.PayDeal!="O")then begin
               vFinData["DOLG:" & IVr.Location & ":" & IVr.CurncyCode & ":SUM"] = vFinData["DOLG:" & IVr.Location & ":" & IVr.CurncyCode & ":SUM"] + IVrw.Sum;
               vFinData["DOLG:" & IVr.Location & ":BSUM"] = vFinData["DOLG:" & IVr.Location & ":BSUM"] + IVrw.Sum/rate;
-              
+              vFinData["DOLG:" & IVr.Location & ":FIFO"] = vFinData["DOLG:" & IVr.Location & ":FIFO"] + IVrw.FIFORowVal;
               vKeysCust[IVr.CustCode] = true;
               vFinData[IVr.CustCode & ":DOLG:" & IVr.Location & ":" & IVr.CurncyCode & ":SUM"] = vFinData[IVr.CustCode & ":DOLG:" & IVr.Location & ":" & IVr.CurncyCode & ":SUM"] + IVrw.Sum;
               vFinData[IVr.CustCode & ":DOLG:" & IVr.Location & ":BSUM"] = vFinData[IVr.CustCode & ":DOLG:" & IVr.Location & ":BSUM"] + IVrw.Sum/rate;
+            end else begin
+              vFinData[IVr.Location & ":" & IVr.CurncyCode & ":SUM"] = vFinData[IVr.Location & ":" & IVr.CurncyCode & ":SUM"] + IVrw.Sum;
+              vFinData[IVr.Location & ":FIFO"] = vFinData[IVr.Location & ":FIFO"] + IVrw.FIFORowVal;
+              vFinData[IVr.Location & ":BSUM"] = vFinData[IVr.Location & ":BSUM"] + IVrw.Sum/rate;
             end;
             
           end;
@@ -83,6 +85,9 @@ begin
     end;
     
     startformat(15);
+      outstring(0,0,"Продажи на точках за наличку",false);
+    endformat;
+    startformat(15);
       outstring(0,0,"Точка",false);
       outstring(120,0,"Выторг (USD)",false);
       outstring(170,0,"(Грн)",false);
@@ -96,7 +101,7 @@ begin
     getvectortags(vKeysLoc,akeysLoc);
     for(i=0;i<akeysLoc.length;i=i+1)begin
       Locr.Code = akeysLoc[i];
-      if(readfirstmain(Locr,1,true))then begin
+      if(readfirstmain(Locr,1,true) and round(vFinData[Locr.Code & ":BSUM"],DEFAULTCURROUNDOFF)!=0)then begin
         startformat(15);
           outstring(0,0,Locr.Name,false);
           outval(120,0,round(vFinData[Locr.Code & ":BSUM"],DEFAULTCURROUNDOFF),m4val,false);
@@ -119,13 +124,12 @@ begin
           total7 = total7 + gp;
           outstring(1,0,gp,true);
         endformat;
-      
       end;
     end;
     gray_divider(0,1);
     
     startformat(15);
-      outstring(0,0,"Всего",false);
+      outstring(0,0,"Итого",false);
       outstring(120,0,total1,false);
       outstring(170,0,total2,false);
       outstring(210,0,total3,false);
@@ -135,10 +139,19 @@ begin
       outstring(1,0,total7,true);
     endformat;
     
+    
+    total1 = blankval;
+    total2 = blankval;
+    total3 = blankval;
+    total4 = blankval;
+    total5 = blankval;
+    total6 = blankval;
+    total7 = blankval;
+    
     startformat(15);
     endformat;
     startformat(15);
-      outstring(0,0,"Включая продажи в долг",false);
+      outstring(0,0,"Продажи в долг",false);
     endformat;
     gray_divider(0,1);
     for(i=0;i<akeysLoc.length;i=i+1)begin
@@ -147,13 +160,25 @@ begin
         if(vFinData["DOLG:" & Locr.Code & ":BSUM"]!=0)then begin
           startformat(15);
             outstring(0,0,Locr.Name,false);
-            outstring(120,0,"",false);
+            outval(120,0,round(vFinData["DOLG:" & Locr.Code & ":BSUM"],DEFAULTCURROUNDOFF),m4val,false);
             outval(170,0,vFinData["DOLG:" & Locr.Code & ":UAH:SUM"],m4val,false);
             outval(210,0,vFinData["DOLG:" & Locr.Code & ":USD:SUM"],m4val,false);
-            outstring(250,0,"",false);
+            outval(250,0,vFinData["DOLG:" & Locr.Code & ":FIFO"],m4val,false);
             outstring(320,0,"",false);
             outstring(380,0,"",false);
-            outstring(1,0,"",true);
+          
+            gp = round(vFinData["DOLG:" & Locr.Code & ":BSUM"],DEFAULTCURROUNDOFF);
+            gp = gp - vFinData["DOLG:" & Locr.Code & ":FIFO"];
+            gp = gp - round(vFinData["DOLG:" & Locr.Code & ":SPEND:BSUM"],DEFAULTCURROUNDOFF);
+          
+            total1 = total1 + round(vFinData["DOLG:" & Locr.Code & ":BSUM"],DEFAULTCURROUNDOFF);
+            total2 = total2 + vFinData["DOLG:" & Locr.Code & ":UAH:SUM"];
+            total3 = total3 + vFinData["DOLG:" & Locr.Code & ":USD:SUM"];
+            total4 = total4 + vFinData["DOLG:" & Locr.Code & ":FIFO"];
+
+
+            total7 = total7 + gp;
+            outstring(1,0,gp,true);
           endformat;
           
           getvectortags(vKeysCust,akeysCust);
@@ -178,6 +203,16 @@ begin
         end;
       end;
     end;
+    startformat(15);
+      outstring(0,0,"Итого",false);
+      outval(120,0,total1,m4val,false);
+      outval(170,0,total2,m4val,false);
+      outval(210,0,total3,m4val,false);
+      outval(250,0,total4,m4val,false);
+      outstring(320,0,"",false);
+      outstring(380,0,"",false);
+      outval(1,0,total7,m4val,true);
+    endformat;
     
     black_divider(0,1);
     startformat(15);
