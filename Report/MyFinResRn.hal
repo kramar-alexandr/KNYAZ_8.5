@@ -505,8 +505,8 @@ begin
   Gray_Divider(0,1);
   startformat(15);
     outstring(200,0,"ˆ’ŽƒŽ",true);
-    outval(300,0,UAH1+UAH2+UAH3+UAH4,m4val,true);
-    outval(400,0,USD1+USD2+USD3+USD4,m4val,true);
+    outval(300,0,UAH1+UAH2-UAH5-UAH3-UAH4,m4val,true);
+    outval(400,0,USD1+USD2-USD5-USD3-USD4,m4val,true);
     outval(1,0,USDTOT1+USDTOT2-USDTOT5-USDTOT3-USDTOT4,m4val,true);
   endformat;
   
