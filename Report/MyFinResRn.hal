@@ -209,8 +209,8 @@ begin
           total2 = total2 + vFinData[CUr.Code & ":DOLG:UAH:SUM"];
           total3 = total3 + vFinData[CUr.Code & ":DOLG:USD:SUM"];
           total4 = total4 + vFinData[CUr.Code & ":DOLG:FIFO"];
-          total5 = total5 + vFinData[CUr.Code & ":DOLG:USD"];
-          total6 = total6 + vFinData[CUr.Code & ":DOLG:UAH"];
+          total5 = total5 + vFinData[CUr.Code & ":DOLGPAY:USD"];
+          total6 = total6 + vFinData[CUr.Code & ":DOLGPAY:UAH"];
           gp = round(vFinData[CUr.Code & ":DOLG:BSUM"],DEFAULTCURROUNDOFF);
           gp = gp - vFinData[CUr.Code & ":DOLG:FIFO"];
           
