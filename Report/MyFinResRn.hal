@@ -184,9 +184,9 @@ begin
       outstring(170,0,"(Грн)",false);
       outstring(210,0,"(USD)",false);
       outstring(250,0,"Стоимость (USD)",false);
-      outstring(320,0,"Возврат долга (USD)",false);
-      outstring(390,0,"(ГРН)",false);
-      outstring(1,0,"Прибыль(USD)",true);
+      outstring(320,0,"Прибыль(USD)",false);
+      outstring(390,0,"Возврат долга (USD)",false);
+      outstring(1,0,"(ГРН)",true);
     endformat;
     gray_divider(0,1);
     getvectortags(vKeysCust,akeysCust);
@@ -200,8 +200,7 @@ begin
           outval(170,0,vFinData[CUr.Code & ":DOLG:UAH:SUM"],m4val,false);
           outval(210,0,vFinData[CUr.Code & ":DOLG:USD:SUM"],m4val,false);
           outval(250,0,vFinData[CUr.Code & ":DOLG:FIFO"],m4val,false);
-          outstring(320,0,vFinData[CUr.Code & ":DOLG:USD"],false);
-          outstring(390,0,vFinData[CUr.Code & ":DOLG:UAH"],false);
+          
           
 //          vFinData[IPrw.CustCode & ":DOLG:BSUM"] = vFinData[IPrw.CustCode & ":DOLG:BSUM"] + IPrw.BankVal/rate;
           
@@ -211,13 +210,14 @@ begin
           total4 = total4 + vFinData[CUr.Code & ":DOLG:FIFO"];
           total5 = total5 + vFinData[IPrw.CustCode & ":DOLG:USD"];
           total6 = total6 + vFinData[CUr.Code & ":DOLG:UAH"];
-          
           gp = round(vFinData[CUr.Code & ":DOLG:BSUM"],DEFAULTCURROUNDOFF);
           gp = gp - vFinData[CUr.Code & ":DOLG:FIFO"];
           
           total7 = total7 + gp;
 
-          outval(1,0,gp,m4val,true);
+          outval(320,0,gp,m4val,false);
+          outstring(390,0,vFinData[CUr.Code & ":DOLG:USD"],false);
+          outstring(1,0,vFinData[CUr.Code & ":DOLG:UAH"],true);
         endformat;
       end;
     end;
@@ -230,9 +230,11 @@ begin
       outval(170,0,total2,m4val,false);
       outval(210,0,total3,m4val,false);
       outval(250,0,total4,m4val,false);
-      outstring(320,0,total5,false);
-      outstring(390,0,total6,false);
-      outval(1,0,total7,m4val,true);
+      
+      outval(320,0,total7,m4val,false);
+      outstring(390,0,total5,false);
+      outstring(1,0,total6,true);
+      
     endformat;
     
     black_divider(0,1);
