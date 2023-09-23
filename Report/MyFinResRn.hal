@@ -9,7 +9,7 @@ begin
   row IVVc IVrw;
   integer i,rwcnt,j,cred;
   boolean TrHs,testf;
-  vector val vFinData;
+  vector val vFinData,vPayData;
   vector boolean vKeysLoc,vKeysCust,vSpend;
   val rate,gp;
   record LocationVc Locr;
@@ -24,6 +24,8 @@ begin
   val fr,to1,to2,br1,br2;
   record ARVc ARr;
   string 20 curcust;
+  record OPVc OPr;
+  row OPVc OPrw;
   
   startreportnoheaderjob("Финансовый отчет");
     
@@ -375,6 +377,29 @@ begin
     endformat;
     
     gray_divider(0,1);
+    
+    black_divider(0,1);
+    startformat(15);
+    endformat;
+    startformat(15);
+      outstring(0,0,"Оплата за товар",false);
+    endformat;
+    
+    OPr.TransDate = RepSpec.sStartDate;
+    TrHs = true;
+    while(loopkey("TransDate",OPr,1,TrHs))begin
+      testf = true;
+      if(OPr.TransDate>RepSpec.sEndDate)then begin TrHs = false; testf = false; end;
+      if(OPr.DoneFlag==0)then begin testf = false; end;
+      
+      if(testf)then begin
+        rwcnt = matrowcnt(OPr);
+        for(i=0;i<rwcnt;i=i+1)begin
+          matrowget(OPr,i,OPrw);
+          vPayData[OPrw.VECode] = vPayData[OPrw.VECode] + OPrw.BankVal;
+        end;
+      end;
+    end;
     
     
   endjob;
