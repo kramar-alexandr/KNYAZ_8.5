@@ -36,7 +36,7 @@ begin
           matrowget(IVr,i,IVrw);
           vFinData[IVr.Location & ":" IVr.CurncyCode & ":SUM"] = vFinData[IVr.Location & ":" IVr.CurncyCode & ":SUM"] + IVrw.Sum;
           vFinData[IVr.Location & ":FIFO"] = vFinData[IVr.Location & ":FIFO"] + IVrw.Sum;
-          vFinData[IVr.Location & ":BSUM"] = vFinData[IVr.Location & ":" IVr.CurncyCode & ":BSUM"] + round(IVrw.Sum*rate,SetRoundModeD(2));
+          vFinData[IVr.Location & ":BSUM"] = vFinData[IVr.Location & ":" IVr.CurncyCode & ":BSUM"] + round(IVrw.Sum*rate,DEFAULTCURROUNDOFF);
         end;
       end;
     end;
