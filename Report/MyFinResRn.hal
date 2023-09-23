@@ -258,8 +258,8 @@ begin
       outstring(430,0,total6,true);
       outstring(1,0,total8,true);
       
-      UAH2 = total5;
-      USD2 = total6;
+      UAH2 = total6;
+      USD2 = total5;
       USDTOT2 = total8;
       
     endformat;
