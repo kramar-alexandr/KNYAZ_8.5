@@ -29,7 +29,7 @@ begin
       if(testf)then begin
         rate = 1;
         if(IVr.ToRateB1!=0)then begin
-          rate = IVr.ToRateB1 / IVr.FrRate;
+          rate = IVr.FrRate / IVr.ToRateB1;
         end;
         logtext(0,"IVr.Location " & IVr.Location & " rate " & rate);
 
@@ -38,10 +38,10 @@ begin
         rwcnt = matrowcnt(IVr);
         for(i=0;i<rwcnt;i=i+1)begin
           matrowget(IVr,i,IVrw);
-          if(IVrw.stp==1 and nonblank(IVrw.ArtCode))then begin
+          if(IVrw.stp==1 and nonblank(IVrw.ArtCode) and IVrw.Quant!=0)then begin
             vFinData[IVr.Location & ":" & IVr.CurncyCode & ":SUM"] = vFinData[IVr.Location & ":" & IVr.CurncyCode & ":SUM"] + IVrw.Sum;
             vFinData[IVr.Location & ":FIFO"] = vFinData[IVr.Location & ":FIFO"] + IVrw.FIFORowVal;
-            vFinData[IVr.Location & ":BSUM"] = vFinData[IVr.Location & ":BSUM"] + IVrw.Sum*rate;
+            vFinData[IVr.Location & ":BSUM"] = vFinData[IVr.Location & ":BSUM"] + IVrw.Sum/rate;
           end;
         end;
       end;
@@ -55,10 +55,10 @@ begin
       if(testf)then begin
         rate = 1;
         if(CLOutr.ToRateB1!=0)then begin
-          rate = CLOutr.ToRateB1 / CLOutr.FrRate;
+          rate = CLOutr.FrRate / CLOutr.ToRateB1;
         end;
         vFinData[CLOutr.Person & ":SPEND:" & CLOutr.CurncyCode] = vFinData[CLOutr.Person & ":SPEND:" & CLOutr.CurncyCode] + CLOutr.Total;
-        vFinData[CLOutr.Person & ":SPEND:BSUM"] = vFinData[CLOutr.Person & ":SPEND:BSUM"] + CLOutr.Total*rate;
+        vFinData[CLOutr.Person & ":SPEND:BSUM"] = vFinData[CLOutr.Person & ":SPEND:BSUM"] + CLOutr.Total/rate;
       end;
     end;
     
