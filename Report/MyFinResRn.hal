@@ -230,8 +230,8 @@ begin
       outval(170,0,total2,m4val,false);
       outval(210,0,total3,m4val,false);
       outval(250,0,total4,m4val,false);
-      outstring(320,0,"",false);
-      outstring(390,0,"",false);
+      outstring(320,0,total5,false);
+      outstring(390,0,total6,false);
       outval(1,0,total7,m4val,true);
     endformat;
     
