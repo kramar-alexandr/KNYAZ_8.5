@@ -54,6 +54,7 @@ begin
               vFinData["DOLG:" & IVr.Location & ":FIFO"] = vFinData["DOLG:" & IVr.Location & ":FIFO"] + IVrw.FIFORowVal*cred;
               vKeysCust[IVr.CustCode] = true;
               vFinData[IVr.CustCode & ":DOLG:" & IVr.Location & ":" & IVr.CurncyCode & ":SUM"] = vFinData[IVr.CustCode & ":DOLG:" & IVr.Location & ":" & IVr.CurncyCode & ":SUM"] + IVrw.Sum;
+              vFinData[IVr.CustCode & ":DOLG:" & IVr.Location & ":FIFO"] = vFinData[IVr.CustCode & ":DOLG:" & IVr.Location & ":FIFO"] + IVrw.FIFORowVal*cred;
               vFinData[IVr.CustCode & ":DOLG:" & IVr.Location & ":BSUM"] = vFinData[IVr.CustCode & ":DOLG:" & IVr.Location & ":BSUM"] + IVrw.Sum/rate;
             end else begin
               vFinData[IVr.Location & ":" & IVr.CurncyCode & ":SUM"] = vFinData[IVr.Location & ":" & IVr.CurncyCode & ":SUM"] + IVrw.Sum;
@@ -191,11 +192,11 @@ begin
               CUr.Code = akeysCust[j];
               readfirstmain(CUr,1,true);
               startformat(15);
-                outstring(50,0,CUr.Name,false);
-                outstring(150,0,"",false);
+                outstring(15,0,CUr.Name,false);
+                outval(120,0,round(vFinData[CUr.Code & ":OLG:" & Locr.Code & ":BSUM"],DEFAULTCURROUNDOFF),m4val,false);
                 outval(170,0,vFinData[CUr.Code & ":DOLG:" & Locr.Code & ":UAH:SUM"],m4val,false);
                 outval(210,0,vFinData[CUr.Code & ":DOLG:" & Locr.Code & ":USD:SUM"],m4val,false);
-                outstring(250,0,"",false);
+                outval(250,0,vFinData[CUr.Code & ":DOLG:" & Locr.Code & ":FIFO"],m4val,false);
                 outstring(320,0,"",false);
                 outstring(380,0,"",false);
                 outstring(1,0,"",true);
