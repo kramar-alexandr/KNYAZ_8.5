@@ -23,6 +23,7 @@ begin
   row IPVc IPrw;
   val fr,to1,to2,br1,br2;
   record ARVc ARr;
+  string 20 curcust;
   
   startreportnoheaderjob("Финансовый отчет");
     
@@ -173,6 +174,7 @@ begin
     total5 = blankval;
     total6 = blankval;
     total7 = blankval;
+    total8 = blankval;
     
     startformat(15);
     endformat;
@@ -248,6 +250,15 @@ begin
         outstring(0,0,"Тукщие долги клиентов",false);
       endformat;
       
+      total1 = blankval;
+      total2 = blankval;
+      total3 = blankval;
+      total4 = blankval;
+      total5 = blankval;
+      total6 = blankval;
+      total7 = blankval;
+      total8 = blankval;
+      
       startformat(15);
         outstring(0,0,"Клиент",false);
         outstring(100,0,"Дата долга",false);
@@ -260,6 +271,25 @@ begin
       
       ARr.CustCode = "";
       while(loopkey("CustCode",ARr,1,true))begin
+      
+        
+        if(nonblank(curcust) and ARr.CustCode!=curcust)then begin
+          startformat(15);
+            outstring(0,0,"Итого",false);
+            outstring(100,0,"",false);
+            outstring(150,0,"",false);
+            outstring(200,0,total1,false);
+            outstring(300,0,total2,false);
+            outstring(1,0,total3,true);
+          endformat;
+          total1 = blankval;
+          total2 = blankval;
+          total3 = blankval;
+          
+          Gray_Divider(0,1);
+        end;
+        curcust = ARr.CustCode;
+      
         CUr.Code = ARr.CustCode;
         readfirstmain(CUr,1,true);
         IVr.SerNr = ARr.InvoiceNr;
@@ -271,12 +301,15 @@ begin
           if(ARr.ARCurncyCode=="USD")then begin
             outval(200,0,ARr.BookRVal,m4val,false);
             outstring(300,0,"",false);
+            total1 = total1 + ARr.BookRVal;
           end;
           if(ARr.ARCurncyCode=="UAH")then begin
             outstring(200,0,"",false);
             outval(300,0,ARr.BookRVal,m4val,false);
+            total2 = total2 + ARr.BookRVal;
           end;
           outstring(1,0,ARr.RVal,true);
+          total3 = total3 + ARr.RVal;
         endformat;
         
       end;
