@@ -39,7 +39,7 @@ begin
           if(IVrw.stp==1 and nonblank(IVrw.ArtCode))then begin
             vFinData[IVr.Location & ":" & IVr.CurncyCode & ":SUM"] = vFinData[IVr.Location & ":" & IVr.CurncyCode & ":SUM"] + IVrw.Sum;
             vFinData[IVr.Location & ":FIFO"] = vFinData[IVr.Location & ":FIFO"] + IVrw.FIFORowVal;
-            vFinData[IVr.Location & ":BSUM"] = vFinData[IVr.Location & ":BSUM"] + round(IVrw.Sum*rate,DEFAULTCURROUNDOFF);
+            vFinData[IVr.Location & ":BSUM"] = vFinData[IVr.Location & ":BSUM"] + IVrw.Sum*rate;
           end;
         end;
       end;
@@ -56,7 +56,7 @@ begin
           rate = CLOutr.ToRateB1 / CLOutr.FrRate;
         end;
         vFinData[CLOutr.Person & ":SPEND:" & CLOutr.CurncyCode] = vFinData[CLOutr.Person & ":SPEND:" & CLOutr.CurncyCode] + CLOutr.Total;
-        vFinData[CLOutr.Person & ":SPEND:BSUM"] = vFinData[CLOutr.Person & ":SPEND:BSUM"] + round(CLOutr.Total*rate,DEFAULTCURROUNDOFF);
+        vFinData[CLOutr.Person & ":SPEND:BSUM"] = vFinData[CLOutr.Person & ":SPEND:BSUM"] + CLOutr.Total*rate;
       end;
     end;
     
@@ -76,10 +76,10 @@ begin
       if(readfirstmain(Locr,1,true))then begin
         startformat(15);
           outstring(0,0,Locr.Name,false);
-          outval(120,0,vFinData[Locr.Code & ":BSUM"],m4val,false);
+          outval(120,0,round(vFinData[Locr.Code & ":BSUM"],DEFAULTCURROUNDOFF),m4val,false);
           outval(190,0,vFinData[Locr.Code & ":UAH:SUM"],m4val,false);
           outval(250,0,vFinData[Locr.Code & ":FIFO"],m4val,false);
-          outstring(320,0,vFinData[Locr.Code & ":SPEND:BSUM"],false);
+          outstring(320,0,round(vFinData[Locr.Code & ":SPEND:BSUM"],DEFAULTCURROUNDOFF),false);
           outstring(380,0,vFinData[Locr.Code & ":SPEND:UAH"],false);
           outstring(1,0,"Прибыль",true);
         endformat;
