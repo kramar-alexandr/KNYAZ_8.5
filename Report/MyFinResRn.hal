@@ -75,7 +75,7 @@ begin
       outstring(210,0,"(USD)",false);
       outstring(250,0,"Стоимость (USD)",false);
       outstring(320,0,"Затраты (USD)",false);
-      outstring(380,0,"Затраты (ГРН)",false);
+      outstring(380,0,"(ГРН)",false);
       outstring(1,0,"Прибыль",true);
     endformat;
     
