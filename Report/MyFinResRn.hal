@@ -481,9 +481,9 @@ begin
   endformat;
   startformat(15);
     outstring(100,0,"‡€’€’› € ’—Šˆ",false);
-    outstring(300,0,UAH5,false);
-    outstring(400,0,USD5,false);
-    outstring(1,0,USDTOT5,true);
+    outstring(300,0,-UAH5,false);
+    outstring(400,0,-USD5,false);
+    outstring(1,0,-USDTOT5,true);
   endformat;
   startformat(15);
     outstring(100,0,"‚‡‚€’ „‹ƒ‚ Š‹ˆ…’‚",false);
