@@ -187,7 +187,7 @@ begin
       outstring(310,0,"Прибыль(USD)",false);
       outstring(370,0,"Возврат(USD)",false);
       outstring(420,0,"(UAH)",false);
-      outstring(1,0,"Баланс",true);
+      outstring(1,0,"Пришло(USD)",true);
     endformat;
     gray_divider(0,1);
     getvectortags(vKeysCust,akeysCust);
@@ -215,11 +215,11 @@ begin
           gp = gp - vFinData[CUr.Code & ":DOLG:FIFO"];
           
           total7 = total7 + gp;
-
+          total8 = total8 + vFinData[CUr.Code & ":DOLGPAY:BSUM"];
           outval(310,0,gp,m4val,false);
           outstring(370,0,vFinData[CUr.Code & ":DOLGPAY:USD"],false);
           outstring(420,0,vFinData[CUr.Code & ":DOLGPAY:UAH"],false);
-          outstring(1,0,blankval,true);
+          outstring(1,0,vFinData[CUr.Code & ":DOLGPAY:BSUM"],true);
         endformat;
       end;
     end;
