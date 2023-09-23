@@ -424,8 +424,7 @@ begin
       CUr.Code = akeysVend[i];
       readfirstmain(CUr,1,true);
       startformat(15);
-        outstring(0,0,CUr.Code,false);
-        outstring(50,0,CUr.Name,false);
+        outstring(0,0,CUr.Name,false);
         outstring(200,0,vPayData["DOLG:" & akeysVend[i]],false);
         outstring(1,0,vPayData[akeysVend[i]],true);
       endformat;
