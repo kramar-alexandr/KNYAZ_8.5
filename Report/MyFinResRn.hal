@@ -103,8 +103,8 @@ begin
           if(to1!=0)then begin
             rate = fr/to1;
           end;
-          vFinData[IPrw.CustCode & ":DOLG:" & IPrw.BankCurncy] = vFinData[IPrw.CustCode & ":DOLG:" & IPrw.BankCurncy] + IPrw.BankVal;
-          vFinData[IPrw.CustCode & ":DOLG:BSUM"] = vFinData[IPrw.CustCode & ":DOLG:BSUM"] + IPrw.BankVal/rate;
+          vFinData[IPrw.CustCode & ":DOLGPAY:" & IPrw.BankCurncy] = vFinData[IPrw.CustCode & ":DOLGPAY:" & IPrw.BankCurncy] + IPrw.BankVal;
+          vFinData[IPrw.CustCode & ":DOLGPAY:BSUM"] = vFinData[IPrw.CustCode & ":DOLGPAY:BSUM"] + IPrw.BankVal/rate;
         end;
       end;
     end;
@@ -216,8 +216,8 @@ begin
           total7 = total7 + gp;
 
           outval(320,0,gp,m4val,false);
-          outstring(390,0,vFinData[CUr.Code & ":DOLG:USD"],false);
-          outstring(1,0,vFinData[CUr.Code & ":DOLG:UAH"],true);
+          outstring(390,0,vFinData[CUr.Code & ":DOLGPAY:USD"],false);
+          outstring(1,0,vFinData[CUr.Code & ":DOLGPAY:UAH"],true);
         endformat;
       end;
     end;
