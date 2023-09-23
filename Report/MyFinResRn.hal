@@ -140,6 +140,8 @@ begin
               endformat;
             end;
           end;
+          
+          Gray_Divider(0,300);
         end;
       end;
     end;
