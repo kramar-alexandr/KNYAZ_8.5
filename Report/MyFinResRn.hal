@@ -6,15 +6,16 @@ global procedure MyFinResRn(record RcVc RepSpec)
 begin
   record IVVc IVr;
   row IVVc IVrw;
-  integer i,rwcnt;
+  integer i,rwcnt,j;
   boolean TrHs,testf;
   vector val vFinData;
-  vector boolean vKeysLoc,vKeysCur;
+  vector boolean vKeysLoc,vKeysCust;
   val rate;
   record LocationVc Locr;
   Record ObjVc Objr;
-  array string 100 akeysLoc,akeysCur;
+  array string 100 akeysLoc,akeysCust;
   record CLOutVc CLOutr;
+  record CUVc CUr;
   
   startreportnoheaderjob("Финансовый отчет");
     
@@ -34,7 +35,7 @@ begin
         logtext(0,IVr.SerNr & " IVr.Location " & IVr.Location & " rate " & rate);
 
         vKeysLoc[IVr.Location] = true;
-        vKeysCur[IVr.CurncyCode] = true;
+        
         rwcnt = matrowcnt(IVr);
         for(i=0;i<rwcnt;i=i+1)begin
           matrowget(IVr,i,IVrw);
@@ -46,6 +47,10 @@ begin
             if(IVr.PayDeal!="O")then begin
               vFinData["DOLG:" & IVr.Location & ":" & IVr.CurncyCode & ":SUM"] = vFinData["DOLG:" & IVr.Location & ":" & IVr.CurncyCode & ":SUM"] + IVrw.Sum;
               vFinData["DOLG:" & IVr.Location & ":BSUM"] = vFinData["DOLG:" & IVr.Location & ":BSUM"] + IVrw.Sum/rate;
+              
+              vKeysCust[IVr.CustCode] = true;
+              vFinData[IVr.CustCode & ":DOLG:" & IVr.Location & ":" & IVr.CurncyCode & ":SUM"] = vFinData[IVr.CustCode & ":DOLG:" & IVr.Location & ":" & IVr.CurncyCode & ":SUM"] + IVrw.Sum;
+              vFinData[IVr.CustCode & ":DOLG:" & IVr.Location & ":BSUM"] = vFinData[IVr.CustCode & ":DOLG:" & IVr.Location & ":BSUM"] + IVrw.Sum/rate;
             end;
             
           end;
@@ -115,8 +120,26 @@ begin
             outstring(250,0,"",false);
             outstring(320,0,"",false);
             outstring(380,0,"",false);
-            outstring(1,0,"Прибыль",true);
+            outstring(1,0,"",true);
           endformat;
+          
+          getvectortags(vKeysCust,akeysCust);
+          for(j=0;j<akeysCust.length;j=j+1)begin
+            if(vFinData[akeysCust[j] & ":DOLG:" & Locr.Code & ":BSUM"]!=0)then begin
+              CUr.Code = akeysCust[j];
+              readfirstmain(CUr,1,true);
+              startformat(15);
+                outstring(100,0,CUr.Name,false);
+                outstring(160,0,"",false);
+                outval(170,0,vFinData[CUr.Code & ":DOLG:" & Locr.Code & ":UAH:SUM"],m4val,false);
+                outval(210,0,vFinData[CUr.Code & ":DOLG:" & Locr.Code & ":USD:SUM"],m4val,false);
+                outstring(250,0,"",false);
+                outstring(320,0,"",false);
+                outstring(380,0,"",false);
+                outstring(1,0,"",true);
+              endformat;
+            end;
+          end;
         end;
       end;
     end;
