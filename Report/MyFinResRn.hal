@@ -175,8 +175,8 @@ begin
       outstring(180,0,total2,true);
       outstring(220,0,total3,true);
       outstring(310,0,total4,true);
-      outstring(310,0,total5,true);
-      outstring(480,0,total6,true);
+      outstring(380,0,total5,true);
+      outstring(420,0,total6,true);
       outstring(1,0,total7,true);
     endformat;
     
