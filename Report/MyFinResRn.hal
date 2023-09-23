@@ -200,12 +200,12 @@ begin
     endformat;
     startformat(15);
       outstring(0,0,"Клиент",false);
-      outstring(160,0,"Выторг (USD)",true);
+      outstring(130,0,"Выторг (USD)",true);
       outstring(180,0,"(Грн)",true);
       outstring(220,0,"(USD)",true);
-      outstring(250,0,"Стоимость (USD)",true);
-      outstring(310,0,"Прибыль(USD)",true);
-      outstring(370,0,"Возврат(USD)",true);
+      outstring(290,0,"Стоимость (USD)",true);
+      outstring(340,0,"Прибыль(USD)",true);
+      outstring(390,0,"Возврат(USD)",true);
       outstring(420,0,"(UAH)",true);
       outstring(1,0,"Пришло(USD)",true);
     endformat;
@@ -217,10 +217,10 @@ begin
         readfirstmain(CUr,1,true);
         startformat(15);
           outstring(0,0,CUr.Name,false);
-          outval(160,0,round(vFinData[CUr.Code & ":DOLG:BSUM"],DEFAULTCURROUNDOFF),m4val,true);
+          outval(130,0,round(vFinData[CUr.Code & ":DOLG:BSUM"],DEFAULTCURROUNDOFF),m4val,true);
           outval(180,0,vFinData[CUr.Code & ":DOLG:UAH:SUM"],m4val,true);
           outval(220,0,vFinData[CUr.Code & ":DOLG:USD:SUM"],m4val,true);
-          outval(250,0,vFinData[CUr.Code & ":DOLG:FIFO"],m4val,true);
+          outval(290,0,vFinData[CUr.Code & ":DOLG:FIFO"],m4val,true);
           
           
 //          vFinData[IPrw.CustCode & ":DOLG:BSUM"] = vFinData[IPrw.CustCode & ":DOLG:BSUM"] + IPrw.BankVal/rate;
@@ -236,8 +236,8 @@ begin
           
           total7 = total7 + gp;
           total8 = total8 + vFinData[CUr.Code & ":DOLGPAY:BSUM"];
-          outval(310,0,gp,m4val,true);
-          outstring(370,0,vFinData[CUr.Code & ":DOLGPAY:USD"],true);
+          outval(340,0,gp,m4val,true);
+          outstring(390,0,vFinData[CUr.Code & ":DOLGPAY:USD"],true);
           outstring(420,0,vFinData[CUr.Code & ":DOLGPAY:UAH"],true);
           outstring(1,0,vFinData[CUr.Code & ":DOLGPAY:BSUM"],true);
         endformat;
@@ -248,13 +248,13 @@ begin
     
     startformat(15);
       outstring(0,0,"Итого",false);
-      outval(160,0,total1,m4val,true);
+      outval(130,0,total1,m4val,true);
       outval(180,0,total2,m4val,true);
       outval(220,0,total3,m4val,true);
-      outval(250,0,total4,m4val,true);
+      outval(290,0,total4,m4val,true);
       
-      outval(310,0,total7,m4val,true);
-      outstring(370,0,total5,true);
+      outval(340,0,total7,m4val,true);
+      outstring(390,0,total5,true);
       outstring(420,0,total6,true);
       outstring(1,0,total8,true);
       
