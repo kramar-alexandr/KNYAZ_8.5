@@ -204,7 +204,7 @@ begin
         outstring(0,0,CLCorspr.Comment,false);        
         outval(150,0,vFinData["SPEND:" & CLCorspr.Code & ":UAH"],m4val,false);
         outval(200,0,vFinData["SPEND:" & CLCorspr.Code & ":USD"],m4val,false);
-        outval(1,0,round(vFinData["SPEND:" & CLCorspr.Code & ":BSUM"],DEFAULTCURROUNDOFF),m4val,false);
+        outval(1,0,round(vFinData["SPEND:" & CLCorspr.Code & ":BSUM"],DEFAULTCURROUNDOFF),m4val,true);
       endformat;
       
       total1 = total1 + vFinData["SPEND:" & CLCorspr.Code & ":UAH"];
@@ -216,7 +216,7 @@ begin
       outstring(0,0,"Итого",false);
       outval(150,0,total1,m4val,false);
       outval(200,0,total2,m4val,false);
-      outval(1,0,total3,m4val,false);
+      outval(1,0,total3,m4val,true);
     endformat;
     
     gray_divider(0,1);
