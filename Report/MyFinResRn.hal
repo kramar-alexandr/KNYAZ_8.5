@@ -127,7 +127,7 @@ begin
       outstring(120,0,"Выторг (USD)",true);
       outstring(160,0,"(Грн)",true);
       outstring(190,0,"(USD)",true);
-      outstring(250,0,"Стоимость (USD)",true);
+      outstring(310,0,"Себестоимость (USD)",true);
       outstring(380,0,"Затраты (USD)",true);
       outstring(420,0,"(ГРН)",true);
       outstring(1,0,"Прибыль(USD)",true);
@@ -142,7 +142,7 @@ begin
           outval(120,0,round(vFinData[Locr.Code & ":BSUM"],DEFAULTCURROUNDOFF),m4val,true);
           outval(160,0,vFinData[Locr.Code & ":UAH:SUM"],m4val,true);
           outval(190,0,vFinData[Locr.Code & ":USD:SUM"],m4val,true);
-          outval(250,0,vFinData[Locr.Code & ":FIFO"],m4val,true);
+          outval(310,0,vFinData[Locr.Code & ":FIFO"],m4val,true);
           outval(380,0,vFinData[Locr.Code & ":SPEND:USD"],m4val,true);
           outval(420,0,vFinData[Locr.Code & ":SPEND:UAH"],m4val,true);
           
@@ -174,7 +174,7 @@ begin
       outstring(120,0,total1,true);
       outstring(160,0,total2,true);
       outstring(190,0,total3,true);
-      outstring(250,0,total4,true);
+      outstring(310,0,total4,true);
       outstring(310,0,total5,true);
       outstring(480,0,total6,true);
       outstring(1,0,total7,true);
