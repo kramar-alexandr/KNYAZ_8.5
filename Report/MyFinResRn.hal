@@ -124,12 +124,12 @@ begin
     endformat;
     startformat(15);
       outstring(0,0,"Точка",false);
-      outstring(120,0,"Выторг (USD)",false);
-      outstring(170,0,"(Грн)",false);
-      outstring(210,0,"(USD)",false);
-      outstring(250,0,"Стоимость (USD)",false);
-      outstring(310,0,"Затраты (USD)",false);
-      outstring(380,0,"(ГРН)",false);
+      outstring(120,0,"Выторг (USD)",true);
+      outstring(160,0,"(Грн)",true);
+      outstring(190,0,"(USD)",true);
+      outstring(250,0,"Стоимость (USD)",true);
+      outstring(310,0,"Затраты (USD)",true);
+      outstring(380,0,"(ГРН)",true);
       outstring(1,0,"Прибыль(USD)",true);
     endformat;
     
@@ -139,12 +139,12 @@ begin
       if(readfirstmain(Locr,1,true) and round(vFinData[Locr.Code & ":BSUM"],DEFAULTCURROUNDOFF)!=0)then begin
         startformat(15);
           outstring(0,0,Locr.Name,false);
-          outval(120,0,round(vFinData[Locr.Code & ":BSUM"],DEFAULTCURROUNDOFF),m4val,false);
-          outval(170,0,vFinData[Locr.Code & ":UAH:SUM"],m4val,false);
-          outval(210,0,vFinData[Locr.Code & ":USD:SUM"],m4val,false);
-          outval(250,0,vFinData[Locr.Code & ":FIFO"],m4val,false);
-          outval(310,0,round(vFinData[Locr.Code & ":SPEND:BSUM"],DEFAULTCURROUNDOFF),m4val,false);
-          outval(380,0,vFinData[Locr.Code & ":SPEND:UAH"],m4val,false);
+          outval(120,0,round(vFinData[Locr.Code & ":BSUM"],DEFAULTCURROUNDOFF),m4val,true);
+          outval(160,0,vFinData[Locr.Code & ":UAH:SUM"],m4val,true);
+          outval(190,0,vFinData[Locr.Code & ":USD:SUM"],m4val,true);
+          outval(250,0,vFinData[Locr.Code & ":FIFO"],m4val,true);
+          outval(310,0,round(vFinData[Locr.Code & ":SPEND:BSUM"],DEFAULTCURROUNDOFF),m4val,true);
+          outval(380,0,vFinData[Locr.Code & ":SPEND:UAH"],m4val,true);
           
           gp = round(vFinData[Locr.Code & ":BSUM"],DEFAULTCURROUNDOFF);
           gp = gp - vFinData[Locr.Code & ":FIFO"];
@@ -171,12 +171,12 @@ begin
     
     startformat(15);
       outstring(0,0,"Итого",false);
-      outstring(120,0,total1,false);
-      outstring(170,0,total2,false);
-      outstring(210,0,total3,false);
-      outstring(250,0,total4,false);
-      outstring(310,0,total5,false);
-      outstring(380,0,total6,false);
+      outstring(120,0,total1,true);
+      outstring(160,0,total2,true);
+      outstring(190,0,total3,true);
+      outstring(250,0,total4,true);
+      outstring(310,0,total5,true);
+      outstring(380,0,total6,true);
       outstring(1,0,total7,true);
     endformat;
     
@@ -200,13 +200,13 @@ begin
     endformat;
     startformat(15);
       outstring(0,0,"Клиент",false);
-      outstring(120,0,"Выторг (USD)",false);
-      outstring(170,0,"(Грн)",false);
-      outstring(210,0,"(USD)",false);
-      outstring(250,0,"Стоимость (USD)",false);
-      outstring(310,0,"Прибыль(USD)",false);
-      outstring(370,0,"Возврат(USD)",false);
-      outstring(420,0,"(UAH)",false);
+      outstring(120,0,"Выторг (USD)",true);
+      outstring(160,0,"(Грн)",true);
+      outstring(190,0,"(USD)",true);
+      outstring(250,0,"Стоимость (USD)",true);
+      outstring(310,0,"Прибыль(USD)",true);
+      outstring(370,0,"Возврат(USD)",true);
+      outstring(420,0,"(UAH)",true);
       outstring(1,0,"Пришло(USD)",true);
     endformat;
     gray_divider(0,1);
@@ -217,10 +217,10 @@ begin
         readfirstmain(CUr,1,true);
         startformat(15);
           outstring(0,0,CUr.Name,false);
-          outval(120,0,round(vFinData[CUr.Code & ":DOLG:BSUM"],DEFAULTCURROUNDOFF),m4val,false);
-          outval(170,0,vFinData[CUr.Code & ":DOLG:UAH:SUM"],m4val,false);
-          outval(210,0,vFinData[CUr.Code & ":DOLG:USD:SUM"],m4val,false);
-          outval(250,0,vFinData[CUr.Code & ":DOLG:FIFO"],m4val,false);
+          outval(120,0,round(vFinData[CUr.Code & ":DOLG:BSUM"],DEFAULTCURROUNDOFF),m4val,true);
+          outval(160,0,vFinData[CUr.Code & ":DOLG:UAH:SUM"],m4val,true);
+          outval(190,0,vFinData[CUr.Code & ":DOLG:USD:SUM"],m4val,true);
+          outval(250,0,vFinData[CUr.Code & ":DOLG:FIFO"],m4val,true);
           
           
 //          vFinData[IPrw.CustCode & ":DOLG:BSUM"] = vFinData[IPrw.CustCode & ":DOLG:BSUM"] + IPrw.BankVal/rate;
@@ -236,9 +236,9 @@ begin
           
           total7 = total7 + gp;
           total8 = total8 + vFinData[CUr.Code & ":DOLGPAY:BSUM"];
-          outval(310,0,gp,m4val,false);
-          outstring(370,0,vFinData[CUr.Code & ":DOLGPAY:USD"],false);
-          outstring(420,0,vFinData[CUr.Code & ":DOLGPAY:UAH"],false);
+          outval(310,0,gp,m4val,true);
+          outstring(370,0,vFinData[CUr.Code & ":DOLGPAY:USD"],true);
+          outstring(420,0,vFinData[CUr.Code & ":DOLGPAY:UAH"],true);
           outstring(1,0,vFinData[CUr.Code & ":DOLGPAY:BSUM"],true);
         endformat;
       end;
@@ -248,14 +248,14 @@ begin
     
     startformat(15);
       outstring(0,0,"Итого",false);
-      outval(120,0,total1,m4val,false);
-      outval(170,0,total2,m4val,false);
-      outval(210,0,total3,m4val,false);
-      outval(250,0,total4,m4val,false);
+      outval(120,0,total1,m4val,true);
+      outval(160,0,total2,m4val,true);
+      outval(190,0,total3,m4val,true);
+      outval(250,0,total4,m4val,true);
       
-      outval(310,0,total7,m4val,false);
-      outstring(370,0,total5,false);
-      outstring(420,0,total6,false);
+      outval(310,0,total7,m4val,true);
+      outstring(370,0,total5,true);
+      outstring(420,0,total6,true);
       outstring(1,0,total8,true);
       
       UAH2 = total5;
@@ -282,10 +282,10 @@ begin
       
       startformat(15);
         outstring(0,0,"Клиент",false);
-        outstring(100,0,"Дата долга",false);
-        outstring(150,0,"Сч/ф",false);
-        outstring(200,0,"Сумма(USD)",false);
-        outstring(300,0,"Сумма(UAH)",false);
+        outstring(100,0,"Дата долга",true);
+        outstring(150,0,"Сч/ф",true);
+        outstring(200,0,"Сумма(USD)",true);
+        outstring(300,0,"Сумма(UAH)",true);
         outstring(1,0,"Всего(USD)",true);
       endformat;
       
@@ -297,10 +297,10 @@ begin
         if(nonblank(curcust) and ARr.CustCode!=curcust)then begin
           startformat(15);
             outstring(0,0,"Итого",false);
-            outstring(100,0,"",false);
-            outstring(150,0,"",false);
-            outstring(200,0,total1,false);
-            outstring(300,0,total2,false);
+            outstring(100,0,"",true);
+            outstring(150,0,"",true);
+            outstring(200,0,total1,true);
+            outstring(300,0,total2,true);
             outstring(1,0,total3,true);
           endformat;
           total1 = blankval;
@@ -317,17 +317,17 @@ begin
         readfirstmain(IVr,1,true);
         startformat(15);
           outstring(0,0,CUr.Name,false);
-          outstring(100,0,IVr.InvDate,false);
-          outstring(150,"DblIVVc",IVr.SerNr,false);
+          outstring(100,0,IVr.InvDate,true);
+          outstring(150,"DblIVVc",IVr.SerNr,true);
           if(ARr.ARCurncyCode=="USD")then begin
-            outval(200,0,ARr.RVal,m4val,false);
-            outstring(300,0,"",false);
+            outval(200,0,ARr.RVal,m4val,true);
+            outstring(300,0,"",true);
             total1 = total1 + ARr.RVal;
             total4 = total4 + ARr.RVal;
           end;
           if(ARr.ARCurncyCode=="UAH")then begin
-            outstring(200,0,"",false);
-            outval(300,0,ARr.RVal,m4val,false);
+            outstring(200,0,"",true);
+            outval(300,0,ARr.RVal,m4val,true);
             total2 = total2 + ARr.RVal;
             total5 = total5 + ARr.RVal;
           end;
@@ -339,19 +339,19 @@ begin
       end;
       startformat(15);
         outstring(0,0,"Итого",false);
-        outstring(100,0,"",false);
-        outstring(150,0,"",false);
-        outstring(200,0,total1,false);
-        outstring(300,0,total2,false);
+        outstring(100,0,"",true);
+        outstring(150,0,"",true);
+        outstring(200,0,total1,true);
+        outstring(300,0,total2,true);
         outstring(1,0,total3,true);
       endformat;
     Gray_Divider(0,1);
     startformat(15);
       outstring(0,0,"ИТОГО",false);
-      outstring(100,0,"",false);
-      outstring(150,0,"",false);
-      outstring(200,0,total4,false);
-      outstring(300,0,total5,false);
+      outstring(100,0,"",true);
+      outstring(150,0,"",true);
+      outstring(200,0,total4,true);
+      outstring(300,0,total5,true);
       outstring(1,0,total6,true);
     endformat;  
     
@@ -365,8 +365,8 @@ begin
     getvectortags(vSpend,akeysSpend);
     startformat(15);
       outstring(0,0,"Затрата",false);
-      outstring(150,0,"ГРН",false);
-      outstring(300,0,"USD",false);
+      outstring(150,0,"ГРН",true);
+      outstring(300,0,"USD",true);
       outstring(1,0,"Итого(USD)",true);
     endformat;
     total1 = blankval;
@@ -378,8 +378,8 @@ begin
       readfirstmain(CLCorspr,1,true);
       startformat(15);
         outstring(0,0,CLCorspr.Comment,false);        
-        outval(150,0,vFinData["SPEND:" & CLCorspr.Code & ":UAH"],m4val,false);
-        outval(300,0,vFinData["SPEND:" & CLCorspr.Code & ":USD"],m4val,false);
+        outval(150,0,vFinData["SPEND:" & CLCorspr.Code & ":UAH"],m4val,true);
+        outval(300,0,vFinData["SPEND:" & CLCorspr.Code & ":USD"],m4val,true);
         outval(1,0,round(vFinData["SPEND:" & CLCorspr.Code & ":BSUM"],DEFAULTCURROUNDOFF),m4val,true);
       endformat;
       
@@ -390,8 +390,8 @@ begin
     end;
     startformat(15);
       outstring(0,0,"Итого",false);
-      outval(150,0,total1,m4val,false);
-      outval(300,0,total2,m4val,false);
+      outval(150,0,total1,m4val,true);
+      outval(300,0,total2,m4val,true);
       outval(1,0,total3,m4val,true);
     endformat;
     
@@ -435,7 +435,7 @@ begin
     total3 = blankval;
     startformat(15);
       outstring(0,0,"Поставщик",false);
-      outstring(200,0,"Долг на сегодня",false);
+      outstring(200,0,"Долг на сегодня",true);
       outstring(1,0,"Оплата за период(USD)",true);
     endformat;
     
@@ -445,7 +445,7 @@ begin
       readfirstmain(CUr,1,true);
       startformat(15);
         outstring(0,0,CUr.Name,false);
-        outstring(200,0,vPayData["DOLG:" & akeysVend[i]],false);
+        outstring(200,0,vPayData["DOLG:" & akeysVend[i]],true);
         outstring(1,0,vPayData[akeysVend[i]],true);
       endformat;
       total1 = total1 + vPayData["DOLG:" & akeysVend[i]];
@@ -455,7 +455,7 @@ begin
     gray_divider(0,1);
     startformat(15);
       outstring(0,0,"Итого",false);
-      outstring(200,0,total1,false);
+      outstring(200,0,total1,true);
       outstring(1,0,total2,true);
     endformat;
     
@@ -466,48 +466,48 @@ begin
   
   Black_Divider(0,1);
   startformat(15);
-    outstring(200,0,"ИТОГО",false);
-    outstring(300,0,"ГРН",false);
-    outstring(400,0,"USD",false);
+    outstring(200,0,"ИТОГО",true);
+    outstring(300,0,"ГРН",true);
+    outstring(400,0,"USD",true);
     
     outstring(1,0,"По Курсу в USD",true);
   endformat;
   
   startformat(15);
-    outstring(100,0,"ПРИХОД ДЕНЕГ ПО ТОЧКАМ НАЛ.",false);
-    outstring(300,0,UAH1,false);
-    outstring(400,0,USD1,false);
+    outstring(100,0,"ПРИХОД ДЕНЕГ ПО ТОЧКАМ НАЛ.",true);
+    outstring(300,0,UAH1,true);
+    outstring(400,0,USD1,true);
     outstring(1,0,USDTOT1,true);
   endformat;
   startformat(15);
-    outstring(100,0,"ЗАТРАТЫ НА ТОЧКИ",false);
-    outstring(300,0,-UAH5,false);
-    outstring(400,0,-USD5,false);
+    outstring(100,0,"ЗАТРАТЫ НА ТОЧКИ",true);
+    outstring(300,0,-UAH5,true);
+    outstring(400,0,-USD5,true);
     outstring(1,0,-USDTOT5,true);
   endformat;
   startformat(15);
-    outstring(100,0,"ВОЗВРАТ ДОЛГОВ КЛИЕНТОВ",false);
-    outstring(300,0,UAH2,false);
-    outstring(400,0,USD2,false);
+    outstring(100,0,"ВОЗВРАТ ДОЛГОВ КЛИЕНТОВ",true);
+    outstring(300,0,UAH2,true);
+    outstring(400,0,USD2,true);
     outstring(1,0,USDTOT2,true);
   endformat;
   startformat(15);
-    outstring(100,0,"ОБЩИЕ ЗАТРАТЫ",false);
-    outstring(300,0,-UAH3,false);
-    outstring(400,0,-USD3,false);
+    outstring(100,0,"ОБЩИЕ ЗАТРАТЫ",true);
+    outstring(300,0,-UAH3,true);
+    outstring(400,0,-USD3,true);
     outstring(1,0,-USDTOT3,true);
   endformat;
   startformat(15);
-    outstring(100,0,"ОПЛАТЫ ПОСТАВЩИКАМ",false);
-    outstring(300,0,-UAH4,false);
-    outstring(400,0,-USD4,false);
+    outstring(100,0,"ОПЛАТЫ ПОСТАВЩИКАМ",true);
+    outstring(300,0,-UAH4,true);
+    outstring(400,0,-USD4,true);
     outstring(1,0,-USDTOT4,true);
   endformat;
   Gray_Divider(0,1);
   startformat(15);
-    outstring(200,0,"ИТОГО",false);
-    outstring(300,0,UAH1+UAH2+UAH3+UAH4,false);
-    outstring(400,0,USD1+USD2+USD3+USD4,false);
+    outstring(200,0,"ИТОГО",true);
+    outstring(300,0,UAH1+UAH2+UAH3+UAH4,true);
+    outstring(400,0,USD1+USD2+USD3+USD4,true);
     outstring(1,0,USDTOT1+USDTOT2-USDTOT5-USDTOT3-USDTOT4,true);
   endformat;
   
