@@ -124,7 +124,7 @@ begin
     endformat;
     startformat(15);
       outstring(0,0,"Точка",false);
-      outstring(160,0,"Выторг (по курсуUSD)",true);
+      outstring(130,0,"Выторг (по курсуUSD)",true);
       outstring(180,0,"(Грн)",true);
       outstring(220,0,"(USD)",true);
       outstring(310,0,"Себестоимость (USD)",true);
@@ -139,7 +139,7 @@ begin
       if(readfirstmain(Locr,1,true) and round(vFinData[Locr.Code & ":BSUM"],DEFAULTCURROUNDOFF)!=0)then begin
         startformat(15);
           outstring(0,0,Locr.Name,false);
-          outval(160,0,round(vFinData[Locr.Code & ":BSUM"],DEFAULTCURROUNDOFF),m4val,true);
+          outval(130,0,round(vFinData[Locr.Code & ":BSUM"],DEFAULTCURROUNDOFF),m4val,true);
           outval(180,0,vFinData[Locr.Code & ":UAH:SUM"],m4val,true);
           outval(220,0,vFinData[Locr.Code & ":USD:SUM"],m4val,true);
           outval(310,0,vFinData[Locr.Code & ":FIFO"],m4val,true);
@@ -171,7 +171,7 @@ begin
     
     startformat(15);
       outstring(0,0,"Итого",false);
-      outstring(160,0,total1,true);
+      outstring(130,0,total1,true);
       outstring(180,0,total2,true);
       outstring(220,0,total3,true);
       outstring(310,0,total4,true);
