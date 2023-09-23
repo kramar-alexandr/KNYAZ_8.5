@@ -129,8 +129,8 @@ begin
               CUr.Code = akeysCust[j];
               readfirstmain(CUr,1,true);
               startformat(15);
-                outstring(100,0,CUr.Name,false);
-                outstring(160,0,"",false);
+                outstring(50,0,CUr.Name,false);
+                outstring(150,0,"",false);
                 outval(170,0,vFinData[CUr.Code & ":DOLG:" & Locr.Code & ":UAH:SUM"],m4val,false);
                 outval(210,0,vFinData[CUr.Code & ":DOLG:" & Locr.Code & ":USD:SUM"],m4val,false);
                 outstring(250,0,"",false);
