@@ -42,6 +42,12 @@ begin
             vFinData[IVr.Location & ":" & IVr.CurncyCode & ":SUM"] = vFinData[IVr.Location & ":" & IVr.CurncyCode & ":SUM"] + IVrw.Sum;
             vFinData[IVr.Location & ":FIFO"] = vFinData[IVr.Location & ":FIFO"] + IVrw.FIFORowVal;
             vFinData[IVr.Location & ":BSUM"] = vFinData[IVr.Location & ":BSUM"] + IVrw.Sum/rate;
+            
+            if(IVr.PayDeal!="O")then begin
+              vFinData["DOLG:" & IVr.Location & ":" & IVr.CurncyCode & ":SUM"] = vFinData["DOLG:" & IVr.Location & ":" & IVr.CurncyCode & ":SUM"] + IVrw.Sum;
+              vFinData["DOLG:" & IVr.Location & ":BSUM"] = vFinData["DOLG:" & IVr.Location & ":BSUM"] + IVrw.Sum/rate;
+            end;
+            
           end;
         end;
       end;
@@ -83,11 +89,31 @@ begin
           outval(170,0,vFinData[Locr.Code & ":UAH:SUM"],m4val,false);
           outval(210,0,vFinData[Locr.Code & ":USD:SUM"],m4val,false);
           outval(250,0,vFinData[Locr.Code & ":FIFO"],m4val,false);
-          outstring(320,0,round(vFinData[Locr.Code & ":SPEND:BSUM"],DEFAULTCURROUNDOFF),false);
-          outstring(380,0,vFinData[Locr.Code & ":SPEND:UAH"],false);
+          outval(320,0,round(vFinData[Locr.Code & ":SPEND:BSUM"],DEFAULTCURROUNDOFF),m4val,false);
+          outval(380,0,vFinData[Locr.Code & ":SPEND:UAH"],m4val,false);
           outstring(1,0,"Прибыль",true);
         endformat;
       
+      end;
+    end;
+    
+    startformat(15);
+      outstring(0,0,"Включая продажи в долг",false);
+    endformat;
+    
+    for(i=0;i<akeysLoc.length;i=i+1)begin
+      Locr.Code = akeysLoc[i];
+      if(readfirstmain(Locr,1,true))then begin
+        startformat(15);
+          outstring(0,0,Locr.Name,false);
+          outval(120,0,round(vFinData["DOLG:" & Locr.Code & ":BSUM"],DEFAULTCURROUNDOFF),m4val,false);
+          outval(170,0,vFinData["DOLG:" & Locr.Code & ":UAH:SUM"],m4val,false);
+          outval(210,0,vFinData["DOLG:" & Locr.Code & ":USD:SUM"],m4val,false);
+          outstring(250,0,"",false);
+          outstring(320,0,"",false);
+          outstring(380,0,"",false);
+          outstring(1,0,"Прибыль",true);
+        endformat;
       end;
     end;
     
