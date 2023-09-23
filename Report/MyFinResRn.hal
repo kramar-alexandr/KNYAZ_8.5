@@ -302,19 +302,29 @@ begin
             outval(200,0,ARr.RVal,m4val,false);
             outstring(300,0,"",false);
             total1 = total1 + ARr.RVal;
+            total4 = total4 + ARr.RVal;
           end;
           if(ARr.ARCurncyCode=="UAH")then begin
             outstring(200,0,"",false);
             outval(300,0,ARr.RVal,m4val,false);
             total2 = total2 + ARr.RVal;
+            total5 = total5 + ARr.RVal;
           end;
           outstring(1,0,ARr.BookRVal,true);
           total3 = total3 + ARr.BookRVal;
+          total6 = total6 + ARr.BookRVal;
         endformat;
         
       end;
-      
-      
+    Gray_Divider(0,1);
+    startformat(15);
+      outstring(0,0,"ˆ’ŽƒŽ",false);
+      outstring(100,0,"",false);
+      outstring(150,0,"",false);
+      outstring(200,0,total4,false);
+      outstring(300,0,total5,false);
+      outstring(1,0,total6,true);
+    endformat;  
     
     black_divider(0,1);
     startformat(15);
