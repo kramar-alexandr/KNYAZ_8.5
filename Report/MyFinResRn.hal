@@ -9,14 +9,15 @@ begin
   integer i,rwcnt,j;
   boolean TrHs,testf;
   vector val vFinData;
-  vector boolean vKeysLoc,vKeysCust;
+  vector boolean vKeysLoc,vKeysCust,vSpend;
   val rate,gp;
   record LocationVc Locr;
   Record ObjVc Objr;
-  array string 100 akeysLoc,akeysCust;
+  array string 100 akeysLoc,akeysCust,akeysSpend;
   record CLOutVc CLOutr;
   record CUVc CUr;
   val total1,total2,total3,total4,total5,total6,total7;
+  record CLCorspVc CLCorspr;
   
   startreportnoheaderjob("Финансовый отчет");
     
@@ -71,6 +72,13 @@ begin
         end;
         vFinData[CLOutr.Person & ":SPEND:" & CLOutr.CurncyCode] = vFinData[CLOutr.Person & ":SPEND:" & CLOutr.CurncyCode] + CLOutr.Total;
         vFinData[CLOutr.Person & ":SPEND:BSUM"] = vFinData[CLOutr.Person & ":SPEND:BSUM"] + CLOutr.Total/rate;
+        
+        if(CLOutr.Person=="BOSS")then begin
+          vSpend[CLOutr.CorspCode] = true;
+          vFinData["SPEND:" & CLOutr.CorspCode & ":" & CLOutr.CurncyCode] = vFinData["SPEND:" & CLOutr.CorspCode & ":" & CLOutr.CurncyCode] + CLOutr.Total;
+          vFinData["SPEND:" & CLOutr.CorspCode & ":BSUM"] = vFinData["SPEND:" & CLOutr.CorspCode & ":BSUM"] + CLOutr.Total/rate;
+        end;
+        
       end;
     end;
     
@@ -170,6 +178,49 @@ begin
         end;
       end;
     end;
+    
+    black_divider(0,1);
+    startformat(15);
+    endformat;
+    startformat(15);
+      outstring(0,0,"Затраты не по точкам",false);
+    endformat;
+    
+    getvectortags(vSpend,akeysSpend);
+    startformat(15);
+      outstring(0,0,"Затрата",false);
+      outstring(150,0,"ГРН",false);
+      outstring(200,0,"USD",false);
+      outstring(1,0,"Итого(USD)",false);
+    endformat;
+    total1 = blankval;
+    total2 = blankval;
+    total3 = blankval;
+    
+    for(i=0;i<akeysSpend.length;i=i+1)begin
+      CLCorspr.Code = akeysSpend[i];
+      readfirstmain(CLCorspr,1,true);
+      startformat(15);
+        outstring(0,0,CLCorspr.Comment,false);        
+        outval(150,0,vFinData["SPEND:" & CLCorspr.Code & ":UAH"],m4val,false);
+        outval(200,0,vFinData["SPEND:" & CLCorspr.Code & ":USD"],m4val,false);
+        outval(1,0,round(vFinData["SPEND:" & CLCorspr.Code & ":BSUM"],DEFAULTCURROUNDOFF),m4val,false);
+      endformat;
+      
+      total1 = total1 + vFinData["SPEND:" & CLCorspr.Code & ":UAH"];
+      total2 = total2 + vFinData["SPEND:" & CLCorspr.Code & ":USD"];
+      total3 = total3 + round(vFinData["SPEND:" & CLCorspr.Code & ":BSUM"],DEFAULTCURROUNDOFF);
+      
+    end;
+    startformat(15);
+      outstring(0,0,"Итого",false);
+      outval(150,0,total1,m4val,false);
+      outval(200,0,total2,m4val,false);
+      outval(1,0,total3,m4val,false);
+    endformat;
+    
+    gray_divider(0,1);
+    
     
   endjob;
   
