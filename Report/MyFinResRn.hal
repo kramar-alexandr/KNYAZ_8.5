@@ -206,7 +206,7 @@ begin
       outstring(290,0,"Стоимость (USD)",true);
       outstring(340,0,"Прибыль(USD)",true);
       outstring(390,0,"Возврат(USD)",true);
-      outstring(430,0,"(UAH)",true);
+      outstring(440,0,"(UAH)",true);
       outstring(1,0,"Пришло(USD)",true);
     endformat;
     gray_divider(0,1);
@@ -238,7 +238,7 @@ begin
           total8 = total8 + vFinData[CUr.Code & ":DOLGPAY:BSUM"];
           outval(340,0,gp,m4val,true);
           outstring(390,0,vFinData[CUr.Code & ":DOLGPAY:USD"],true);
-          outstring(430,0,vFinData[CUr.Code & ":DOLGPAY:UAH"],true);
+          outstring(440,0,vFinData[CUr.Code & ":DOLGPAY:UAH"],true);
           outstring(1,0,vFinData[CUr.Code & ":DOLGPAY:BSUM"],true);
         endformat;
       end;
@@ -255,7 +255,7 @@ begin
       
       outval(340,0,total7,m4val,true);
       outstring(390,0,total5,true);
-      outstring(430,0,total6,true);
+      outstring(440,0,total6,true);
       outstring(1,0,total8,true);
       
       UAH2 = total5;
