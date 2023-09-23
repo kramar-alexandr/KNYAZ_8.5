@@ -27,6 +27,11 @@ begin
   string 20 curcust;
   record OPVc OPr;
   row OPVc OPrw;
+  val UAH1,USD1,USDTOT1;
+  val UAH2,USD2,USDTOT2;
+  val UAH3,USD3,USDTOT3;
+  val UAH4,USD4,USDTOT4;
+  val UAH5,USD5,USDTOT5;
   
   startreportnoheaderjob("”èíàíñîâûé îò÷åò");
     
@@ -152,6 +157,12 @@ begin
           total5 = total5 + round(vFinData[Locr.Code & ":SPEND:BSUM"],DEFAULTCURROUNDOFF);
           total6 = total6 + vFinData[Locr.Code & ":SPEND:UAH"];
           total7 = total7 + gp;
+          
+          
+          UAH5 = UAH5 + vFinData[Locr.Code & ":SPEND:UAH"];
+          USD5 = USD5 + vFinData[Locr.Code & ":SPEND:USD"];
+          USDTOT5 = USDTOT5 + round(vFinData[Locr.Code & ":SPEND:BSUM"],DEFAULTCURROUNDOFF);
+          
           outstring(1,0,gp,true);
         endformat;
       end;
@@ -169,6 +180,9 @@ begin
       outstring(1,0,total7,true);
     endformat;
     
+    UAH1 = total2;
+    USD1 = total3;
+    USDTOT1 = total1;
     
     total1 = blankval;
     total2 = blankval;
@@ -243,6 +257,10 @@ begin
       outstring(370,0,total5,false);
       outstring(420,0,total6,false);
       outstring(1,0,total8,true);
+      
+      UAH2 = total5;
+      USD2 = total6;
+      USDTOT2 = total8;
       
     endformat;
     
@@ -377,6 +395,10 @@ begin
       outval(1,0,total3,m4val,true);
     endformat;
     
+    UAH3 = total1;
+    USD3 = total2;
+    USDTOT3 = total3;
+    
     gray_divider(0,1);
     
     black_divider(0,1);
@@ -439,7 +461,61 @@ begin
       outstring(1,0,total2,true);
     endformat;
     
-  endjob;
+    UAH4 = blankval;
+    USD4 = total1;
+    USDTOT4 = total2;
   
+  
+  Black_Divider(0,1);
+  startformat(15);
+    outstring(200,0,"ˆ’ƒ",false);
+    outstring(300,0,"ƒ",false);
+    outstring(400,0,"USD",false);
+    
+    outstring(1,0,"î Šóğñó â USD",true);
+  endformat;
+  
+  startformat(15);
+    outstring(100,0,"ˆ•„ „……ƒ  ’—Š€Œ €‹.",false);
+    outstring(300,0,UAH1,false);
+    outstring(400,0,USD1,false);
+    outstring(1,0,USDTOT1,true);
+  endformat;
+  startformat(15);
+    outstring(100,0,"‡€’€’› € ’—Šˆ",false);
+    outstring(300,0,UAH5,false);
+    outstring(400,0,USD5,false);
+    outstring(1,0,USDTOT5,true);
+  endformat;
+  startformat(15);
+    outstring(100,0,"‚‡‚€’ „‹ƒ‚ Š‹ˆ…’‚",false);
+    outstring(300,0,UAH2,false);
+    outstring(400,0,USD2,false);
+    outstring(1,0,USDTOT2,true);
+  endformat;
+  startformat(15);
+    outstring(100,0,"™ˆ… ‡€’€’›",false);
+    outstring(300,0,-UAH3,false);
+    outstring(400,0,-USD3,false);
+    outstring(1,0,-USDTOT3,true);
+  endformat;
+  startformat(15);
+    outstring(100,0,"‹€’› ‘’€‚™ˆŠ€Œ",false);
+    outstring(300,0,-UAH4,false);
+    outstring(400,0,-USD4,false);
+    outstring(1,0,-USDTOT4,true);
+  endformat;
+  Gray_Divider(0,1);
+  startformat(15);
+    outstring(200,0,"ˆ’ƒ",false);
+    outstring(300,0,UAH1+UAH2+UAH3+UAH4,false);
+    outstring(400,0,USD1+USD2+USD3+USD4,false);
+    outstring(1,0,USDTOT1+USDTOT2-USDTOT5-USDTOT3-USDTOT4,true);
+  endformat;
+  
+  
+  
+  
+  endjob;
 return;
 end;
