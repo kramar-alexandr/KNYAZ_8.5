@@ -96,11 +96,13 @@ begin
       
       end;
     end;
-    
+    gray_divider(0,1);
+    startformat(15);
+    endformat;
     startformat(15);
       outstring(0,0,"‚ключаЯ продажи в долг",false);
     endformat;
-    
+    gray_divider(0,1);
     for(i=0;i<akeysLoc.length;i=i+1)begin
       Locr.Code = akeysLoc[i];
       if(readfirstmain(Locr,1,true))then begin
