@@ -299,17 +299,17 @@ begin
           outstring(100,0,IVr.InvDate,false);
           outstring(150,"DblIVVc",IVr.SerNr,false);
           if(ARr.ARCurncyCode=="USD")then begin
-            outval(200,0,ARr.BookRVal,m4val,false);
+            outval(200,0,ARr.RVal,m4val,false);
             outstring(300,0,"",false);
-            total1 = total1 + ARr.BookRVal;
+            total1 = total1 + ARr.RVal;
           end;
           if(ARr.ARCurncyCode=="UAH")then begin
             outstring(200,0,"",false);
-            outval(300,0,ARr.BookRVal,m4val,false);
-            total2 = total2 + ARr.BookRVal;
+            outval(300,0,ARr.RVal,m4val,false);
+            total2 = total2 + ARr.RVal;
           end;
-          outstring(1,0,ARr.RVal,true);
-          total3 = total3 + ARr.RVal;
+          outstring(1,0,ARr.BookRVal,true);
+          total3 = total3 + ARr.BookRVal;
         endformat;
         
       end;
