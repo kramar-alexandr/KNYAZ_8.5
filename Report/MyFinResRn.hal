@@ -284,9 +284,9 @@ begin
         outstring(0,0,"Клиент",false);
         outstring(100,0,"Дата долга",true);
         outstring(150,0,"Сч/ф",true);
-        outstring(200,0,"Сумма(USD)",true);
-        outstring(300,0,"Сумма(UAH)",true);
-        outstring(1,0,"Всего(USD)",true);
+        outstring(300,0,"Сумма(USD)",true);
+        outstring(400,0,"Сумма(UAH)",true);
+        outstring(1,0,"Всего(по курсу USD)",true);
       endformat;
       
       
@@ -299,8 +299,8 @@ begin
             outstring(0,0,"Итого",false);
             outstring(100,0,"",true);
             outstring(150,0,"",true);
-            outstring(200,0,total1,true);
-            outstring(300,0,total2,true);
+            outstring(300,0,total1,true);
+            outstring(400,0,total2,true);
             outstring(1,0,total3,true);
           endformat;
           total1 = blankval;
@@ -320,14 +320,14 @@ begin
           outstring(100,0,IVr.InvDate,true);
           outstring(150,"DblIVVc",IVr.SerNr,true);
           if(ARr.ARCurncyCode=="USD")then begin
-            outval(200,0,ARr.RVal,m4val,true);
-            outstring(300,0,"",true);
+            outval(300,0,ARr.RVal,m4val,true);
+            outstring(400,0,"",true);
             total1 = total1 + ARr.RVal;
             total4 = total4 + ARr.RVal;
           end;
           if(ARr.ARCurncyCode=="UAH")then begin
-            outstring(200,0,"",true);
-            outval(300,0,ARr.RVal,m4val,true);
+            outstring(300,0,"",true);
+            outval(400,0,ARr.RVal,m4val,true);
             total2 = total2 + ARr.RVal;
             total5 = total5 + ARr.RVal;
           end;
@@ -338,11 +338,11 @@ begin
         
       end;
       startformat(15);
-        outstring(0,0,"Итого",false);
+        outstring(0,0,"",false);
         outstring(100,0,"",true);
-        outstring(150,0,"",true);
-        outstring(200,0,total1,true);
-        outstring(300,0,total2,true);
+        outstring(150,0,"Итого",true);
+        outstring(300,0,total1,true);
+        outstring(400,0,total2,true);
         outstring(1,0,total3,true);
       endformat;
     Gray_Divider(0,1);
@@ -350,8 +350,8 @@ begin
       outstring(0,0,"ИТОГО",false);
       outstring(100,0,"",true);
       outstring(150,0,"",true);
-      outstring(200,0,total4,true);
-      outstring(300,0,total5,true);
+      outstring(300,0,total4,true);
+      outstring(400,0,total5,true);
       outstring(1,0,total6,true);
     endformat;  
     
