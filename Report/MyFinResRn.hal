@@ -22,6 +22,7 @@ begin
   record IPVc IPr;
   row IPVc IPrw;
   val fr,to1,to2,br1,br2;
+  record ARVc ARr;
   
   startreportnoheaderjob("Финансовый отчет");
     
@@ -239,6 +240,48 @@ begin
       outstring(1,0,total8,true);
       
     endformat;
+    
+    black_divider(0,1);
+      startformat(15);
+      endformat;
+      startformat(15);
+        outstring(0,0,"Тукщие долги клиентов",false);
+      endformat;
+      
+      startformat(15);
+        outstring(0,0,"Клиент",false);
+        outstring(100,0,"Дата долга",false);
+        outstring(150,0,"Сч/ф",false);
+        outstring(200,0,"Сумма(USD)",false);
+        outstring(300,0,"Сумма(UAH)",false);
+        outstring(1,0,"Всего(USD)",true);
+      endformat;
+      
+      
+      ARr.CustCode = "";
+      while(loopkey("CustCode",ARr,1,true))begin
+        CUr.Code = ARr.CustCode;
+        readfirstmain(CUr,1,true);
+        IVr.SerNr = ARr.InvoiceNr;
+        readfirstmain(IVr,1,true);
+        startformat(15);
+          outstring(0,0,CUr.Name,false);
+          outstring(100,0,IVr.InvDate,false);
+          outstring(150,"DblIVVc",IVr.SerNr,false);
+          if(ARr.ARCurncyCode=="USD")then begin
+            outval(200,0,ARr.BookRVal,m4val,false);
+            outstring(300,0,"",false);
+          end;
+          if(ARr.ARCurncyCode=="UAH")then begin
+            outstring(200,0,"",false);
+            outval(300,0,ARr.BookRVal,m4val,false);
+          end;
+          outstring(1,0,ARr.RVal,true);
+        endformat;
+        
+      end;
+      
+      
     
     black_divider(0,1);
     startformat(15);
