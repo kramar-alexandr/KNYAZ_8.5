@@ -118,7 +118,7 @@ begin
       outstring(170,0,"(Грн)",false);
       outstring(210,0,"(USD)",false);
       outstring(250,0,"Стоимость (USD)",false);
-      outstring(320,0,"Затраты (USD)",false);
+      outstring(310,0,"Затраты (USD)",false);
       outstring(380,0,"(ГРН)",false);
       outstring(1,0,"Прибыль(USD)",true);
     endformat;
@@ -133,7 +133,7 @@ begin
           outval(170,0,vFinData[Locr.Code & ":UAH:SUM"],m4val,false);
           outval(210,0,vFinData[Locr.Code & ":USD:SUM"],m4val,false);
           outval(250,0,vFinData[Locr.Code & ":FIFO"],m4val,false);
-          outval(320,0,round(vFinData[Locr.Code & ":SPEND:BSUM"],DEFAULTCURROUNDOFF),m4val,false);
+          outval(310,0,round(vFinData[Locr.Code & ":SPEND:BSUM"],DEFAULTCURROUNDOFF),m4val,false);
           outval(380,0,vFinData[Locr.Code & ":SPEND:UAH"],m4val,false);
           
           gp = round(vFinData[Locr.Code & ":BSUM"],DEFAULTCURROUNDOFF);
@@ -159,7 +159,7 @@ begin
       outstring(170,0,total2,false);
       outstring(210,0,total3,false);
       outstring(250,0,total4,false);
-      outstring(320,0,total5,false);
+      outstring(310,0,total5,false);
       outstring(380,0,total6,false);
       outstring(1,0,total7,true);
     endformat;
@@ -184,7 +184,7 @@ begin
       outstring(170,0,"(Грн)",false);
       outstring(210,0,"(USD)",false);
       outstring(250,0,"Стоимость (USD)",false);
-      outstring(320,0,"Прибыль(USD)",false);
+      outstring(310,0,"Прибыль(USD)",false);
       outstring(370,0,"Возврат(USD)",false);
       outstring(420,0,"(UAH)",false);
       outstring(1,0,"Баланс",true);
@@ -216,7 +216,7 @@ begin
           
           total7 = total7 + gp;
 
-          outval(320,0,gp,m4val,false);
+          outval(310,0,gp,m4val,false);
           outstring(370,0,vFinData[CUr.Code & ":DOLGPAY:USD"],false);
           outstring(420,0,vFinData[CUr.Code & ":DOLGPAY:UAH"],false);
           outstring(1,0,blankval,true);
@@ -233,7 +233,7 @@ begin
       outval(210,0,total3,m4val,false);
       outval(250,0,total4,m4val,false);
       
-      outval(320,0,total7,m4val,false);
+      outval(310,0,total7,m4val,false);
       outstring(370,0,total5,false);
       outstring(420,0,total6,false);
       outstring(1,0,total8,true);
