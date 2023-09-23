@@ -47,9 +47,9 @@ begin
     
     startformat(15);
       outstring(0,0,"Точка",false);
-      outstring(200,0,"Выторг",false);
-      outstring(260,0,"(Грн)",false);
-      outstring(300,0,"Стоимость",false);
+      outstring(120,0,"Выторг (USD)",false);
+      outstring(190,0,"(Грн)",false);
+      outstring(250,0,"Стоимость (USD)",false);
       outstring(380,0,"Затраты",false);
       outstring(1,0,"Прибыль",true);
     endformat;
@@ -60,9 +60,9 @@ begin
       if(readfirstmain(Locr,1,true))then begin
         startformat(15);
           outstring(0,0,Locr.Name,false);
-          outval(200,0,vFinData[Locr.Code & ":BSUM"],m4val,false);
-          outval(260,0,vFinData[Locr.Code & ":UAH:SUM"],m4val,false);
-          outval(300,0,vFinData[Locr.Code & ":FIFO"],m4val,false);
+          outval(120,0,vFinData[Locr.Code & ":BSUM"],m4val,false);
+          outval(190,0,vFinData[Locr.Code & ":UAH:SUM"],m4val,false);
+          outval(250,0,vFinData[Locr.Code & ":FIFO"],m4val,false);
           outstring(380,0,"Затраты",false);
           outstring(1,0,"Прибыль",true);
         endformat;
