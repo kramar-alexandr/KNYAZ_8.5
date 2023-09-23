@@ -191,7 +191,7 @@ begin
       outstring(0,0,"Затрата",false);
       outstring(150,0,"ГРН",false);
       outstring(200,0,"USD",false);
-      outstring(1,0,"Итого(USD)",false);
+      outstring(1,0,"Итого(USD)",true);
     endformat;
     total1 = blankval;
     total2 = blankval;
