@@ -460,7 +460,7 @@ begin
     endformat;
     
     UAH4 = blankval;
-    USD4 = total1;
+    USD4 = total2;
     USDTOT4 = total2;
   
   
