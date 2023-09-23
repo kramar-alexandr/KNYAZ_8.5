@@ -31,6 +31,8 @@ begin
         if(IVr.ToRateB1!=0)then begin
           rate = IVr.ToRateB1 / IVr.FrRate;
         end;
+        logtext(0,"IVr.Location " & IVr.Location & " rate " & rate);
+
         vKeysLoc[IVr.Location] = true;
         vKeysCur[IVr.CurncyCode] = true;
         rwcnt = matrowcnt(IVr);
