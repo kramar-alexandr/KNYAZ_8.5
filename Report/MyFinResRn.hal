@@ -154,7 +154,7 @@ begin
           total2 = total2 + vFinData[Locr.Code & ":UAH:SUM"];
           total3 = total3 + vFinData[Locr.Code & ":USD:SUM"];
           total4 = total4 + vFinData[Locr.Code & ":FIFO"];
-          total5 = total5 + round(vFinData[Locr.Code & ":SPEND:BSUM"],DEFAULTCURROUNDOFF);
+          total5 = total5 + vFinData[Locr.Code & ":SPEND:USD"];
           total6 = total6 + vFinData[Locr.Code & ":SPEND:UAH"];
           total7 = total7 + gp;
           
