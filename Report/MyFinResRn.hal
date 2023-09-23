@@ -17,7 +17,7 @@ begin
   array string 100 akeysLoc,akeysCust,akeysSpend;
   record CLOutVc CLOutr;
   record CUVc CUr;
-  val total1,total2,total3,total4,total5,total6,total7;
+  val total1,total2,total3,total4,total5,total6,total7,total8;
   record CLCorspVc CLCorspr;
   record IPVc IPr;
   row IPVc IPrw;
@@ -185,8 +185,9 @@ begin
       outstring(210,0,"(USD)",false);
       outstring(250,0,"Стоимость (USD)",false);
       outstring(320,0,"Прибыль(USD)",false);
-      outstring(390,0,"Возврат долга (USD)",false);
-      outstring(1,0,"(ГРН)",true);
+      outstring(370,0,"Возврат(USD)",false);
+      outstring(420,0,"(UAH)",false);
+      outstring(1,0,"Баланс",true);
     endformat;
     gray_divider(0,1);
     getvectortags(vKeysCust,akeysCust);
@@ -216,8 +217,9 @@ begin
           total7 = total7 + gp;
 
           outval(320,0,gp,m4val,false);
-          outstring(390,0,vFinData[CUr.Code & ":DOLGPAY:USD"],false);
-          outstring(1,0,vFinData[CUr.Code & ":DOLGPAY:UAH"],true);
+          outstring(370,0,vFinData[CUr.Code & ":DOLGPAY:USD"],false);
+          outstring(420,0,vFinData[CUr.Code & ":DOLGPAY:UAH"],false);
+          outstring(1,0,blankval,true);
         endformat;
       end;
     end;
@@ -232,8 +234,9 @@ begin
       outval(250,0,total4,m4val,false);
       
       outval(320,0,total7,m4val,false);
-      outstring(390,0,total5,false);
-      outstring(1,0,total6,true);
+      outstring(370,0,total5,false);
+      outstring(420,0,total6,false);
+      outstring(1,0,total8,true);
       
     endformat;
     
