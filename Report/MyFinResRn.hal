@@ -160,7 +160,7 @@ begin
       outstring(210,0,"(USD)",false);
       outstring(250,0,"Стоимость (USD)",false);
       outstring(320,0,"Возврат долга (USD)",false);
-      outstring(380,0,"(ГРН)",false);
+      outstring(390,0,"(ГРН)",false);
       outstring(1,0,"Прибыль(USD)",true);
     endformat;
     gray_divider(0,1);
@@ -176,7 +176,7 @@ begin
           outval(210,0,vFinData[CUr.Code & ":DOLG:USD:SUM"],m4val,false);
           outval(250,0,vFinData[CUr.Code & ":DOLG:FIFO"],m4val,false);
           outstring(320,0,"",false);
-          outstring(380,0,"",false);
+          outstring(390,0,"",false);
           
           
           total1 = total1 + round(vFinData[CUr.Code & ":DOLG:BSUM"],DEFAULTCURROUNDOFF);
@@ -205,7 +205,7 @@ begin
       outval(210,0,total3,m4val,false);
       outval(250,0,total4,m4val,false);
       outstring(320,0,"",false);
-      outstring(380,0,"",false);
+      outstring(390,0,"",false);
       outval(1,0,total7,m4val,true);
     endformat;
     
