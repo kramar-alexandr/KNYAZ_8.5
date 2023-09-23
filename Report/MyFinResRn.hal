@@ -10,7 +10,7 @@ begin
   integer i,rwcnt,j,cred;
   boolean TrHs,testf;
   vector val vFinData,vPayData;
-  vector boolean vKeysLoc,vKeysCust,vSpend;
+  vector boolean vKeysLoc,vKeysCust,vSpend,vVend;
   val rate,gp;
   record LocationVc Locr;
   Record ObjVc Objr;
@@ -397,13 +397,14 @@ begin
         rwcnt = matrowcnt(OPr);
         for(i=0;i<rwcnt;i=i+1)begin
           matrowget(OPr,i,OPrw);
-          akeysVend[OPrw.VECode] = true;
+          vVend[OPrw.VECode] = true;
           vPayData[OPrw.VECode] = vPayData[OPrw.VECode] + OPrw.BankVal;
         end;
       end;
     end;
     
     while(loopmain(APr,1,true))begin
+      vVend[APr.VECode] = true;
       vPayData["DOLG:" & APr.VECode] = vPayData["DOLG:" & APr.VECode] + APr.RVal;
     end;
     
@@ -416,7 +417,7 @@ begin
       outstring(1,0,"Ћплата за период(USD)",true);
     endformat;
     
-    getvectortags(vPayData,akeysVend);
+    getvectortags(vVend,akeysVend);
     for(i=0;i<akeysVend.length;i=i+1)begin
       CUr.Code = akeysVend[i];
       readfirstmain(CUr,1,true);
