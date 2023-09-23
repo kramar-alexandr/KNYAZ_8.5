@@ -569,7 +569,7 @@ window MyFinResRClass:1
 begin
   real h,v,vs;
   WindowBegin("Финансовый отчет",MyFinResRClass,CGRcW,RcType);
-  SetWRect(20,80,400,300); // _ _ _ 240
+  SetWRect(20,80,400,300);
   vs = 20;h = 130; v = 26;
   PeriodField(h,v + 15,"Период");
   EndWindow;
