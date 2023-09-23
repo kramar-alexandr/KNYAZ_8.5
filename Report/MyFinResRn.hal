@@ -28,7 +28,7 @@ begin
       if(testf)then begin
         rate = 1;
         if(IVr.ToRateB1!=0)then begin
-          rate = IVr.FrRate / IVr.ToRateB1;
+          rate = IVr.ToRateB1 / IVr.FrRate;
         end;
         vKeysLoc[IVr.Location] = true;
         vKeysCur[IVr.CurncyCode] = true;
