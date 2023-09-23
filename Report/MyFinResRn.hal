@@ -199,7 +199,7 @@ begin
                 outstring(380,0,"",false);
                 
                 gp = round(vFinData[CUr.Code & ":DOLG:" & Locr.Code & ":BSUM"],DEFAULTCURROUNDOFF);
-                gp = gp - round(vFinData[CUr.Code & ":DOLG:" & Locr.Code & ":SPEND:BSUM"],DEFAULTCURROUNDOFF);
+                gp = gp - vFinData[CUr.Code & ":DOLG:" & Locr.Code & ":FIFO"];
                 
                 outval(1,0,gp,m4val,true);
               endformat;
