@@ -16,6 +16,7 @@ begin
   array string 100 akeysLoc,akeysCust;
   record CLOutVc CLOutr;
   record CUVc CUr;
+  val total1,total2,total3,total4,total5,total6,total7;
   
   startreportnoheaderjob("Финансовый отчет");
     
@@ -101,12 +102,31 @@ begin
           gp = gp - vFinData[Locr.Code & ":FIFO"];
           gp = gp - round(vFinData[Locr.Code & ":SPEND:BSUM"],DEFAULTCURROUNDOFF);
           
+          total1 = total1 + round(vFinData[Locr.Code & ":BSUM"],DEFAULTCURROUNDOFF);
+          total2 = total2 + vFinData[Locr.Code & ":UAH:SUM"];
+          total3 = total3 + vFinData[Locr.Code & ":USD:SUM"];
+          total4 = total4 + vFinData[Locr.Code & ":FIFO"];
+          total5 = total5 + round(vFinData[Locr.Code & ":SPEND:BSUM"],DEFAULTCURROUNDOFF);
+          total6 = total6 + vFinData[Locr.Code & ":SPEND:UAH"];
+          total7 = total7 + gp;
           outstring(1,0,gp,true);
         endformat;
       
       end;
     end;
     gray_divider(0,1);
+    
+    startformat(15);
+      outstring(0,0,"Всего",false);
+      outstring(120,0,total1,false);
+      outstring(170,0,total2,false);
+      outstring(210,0,total3,false);
+      outstring(250,0,total4,false);
+      outstring(320,0,total5,false);
+      outstring(380,0,total6,false);
+      outstring(1,0,total7,true);
+    endformat;
+    
     startformat(15);
     endformat;
     startformat(15);
