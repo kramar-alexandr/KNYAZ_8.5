@@ -107,7 +107,7 @@ begin
         if(vFinData["DOLG:" & Locr.Code & ":BSUM"]!=0)then begin
           startformat(15);
             outstring(0,0,Locr.Name,false);
-            outval(120,0,round(vFinData["DOLG:" & Locr.Code & ":BSUM"],DEFAULTCURROUNDOFF),m4val,false);
+            outstring(120,0,"",false);
             outval(170,0,vFinData["DOLG:" & Locr.Code & ":UAH:SUM"],m4val,false);
             outval(210,0,vFinData["DOLG:" & Locr.Code & ":USD:SUM"],m4val,false);
             outstring(250,0,"",false);
