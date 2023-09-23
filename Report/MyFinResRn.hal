@@ -1,4 +1,4 @@
-external inner function roundmode SetRoundModeD(Integer);
+external function roundmode SetRoundModeD(Integer);
 
 SetLangMode(LangRussian,"RUS",0);
 
