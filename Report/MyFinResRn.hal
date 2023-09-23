@@ -34,9 +34,9 @@ begin
         rwcnt = matrowcnt(IVr);
         for(i=0;i<rwcnt;i=i+1)begin
           matrowget(IVr,i,IVrw);
-          vFinData[IVr.Location & ":" IVr.CurncyCode & ":SUM"] = vFinData[IVr.Location & ":" IVr.CurncyCode & ":SUM"] + IVrw.Sum;
+          vFinData[IVr.Location & ":" & IVr.CurncyCode & ":SUM"] = vFinData[IVr.Location & ":" & IVr.CurncyCode & ":SUM"] + IVrw.Sum;
           vFinData[IVr.Location & ":FIFO"] = vFinData[IVr.Location & ":FIFO"] + IVrw.Sum;
-          vFinData[IVr.Location & ":BSUM"] = vFinData[IVr.Location & ":" IVr.CurncyCode & ":BSUM"] + round(IVrw.Sum*rate,DEFAULTCURROUNDOFF);
+          vFinData[IVr.Location & ":BSUM"] = vFinData[IVr.Location & ":BSUM"] + round(IVrw.Sum*rate,DEFAULTCURROUNDOFF);
         end;
       end;
     end;
@@ -58,7 +58,7 @@ begin
         startformat(15);
           outstring(0,0,Locr.Name,false);
           outstring(200,0,vFinData[Locr.Code & ":BSUM"],false);
-          outstring(260,0,vFinData[Locr.Code & ":" "UAH" & ":SUM"],false);
+          outstring(260,0,vFinData[Locr.Code & ":UAH:SUM"],false);
           outstring(300,0,vFinData[Locr.Code & ":FIFO"],false);
           outstring(380,0,"Затраты",false);
           outstring(1,0,"Прибыль",true);
