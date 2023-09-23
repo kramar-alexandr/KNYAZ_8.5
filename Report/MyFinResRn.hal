@@ -14,6 +14,7 @@ begin
   record LocationVc Locr;
   Record ObjVc Objr;
   array string 100 akeysLoc,akeysCur;
+  record CLOutVc CLOutr;
   
   startreportnoheaderjob("Финансовый отчет");
     
@@ -44,13 +45,28 @@ begin
       end;
     end;
     
+    CLOutr.TransDate = RepSpec.sStartDate;
+    TrHs = true;
+    while (LoopKey("TransDate",CLOutr,1,TrHs)) begin
+    testf = true;
+    if (CLOutr.TransDate>RepSpec.sEndDate) then begin TrHs = false;  testf = false; end;
+      if(testf)then begin
+        rate = 1;
+        if(CLOutr.ToRateB1!=0)then begin
+          rate = CLOutr.ToRateB1 / CLOutr.FrRate;
+        end;
+        vFinData[CLOutr.Person & ":SPEND:" & CLOutr.CurncyCode] = vFinData[CLOutr.Person & ":SPEND:" & CLOutr.CurncyCode] + CLOutr.Total;
+        vFinData[CLOutr.Person & ":SPEND:BSUM"] = vFinData[CLOutr.Person & ":SPEND:BSUM"] + round(CLOutr.Total*rate,DEFAULTCURROUNDOFF);
+      end;
+    end;
     
     startformat(15);
       outstring(0,0,"Точка",false);
       outstring(120,0,"Выторг (USD)",false);
       outstring(190,0,"(Грн)",false);
       outstring(250,0,"Стоимость (USD)",false);
-      outstring(380,0,"Затраты",false);
+      outstring(320,0,"Затраты (USD)",false);
+      outstring(380,0,"Затраты (ГРН)",false);
       outstring(1,0,"Прибыль",true);
     endformat;
     
@@ -63,7 +79,8 @@ begin
           outval(120,0,vFinData[Locr.Code & ":BSUM"],m4val,false);
           outval(190,0,vFinData[Locr.Code & ":UAH:SUM"],m4val,false);
           outval(250,0,vFinData[Locr.Code & ":FIFO"],m4val,false);
-          outstring(380,0,"Затраты",false);
+          outstring(320,0,vFinData[Locr.Code & ":SPEND:BSUM"],false);
+          outstring(380,0,vFinData[Locr.Code & ":SPEND:UAH"],false);
           outstring(1,0,"Прибыль",true);
         endformat;
       
