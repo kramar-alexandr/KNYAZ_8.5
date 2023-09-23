@@ -316,6 +316,14 @@ begin
         endformat;
         
       end;
+      startformat(15);
+        outstring(0,0,"ˆòîãî",false);
+        outstring(100,0,"",false);
+        outstring(150,0,"",false);
+        outstring(200,0,total1,false);
+        outstring(300,0,total2,false);
+        outstring(1,0,total3,true);
+      endformat;
     Gray_Divider(0,1);
     startformat(15);
       outstring(0,0,"ˆ’ƒ",false);
