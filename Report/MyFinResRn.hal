@@ -1,0 +1,73 @@
+external function roundmode SetRoundModeD(Integer);
+
+SetLangMode(LangRussian,"RUS",0);
+
+global procedure MyFinResRn(record RcVc RepSpec)
+begin
+  record IVVc IVr;
+  row IVVc IVrw;
+  integer i,rwcnt;
+  boolean TrHs,testf;
+  vector val vFinData;
+  vector boolean vKeysLoc,vKeysCur;
+  val rate;
+  record LocationVc Locr;
+  Record ObjVc Objr;
+  array string 100 akeysLoc,akeysCur;
+  
+  startreportnoheaderjob("Финансовый отчет");
+    
+    IVr.InvDate = RepSpec.sStartDate;
+    TrHs = true;
+    while(LoopKey("InvDate",IVr,1,TrHs))begin
+      testf = true;
+      if(IVr.InvDate>RepSpec.sEndDate)then begin TrHs = false; testf = false; end;
+      if(IVr.OKFlag==0)then begin testf = false; end;
+      
+      if(testf)then begin
+        rate = 1;
+        if(IVr.ToRateB1!=0)then begin
+          rate = IVr.FrRate / IVr.ToRateB1;
+        end;
+        vKeysLoc[IVr.Location] = true;
+        vKeysCur[IVr.CurncyCode] = true;
+        rwcnt = matrowcnt(IVr);
+        for(i=0;i<rwcnt;i=i+1)begin
+          matrowget(IVr,i,IVrw);
+          vFinData[IVr.Location & ":" IVr.CurncyCode & ":SUM"] = vFinData[IVr.Location & ":" IVr.CurncyCode & ":SUM"] + IVrw.Sum;
+          vFinData[IVr.Location & ":FIFO"] = vFinData[IVr.Location & ":FIFO"] + IVrw.Sum;
+          vFinData[IVr.Location & ":BSUM"] = vFinData[IVr.Location & ":" IVr.CurncyCode & ":BSUM"] + round(IVrw.Sum*rate,SetRoundModeD(2));
+        end;
+      end;
+    end;
+    
+    
+    startformat(15);
+      outstring(0,0,"Точка",false);
+      outstring(200,0,"Выторг",false);
+      outstring(260,0,"(Грн)",false);
+      outstring(300,0,"Стоимость",false);
+      outstring(380,0,"Затраты",false);
+      outstring(1,0,"Прибыль",true);
+    endformat;
+    
+    getvectortags(vKeysLoc,akeysLoc);
+    for(i=0;i<akeysLoc.length;i=i+1)begin
+      Locr.Code = akeysLoc[i];
+      if(readfirstmain(Locr,1,true))then begin
+        startformat(15);
+          outstring(0,0,Locr.Name,false);
+          outstring(200,0,vFinData[Locr.Code & ":BSUM"],false);
+          outstring(260,0,vFinData[Locr.Code & ":" "UAH" & ":SUM"],false);
+          outstring(300,0,vFinData[Locr.Code & ":FIFO"],false);
+          outstring(380,0,"Затраты",false);
+          outstring(1,0,"Прибыль",true);
+        endformat;
+      
+      end;
+    end;
+    
+  endjob;
+  
+return;
+end;

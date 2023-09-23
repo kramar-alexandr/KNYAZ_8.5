@@ -21,6 +21,11 @@ begin
   Report("Отчет по наценкам",MarkUpRClass,MarkUpRn,0,modSL);
   Report("Отчет по резервам в премещениях",ResInDisplRClass,ResInDisplRn,0,modIN); // Edit ************* Ihor Trubachov 20*08*2021
 	
+	Report("Финансовый отчет",MyFinResRClass,MyFinResRn,0,modNL);
+	Report("Финансовый отчет",MyFinResRClass,MyFinResRn,0,modSL);
+	Report("Финансовый отчет",MyFinResRClass,MyFinResRn,0,modSO);
+	
+	
   Import("Импортировать товары",INImportFromFMFormatIClass,INImportFromFMFormatIn,modIN);
   Import("Импорт остатков",ImportStockRemains2IClass,ImportStockRemains2In,modIN);
   
