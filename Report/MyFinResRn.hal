@@ -36,8 +36,6 @@ begin
         if(IVr.ToRateB1!=0)then begin
           rate = IVr.FrRate / IVr.ToRateB1;
         end;
-        logtext(0,IVr.SerNr & " IVr.Location " & IVr.Location & " rate " & rate);
-
         vKeysLoc[IVr.Location] = true;
         
         rwcnt = matrowcnt(IVr);
@@ -183,7 +181,7 @@ begin
 
 
             total7 = total7 + gp;
-            outstring(1,0,gp,true);
+            outval(1,0,gp,m4val,true);
           endformat;
           
           getvectortags(vKeysCust,akeysCust);
@@ -199,7 +197,11 @@ begin
                 outval(250,0,vFinData[CUr.Code & ":DOLG:" & Locr.Code & ":FIFO"],m4val,false);
                 outstring(320,0,"",false);
                 outstring(380,0,"",false);
-                outstring(1,0,"",true);
+                
+                gp = round(vFinData[CUr.Code & ":DOLG:" & Locr.Code & ":BSUM"],DEFAULTCURROUNDOFF);
+                gp = gp - round(vFinData[CUr.Code & ":DOLG:" & Locr.Code & ":SPEND:BSUM"],DEFAULTCURROUNDOFF);
+                
+                outval(1,0,gp,m4val,true);
               endformat;
             end;
           end;
