@@ -6,7 +6,7 @@ global procedure MyFinResRn(record RcVc RepSpec)
 begin
   record IVVc IVr;
   row IVVc IVrw;
-  integer i,rwcnt,j;
+  integer i,rwcnt,j,cred;
   boolean TrHs,testf;
   vector val vFinData;
   vector boolean vKeysLoc,vKeysCust,vSpend;
@@ -43,17 +43,21 @@ begin
         rwcnt = matrowcnt(IVr);
         for(i=0;i<rwcnt;i=i+1)begin
           matrowget(IVr,i,IVrw);
+          cred = 1;
+          if(IVrw.Quant<0)then begin
+            cred = -1;
+          end;
           if(IVrw.stp==1 and nonblank(IVrw.ArtCode) and IVrw.Quant!=0)then begin            
             if(IVr.PayDeal!="O")then begin
               vFinData["DOLG:" & IVr.Location & ":" & IVr.CurncyCode & ":SUM"] = vFinData["DOLG:" & IVr.Location & ":" & IVr.CurncyCode & ":SUM"] + IVrw.Sum;
               vFinData["DOLG:" & IVr.Location & ":BSUM"] = vFinData["DOLG:" & IVr.Location & ":BSUM"] + IVrw.Sum/rate;
-              vFinData["DOLG:" & IVr.Location & ":FIFO"] = vFinData["DOLG:" & IVr.Location & ":FIFO"] + IVrw.FIFORowVal;
+              vFinData["DOLG:" & IVr.Location & ":FIFO"] = vFinData["DOLG:" & IVr.Location & ":FIFO"] + IVrw.FIFORowVal*cred;
               vKeysCust[IVr.CustCode] = true;
               vFinData[IVr.CustCode & ":DOLG:" & IVr.Location & ":" & IVr.CurncyCode & ":SUM"] = vFinData[IVr.CustCode & ":DOLG:" & IVr.Location & ":" & IVr.CurncyCode & ":SUM"] + IVrw.Sum;
               vFinData[IVr.CustCode & ":DOLG:" & IVr.Location & ":BSUM"] = vFinData[IVr.CustCode & ":DOLG:" & IVr.Location & ":BSUM"] + IVrw.Sum/rate;
             end else begin
               vFinData[IVr.Location & ":" & IVr.CurncyCode & ":SUM"] = vFinData[IVr.Location & ":" & IVr.CurncyCode & ":SUM"] + IVrw.Sum;
-              vFinData[IVr.Location & ":FIFO"] = vFinData[IVr.Location & ":FIFO"] + IVrw.FIFORowVal;
+              vFinData[IVr.Location & ":FIFO"] = vFinData[IVr.Location & ":FIFO"] + IVrw.FIFORowVal*cred;
               vFinData[IVr.Location & ":BSUM"] = vFinData[IVr.Location & ":BSUM"] + IVrw.Sum/rate;
             end;
             
