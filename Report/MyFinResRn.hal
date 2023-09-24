@@ -543,17 +543,17 @@ begin
   
   startformat(15);
     outstring(100,0,"ğîäàæè €ëåêñàíäğà â ïåğèîä",true);
-    outval(100,0,vFinData["’_€€’‹ˆ—€:" & "UAH"],m4val,true);
-    outstring(110,0,"ƒ",false);
-    outval(200,0,vFinData["’_€€’‹ˆ—€:" & "USD"],m4val,true);
-    outstring(210,0,"USD",false);
+    outval(300,0,vFinData["’_€€’‹ˆ—€:" & "UAH"],m4val,true);
+    outstring(310,0,"ƒ",false);
+    outval(400,0,vFinData["’_€€’‹ˆ—€:" & "USD"],m4val,true);
+    outstring(410,0,"USD",false);
   endformat;
   startformat(15);
     outstring(100,0,"‘åáåñòîèìîñòü ïğîäàæ àëåêñàíäğà",true);
-    outval(100,0,vFinData["FIFO:’_€€’‹ˆ—€:" & "UAH"],m4val,true);
-    outstring(110,0,"ƒ",false);
-    outval(200,0,vFinData["FIFO:’_€€’‹ˆ—€:" & "USD"],m4val,true);
-    outstring(210,0,"USD",false);
+    outval(300,0,vFinData["FIFO:’_€€’‹ˆ—€:" & "UAH"],m4val,true);
+    outstring(310,0,"ƒ",false);
+    outval(400,0,vFinData["FIFO:’_€€’‹ˆ—€:" & "USD"],m4val,true);
+    outstring(410,0,"USD",false);
   endformat;
   Gray_Divider(0,1);
   
