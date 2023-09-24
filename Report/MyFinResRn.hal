@@ -363,7 +363,7 @@ begin
             total6 = total6 + ARr.BookRVal;
           endformat;
         end else begin
-          vFinData["’_€€’‹ˆ—€:DOLG"] = vFinData["’_€€’‹ˆ—€:DOLG"] + ARr.BookRVal;
+          vFinData["’_€€’‹ˆ—€:DOLG"] = vFinData["’_€€’‹ˆ—€:DOLG"] + ARr.RVal;
         end;
       end;
       startformat(15);
