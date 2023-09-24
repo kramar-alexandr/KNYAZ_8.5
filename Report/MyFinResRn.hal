@@ -292,48 +292,49 @@ begin
       
       ARr.CustCode = "";
       while(loopkey("CustCode",ARr,1,true))begin
-        if(nonblank(curcust) and ARr.CustCode!=curcust and ARr.CustCode!="éí_ÄçÄíéãàóÄ")then begin
-          startformat(15);
-            outstring(0,0,"àÚÓ„Ó",false);
-            outstring(100,0,"",true);
-            outstring(150,0,"",true);
-            outstring(300,0,total1,true);
-            outstring(400,0,total2,true);
-            outstring(1,0,total3,true);
-          endformat;
-          total1 = blankval;
-          total2 = blankval;
-          total3 = blankval;
+        if(ARr.CustCode!="éí_ÄçÄíéãàóÄ")then begin
+          if(nonblank(curcust) and ARr.CustCode!=curcust)then begin
+            startformat(15);
+              outstring(0,0,"àÚÓ„Ó",false);
+              outstring(100,0,"",true);
+              outstring(150,0,"",true);
+              outstring(300,0,total1,true);
+              outstring(400,0,total2,true);
+              outstring(1,0,total3,true);
+            endformat;
+            total1 = blankval;
+            total2 = blankval;
+            total3 = blankval;
           
-          Gray_Divider(0,1);
-        end;
-        curcust = ARr.CustCode;
+            Gray_Divider(0,1);
+          end;
+          curcust = ARr.CustCode;
       
-        CUr.Code = ARr.CustCode;
-        readfirstmain(CUr,1,true);
-        IVr.SerNr = ARr.InvoiceNr;
-        readfirstmain(IVr,1,true);
-        startformat(15);
-          outstring(0,0,CUr.Name,false);
-          outstring(100,0,IVr.InvDate,true);
-          outstring(150,"DblIVVc",IVr.SerNr,true);
-          if(ARr.ARCurncyCode=="USD")then begin
-            outval(300,0,ARr.RVal,m4val,true);
-            outstring(400,0,"",true);
-            total1 = total1 + ARr.RVal;
-            total4 = total4 + ARr.RVal;
-          end;
-          if(ARr.ARCurncyCode=="UAH")then begin
-            outstring(300,0,"",true);
-            outval(400,0,ARr.RVal,m4val,true);
-            total2 = total2 + ARr.RVal;
-            total5 = total5 + ARr.RVal;
-          end;
-          outstring(1,0,ARr.BookRVal,true);
-          total3 = total3 + ARr.BookRVal;
-          total6 = total6 + ARr.BookRVal;
-        endformat;
-        
+          CUr.Code = ARr.CustCode;
+          readfirstmain(CUr,1,true);
+          IVr.SerNr = ARr.InvoiceNr;
+          readfirstmain(IVr,1,true);
+          startformat(15);
+            outstring(0,0,CUr.Name,false);
+            outstring(100,0,IVr.InvDate,true);
+            outstring(150,"DblIVVc",IVr.SerNr,true);
+            if(ARr.ARCurncyCode=="USD")then begin
+              outval(300,0,ARr.RVal,m4val,true);
+              outstring(400,0,"",true);
+              total1 = total1 + ARr.RVal;
+              total4 = total4 + ARr.RVal;
+            end;
+            if(ARr.ARCurncyCode=="UAH")then begin
+              outstring(300,0,"",true);
+              outval(400,0,ARr.RVal,m4val,true);
+              total2 = total2 + ARr.RVal;
+              total5 = total5 + ARr.RVal;
+            end;
+            outstring(1,0,ARr.BookRVal,true);
+            total3 = total3 + ARr.BookRVal;
+            total6 = total6 + ARr.BookRVal;
+          endformat;
+        end;
       end;
       startformat(15);
         outstring(0,0,"",false);
