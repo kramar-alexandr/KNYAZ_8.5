@@ -99,8 +99,21 @@ begin
         if(CLOutr.ToRateB1!=0)then begin
           rate = CLOutr.FrRate / CLOutr.ToRateB1;
         end;
-        vFinData[CLOutr.Person & ":SPEND:" & CLOutr.CurncyCode] = vFinData[CLOutr.Person & ":SPEND:" & CLOutr.CurncyCode] + CLOutr.Total;
-        vFinData[CLOutr.Person & ":SPEND:BSUM"] = vFinData[CLOutr.Person & ":SPEND:BSUM"] + CLOutr.Total/rate;
+        if(CLOutr.Person!="ALEKSANDR")then begin
+          vFinData[CLOutr.Person & ":SPEND:" & CLOutr.CurncyCode] = vFinData[CLOutr.Person & ":SPEND:" & CLOutr.CurncyCode] + CLOutr.Total;
+          vFinData[CLOutr.Person & ":SPEND:BSUM"] = vFinData[CLOutr.Person & ":SPEND:BSUM"] + CLOutr.Total/rate;
+        end else begin
+          if(CLOutr.CurncyCode=="UAH")then begin
+            vFinData["’_€€’‹ˆ—€:SPEND"] = vFinData["’_€€’‹ˆ—€:SPEND"] + CLOutr.Total;
+          end else begin
+            curcode = "UAH";
+            GetFullCurncyRate(curcode,IVr.InvDate,fr,to1,to2,br1,br2);
+            if(fr==0)then begin
+              fr = 1;
+            end;
+            vFinData["’_€€’‹ˆ—€:SPEND"] = vFinData["’_€€’‹ˆ—€:SPEND"] + CLOutr.Total * fr;
+          end;
+        end;
         
         if(CLOutr.Person=="BOSS")then begin
           vSpend[CLOutr.CorspCode] = true;
@@ -559,21 +572,26 @@ begin
     //outval(400,0,vFinData["FIFO:’_€€’‹ˆ—€:" & "USD"],m4val,true);
     //outstring(410,0,"USD",false);
   endformat;
+  Gray_Divider(0,1);
+  total1 = blankval;
+  total2 = blankval;
+  total3 = blankval;
+  
   startformat(15);
-    Gray_Divider(0,1);
     outstring(100,0,"‡àğàáîòîê €ëåêñàíäğà ƒ",true);
-    
-    total1 = blankval;
-    total2 = blankval;
-    total3 = blankval;
-    
     total1 = vFinData["’_€€’‹ˆ—€:" & "UAH"] - vFinData["FIFO:’_€€’‹ˆ—€:" & "UAH"];    
-    
     outval(450,0,total1,m4val,true);
     outstring(1,0,"ƒ",true);
-    
   endformat;
-  Gray_Divider(0,1);
+  startformat(15);
+    outstring(100,0,"‡àòğàòû íà àëåêñàíäğà",true);
+    total2 = vFinData["’_€€’‹ˆ—€:SPEND"];    
+    outval(450,0,total2,m4val,true);
+    outstring(1,0,"ƒ",true);
+  endformat;
+  
+  
+  
   
   endjob;
 return;
