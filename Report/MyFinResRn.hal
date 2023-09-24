@@ -558,6 +558,8 @@ begin
     outstring(310,0,"ƒ",false);
     //outval(400,0,vFinData["FIFO:’_€€’‹ˆ—€:" & "USD"],m4val,true);
     //outstring(410,0,"USD",false);
+  endformat;
+  startformat(15);
     Gray_Divider(0,1);
     outstring(100,0,"‡àğàáîòîê €ëåêñàíäğà ƒ",true);
     
@@ -567,8 +569,8 @@ begin
     
     total1 = vFinData["’_€€’‹ˆ—€:" & "UAH"] - vFinData["FIFO:’_€€’‹ˆ—€:" & "UAH"];    
     
-    outval(400,0,vFinData["FIFO:’_€€’‹ˆ—€:" & "USD"],m4val,true);
-    outstring(410,0,"USD",false);
+    outval(450,0,total1,m4val,true);
+    outstring(1,0,"ƒ",true);
     
   endformat;
   Gray_Divider(0,1);
