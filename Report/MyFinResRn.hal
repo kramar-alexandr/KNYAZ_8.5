@@ -542,10 +542,17 @@ begin
   
   
   startformat(15);
-    outstring(1,0,"Продажи Александра в период",true);
-    outval(100,0,vFinData["ОТ_АНАТОЛИЧА:" & IVr.CurncyCode],m4val,true);
+    outstring(100,0,"Продажи Александра в период",true);
+    outval(100,0,vFinData["ОТ_АНАТОЛИЧА:" & "UAH"],m4val,true);
     outstring(110,0,"ГРН",false);
-    outval(200,0,vFinData["ОТ_АНАТОЛИЧА:" & IVr.CurncyCode],m4val,true);
+    outval(200,0,vFinData["ОТ_АНАТОЛИЧА:" & "USD"],m4val,true);
+    outstring(210,0,"USD",false);
+  endformat;
+  startformat(15);
+    outstring(100,0,"Себестоимость продаж александра",true);
+    outval(100,0,vFinData["FIFO:ОТ_АНАТОЛИЧА:" & "UAH"],m4val,true);
+    outstring(110,0,"ГРН",false);
+    outval(200,0,vFinData["FIFO:ОТ_АНАТОЛИЧА:" & "USD"],m4val,true);
     outstring(210,0,"USD",false);
   endformat;
   Gray_Divider(0,1);
