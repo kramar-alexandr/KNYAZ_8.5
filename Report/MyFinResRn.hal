@@ -362,6 +362,8 @@ begin
             total3 = total3 + ARr.BookRVal;
             total6 = total6 + ARr.BookRVal;
           endformat;
+        end else begin
+          vFinData["ОТ_АНАТОЛИЧА:DOLG"] = vFinData["ОТ_АНАТОЛИЧА:DOLG"] + ARr.BookRVal;
         end;
       end;
       startformat(15);
@@ -584,7 +586,13 @@ begin
     outstring(1,0,"ГРН",true);
   endformat;
   startformat(15);
-    outstring(100,0,"Затраты на александра",true);
+    outstring(100,0,"Долг Александра за товар",true);
+    total3 = vFinData["ОТ_АНАТОЛИЧА:DOLG"];    
+    outval(450,0,total3,m4val,true);
+    outstring(1,0,"ГРН",true);
+  endformat;
+  startformat(15);
+    outstring(100,0,"Затраты на Aлександра",true);
     total2 = vFinData["ОТ_АНАТОЛИЧА:SPEND"];    
     outval(450,0,total2,m4val,true);
     outstring(1,0,"ГРН",true);
