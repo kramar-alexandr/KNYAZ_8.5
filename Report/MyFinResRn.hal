@@ -212,7 +212,7 @@ begin
     gray_divider(0,1);
     getvectortags(vKeysCust,akeysCust);
     for(j=0;j<akeysCust.length;j=j+1)begin
-      if(vFinData[akeysCust[j] & ":DOLG:BSUM"]!=0)then begin
+      if(vFinData[akeysCust[j] & ":DOLG:BSUM"]!=0 and akeysCust[j]!="Ž’_€€’Ž‹ˆ—€")then begin
         CUr.Code = akeysCust[j];
         readfirstmain(CUr,1,true);
         startformat(15);
@@ -450,7 +450,6 @@ begin
       endformat;
       total1 = total1 + vPayData["DOLG:" & akeysVend[i]];
       total2 = total2 + vPayData[akeysVend[i]];
-      
     end;
     gray_divider(0,1);
     startformat(15);
