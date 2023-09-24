@@ -57,16 +57,27 @@ begin
           if(IVrw.Quant<0)then begin
             cred = -1;
           end;
-          if(IVrw.stp==1 and nonblank(IVrw.ArtCode) and IVrw.Quant!=0)then begin            
-            if(IVr.PayDeal!="O")then begin
-              vKeysCust[IVr.CustCode] = true;
-              vFinData[IVr.CustCode & ":DOLG:" & IVr.CurncyCode & ":SUM"] = vFinData[IVr.CustCode & ":DOLG:" & IVr.CurncyCode & ":SUM"] + IVrw.Sum;
-              vFinData[IVr.CustCode & ":DOLG:FIFO"] = vFinData[IVr.CustCode & ":DOLG:FIFO"] + IVrw.FIFORowVal*cred;
-              vFinData[IVr.CustCode & ":DOLG:BSUM"] = vFinData[IVr.CustCode & ":DOLG:BSUM"] + IVrw.Sum/rate;
+          if(IVrw.stp==1 and nonblank(IVrw.ArtCode) and IVrw.Quant!=0)then begin   
+            if(IVr.CustCode!="Ž’_€€’Ž‹ˆ—€")then begin         
+              if(IVr.PayDeal!="O")then begin
+                vKeysCust[IVr.CustCode] = true;
+                vFinData[IVr.CustCode & ":DOLG:" & IVr.CurncyCode & ":SUM"] = vFinData[IVr.CustCode & ":DOLG:" & IVr.CurncyCode & ":SUM"] + IVrw.Sum;
+                vFinData[IVr.CustCode & ":DOLG:FIFO"] = vFinData[IVr.CustCode & ":DOLG:FIFO"] + IVrw.FIFORowVal*cred;
+                vFinData[IVr.CustCode & ":DOLG:BSUM"] = vFinData[IVr.CustCode & ":DOLG:BSUM"] + IVrw.Sum/rate;
+              end else begin
+                vFinData[IVr.Location & ":" & IVr.CurncyCode & ":SUM"] = vFinData[IVr.Location & ":" & IVr.CurncyCode & ":SUM"] + IVrw.Sum;
+                vFinData[IVr.Location & ":FIFO"] = vFinData[IVr.Location & ":FIFO"] + IVrw.FIFORowVal*cred;
+                vFinData[IVr.Location & ":BSUM"] = vFinData[IVr.Location & ":BSUM"] + IVrw.Sum/rate;
+              end;
             end else begin
-              vFinData[IVr.Location & ":" & IVr.CurncyCode & ":SUM"] = vFinData[IVr.Location & ":" & IVr.CurncyCode & ":SUM"] + IVrw.Sum;
-              vFinData[IVr.Location & ":FIFO"] = vFinData[IVr.Location & ":FIFO"] + IVrw.FIFORowVal*cred;
-              vFinData[IVr.Location & ":BSUM"] = vFinData[IVr.Location & ":BSUM"] + IVrw.Sum/rate;
+              vFinData["Ž’_€€’Ž‹ˆ—€:" & IVr.CurncyCode] = vFinData["Ž’_€€’Ž‹ˆ—€:" & IVr.CurncyCode] + IVrw.Sum;
+              if(rate==1)then begin
+                GetFullCurncyRate(IVr.CurncyCode,IVr.InvDate,fr,to1,to2,br1,br2);
+              end;
+              if(fr==0)then begin
+                fr = 1;
+              end;
+              vFinData["FIFO:Ž’_€€’Ž‹ˆ—€:" & IVr.CurncyCode] = vFinData["FIFO:Ž’_€€’Ž‹ˆ—€:" & IVr.CurncyCode] + IVrw.FIFORowVal*cred*fr;
             end;
             
           end;
@@ -509,7 +520,35 @@ begin
   endformat;
   
   
+  Black_Divider(0,1);
+  startformat(15);
+  endformat;
+  startformat(15);
+    outstring(100,0,"àñ÷åòû ñ €ëåêñàíäðîì",true);
+  endformat;
+  Gray_Divider(0,1);
   
+  /*
+  vFinData["Ž’_€€’Ž‹ˆ—€:" & IVr.CurncyCode] = vFinData["Ž’_€€’Ž‹ˆ—€:" & IVr.CurncyCode] + IVrw.Sum;
+              if(rate==1)then begin
+                GetFullCurncyRate(IVr.CurncyCode,IVr.InvDate,fr,to1,to2,br1,br2);
+              end;
+              if(fr==0)then begin
+                fr = 1;
+              end;
+              vFinData["FIFO:Ž’_€€’Ž‹ˆ—€:" & IVr.CurncyCode] = vFinData["FIFO:Ž’_€€’Ž‹ˆ—€:" & IVr.CurncyCode] + IVrw.FIFORowVal*cred*fr;
+
+  */
+  
+  
+  startformat(15);
+    outstring(1,0,"ðîäàæè €ëåêñàíäðà â ïåðèîä",true);
+    outval(100,0,vFinData["Ž’_€€’Ž‹ˆ—€:" & IVr.CurncyCode],m4val,true);
+    outstring(110,0,"ƒ",false);
+    outval(200,0,vFinData["Ž’_€€’Ž‹ˆ—€:" & IVr.CurncyCode],m4val,true);
+    outstring(210,0,"USD",false);
+  endformat;
+  Gray_Divider(0,1);
   
   endjob;
 return;
