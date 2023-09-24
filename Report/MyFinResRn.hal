@@ -71,6 +71,7 @@ begin
               end;
             end else begin
               vFinData["’_€€’‹ˆ—€:" & IVr.CurncyCode] = vFinData["’_€€’‹ˆ—€:" & IVr.CurncyCode] + IVrw.Sum;
+              fr = IVr.FrRate;
               /*if(rate==1 and )then begin
                 GetFullCurncyRate(IVr.CurncyCode,IVr.InvDate,fr,to1,to2,br1,br2);
               end;*/
