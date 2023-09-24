@@ -292,9 +292,7 @@ begin
       
       ARr.CustCode = "";
       while(loopkey("CustCode",ARr,1,true))begin
-      
-        
-        if(nonblank(curcust) and ARr.CustCode!=curcust)then begin
+        if(nonblank(curcust) and ARr.CustCode!=curcust and ARr.CustCode!="’_€€’‹ˆ—€")then begin
           startformat(15);
             outstring(0,0,"ˆòîãî",false);
             outstring(100,0,"",true);
