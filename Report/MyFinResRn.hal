@@ -24,7 +24,7 @@ begin
   val fr,to1,to2,br1,br2;
   record ARVc ARr;
   record APVc APr;
-  string 20 curcust;
+  string 20 curcust,curcode;
   record OPVc OPr;
   row OPVc OPrw;
   val UAH1,USD1,USDTOT1;
@@ -72,13 +72,16 @@ begin
             end else begin
               vFinData["’_€€’‹ˆ—€:" & IVr.CurncyCode] = vFinData["’_€€’‹ˆ—€:" & IVr.CurncyCode] + IVrw.Sum;
               fr = IVr.FrRate;
-              /*if(rate==1 and )then begin
-                GetFullCurncyRate(IVr.CurncyCode,IVr.InvDate,fr,to1,to2,br1,br2);
-              end;*/
-              if(fr==0)then begin
-                fr = 1;
+              if(IVr.CurncyCode=="UAH")then begin
+                vFinData["FIFO:’_€€’‹ˆ—€:" & IVr.CurncyCode] = vFinData["FIFO:’_€€’‹ˆ—€:" & IVr.CurncyCode] + IVrw.FIFORowVal*cred*fr;
+              end else begin
+                curcode = "UAH";
+                GetFullCurncyRate(curcode,IVr.InvDate,fr,to1,to2,br1,br2);
+                if(fr==0)then begin
+                  fr = 1;
+                end;
+                vFinData["FIFO:’_€€’‹ˆ—€:" & IVr.CurncyCode] = vFinData["FIFO:’_€€’‹ˆ—€:" & IVr.CurncyCode] + IVrw.FIFORowVal*cred*fr;
               end;
-              vFinData["FIFO:’_€€’‹ˆ—€:" & IVr.CurncyCode] = vFinData["FIFO:’_€€’‹ˆ—€:" & IVr.CurncyCode] + IVrw.FIFORowVal*cred*fr;
             end;
             
           end;
@@ -546,15 +549,27 @@ begin
     outstring(100,0,"ğîäàæè €ëåêñàíäğà â ïåğèîä",true);
     outval(300,0,vFinData["’_€€’‹ˆ—€:" & "UAH"],m4val,true);
     outstring(310,0,"ƒ",false);
-    outval(400,0,vFinData["’_€€’‹ˆ—€:" & "USD"],m4val,true);
-    outstring(410,0,"USD",false);
+    //outval(400,0,vFinData["’_€€’‹ˆ—€:" & "USD"],m4val,true);
+    //outstring(410,0,"USD",false);
   endformat;
   startformat(15);
     outstring(100,0,"‘åáåñòîèìîñòü ïğîäàæ àëåêñàíäğà",true);
     outval(300,0,vFinData["FIFO:’_€€’‹ˆ—€:" & "UAH"],m4val,true);
     outstring(310,0,"ƒ",false);
+    //outval(400,0,vFinData["FIFO:’_€€’‹ˆ—€:" & "USD"],m4val,true);
+    //outstring(410,0,"USD",false);
+    Gray_Divider(0,1);
+    outstring(100,0,"‡àğàáîòîê €ëåêñàíäğà ƒ",true);
+    
+    total1 = blankval;
+    total2 = blankval;
+    total3 = blankval;
+    
+    total1 = vFinData["’_€€’‹ˆ—€:" & "UAH"] - vFinData["FIFO:’_€€’‹ˆ—€:" & "UAH"];    
+    
     outval(400,0,vFinData["FIFO:’_€€’‹ˆ—€:" & "USD"],m4val,true);
     outstring(410,0,"USD",false);
+    
   endformat;
   Gray_Divider(0,1);
   
