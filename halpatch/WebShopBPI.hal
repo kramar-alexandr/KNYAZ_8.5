@@ -506,6 +506,7 @@ begin
 	Boolean chsum;
 	string 255 artCode;
 	longint res;
+	val sum;
 	
 	logtext(0,"WebSendInvent start");
 	
@@ -570,12 +571,15 @@ begin
 				if(OKFlag=="true")then begin
           IVVc_PasteSum(IVr,k,chsum,1);
 				end;
+				sum = sum + IVrw.Sum;
 				matrowget(IVr,k,IVrw);
 				
 				k=k+1;
 			end;
 		end;
-	
+		if(OKFlag!="true")then begin
+      IVr.Sum4 = sum;
+	  end;
 		logtext(0,"IVr.SerNr " & IVr.SerNr);
 		logtext(0,"WebRemoteIPAddress " & WebRemoteIPAddress);
 	
