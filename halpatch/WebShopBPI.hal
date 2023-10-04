@@ -589,13 +589,18 @@ begin
 			IVr.Objects = USr.PersObjx;
 			IVr.TransDate = currentdate;
 			IVr.InvDate = currentdate;
-			recordinsert(IVr,true);
-			
 			
 			if(OKFlag=="true")then begin
-				recordcopy(oldIVr,IVr);
-					IVr.OKFlag = 1;
-				recordupdate(oldIVr,IVr,true);
+        recordinsert(IVr,true);
+      
+      
+        if(OKFlag=="true")then begin
+          recordcopy(oldIVr,IVr);
+            IVr.OKFlag = 1;
+          recordupdate(oldIVr,IVr,true);
+        end;
+			end else begin
+			  recordstore(IVr,true);
 			end;
 		end;
 lendinvent:;
