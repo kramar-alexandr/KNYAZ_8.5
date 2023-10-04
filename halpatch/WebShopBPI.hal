@@ -550,6 +550,7 @@ begin
 			for(i=0;i<rwcnt;i=i+1)begin
 				clearrow(IVr,IVrw,kInvoiceRowTypeNormal);
 				IVrw.ArtCode = JSONGet(jsonobj,"items/[" & i & "]/ArtCode");
+				IVrw.VATCode = "0%";
 				matrowput(IVr,k,IVrw);
 				if(OKFlag=="true")then begin
           if IVVc_PasteArtCode(IVr,k,tstr,tstr,false,sernrf) then begin
