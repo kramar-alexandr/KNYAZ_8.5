@@ -223,6 +223,9 @@ begin
 			if(INr.Terminated==0 and INr.NotForSales==0)then begin
 				if(readfirstmain(ISr,2,true) or moveQuant[INr.Code]>0)then begin
 					Inst = Round(ISr.Instock-ISr.RsrvQty,SetRoundModeD(1));
+					if(Inst<0)then begin
+					  Inst = 0;
+					end;
 					if (!saldf and (Inst>0 or moveQuant[INr.Code]>0)) then begin saldf = true; end;
 					if(saldf)then begin // _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_- Anton Preisinger 15:09 09.08.2021
 						price = INr.UPrice1;
