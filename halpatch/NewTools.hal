@@ -1257,7 +1257,7 @@ begin
     
     
   
-    SetCompany(1,false);
+    /*SetCompany(1,false);
       LogText(0,"Switched to company #" & CurrentCompany);
       BlockLoad(CDBl);
       logtext(0,"CustTimeTableAction " & CDBl.DaySessionStartTime);
@@ -1280,13 +1280,13 @@ begin
       if (CDBl.DaySessionStartTime!=blankt and CDBl.DaySessionEndTime!=blankt and curtnew==AddMinutes(CDBl.DaySessionEndTime,15)) then begin
         RECORDNEW(RepSpec);
         CalcCashierSalaryAndMakeTransaction(RepSpec);
-      end;
+      end;*/
     SetCompany(9,false);
 			if(getminute(currenttime)==5 and gethour(currenttime)<=23 and gethour(currenttime)>=17)then begin
 				SyncCurrWithNBUMn;
 			end;
 			if((getminute(currenttime)==0 and gethour(currenttime)==7) or (getminute(currenttime)==0 and gethour(currenttime)==9))then begin
-				queued.ReserveRecalcMnTime;	// Edit ********** Ihor Trubachov 26*07*2021
+				//queued.ReserveRecalcMnTime;	// Edit ********** Ihor Trubachov 26*07*2021
 			end;
 		
 		
@@ -1297,7 +1297,7 @@ return;
 end; //Edit***************************Sasha2,17:59 13.03.2017 }
 
 
-global 
+/*global 
 updating procedure RHistRemoveMn(record RcVc RepSpec)
 begin
 	record RHistVc RHr;
@@ -1314,7 +1314,7 @@ begin
   	end;
   end;
   return;
-end;
+end;*/
 
 global webpublic updating procedure WebRefreshBarCodes()
 begin
