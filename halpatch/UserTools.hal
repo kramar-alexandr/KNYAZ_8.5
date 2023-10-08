@@ -527,6 +527,10 @@ begin
 	  res = 0;
 	end;
 	
+	if(RHr.FileName!="StockMovVc")then begin
+	  res = 0;
+	end;
+	
   RHistVcRecordImportTest = res;
   RETURN;
 END;
