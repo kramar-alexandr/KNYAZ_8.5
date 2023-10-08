@@ -515,7 +515,7 @@ end;
 
 
 
-global
+/*global
 function LongInt RHistVcRecordImportTest(var record RHistVc RHr,record RHistVc RH2r,LongInt long3,LongInt long4)
 begin
   LongInt res;
@@ -561,7 +561,10 @@ begin
 	
   RHistVcRecordImportTest = res;
   RETURN;
-END;
+END;*/
+
+
+
 /*
 global
 function LongInt IVVcRecordImportTest(var record IVVc IVr,record IVVc IV2r,LongInt long3,LongInt long4)
