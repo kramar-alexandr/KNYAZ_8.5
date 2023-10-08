@@ -134,7 +134,17 @@ BlockBegin(FiscalSetLocalBlock,-,"");
 EndBlock;
 
 RecordAddBegin(ORVc,"ORVc_Custom");
+  RecordField(Math2,M4TextField,0,0);
   ArrayField(TotOrdQuant,M4Val,0,0);
+EndRecordAdd;
+
+RecordAddBegin(SHVc,"SHVc_Custom");
+  RecordField(Finished,M4Mark,0,0);
+  
+  SubsetKeyBegin2(ActSerNr);
+  StoreInBaseKey;
+  AppendFieldToKeyName(Location);
+  KeySegment(SerNr); 
 EndRecordAdd;
 
 RecordAddBegin(VIVc,"VIVc_Custom");
@@ -186,6 +196,14 @@ RecordAddBegin(IVVc,"IVVc_Custom");
   RecordField(DaySessionStartTime,M4Time,0,0); //Edit***************************Sasha2,11:11 07.03.2017
   RecordField(DaySessionEndTime,M4Time,0,0); //Edit***************************Sasha2,11:11 07.03.2017
   RecordField(AcceptedFlag,M4Mark,0,0);
+  
+  KeyBegin(AcceptedFlag);
+  KeySegment(AcceptedFlag);
+  KeySegment(SerNr);
+  KeyBegin(ActAcceptedFlag);
+  KeySegment(AcceptedFlag);
+  KeySegment(SerNr);
+  
 EndRecordAdd;
 
 RecordAddBegin(LocationVc,"LocationVc_Custom");
