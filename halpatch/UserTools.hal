@@ -521,6 +521,8 @@ begin
   LongInt res;
   string 1 c,nul;
 	integer cter,i,pref,check;
+	string 20 recname;
+	string 10 compnr;
   
   res = 1;
 	
@@ -533,7 +535,7 @@ begin
   recname = "";
   cter = 0;
   if(blank(RHr.RecidStr))then begin
-    cnter["BLANK"] = cnter["BLANK"] + 1;
+
   end else begin
     pref = asc(c) + 1;
     compnr = mid(RHr.RecidStr,1,asc(c));
