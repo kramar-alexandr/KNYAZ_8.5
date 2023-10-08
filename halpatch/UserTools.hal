@@ -519,6 +519,8 @@ global
 function LongInt RHistVcRecordImportTest(var record RHistVc RHr,record RHistVc RH2r,LongInt long3,LongInt long4)
 begin
   LongInt res;
+  string 1 c,nul;
+	integer cter,i,pref,check;
   
   res = 1;
 	
@@ -527,9 +529,33 @@ begin
 	  res = 0;
 	end;
 	
-	if(RHr.FileName!="StockMovVc")then begin
-	  res = 0;
-	end;
+	c = left(RHr.RecidStr,1);
+  recname = "";
+  cter = 0;
+  if(blank(RHr.RecidStr))then begin
+    cnter["BLANK"] = cnter["BLANK"] + 1;
+  end else begin
+    pref = asc(c) + 1;
+    compnr = mid(RHr.RecidStr,1,asc(c));
+    if(pref<len(RHr.RecidStr))then begin
+      for(i=pref;i<len(RHr.RecidStr);i=i+1)begin
+          c = mid(RHr.RecidStr,i,1);
+        if(asc(c)==0)then begin
+          i = len(RHr.RecidStr);
+        end else begin
+          recname = recname & c;
+        end;
+      end;
+    end else begin
+    end;
+  end;
+  if(blank(recname))then begin
+    recname = "BLANK";
+  end;
+  
+  if(recname!="STOCKMOVVC")then begin
+    res = 0;
+  end;
 	
   RHistVcRecordImportTest = res;
   RETURN;
