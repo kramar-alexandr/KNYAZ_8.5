@@ -384,3 +384,29 @@ begin
 	//runprogram("chmod","-R a+rw ExportData");
 return;
 end;
+
+
+
+global webpublic updating procedure WebConfirmOldIV()
+begin
+  record IVVc IVr;
+  boolean TrHs;
+  
+  setcompany(9,false);
+  
+  IVr.AcceptedFlag = 0;
+  TrHs = true;
+  while(loopkey("AcceptedFlag",IVr,1,TrHs))begin
+    if(IVr.AcceptedFlag==0)then begin
+      if(IVr.InvDate<stringtodate("01/09/2023"))then begin
+        IVr.AcceptedFlag = 1;
+        recordstore(IVr,true);
+        stepback(IVr);
+      end;
+    end else begin
+      TrHs = false;
+    end;
+  end;
+    
+return;
+end;
