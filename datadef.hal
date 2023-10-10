@@ -134,7 +134,7 @@ BlockBegin(FiscalSetLocalBlock,-,"");
 EndBlock;
 
 RecordAddBegin(ORVc,"ORVc_Custom");
-  RecordField(Math2,M4TextField,0,0);
+  //RecordField(Math2,M4TextField,0,0);
   ArrayField(TotOrdQuant,M4Val,0,0);
 EndRecordAdd;
 
