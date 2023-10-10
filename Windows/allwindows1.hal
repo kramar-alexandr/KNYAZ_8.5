@@ -1123,7 +1123,7 @@ begin
     EditFieldTL(h,v,150,"Классиф. поставщиков",M4UStr,Normal,30,f8,false,CClassSClass); v = v + vs;
   end;
   EditFieldTL(h,v,80,"Дата",M4Date,Normal,0,d1,false,PasteCurDate); v = v + vs;
-  EditFieldTL(h,v,80,"Прейскурант",M4Date,Normal,0,f13,false,PLSClass); v = v + vs;
+  EditFieldTL(h,v,80,"Прейскурант",M4Code,Normal,20,f13,false,PLSClass); v = v + vs;
   EditFieldTL(h,v,150,"Фильтр по слову в назв-нии",M4UStr,Normal,255,f12,false,0); v = v + vs; //Edit***************************Sasha2,11:25 27.12.2016
   ButtonFrame(h2,vm=(v+=30),123,5,"Purchase Ledger");
   RadioButton(h2,v,0,0,"Сводный",ArtMode);
