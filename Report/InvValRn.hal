@@ -358,8 +358,11 @@ begin
   
   USr.Code = currentuser;// Edit ************************** BPI Ukraine - KramarAlexandr - 02, 27 10 2020 y. at 1:47:18 PM
   if(readfirstmain(USr,1,true))then begin
-  	if(nonblank(USr.SalesGroup) or nonblank(USr.MinPLCode))then begin
+  	if(nonblank(USr.SalesGroup) or nonblank(USr.MinPLCode) or nonblank(RepSpec.f13))then begin
 			PLr.PLCode = USr.MinPLCode;
+			if(nonblank(RepSpec.f13))then begin
+			  PLr.PLCode = RepSpec.f13;
+			end;
 			PLr.ArtCode = INp.Code;
 			if(readfirstmain(PLr,2,true))then begin
 				INp.UPrice1 = PLr.ExVatPrice;
