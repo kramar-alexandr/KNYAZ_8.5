@@ -4010,7 +4010,7 @@ begin
   RecordList(4,50,-21,-39);
   RlColKey(4,4,"№",SerNr,false,ActAcceptedFlag);
   RlColKey(79,79,"ОК",OKFlag,false,OKFlag);
-  RlCol(100,100,"Принято",AcceptedFlag,false);
+  RlColKey(100,100,"Принято",AcceptedFlag,false,AcceptedFlag);
   RlColKey(151,151,"Дата сч/ф",InvDate,false,InvDate);
   if (StandardHansa==false) then begin
     RlColKey(231,231,"Склад",Location,false,Location);
@@ -4074,7 +4074,7 @@ begin
   RecordList(4,17,-21,-39);
   RlColKey(4,4,"№",SerNr,false,SerNr);
   RlColKey(79,79,"ОК",OKFlag,false,OKFlag);
-  RlCol(100,100,"Принято",AcceptedFlag,false);
+  RlColKey(100,100,"Принято",AcceptedFlag,false,AcceptedFlag);
   RlColKey(151,151,"Дата сч/ф",InvDate,false,InvDate);
   if (StandardHansa==false) then begin
     RlColKey(231,231,"Склад",Location,false,Location);
