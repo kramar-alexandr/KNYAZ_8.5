@@ -3986,7 +3986,7 @@ end;
 window IVLClass:8
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
-  real pos;
+  real pos,h,v;
   Boolean acptf;
   
   WindowBegin("Счета-фактуры",IVLClass,CGmlist,-);
@@ -4002,8 +4002,12 @@ begin
   Sizeable(-1,-1,0,0);
   SpawnClass(IVDClass);
   UseView(IVVc);
+  
+  h = 50; v = 5;
+  HalPushButton(h,v,h+100,v+12,"OpenAllIVVcDsm","Все записи");//Edit----------------------Dima  26.08.2015
+  
   FormName(PrintIVL);
-  RecordList(4,17,-21,-39);
+  RecordList(4,50,-21,-39);
   RlColKey(4,4,"№",SerNr,false,ActAcceptedFlag);
   RlColKey(79,79,"ОК",OKFlag,false,OKFlag);
   RlCol(100,100,"Принято",AcceptedFlag,false);
@@ -4029,7 +4033,7 @@ begin
   RlCol(-1,-1,"",Invalid,true);
   SearchField("Поиск");
   if (HasLimitedAccess) then begin
-    BrowseSubsetButton(-40,-15);
+   // BrowseSubsetButton(-40,-15);
   end;
   SpecialMenu("OK",'G',0,"OKIVLsm");
   SpecialMenu("Принято",'G',0,"AcceptedIVLsm");
@@ -4047,7 +4051,7 @@ begin
 end;
 
 
-window AllIVLClass:8
+window AllIVLClass:1
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
   real pos;

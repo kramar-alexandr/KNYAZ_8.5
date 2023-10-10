@@ -2812,3 +2812,45 @@ begin
   
   return;
 end;
+
+
+global 
+procedure OpenAllIVVcDsm()	//Edit----------------------Dima  02.07.2015
+begin
+	record IVVc IVr;
+	integer nwn,wn;
+	string 20 subset;// Edit ************************** BPI Ukraine - KramarAlexandr - 05, 15 11 2019 y. at 11:33:29 AM
+	
+	RecordNew(IVr);
+	
+
+	
+	nwn = OpenWindow("AllIVLClass",0,CurWindow,"","",IVr);
+end;
+
+
+global
+function Integer AllIVLClassRowColor(record IVVc IVr)
+begin
+  Integer res;
+  record ARVc ARr;
+  
+  res = kRowColorNone;
+  
+  ARr.InvoiceNr = IVr.SerNr;
+  
+  if (ReadFirstMain(ARr,1,true)) then begin
+    if (ARr.DueDate<CurrentDate) then begin
+      res = kRowcolorRed;
+    end else begin
+      //res = kRowcolorYellow;
+    end;
+  end else begin
+    if (IVr.OKFlag) then begin
+      res = kRowcolorGreen;
+    end;
+  end;
+  
+  AllIVLClassRowColor = res;
+  return;
+end;
