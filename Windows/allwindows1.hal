@@ -5068,8 +5068,8 @@ begin
   t = kInvoiceRowTypePerceptionTax;    
   flipnr = 1;
   Flip(flipnr); flipnr = flipnr + 1;
-  MatCol(1,-98,"Зак.",0,Ordered,true,0);
-  MatCol(1,-50,"Своб.",0,Ship,true,0);
+  MatCol(1,-200,"Зак.",0,Ordered,true,0);
+  MatCol(1,-100,"Собрано.",0,Ship,true,0);
 
   Flip(flipnr); flipnr = flipnr + 1;
   if (IsEnterprise==false) then begin
