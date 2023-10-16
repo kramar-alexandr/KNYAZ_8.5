@@ -5092,10 +5092,6 @@ begin
     end else begin
       MatCol(t=kInvoiceRowTypeStructuredItemComponent,-98,"Ordered",0,Ordered,true,0); //!!TRANSLATE
     end;
-    MatCol(t=1,-240,"Unit Price",0,Price,true,0); //!!TRANSLATE
-    MatCol(t,-165,"%",0,vRebate,true,0); //!!TRANSLATE
-    MatCol(t,-130,"Sum",0,Sum,true,0); //!!TRANSLATE
-    MatCol(t,-45,"#V-Cd#",0,VATCode,false,VATCodeSClass); //!!TRANSLATE
   end;
   Flip(flipnr); flipnr = flipnr + 1;
   if (IsEnterprise==false) then begin
