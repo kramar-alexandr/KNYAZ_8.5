@@ -5068,31 +5068,9 @@ begin
   t = kInvoiceRowTypePerceptionTax;    
   flipnr = 1;
   Flip(flipnr); flipnr = flipnr + 1;
-  if (HasLocalization("UKR")==false) then begin
-  if (HasCustItem) then begin
-    MatCol(1,-180,"Товар кл.",0,CustArtCode,false,CUINSClass);
-  end;
   MatCol(1,-98,"Зак.",0,Ordered,true,0);
-  //MatCol(1,-98,"Avail.",0,InStock,true,0);
   MatCol(1,-50,"Своб.",0,Ship,true,0);
-  if (HasCustItem) then begin
-    MatCol(t=kInvoiceRowTypeStructuredItemComponent,-180,"Товар кл.",0,CustArtCode,false,CUINSClass);
-    MatCol(t,-150,"Заказано",0,Ordered,true,0); 
-  end else begin
-    MatCol(t=kInvoiceRowTypeStructuredItemComponent,-98,"Зак.",0,Ordered,true,0);
-  end;
-  //MatCol(t,-98,"Avail.",0,InStock,true,0);
-  MatCol(t,-50,"Своб.",0,Ship,true,0);
-  end else begin  
-    MatCol(1,-340,"Ord. Qty",0,Ordered,true,0); //!!TRANSLATE
-    MatCol(1,-290,"Del. Qty",0,Ship,true,0); //!!TRANSLATE
-    if (HasCustItem) then begin
-      MatCol(t=kInvoiceRowTypeStructuredItemComponent,-180,"Cust. Item No.",0,CustArtCode,false,CUINSClass); //!!TRANSLATE
-      MatCol(t,-150,"Ordered",0,Ordered,true,0); //!!TRANSLATE
-    end else begin
-      MatCol(t=kInvoiceRowTypeStructuredItemComponent,-98,"Ordered",0,Ordered,true,0); //!!TRANSLATE
-    end;
-  end;
+
   Flip(flipnr); flipnr = flipnr + 1;
   if (IsEnterprise==false) then begin
     pos = -350;
@@ -5329,63 +5307,18 @@ begin
     end;
   end;
   */
-  /*if (GuiType==kGuiMetro) then begin // Temporarily disabled on Windows 8
-    SpecialMenu("Статус товара",'I',2,"ItemStatusSHDsm");
-    if (HasIntegratedNL) then begin
-      SpecialMenu("Открыть запись операции",'t',3,"OpenTRFromSH");
-    end;
-    SpecialMenu("Печать этикеток фрахта",'l',0,"PrintSHLabSHDsm");
-    if (HasReturnedGoods and HasModIN) then begin
-      SpecialMenu("Создать возврат товаров",'B',5,"RetFromSHSpec");
-    end;
-  end else begin
+  SpecialMenu("Статус товара",'I',2,"ItemStatusSHDsm");
+  SpecialMenu("Создать возврат товаров",'B',5,"RetFromSHSpec");
   SpecialMenu("Печать этикеток фрахта",'l',0,"PrintSHLabSHDsm");
-  if (IsEnterprise) then begin
-    SpecialMenu("Пересчитать вес",'w',1,"SHCalcWeightDsm");
-  end;
-  if (HasIntegratedNL) then begin
-    SpecialMenu("Открыть запись операции",'t',3,"OpenTRFromSH");
-  end;
-  if (HasLocalization("SWE")) then begin
-    SpecialMenu("Экспорт ASG",' ',4,"ASGEnSHDsm"); 
-  end;
-  if (HasLocalization("NOR")) then begin
-    SpecialMenu("Winedi Export",' ',4,"WinEDIEnSHDsm"); 
-  end;
-  if (HasLocalization("PRT")) then begin
-    if (HasETaxDocuments) then begin
-    SpecialMenu("Send to Tax Authorities",'',10,"EShipPRTDsm");  //tax authorities server is down
-    end;
-  end;
-  if (HasLocalization("MEX")) then begin
-    SpecialMenu("Send Mexican E-Delivery",'e',17,"SendMexEDelDsm"); //!!TRANSLATE
-  end;
-  if (IsEnterprise) then begin
-    SpecialMenu("Заполнить серийные номера партий",' ',6,"INBatchSHSpec");
-  end;
-  if (HasModWHM) then begin
-    SpecialMenu("Утвердить складские перемещения",' ',8,"OKStockMovSHrDsm");
-    SpecialMenu("Список комплектаций по складу",' ',9,"PickingListDsm");
-  end;
-//  SpecialMenu("Calculate Manually",' ',10,"CalcSHMan"); 
-  if (IsEnterprise) then begin
-    if (StandardHansa==false) then begin
-      SpecialMenu("Зарегестрировать электронную отгрузку",' ',9,"EShipRegisterDsm");
-    end;
-    if (GuiType==kGuiiPhone) then begin
-      SpecialMenu("Подписать",' ',10,"SignSHDsm");  
-    end;
-  end;
+
+  SpecialMenu("Открыть запись операции",'t',3,"OpenTRFromSH");
+
+
   SpecMenuGroup("",kSpecMenuGroupTypeExtendedPlusMenu,0);         
   if (HasModSL) then begin
     SpecialMenu("Счёт-фактура",'F',1,"IVFromSHDsm"); 
   end;
-  if (IsEnterprise or HasReturnedGoods) then begin
-    SpecialMenu("Возращённые товары",'B',2,"RetFromSHDsm"); 
-  end;
-  if (HasModPOS) then begin
-    SpecialMenu("POS Invoice",' ',0,"IVCashFromSHDsm"); //!!TRANSLATE
-  end;
-  end;*/
+
+
   EndWindow;
 end;
