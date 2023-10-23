@@ -29,6 +29,10 @@ begin
   val t100;
   val frrate,to1,to2,br1,br2;
   Integer theroundof;
+  Integer tempInt;
+  logText(0,"CalcItemPrice");
+  
+  
   
   AddPricef = true;
   theroundof = roundof;
@@ -63,11 +67,15 @@ begin
           end;
         end;
     end;
+    
+    logText(0,INp.Name & " starting price: " & newpr);
+    
     if (RepSpec.flags[1]<>0) then begin
       t = newpr * INp.Markup;
       t = t / t100;
       newpr = newpr + t;
     end;
+    
     if (pldfound) then begin
       switch (PFr.SelBase) begin
         case 2:
@@ -109,10 +117,25 @@ begin
       end;
       goto LCalcItemPrice;
     end;
+    
+    logText(0,"newpr before round: " & newpr);
+    
     newpr = newpr * PFr.Perc;
     newpr = newpr / 100;
     newpr = Round(newpr + PFr.Add1Val,SetRoundModeD(PFr.RndTo));
     newpr = Round(newpr + PFr.Add2Val,SetRoundModeD(roundof));
+    
+    logText(0,"newpr after round: " & newpr);
+    
+    if(PFr.Code=="101+4") then begin
+      tempInt = newpr / 5;
+      if ((tempInt * 5) <> newpr) then begin
+    	newpr = tempInt * 5 + 5;
+	  end;
+    end;
+     
+    logText(0,"newpr after correction: " & newpr);
+    
     if (newpr<>exvatprice) then begin
       res = true;
       exvatprice = newpr;
