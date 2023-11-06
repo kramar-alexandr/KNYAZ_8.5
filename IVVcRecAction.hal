@@ -96,7 +96,7 @@ begin
   record LocationVc Locr;
   integer curcomp;
 
-	res = inner.IVVcRecordSaveAfter(IVr,IV2r,long3,long4);
+	res = inner.IVVcRecordUpdateAfter(IVr,IV2r,long3,long4);
   curcomp = currentcompany;
   /*if(IVr.OKFlag==1 and IV2r.OKFlag==0)then begin
   	CreatePOInOtherCom(IVr);
