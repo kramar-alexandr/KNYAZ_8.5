@@ -596,24 +596,21 @@ begin
 			IVr.InvDate = currentdate;
 			
 			if(OKFlag=="true")then begin
-        recordinsert(IVr,true);
+        recordinsert(IVr,true);//First Save
       
-      
-        if(OKFlag=="true")then begin
-          recordcopy(oldIVr,IVr);
-            IVr.OKFlag = 1;
-          recordupdate(oldIVr,IVr,true);
-        end;
+        recordcopy(oldIVr,IVr);// Second Update with Ok
+          IVr.OKFlag = 1;
+        recordupdate(oldIVr,IVr,true);
 			end else begin
 			  recordstore(IVr,true);
 			  Locr.Code = IVr.Location;
-        if(readfirstmain(Locr,1,true))then begin
+        /*if(readfirstmain(Locr,1,true))then begin
           Locr.BalanceSum = Locr.BalanceSum - fsum + IVr.Sum4;
           logtext(0,"IV2r.Sum4 " & fsum);
           logtext(0,"IVr.Sum4 " & IVr.Sum4);
           logtext(0,"Change balance from IVVcRecordUpdateAfter 03 " & IVr.SerNr & " " & -fsum + IVr.Sum4);
           recordstore(Locr,true);
-        end;
+        end;*/
 			end;
 		end;
 lendinvent:;
