@@ -528,7 +528,7 @@ begin
 		logtext(0,"SERNR  " & JSONGet(jsonobj,"SerNr"));
 		if(nonblank(JSONGet(jsonobj,"SerNr")))then begin
 			IVr.SerNr = stringtolongint(JSONGet(jsonobj,"SerNr"));
-			if(readfirstmain(IVr,1,true))then begin
+			if(IVr.SerNr>0 and readfirstmain(IVr,1,true))then begin
 			  fsum = IVr.Sum4;
 				if(IVr.OKFlag==1)then begin
 					res = 1115;
