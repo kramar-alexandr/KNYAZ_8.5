@@ -506,7 +506,7 @@ begin
 	string 100 warning,errstr,prepstr,invdatewarn,transdatewarn,tstr;
 	string 100 OKFlag;
 	string 50 CredInv;
-	Boolean chsum;
+	Boolean chsum,createmode;
 	string 255 artCode;
 	longint res;
 	val sum,fsum;
@@ -536,6 +536,7 @@ begin
 				end;
 			end else begin
 				recordnew(IVr);
+				createmode = true;
 				IVr.SerNr = NextSerNr("IVVc",IVr.TransDate,-1,false,IVr.LangCode);
 				IVr.CustCode = "NONAME";
 				PasteCust2InInv(IVr,LMb,IVr.CustCode,true,warning,errstr,prepstr,invdatewarn,transdatewarn);
@@ -604,13 +605,15 @@ begin
 			end else begin
 			  recordstore(IVr,true);
 			  Locr.Code = IVr.Location;
-        /*if(readfirstmain(Locr,1,true))then begin
-          Locr.BalanceSum = Locr.BalanceSum - fsum + IVr.Sum4;
-          logtext(0,"IV2r.Sum4 " & fsum);
-          logtext(0,"IVr.Sum4 " & IVr.Sum4);
-          logtext(0,"Change balance from IVVcRecordUpdateAfter 03 " & IVr.SerNr & " " & -fsum + IVr.Sum4);
-          recordstore(Locr,true);
-        end;*/
+			  if(createmode)then begin
+          if(readfirstmain(Locr,1,true))then begin
+            Locr.BalanceSum = Locr.BalanceSum - fsum + IVr.Sum4;
+            logtext(0,"IV2r.Sum4 " & fsum);
+            logtext(0,"IVr.Sum4 " & IVr.Sum4);
+            logtext(0,"Change balance from IVVcRecordUpdateAfter 03 " & IVr.SerNr & " " & -fsum + IVr.Sum4);
+            recordstore(Locr,true);
+          end;
+        end;
 			end;
 		end;
 lendinvent:;
