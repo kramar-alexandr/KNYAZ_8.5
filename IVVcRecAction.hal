@@ -132,3 +132,27 @@ begin
   IVVcRecordUpdateAfter = res; 
   return;
 end;
+
+
+
+global
+updating function LongInt IVVcRecordRemove(var record IVVc IVr,record IVVc IV2r,LongInt long3,LongInt long4)
+BEGIN
+  LongInt res;
+  record CredManEventVc CredManEventr;
+  record LocationVc Locr;
+  
+  res = inner.IVVcRecordRemove(IVr,IV2r,long3,long4);
+  Locr.Code = IVr.Location;
+  if(readfirstmain(Locr,1,true))then begin
+    Locr.BalanceSum = Locr.BalanceSum - IVr.Sum4;
+    logtext(0,"IV2r.Sum4 " & IV2r.Sum4);
+    logtext(0,"IVr.Sum4 " & IVr.Sum4);
+    logtext(0,"Change balance from IVVcRecordRemove 01 " & IVr.SerNr & " " & - IVr.Sum4);
+    recordstore(Locr,true);
+  end;
+    
+  IVVcRecordRemove = res; 
+  RETURN;
+END;
+
