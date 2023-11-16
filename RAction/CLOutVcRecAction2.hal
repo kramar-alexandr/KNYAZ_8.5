@@ -538,7 +538,7 @@ BEGIN
     Locr.Code = CLOutr.Person;
     if(readfirstmain(Locr,1,true))then begin
       Locr.BalanceSum = Locr.BalanceSum - CLOutr.Total;
-      Locr.RashodSum = Locr.RashodSum - CLOutr.Total;
+      //Locr.RashodSum = Locr.RashodSum - CLOutr.Total;
       recordstore(Locr,true);
     end;
   end;      
@@ -548,20 +548,20 @@ BEGIN
       Locr.Code = CLOutr.Person;
       if(readfirstmain(Locr,1,true))then begin
         Locr.BalanceSum = Locr.BalanceSum + CLOutr.Total;
-        Locr.RashodSum = Locr.RashodSum + CLOutr.Total;
+        //Locr.RashodSum = Locr.RashodSum + CLOutr.Total;
         recordstore(Locr,true);
       end;
     end;
   end;
   
   
-  if ((CLOutr.OKFlag==0) and (CLOut2r.OKFlag==0)) then begin
+  /*if ((CLOutr.OKFlag==0) and (CLOut2r.OKFlag==0)) then begin
     Locr.Code = CLOutr.Person;
     if(readfirstmain(Locr,1,true))then begin
       Locr.RashodSum = Locr.RashodSum - CLOut2r.Total + CLOutr.Total;
       recordstore(Locr,true);
     end;
-  end;
+  end;*/
   
   CLOutVcRecordUpdateAfter = res;
   RETURN;
@@ -592,11 +592,11 @@ begin
   LongInt res;
   record LocationVc Locr;
   
-  Locr.Code = CLOutr.Person;
+  /*Locr.Code = CLOutr.Person;
   if(readfirstmain(Locr,1,true))then begin
     Locr.RashodSum = Locr.RashodSum - CLOutr.Total;
     recordstore(Locr,true);
-  end;
+  end;*/
   
   DeleteCLOutVI(CLOutr);
   CLOutVcRecordRemove = res;  
