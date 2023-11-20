@@ -140,6 +140,8 @@ EndRecordAdd;
 
 RecordAddBegin(SHVc,"SHVc_Custom");
   RecordField(Finished,M4Mark,0,0);
+  ChangeField(Check1,M4Mark,0,0);
+  ChangeField(Check2,M4Mark,0,0);
   
   SubsetKeyBegin2(ActSerNr);
   StoreInBaseKey;

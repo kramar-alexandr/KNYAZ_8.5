@@ -5188,129 +5188,7 @@ begin
       v = v + vs;
     end;
   end;
-/*
-//  CheckBox(20,-20,0,"OK",OKFlag);
-  if (HasLocalization("PRT")) then begin
-    EditField(120,-20,150,"Tax Seal",ViewOnly,TaxAdminServSeal,false,0);
-//    SoftEditField(120,-20,150,"Tax Auth. Approval",Normal,"TaxAdminServSeal",false,0,M4Str,200);
-  end;
-  EditField(-131,-20,80,"Общее кол-во",ViewOnly,TotQty,true,0);
-  if (IsEnterprise) then begin
-    Tile(tilenr,90,false,tilenr,ShipMode); tilenr = tilenr + 1;
-    vs = 20;
-    EditField(h1,v=vm,82,"Способ отгр.",Normal,ShipMode,false,DMSClass);
-    EditField(h1,v+=vs,80,"Сумма налога",ViewOnly,TAX1Sum,true,0);
-    if (StandardHansa==false) then begin
-      EditField(h1,v+=vs,80,"Заявлен. значение",Normal,DeclaredVal,true,0);
-      EditField(h1,v+=vs,-20,"Статус отгрузки",ViewOnly,EShipStatus,false,0);
-      if (HasLocalization("BRA,BOL,PRT")) then begin  
-        EditField(h1,v+=vs,80,"Tax Seal",ViewOnly,TaxAdminServSeal,false,0);
-      end;
-    end;
-    EditField(h2,v=vm,80,"Итого кол-во",ViewOnly,TotQty,true,0);
-    EditField(h2,v+=vs,80,"Итого вес",Normal,TotWeight,true,0);
-    EditField(h2,v+=vs,80,"Итого объем",Normal,TotVolume,true,0);
-    CheckBox(473,v=vm,0,"Использовать адрес для выст. счета",Check2);
-    if (StandardHansa==false) then begin
-      CheckBox(473,v+=16,0,"Создана электронная отгрузка",EShipmentCreated);
-      CheckBox(473,v+=16,0,"Собрана электронная отгрузка",EShipCollected);
-    end;
-    Tile(tilenr,110,false,tilenr,Packages); tilenr = tilenr + 1;
-    h2 = 310;
-    EditField(h1,v=6,82,"Трансп. №",Normal,TransportNumber,false,0);
-    EditField(h1,v+=vs,82,"Упаковки",Normal,Packages,true,0);
-    if (HasLanguages) then begin 
-    EditField(h1,v+=vs,82,"Языка",Normal,LangCode,false,LangSClass);
-    end;  
-    EditField(h1,v+=vs,82,"Валюта",Normal,CurncyCode,false,CurncyCodeSClass);
-    if (StandardHansa==false) then begin
-      EditField(h1,v+=vs,-20,"Инстр.по трансп.",Normal,TransportDirect,false,0);
-      EditField(h1,v+=vs,80,"План. дата отпр.",Normal,PlanSendDate,false,PasteCurDate);
-      EditField(h1,v+=vs,80,"План. время отпр.",Normal,PlanSendTime,false,PasteCurTime);
-    end;
 
-    EditField(h2,v=6,135,"Из города",Normal,FromCity,false,0);
-    EditField(h2,v+=vs,135,"В город",Normal,ToCity,false,0);
-    EditField(h2,v+=vs,135,"Из дока",Normal,FromDock,false,0);
-    EditField(h2,v+=vs,135,"В док",Normal,ToDock,false,0);
-    if (StandardHansa==false) then begin
-      EditField(h2,v+=2*vs,80,"План. дата приб.",Normal,PlanArrDate,false,PasteCurDate);
-      EditField(h2,v+=vs,80,"План. время  приб.",Normal,PlanArrTime,false,PasteCurTime);
-    end;
-  end;
-  Tile(tilenr,150,false,tilenr,Addr1); tilenr = tilenr + 1;
-  vs = 20;
-  if (IsEnterprise) then begin
-    if (StandardHansa==false) then begin
-      EditField(h1,v=6,80,"Код адреса",Normal,DelAddrCode,false,DelAddr3SClass);
-      EditField(h1,v+=vs,-20,"Отгрузка",Normal,Addr1,false,0);
-    end else begin
-      EditField(h1,v=6,-20,"Адрес",Normal,Addr1,false,0);
-    end;
-    EditField(h1,v+=vs,-20,"Адрес",Normal,Addr2,false,0);
-  end else begin
-    EditField(h1,v=6,-20,"Адрес",Normal,Addr1,false,0);   // From dict
-    EditField(h1,v+=vs,-20,"",Normal,Addr2,false,0);
-  end;
-  EditField(h1,v+=vs,-20,"",Normal,Addr3,false,0);
-  EditField(h1,v+=vs,-20,"",Normal,DelAddr3,false,0);
-  EditField(h1,v+=vs,-20,"",Normal,DelAddr4,false,0);
-  if (HasCountryPerCustomer) then begin
-    EditField(h1,v+=vs,80,"Страны",Normal,DelCountry,false,CountrySClass);
-    if (HasLocalization("BRA")) then begin 
-      EditField(h2-109,v,232,"",ViewOnly,DelCountryName,false,0);
-    end;    
-  end;
-  if (IsEnterprise) then begin
-    EditField(h3,v,-20,"Регион",Normal,Region,false,RegionSClass);
-    Tile(tilenr,30,false,tilenr,Comment); tilenr = tilenr + 1;
-    EditField(h1+10,v=6,-20,"Комментарий",Normal,Comment,false,0);
-    EditField(h1+10,v+=20,-20,"Основание",Normal,ORCOType,false,0); // NEWTRANSLATE
-    if (HasNumberSeries and HasLocalization("PRT")) then begin  
-      if (HasOfficialSerNr) then begin
-        EditField(h1+10,v+=vs,100,"Official Ser No. 2",Normal,OfficialSerNr2,false,0);  
-        EditField(h2,v,135,"Статус",Normal,Status,false,SetSClass);  
-      end;    
-    end;
-  end else begin
-    if (HasLocalization("RUS")) then begin  
-      EditField(h1,v+=vs,80,"Итого вес",Normal,TotWeight,true,0);  
-    end;
-  end;
-  if (IsStandardProduct and HasLocalization("PRT,LTU") and HasModIN and HasModSL) then begin 
-    Tile(tilenr,110,false,tilenr,PlanSendDate); tilenr = tilenr + 1;
-    h2 = 310;
-    EditField(h1,v=6,80,"Plan. Sent Date",Normal,PlanSendDate,false,PasteCurDate);
-    EditField(h1,v+=vs,80,"Plan. Sent Time",Normal,PlanSendTime,false,PasteCurTime);
-    if (HasLocalization("PRT")) then begin
-    EditField(h2,v=6,80,"Plan. Arrival Date",Normal,PlanArrDate,false,PasteCurDate);
-    EditField(h2,v+=vs,80,"Plan. Arrival Time",Normal,PlanArrTime,false,PasteCurTime);      
-  end;
-  end;
-  
-  if (IsEnterprise or HasLocalization("LTU,PRT") or BuildProductCode=="PAYYAPERP") then begin
-    if (IsStandardProduct==false or HasLocalization("PRT,LTU")==false or HasModIN==false or HasModSL==false) then begin
-    Tile(tilenr,130,false,tilenr,FreightCode); tilenr = tilenr + 1;
-      v = 6;
-    end else begin
-      v = v + vs;
-    end;
-    if (IsEnterprise) then begin
-      HalPushButton(573,2,700,22,"UpdateSHPackages","UpdateSHPackages");
-    end;
-    EditField(h1,v,80,"Трансп. компания",Normal,FreightCode,false,FreightCompanySClass);
-    if (FreightCompanyIsFedex(SHr.FreightCode)) then begin
-      EditField(h2,v,190,"Service Type",Normal,ServiceType,false,SetSClass); //!!TRANSLATE
-    end;
-    EditField(h1,v+=vs,-20,"Название",Normal,FreightCompany,false,0);
-    EditField(h1,v+=vs,-20,"ИНН",Normal,FreightCompanyRegNr,false,0);
-    EditField(h1,v+=vs,-20,"Инф-ия о машине",Normal,TruckInfo,false,0);
-    if (IsEnterprise or HasLocalization("PRT")) then begin
-    EditField(h1,v+=vs,-20,"Водитель",Normal,Driver,false,0);
-    EditField(h1,v+=vs,-20,"CMR",Normal,CMRText,false,0); // International transporting number
-    end;
-  end;
-  */
   SpecialMenu("Статус товара",'I',2,"ItemStatusSHDsm");
   SpecialMenu("Создать возврат товаров",'B',5,"RetFromSHSpec");
   SpecialMenu("Печать этикеток фрахта",'l',0,"PrintSHLabSHDsm");
@@ -5326,3 +5204,63 @@ begin
 
   EndWindow;
 end;
+
+
+
+window SHLClass:1
+  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  WindowBegin("Отгрузки",SHLClass,CGmlist,SHView);
+  SpawnClass(SHDClass);
+  SetWRect(20,80,880,298);
+  Sizeable(-1,-1,0,0);
+  UseView(SHVc);
+  FormName(PrintSHL);
+  RecordList(4,17,-21,-39);
+  RlColKey(4,4,"№",SerNr,false,SerNr);
+  RlColKey(79,79,"ОК",OKFlag,false,OKFlag);
+  RlColKey(111,111,"Дата",ShipDate,false,ShipDate);
+  if (HasMultiLocations) then begin
+    RlCol(191,191,"Склад",Location,false);
+    RlColKey(251,251,"Счёт Но.",OrderNr,false,OrderKey);
+  end else begin
+    RlColKey(191,191,"Заказ Но.",OrderNr,false,OrderKey);
+  end;
+  if (HasOfficialSerNr) then begin
+  //RlColKey(321,321,"Офиц.No.",OfficialSerNr,false,OfficialSerNr);
+  end;
+  RlColKey(321,321,"Клиент",CustCode,false,CustCode);
+  RlColKey(390,390,"Наим.",Addr0,false,CustName);
+  if (IsEnterprise) then begin
+    RlColKey(-300,-300,"Трансп. Но.",TransportNumber,false,TransportNumber);
+    //RlColKey(-80,-80,"Способ отгрузки",ShipMode,false,ShipMode);
+    RlCol(-150,-150,"К сборке",Check1,false);
+    RlCol(-100,-100,"Собран",Check2,false);
+    RlCol(-50,-50,"Доставлено",Finished,false);
+  end else begin
+    RlColKey(-180,-180,"Коммент.",Comment,false,Comment);
+  end;
+  if (HasLimitedAccess) then begin
+    BrowseSubsetButton(-40,-15);
+  end;
+  SearchField("Поиск");
+  if (GuiType==kGuiMetro) then begin
+    RowMenuBegin("");
+    RowMenuItem(0,"OK",'G','G',4312,"SHOKLsm");  
+    EndRowMenu;
+  end else begin
+    SpecialMenu("OK",'G',0,"SHOKLsm");
+  end;
+  if (HasLocalization("MEX")) then begin
+    SpecialMenu("Send Mexican E-Deliveries",'n',3,"SendMexEDelLsm"); //!!TRANSLATE
+  end;
+  EndWindow;
+end;
+
+/*
+CheckBox(h4=-200,v=vm,0,"Готово к сборке",Check1);
+  CheckBox(h4,v+=vs,0,"Собрано и упаковано",Check2);
+  CheckBox(h4,v+=vs,0,"Отгружено",OKFlag);
+  CheckBox(h4,v+vs,0,"Доставлено",Finished);
+
+*/
