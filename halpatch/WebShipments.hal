@@ -75,6 +75,7 @@ begin
 	    if(JSONGET(jsonobj,"done")=="1" or JSONGET(jsonobj,"done")=="true")then begin
 	      SHr.Check2 = 1;
 	      recordstore(SHr,true);
+	      weboutstring("ok");
 	    end;
 	  end;
 	end;
