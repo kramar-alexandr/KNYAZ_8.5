@@ -58,3 +58,26 @@ begin
   
 return;
 end;
+
+global webpublic updating procedure WebUpdateShipments()
+begin
+  area resarea;
+	json jsonobj;
+	record SHVc SHr;
+	
+	SetCompany(9,false);
+	webgetpostdata(resarea);
+	
+	jsonobj = ParseJSONArea(resarea);
+	if(nonblank(JSONGET(jsonobj,"shipment_no")))then begin
+	  SHr.SerNr = stringtolongint(JSONGET(jsonobj,"shipment_no"));
+	  if(readfirstmain(SHr,1,true))then begin
+	    if(JSONGET(jsonobj,"done")=="1" or JSONGET(jsonobj,"done")=="true")then begin
+	      SHr.Check2 = 1;
+	      recordstore(SHr,true);
+	    end;
+	  end;
+	end;
+
+return;
+end;
