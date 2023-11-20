@@ -13,7 +13,7 @@ begin
   area response;
   
   addtexttoarea("{\"shipments\": [",response);
-  setcompany(1,false);
+  setcompany(9,false);
   SHr.ShipDate = currentdate;
   TrHs = true;
   while(loopbackkey("ShipDate",SHr,1,TrHs))begin
