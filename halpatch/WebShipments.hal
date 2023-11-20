@@ -27,6 +27,7 @@ begin
       addParamToJSONArea("customer_name",NormalizeStrToJson(SHr.Addr0),response);
       addParamToJSONArea("transport_no",NormalizeStrToJson(SHr.TransportNumber),response);
       addParamToJSONArea("city",NormalizeStrToJson(SHr.CMRText),response);
+      addParamToJSONArea("sender_code",NormalizeStrToJson(SHr.FreightCode),response);
       addParamToJSONArea("warehouse_no",NormalizeStrToJson(SHr.EShipStatus),response);
       addParamToJSONArea("ready",SHr.Check1,response);      
       addParamToJSONArea("done",SHr.Check2,response);      
