@@ -25,6 +25,7 @@ AddTextToArea("\"" & param & "\":" &  "\"" & value & "\",",req);
 return;
 end;
 
+global
 procedure delLastComaInArea(var area req)
 begin
 	longint alen;
