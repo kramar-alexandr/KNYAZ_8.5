@@ -4942,6 +4942,7 @@ begin
   EditField(75,vm=(v=6),95,"№",Normal,SerNr,false,TSerSClass);
   EditField(75,v+=20,95,"Получатель",ViewOnly,CustCode,false,0);
   EditField(h=255,v=vm,-40,"Наим.",Normal,Addr0,false,0);
+  EditField(75,v+20,95,"Отправитель",ViewOnly,FreightCode,false,FreightCompanySClass);
   v = v + vs;
   if (HasOfficialSerNr and (HasLocalization("AGO")==false)) then begin
     EditField(h,vm=v,135,"Офиц. номер",Normal,OfficialSerNr,false,LegalInvNrSClass);
