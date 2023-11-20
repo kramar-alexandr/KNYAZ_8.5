@@ -19,6 +19,7 @@ begin
   while(loopbackkey("ShipDate",SHr,1,TrHs))begin
     testf = true;
     if(blank(SHr.TransportNumber))then begin testf = false; end;
+    if(SHr.OKFlag==1)then begin testf = false; end;
     
     if(testf)then begin
       addtexttoarea("{",response);
