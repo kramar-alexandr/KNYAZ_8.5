@@ -8,9 +8,11 @@ global webpublic procedure WebGetShipments()
 begin
   record SHVc SHr;
   row SHVc Shrw;
-  integer i,rwcnt,cntr,q;
+  integer i,rwcnt,cntr,q,j,txtcnt;
   boolean testf,TrHs;
   area response;
+  record INVc INr;
+  vector string 255 vtstr;
   
   addtexttoarea("{\"shipments\": [",response);
   setcompany(9,false);
@@ -31,7 +33,7 @@ begin
       addParamToJSONArea("sender_code",NormalizeStrToJson(SHr.FreightCode),response);
       addParamToJSONArea("warehouse_no",NormalizeStrToJson(SHr.EShipStatus),response);
       addParamToJSONArea("ready",SHr.Check1,response);      
-      addParamToJSONArea("done",SHr.Check2,response);      
+      addParamToJSONArea("done",SHr.Check2,response);  
       addtexttoarea(" \"items\": [",response);
         rwcnt = matrowcnt(SHr);
         for(i=0;i<rwcnt;i=i+1)begin
@@ -41,6 +43,18 @@ begin
           addParamToJSONArea("item_description",NormalizeStrToJson(SHrw.Spec),response);
           q = SHrw.Ship;
           addParamToJSONArea("quantity",q,response);
+          INr.Code = SHrw.ArtCode;
+          if(readfirstmain(INr,1,true))then begin
+            vtstr[""] = "";
+            txtcnt = LineTextCnt(INr);
+            for(j=0;j<txtcnt;j=j+1)begin
+              vtstr[""] = vtstr[""] & LineTextGet(INr,i);
+              if(j<txtcnt-1)then begin
+                vtstr[""] = vtstr[""] & "\\n";
+              end;
+            end;
+            addParamToJSONArea("item_full_description",NormalizeStrToJson(vtstr[""]),response);
+          end;
           delLastComaInArea(response);
           addtexttoarea("},",response);
         end;
