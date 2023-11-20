@@ -69,6 +69,10 @@ begin
 	webgetpostdata(resarea);
 	
 	jsonobj = ParseJSONArea(resarea);
+	logtext(0,"WebUpdateShipments");
+
+  logtext(0,JSONGET(jsonobj,"shipment_no"));
+
 	if(nonblank(JSONGET(jsonobj,"shipment_no")))then begin
 	  SHr.SerNr = stringtolongint(JSONGET(jsonobj,"shipment_no"));
 	  if(readfirstmain(SHr,1,true))then begin
