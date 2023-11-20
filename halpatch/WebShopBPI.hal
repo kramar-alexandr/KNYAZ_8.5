@@ -16,6 +16,7 @@ remote procedure CLOutVc_PasteCorspCode(var record CLOutVc,Integer);
 external function roundmode SetRoundModeD(Integer);
 external function Boolean StockTakeVc_PasteArtCode(var record StockTakeVc,Integer,Integer,var string);
 
+global
 procedure addParamToJSONArea(string param, string value, var area req)
 begin
 
