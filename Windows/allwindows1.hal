@@ -4949,8 +4949,9 @@ begin
   if (HasTREO) then begin
     //EditField(h+230,vm,95,"TREO Но.",Normal,TREONr,false,0);
   end;
-  CheckBox(h4=-200,v,0,"Собрано и упаковано",OKFlag);
-  CheckBox(h4,v+vm,0,"Доставлено",Finished);
+  CheckBox(h4=-200,v=vm,0,"Готово к сборке",Check1);
+  CheckBox(h4,v+=vs,0,"Собрано и упаковано",OKFlag);
+  CheckBox(h4,v+vs,0,"Доставлено",Finished);
   if (HasLocalization("MEX")) then begin
     //CheckBox(h4=-100,v+=vs,1,"E-Delivery",EDeliveryCheck); //!!TRANSLATE
   end;
@@ -5021,17 +5022,18 @@ begin
       end;
     end;
   end;
-  EditField(h3,v+vs,-40,"Трансп. №",Normal,TransportNumber,false,0);
+  EditField(h3,v+=vs,-40,"Трансп. №",Normal,TransportNumber,false,0);
+  EditField(h3,v+=vs,-40,"№ Отделения",Normal,EShipStatus,false,0);
+  EditField(h1,v,150,"Город",Normal,CMRText,false,0);
   if (IsEnterprise) then begin
     //EditField(h3,v+=vs,80,"Вид счёта",Normal,SHClass,false,OrderClassSClass);
     if (HasLocalization("MEX")) then begin
       //EditField(h3,v+=vs,135,"UUID",Normal,OfficialSerNr2,false,0); //!!TRANSLATE
     end;
-    //CheckBox(h4,v=6,0,"Сообщение",Check1);
   end;
   if (IsEnterprise==false) then begin
     if (HasMultiLocations or HasModTS) then begin
-      EditField(h1,v+=2*vs,-40,"Коммент.",Normal,Comment,false,0);
+      EditField(h1,v+=vs,-40,"Коммент.",Normal,Comment,false,0);
     end else begin
       EditField(h1,v+=vs,-310,"Коммент.",Normal,Comment,false,0);
     end;

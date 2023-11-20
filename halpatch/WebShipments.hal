@@ -1,0 +1,59 @@
+external procedure addParamToJSONArea(string, string, var area);
+external procedure delLastComaInArea(var area);
+external function string 255 NormalizeStrToJson(string);
+
+SetLangMode(LangRussian,"RUS",0);
+
+global webpublic procedure WebGetShipments()
+begin
+  record SHVc SHr;
+  row SHVc Shrw;
+  integer i,rwcnt,cntr,q;
+  boolean testf,TrHs;
+  area response;
+  
+  addtexttoarea("{\"shipments\": [",response);
+  setcompany(1,false);
+  SHr.ShipDate = currentdate;
+  TrHs = true;
+  while(loopbackkey("ShipDate",SHr,1,TrHs))begin
+    testf = true;
+    if(blank(SHr.TransportNumber))then begin testf = false; end;
+    
+    if(testf)then begin
+      addtexttoarea("{",response);
+      addParamToJSONArea("shipment_no",NormalizeStrToJson(SHr.SerNr),response);
+      addParamToJSONArea("date",NormalizeStrToJson(SHr.ShipDate),response);
+      addParamToJSONArea("customer_name",NormalizeStrToJson(SHr.Addr0),response);
+      addParamToJSONArea("transport_no",NormalizeStrToJson(SHr.TransportNumber),response);
+      addParamToJSONArea("city",NormalizeStrToJson(SHr.CMRText),response);
+      addParamToJSONArea("warehouse_no",NormalizeStrToJson(SHr.EShipStatus),response);
+      addParamToJSONArea("done",SHr.Check1,response);      
+      addtexttoarea(" \"items\": [",response);
+        rwcnt = matrowcnt(SHr);
+        for(i=0;i<rwcnt;i=i+1)begin
+          matrowget(SHr,i,Shrw);
+          addtexttoarea("{",response);
+          addParamToJSONArea("item_code",NormalizeStrToJson(SHrw.ArtCode),response);
+          addParamToJSONArea("item_description",NormalizeStrToJson(SHrw.Spec),response);
+          q = SHrw.Ship;
+          addParamToJSONArea("quantity",q,response);
+          delLastComaInArea(response);
+          addtexttoarea("},",response);
+        end;
+      delLastComaInArea(response);  
+      addtexttoarea("]",response);
+      addtexttoarea("},",response);
+      if(cntr>100)then begin
+        TrHs = false;
+      end;
+      cntr = cntr + 1;
+    end;
+  end;
+  delLastComaInArea(response);
+  addtexttoarea("]}",response);
+  
+  weboutarea2(response);
+  
+return;
+end;
