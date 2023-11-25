@@ -48,7 +48,7 @@ begin
             vtstr[""] = "";
             txtcnt = LineTextCnt(INr);
             for(j=0;j<txtcnt;j=j+1)begin
-              vtstr[""] = vtstr[""] & LineTextGet(INr,i);
+              vtstr[""] = vtstr[""] & LineTextGet(INr,j);
               if(j<txtcnt-1)then begin
                 vtstr[""] = vtstr[""] & "\\n";
               end;
