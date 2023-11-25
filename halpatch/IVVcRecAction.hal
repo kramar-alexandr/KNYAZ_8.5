@@ -470,7 +470,10 @@ begin
   if (IVp.OrderNr>0) then begin
     ORr.SerNr = IVp.OrderNr;
     ReadFIrstMain(ORr,1,true);
+    IVp.UpdStockFlag = 0;// Edit ************************** BPI Ukraine - KramarAlexandr - Saturday, 25 November 2023, 17:53:23
   end;
+  
+  
   if (IVp.InvType==kInvoiceTypeDownpayment) then begin
     PDr.Code = IVp.PayDeal;
     if (ReadFirstMain(PDr,1,true)) then begin
