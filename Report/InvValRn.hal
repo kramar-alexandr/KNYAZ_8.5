@@ -346,7 +346,7 @@ end;
 
 procedure GetCostPrice(record RcVc RepSpec,record INVc INp,record INVc orgINr,Boolean varf,Boolean fManyLocations,
                        record CostAccBlock CAb,
-                       Integer UseDiscount,roundmode roundof,val instock,val instockwithconsig,val orginstock,var val resprice,var val restotprice, var val resqty)
+                       Integer UseDiscount,roundmode roundof,val instock,val instockwithconsig,val orginstock,var val resprice,var val restotprice, var integer resqty)
 begin
   record WeigAvVc war;
   Integer StockListCostModel;
@@ -379,6 +379,9 @@ begin
   ISr.Code = INp.Code;
   if(readfirstmain(ISr,2,true))then begin
     resqty = ISr.RsrvQty;
+  end;
+  if(resqty==0)then begin
+    resqty = blankval;
   end;
   
   GetCostModel(INp,CAb,ITr,primary,queuecostmodel,false);
@@ -569,7 +572,7 @@ procedure InvListOneItem(record RcVc RepSpec,Integer inpos,record INVc INp,strin
                          var Boolean itemoutp,var Boolean groutp,var string lastgroup,var val sum1p,var val nrp,var val groupqtyp,var val groupsump,roundmode roundof,var val nrq2p,string dblstr,
                          vector val vlocationtotals)
 BEGIN
-  Integer typ;
+  Integer typ,resqty;
   Boolean plhit;
   val upric,zero;
   val instock,t,t2,instock2,consiginstock,instockwithconsig,instockwithconsigsin,instock2sin,totcpsin;
@@ -586,7 +589,7 @@ BEGIN
   record PISVc PISr;
   record INVc desumINr;
   string 20 desummariseditem;
-  val desummarisedkoef,resqty;
+  val desummarisedkoef;
 
   BlockLoad(mst);
   fManyLocations = false;
