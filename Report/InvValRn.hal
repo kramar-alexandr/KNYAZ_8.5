@@ -355,6 +355,7 @@ begin
   val costprc;
   record UserVc USr;// Edit ************************** BPI Ukraine - KramarAlexandr - 02, 27 10 2020 y. at 1:44:42 PM
   record PLVc PLr;// Edit ************************** BPI Ukraine - KramarAlexandr - 02, 27 10 2020 y. at 1:44:54 PM
+  record ItemStatusVc ISr;
   
   USr.Code = currentuser;// Edit ************************** BPI Ukraine - KramarAlexandr - 02, 27 10 2020 y. at 1:47:18 PM
   if(readfirstmain(USr,1,true))then begin
@@ -368,6 +369,16 @@ begin
 				INp.UPrice1 = PLr.ExVatPrice;
 			end;
   	end;
+  end;
+  
+  resqty = blankval;
+  ISr.Location = RepSpec.f2;
+  if(blank(ISr.Location))then begin
+    ISr.Location = ";;;";
+  end;
+  ISr.Code = INp.Code;
+  if(readfirstmain(ISr,2,true))then begin
+    resqty = ISr.RsrvQty;
   end;
   
   GetCostModel(INp,CAb,ITr,primary,queuecostmodel,false);
