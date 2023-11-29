@@ -794,7 +794,7 @@ BEGIN
         OutVal(3,0,instock,M4UVal,true);
       end;
       if (RepSpec.PocketPC == 0) then begin
-        OutVal(4,0,t2,M45Val,true);
+        //OutVal(4,0,t2,M45Val,true);
       end;
       typ = M45Val;
       if ((RepSpec.flags[16]!=0) or (roundof.decimals==2)) then begin
@@ -1782,7 +1782,7 @@ begin
       StartFormat(15);
       OutString(0,0,USetStr(2325),false);
       OutString(2,0,USetStr(2326),false);
-      OutString(5,0,USetStr(2327),false);
+      OutString(5,0,USetStr(12172),false);// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 29 November 2023, 11:39:19
       OutStringAdjust(3,0,USetStr(2330),true,M4Val);
       if (RepSpec.flags[15]==1) then begin
         OutStringAdjustBiDi(350,0,USetStr(7593),true,M4Val,390);
