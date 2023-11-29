@@ -471,6 +471,7 @@ begin
     ORr.SerNr = IVp.OrderNr;
     ReadFIrstMain(ORr,1,true);
     IVp.UpdStockFlag = 0;// Edit ************************** BPI Ukraine - KramarAlexandr - Saturday, 25 November 2023, 17:53:23
+    IVp.AcceptedFlag = 1;
   end;
   
   
