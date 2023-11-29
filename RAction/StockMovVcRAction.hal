@@ -329,6 +329,7 @@ begin
   record ItemStatusVc ISr;
   record PISVc PISr;
   val w,h,d,m;
+	val instock;//Edit_________________ABR//Edit_________________ABR																																
   val prev,stockreservq;
   row StockMovVc StockMov2rw;
   Integer errcode;
@@ -339,6 +340,7 @@ begin
   val serqty;
   string 255 serialnr,errofield;
   Boolean testf;
+  record LocationVc Locr;// Edit ************************** BPI Ukraine - KramarAlexandr - 03, 13 05 2020 y. at 11:29:57 AM
   
   rwcnt = MatRowCnt(SMp);
   ToLocr.Code = tolocation;
@@ -603,6 +605,9 @@ begin
             FindStockValueInclStockReserv(-1,StockMovrw.ArtCode,StockMovrw.SerialNr,frlocation,ISr,stockreservq);
           end;
           prev = prev + quant;
+          if(SMp.MoveIncludingReserve==0)then begin
+            ISr.Instock = ISr.Instock - ISr.RsrvQty;
+          end;
           if (ISr.Instock<(prev+stockreservq)) then begin
             if (sentquantf) then begin
               error = 1247;
@@ -646,7 +651,7 @@ begin
   Integer i,rwcnt,j,orwcnt,rwcnt1;
   Integer insertmode,updatemode;
   Boolean transreceivef,gentrans,transsendf,testf,test2f,checksendf,checkreceivef,confirmedf;
-  val prev,orsrv,t;
+  val prev,orsrv,t,rsrv,rsrved;
   Integer errcode;
   LongInt sernr;
   string 20 frlocation,tolocation;
