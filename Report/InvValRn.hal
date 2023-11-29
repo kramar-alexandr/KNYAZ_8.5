@@ -806,6 +806,8 @@ BEGIN
           instockwithconsig = Round(instockwithconsig/desummarisedkoef,DefaultRoundMode);
         end;
         OutVal(3,0,instockwithconsig,M4UVal,true);
+        OutString(300,0,instockwithconsig - resqty,false);// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 29 November 2023, 11:56:44
+
         if (RepSpec.flags[15]==1) then begin
           OutValBiDi(350,0,instock2,M4UVal,true,390);
         end;
@@ -1789,15 +1791,15 @@ begin
   end;
   if (RepSpec.PocketPC==0) then begin
     SetRepCol(2,70);
-    SetRepColBiDi(3,310,350);
+    SetRepColBiDi(3,260,350);
     SetRepColBiDi(4,400,440);
-    SetRepCol(5,240);
+    SetRepCol(5,200);
     SetRepColBiDi(6,480,505);
   end else begin
     SetRepCol(2,100);
-    SetRepCol(3,380);
+    SetRepCol(3,240);
     SetRepCol(4,400);
-    SetRepCol(5,240);
+    SetRepCol(5,200);
   end;
   if ((RepSpec.ArtMode==0) or (RepSpec.ArtMode==2)) then begin
     if (RepSpec.PocketPC==0) then begin
@@ -1806,6 +1808,7 @@ begin
       OutString(2,0,USetStr(2326),false);
       OutString(5,0,USetStr(12172),false);// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 29 November 2023, 11:39:19
       OutStringAdjust(3,0,USetStr(2330),true,M4Val);
+      OutString(300,0,USetStr(2333),false);// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 29 November 2023, 11:56:44
       if (RepSpec.flags[15]==1) then begin
         OutStringAdjustBiDi(350,0,USetStr(7593),true,M4Val,390);
       end;  
