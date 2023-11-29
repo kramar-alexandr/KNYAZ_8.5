@@ -806,7 +806,7 @@ BEGIN
           instockwithconsig = Round(instockwithconsig/desummarisedkoef,DefaultRoundMode);
         end;
         OutVal(3,0,instockwithconsig,M4UVal,true);
-        OutString(300,0,instockwithconsig - resqty,false);// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 29 November 2023, 11:56:44
+        OutVal(300,0,instockwithconsig - resqty,M4UVal,false);// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 29 November 2023, 11:56:44
 
         if (RepSpec.flags[15]==1) then begin
           OutValBiDi(350,0,instock2,M4UVal,true,390);
