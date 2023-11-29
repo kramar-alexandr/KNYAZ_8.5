@@ -102,3 +102,34 @@ begin
 
 return;
 end;
+
+
+global webpublic updating procedure WebConfirmAllShipments()
+begin
+  record SHVc SHr,oldSHr;
+  boolean TrHs,testf;
+  
+  logtext(0,"WebConfirmAllShipments");
+
+  SetCompany(9,false);
+  
+  SHr.OKFlag = 0;
+  TrHs = true;
+  while(loopkey("OKFlag",SHr,1,TrHs))begin
+    testf = true;
+    if(SHr.OKFlag==1)then begin TrHs = false; testf = false; end;
+    if(SHr.Check2==0 or SHr.Check1==0)then begin testf = false; end;
+    
+    if(testf)then begin
+      recordcopy(oldSHr,SHr);
+      SHr.OKFlag = 1;
+      logtext(0,"WebConfirmAllShipments " & SHr.SerNr);
+      recordupdate(oldSHr,SHr,true);
+    end;
+  end;
+  
+  
+  weboutstring("ok");
+  
+return;
+end;
