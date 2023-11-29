@@ -346,7 +346,7 @@ end;
 
 procedure GetCostPrice(record RcVc RepSpec,record INVc INp,record INVc orgINr,Boolean varf,Boolean fManyLocations,
                        record CostAccBlock CAb,
-                       Integer UseDiscount,roundmode roundof,val instock,val instockwithconsig,val orginstock,var val resprice,var val restotprice, var longint resqty)
+                       Integer UseDiscount,roundmode roundof,val instock,val instockwithconsig,val orginstock,var val resprice,var val restotprice, var integer resqty)
 begin
   record WeigAvVc war;
   Integer StockListCostModel;
@@ -572,8 +572,7 @@ procedure InvListOneItem(record RcVc RepSpec,Integer inpos,record INVc INp,strin
                          var Boolean itemoutp,var Boolean groutp,var string lastgroup,var val sum1p,var val nrp,var val groupqtyp,var val groupsump,roundmode roundof,var val nrq2p,string dblstr,
                          vector val vlocationtotals)
 BEGIN
-  Integer typ;
-  longint resqty;
+  Integer typ,resqty;
   Boolean plhit;
   val upric,zero;
   val instock,t,t2,instock2,consiginstock,instockwithconsig,instockwithconsigsin,instock2sin,totcpsin;
@@ -784,7 +783,11 @@ BEGIN
         if (RepSpec.flags[19]==2) and nonblank(desummariseditemname) then begin
           OutString(inpos,dblstr,desumINr.Code,false);
           OutStringID(2,"DblINVc",desumINr.Name,false,desumINr.Code);
-          OutString(5,0,resqty,false);
+          if(resqty!=0)then begin
+            OutString(5,0,resqty,false);
+          end else begin
+            OutString(5,0,"",false);
+          end;
         end else begin
           OutString(inpos,dblstr,INp.Code & variety,false);
           if (nonblank(variety)) then begin
@@ -793,7 +796,11 @@ BEGIN
           end else begin
             OutStringID(2,"DblINVc",INp.Name,false,INp.Code);
           end;
-          OutString(5,0,resqty,false);
+          if(resqty!=0)then begin
+            OutString(5,0,resqty,false);
+          end else begin
+            OutString(5,0,"",false);
+          end;
         end;
         if (desummarisedkoef!=0) and (RepSpec.flags[19]==2) then begin 
           instockwithconsig = Round(instockwithconsig/desummarisedkoef,DefaultRoundMode);
