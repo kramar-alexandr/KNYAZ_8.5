@@ -346,7 +346,7 @@ end;
 
 procedure GetCostPrice(record RcVc RepSpec,record INVc INp,record INVc orgINr,Boolean varf,Boolean fManyLocations,
                        record CostAccBlock CAb,
-                       Integer UseDiscount,roundmode roundof,val instock,val instockwithconsig,val orginstock,var val resprice,var val restotprice)
+                       Integer UseDiscount,roundmode roundof,val instock,val instockwithconsig,val orginstock,var val resprice,var val restotprice, var val resqty)
 begin
   record WeigAvVc war;
   Integer StockListCostModel;
@@ -575,7 +575,7 @@ BEGIN
   record PISVc PISr;
   record INVc desumINr;
   string 20 desummariseditem;
-  val desummarisedkoef;
+  val desummarisedkoef,resqty;
 
   BlockLoad(mst);
   fManyLocations = false;
@@ -709,7 +709,7 @@ BEGIN
         end;
         EndFormat;
       end;
-      GetCostPrice(RepSpec,INp,orgINr,varf,fManyLocations,CAb,GOb.UseDiscount,roundof,instock,instockwithconsig,orginstock,t2,t); 
+      GetCostPrice(RepSpec,INp,orgINr,varf,fManyLocations,CAb,GOb.UseDiscount,roundof,instock,instockwithconsig,orginstock,t2,t,resqty); 
       t = t + totcpsin;
       if (desummarisedkoef!=0) and (RepSpec.flags[19]==2) then begin 
         instockwithconsig = Round(instockwithconsig/desummarisedkoef,DefaultRoundMode);
@@ -748,7 +748,7 @@ BEGIN
       nrq2p = nrq2p + instock2;      
     end;
     if (RepSpec.ArtMode==0) then begin// Overview     
-      GetCostPrice(RepSpec,INp,orgINr,varf,fManyLocations,CAb,GOb.UseDiscount,roundof,instock,instockwithconsig,orginstock,t2,t);
+      GetCostPrice(RepSpec,INp,orgINr,varf,fManyLocations,CAb,GOb.UseDiscount,roundof,instock,instockwithconsig,orginstock,t2,t,resqty);
 
 //Trace("INp.Code " & INp.Code," instock " & instock & " t " & t);  
 
@@ -769,7 +769,7 @@ BEGIN
         if (RepSpec.flags[19]==2) and nonblank(desummariseditemname) then begin
           OutString(inpos,dblstr,desumINr.Code,false);
           OutStringID(2,"DblINVc",desumINr.Name,false,desumINr.Code);
-          OutString(5,0,desumINr.Unittext,false);
+          OutString(5,0,resqty,false);
         end else begin
           OutString(inpos,dblstr,INp.Code & variety,false);
           if (nonblank(variety)) then begin
@@ -778,7 +778,7 @@ BEGIN
           end else begin
             OutStringID(2,"DblINVc",INp.Name,false,INp.Code);
           end;
-          OutString(5,0,INp.Unittext,false);
+          OutString(5,0,resqty,false);
         end;
         if (desummarisedkoef!=0) and (RepSpec.flags[19]==2) then begin 
           instockwithconsig = Round(instockwithconsig/desummarisedkoef,DefaultRoundMode);
@@ -794,7 +794,7 @@ BEGIN
         OutVal(3,0,instock,M4UVal,true);
       end;
       if (RepSpec.PocketPC == 0) then begin
-        //OutVal(4,0,t2,M45Val,true);
+        OutVal(4,0,t2,M45Val,true);
       end;
       typ = M45Val;
       if ((RepSpec.flags[16]!=0) or (roundof.decimals==2)) then begin
