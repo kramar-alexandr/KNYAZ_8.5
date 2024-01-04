@@ -1344,7 +1344,7 @@ not needed any more
                         end else begin
                           FindStockValueInclStockReserv(IVp.OrderNr,IVrw.ArtCode,IVrw.SerialNr,location,ISr,stockreservq);
                         end;
-                        if ((ISr.Instock-stockreservq<prev) and (prev>0)) then begin
+                        if ((ISr.Instock-ISr.RsrvQty-stockreservq<prev) and (prev>0)) then begin
                           if (HasModSL) then begin
                             if (nonblank(IVrw.SerialNr)) then begin
                               RecordCheckError(1240,"",i,"SerialNr");      
