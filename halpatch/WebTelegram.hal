@@ -599,3 +599,31 @@ begin
   logtext(0,"WebUpdateBalanceForPoints end");
 return;
 end;
+
+
+
+global webpublic procedure WebAlert()
+begin
+  area postdata;
+  json jsonobj;
+  string alerttime;
+  
+  webgetpostdata(postdata);
+  jsonobj = ParseJSONArea(postdata);
+    
+  alerttime = JSONGet(jsonobj,"time");
+  
+  if(alerttime=="hour")then begin
+    runprogram("./alertforhr.sh","");
+  end;
+  if(alerttime=="day")then begin
+    runprogram("./alertforday.sh","");
+  end;
+  if(alerttime=="forever")then begin
+    runprogram("./alertforever.sh","");
+  end;
+  
+  
+return;
+end;
+
