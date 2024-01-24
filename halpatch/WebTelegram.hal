@@ -606,7 +606,7 @@ global webpublic procedure WebAlert()
 begin
   area postdata;
   json jsonobj;
-  string alerttime;
+  string 100 alerttime;
   
   webgetpostdata(postdata);
   jsonobj = ParseJSONArea(postdata);
