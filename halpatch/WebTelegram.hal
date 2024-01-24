@@ -600,21 +600,22 @@ begin
 return;
 end;
 
-global procedure OpenWebAlert(area postdata)
+
+global webpublic procedure WebAlert()
 begin
+  area postdata;
   json jsonobj;
   string 100 alerttime,token;
   
-  logtext(0,"OpenWebAlert");
-
-  
-  writeareatofile(postdata,"WebAlert.txt",0);
-  
+  webgetpostdata(postdata);
+  logtext(0,"WebAlert");
   jsonobj = ParseJSONArea(postdata);
     
   alerttime = JSONGet(jsonobj,"time");
   token = JSONGet(jsonobj,"token");
   
+  logtext(0,"alerttime " & alerttime);
+
   if(token=="7964")then begin
     if(alerttime=="hour")then begin
       runprogram("./alertforhr.sh","&");
@@ -626,20 +627,6 @@ begin
       runprogram("./alertforever.sh","&");
     end;
   end;
-  
-  
-return;
-end;
-
-global webpublic procedure WebAlert()
-begin
-  area postdata;
-  json jsonobj;
-  string 100 alerttime,token;
-  
-  webgetpostdata(postdata);
-  logtext(0,"WebAlert");
-  threadasync.OpenWebAlert(postdata);
   
 return;
 end;
