@@ -617,13 +617,13 @@ begin
   
   if(token=="7964")then begin
     if(alerttime=="hour")then begin
-      runprogram("./alertforhr.sh","");
+      runprogram("./alertforhr.sh","&");
     end;
     if(alerttime=="day")then begin
-      runprogram("./alertforday.sh","");
+      runprogram("./alertforday.sh","&");
     end;
     if(alerttime=="forever")then begin
-      runprogram("./alertforever.sh","");
+      runprogram("./alertforever.sh","&");
     end;
   end;
   
