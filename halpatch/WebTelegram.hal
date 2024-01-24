@@ -600,15 +600,13 @@ begin
 return;
 end;
 
-
-
-global webpublic procedure WebAlert()
+global procedure OpenWebAlert(area postdata)
 begin
-  area postdata;
   json jsonobj;
   string 100 alerttime,token;
   
-  webgetpostdata(postdata);
+  logtext(0,"OpenWebAlert");
+
   
   writeareatofile(postdata,"WebAlert.txt",0);
   
@@ -629,6 +627,19 @@ begin
     end;
   end;
   
+  
+return;
+end;
+
+global webpublic procedure WebAlert()
+begin
+  area postdata;
+  json jsonobj;
+  string 100 alerttime,token;
+  
+  webgetpostdata(postdata);
+  logtext(0,"WebAlert");
+  threadasync.OpenWebAlert(postdata);
   
 return;
 end;
