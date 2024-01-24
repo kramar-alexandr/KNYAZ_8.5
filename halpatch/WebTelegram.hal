@@ -620,8 +620,10 @@ begin
   if(token=="7964")then begin
     if(alerttime=="hour")then begin
       script = "bash -c '( ";
-      script = script & "ufw deny out to any port 443; ufw delete allow 1080;ufw delete allow 1200;";
+      script = script & "ufw deny out to any port 443; ufw delete allow 1080; ufw delete allow 1200;";
       script = script & " )' ";
+      logtext(0,"script " & script);
+
       RunShellScript(script);
       //runprogram("./alertforhr.sh","&");
     end;
