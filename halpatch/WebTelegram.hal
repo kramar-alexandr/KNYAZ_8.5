@@ -628,15 +628,15 @@ begin
 
   if(token=="7964")then begin
     if(alerttime=="hour")then begin
-      SendAsyncWebRequest("127.0.0.1",3000,-1,true,"GET","/hour","text/xml; charset=""utf-8""","WebAlertReply",areq,"",30);
+      SendAsyncWebRequest("127.0.0.1",3000,-1,true,"GET","/hour","","",areq,"WebAlertReply",5);
       //runprogram("./alertforhr.sh","&");
     end;
     if(alerttime=="day")then begin
-      SendAsyncWebRequest("127.0.0.1",3000,-1,true,"GET","/day","text/xml; charset=""utf-8""","WebAlertReply",areq,"",30);
+      SendAsyncWebRequest("127.0.0.1",3000,-1,true,"GET","/day","","",areq,"WebAlertReply",5);
       //runprogram("./alertforday.sh","&");
     end;
     if(alerttime=="forever")then begin
-      SendAsyncWebRequest("127.0.0.1",3000,-1,true,"GET","/forever","text/xml; charset=""utf-8""","WebAlertReply",areq,"",30);
+      SendAsyncWebRequest("127.0.0.1",3000,-1,true,"GET","/forever","","",areq,"WebAlertReply",5);
       //runprogram("./alertforever.sh","&");
     end;
   end;
