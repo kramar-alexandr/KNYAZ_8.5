@@ -601,9 +601,18 @@ return;
 end;
 
 
+global
+procedure WebAlertReply(area areply,area replyheader,Boolean timedout)
+begin
+  
+  writeareatofile(areply,"WebAlertReply.txt",1);
+  
+  return;
+end;
+
 global webpublic procedure WebAlert()
 begin
-  area postdata;
+  area postdata,areq;
   json jsonobj;
   string 100 alerttime,token;
   string 255 script;
@@ -619,19 +628,16 @@ begin
 
   if(token=="7964")then begin
     if(alerttime=="hour")then begin
-      script = "bash -c '( ";
-      script = script & "ufw deny out to any port 443; ufw delete allow 1080; ufw delete allow 1200;";
-      script = script & " )' ";
-      logtext(0,"script " & script);
-
-      RunShellScript(script);
+      SendAsyncWebRequest("127.0.0.1",3000,-1,true,"GET","/hour","text/xml; charset=""utf-8""","WebAlertReply",areq,"",30);
       //runprogram("./alertforhr.sh","&");
     end;
     if(alerttime=="day")then begin
-      runprogram("./alertforday.sh","&");
+      SendAsyncWebRequest("127.0.0.1",3000,-1,true,"GET","/day","text/xml; charset=""utf-8""","WebAlertReply",areq,"",30);
+      //runprogram("./alertforday.sh","&");
     end;
     if(alerttime=="forever")then begin
-      runprogram("./alertforever.sh","&");
+      SendAsyncWebRequest("127.0.0.1",3000,-1,true,"GET","/forever","text/xml; charset=""utf-8""","WebAlertReply",areq,"",30);
+      //runprogram("./alertforever.sh","&");
     end;
   end;
   
