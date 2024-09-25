@@ -3963,7 +3963,9 @@ begin
         MatCol(1,192,"Рассч.",0,Qty,true,0);
       end;
       if (HasAdvancedStock) then begin
-        MatCol(1,254,"На складе",0,InStock,true,0);
+        if(currentuser=="SA" or currentuser=="BOSS")then begin
+          MatCol(1,254,"На складе",0,InStock,true,0);
+        end;
         MatCol(1,314,"Описание",0,Spec,false,0);
       end else begin
         MatCol(1,254,"Описание",0,Spec,false,0);
@@ -3982,7 +3984,9 @@ begin
       end;
       pos = 154;
       if (HasAdvancedStock) then begin
-        MatCol(1,pos,"На скл.",0,InStock,true,0);
+        if(currentuser=="SA" or currentuser=="BOSS")then begin
+          MatCol(1,pos,"На скл.",0,InStock,true,0);
+        end;
         pos = pos + 62;
         if (HasSerialNumbers) then begin
           MatCol(1,pos,"Нр.серии",0,SerialNr,false,SerialNrSClass);  
