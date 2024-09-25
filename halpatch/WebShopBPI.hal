@@ -1434,7 +1434,7 @@ begin
 
   
   company = webgetarg("company");
-  login = webgetarg("company");
+  login = webgetarg("login");
   password = webgetarg("passwd");
   
   logtext(0,"company " & company);
