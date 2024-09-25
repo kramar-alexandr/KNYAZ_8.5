@@ -926,7 +926,7 @@ boolean testf;
 json js;
 val dif;
 
-  logtext(0,"WebGetUsers start " & WebLoginStatus);
+  logtext(0,"WebGetUsers start = " & WebLoginStatus);
 	if(WebLoginStatus==3 and left(currentuser,5)=="INKAS")then begin
 
 		WebSetContentType("application/json; charset=UTF-8");	
