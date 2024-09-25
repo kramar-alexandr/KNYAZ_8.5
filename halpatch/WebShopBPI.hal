@@ -935,7 +935,8 @@ val dif;
 			
 			curUSr.Code = currentuser;
 			readfirstmain(curUSr,1,true);
-			
+			logtext(0,"WebGetUsersWebGetUsersWebGetUsersWebGetUsers");
+
 			addfiletoarea("JSON/WebGetUsers_" & currentuser & ".json",resarea,false);
 			js = ParseJSONArea(resarea);
 			dif = AbsoluteVal(gethour(currenttime)-stringtoval(JSONGET(js,"hour"),M4Val));
