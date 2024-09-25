@@ -1442,7 +1442,9 @@ begin
   logtext(0,"password " & password);
   
   if(left(login,5)=="INKAS" or login=="SA" or left(login,5)=="ADMIN")then begin
-    ShowRedirectHtml("/dologin?login=" & login & "&passwd=" & password & "&company=" & company & "",WebSecureMode);
+    logtext(0,"ShowRedirectHtml " & "/dologin?login=" & login & "&passwd=" & password & "&company=" & company);
+
+    ShowRedirectHtml("/dologin?login=" & login & "&passwd=" & password & "&company=" & company,WebSecureMode);
   end;
   
 return;
