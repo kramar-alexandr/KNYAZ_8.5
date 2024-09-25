@@ -1434,6 +1434,10 @@ begin
   login = webgetarg("company");
   password = webgetarg("passwd");
   
+  logtext(0,"company " & company);
+  logtext(0,"login " & login);
+  logtext(0,"password " & password);
+  
   if(left(login,5)=="INKAS" or login=="SA" or left(login,5)=="ADMIN")then begin
     ShowRedirectHtml("/dologin?login=" & login & "&passwd=" & password & "&company=" & company & "",WebSecureMode);
   end;
