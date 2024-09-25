@@ -15,6 +15,8 @@ remote procedure CLOutVc_PasteCurncyCode(var record CLOutVc);
 remote procedure CLOutVc_PasteCorspCode(var record CLOutVc,Integer);
 external function roundmode SetRoundModeD(Integer);
 external function Boolean StockTakeVc_PasteArtCode(var record StockTakeVc,Integer,Integer,var string);
+external procedure ShowRedirectHtml(string,boolean);
+
 
 global
 procedure addParamToJSONArea(string param, string value, var area req)
@@ -1422,4 +1424,18 @@ lendinventST:;
 	logtext(0,"WebSendInventST end");
 	
  return;
+end;
+
+global webpublic procedure WebCustdologin()
+begin
+  string 20 company,login,password;
+  
+  company = webgetarg("company");
+  login = webgetarg("company");
+  password = webgetarg("passwd");
+  
+  if(left(login,5)=="INKAS" or login=="SA" or left(login,5)=="ADMIN")then begin
+    ShowRedirectHtml("/dologin?login=" & login & "&passwd=" & password & "&company=" & company & "",WebSecureMode);
+  end;
+return;
 end;
