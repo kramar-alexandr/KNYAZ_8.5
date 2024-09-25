@@ -108,6 +108,41 @@ lWebIsLogIn:;
   return;
 end;
 
+global webpublic procedure WebIsLogInInkass()
+begin
+  Time checkTime;
+  array string 5 checkTimeStr;
+  string 255 sentMD5,checkMD5,foruser;
+  integer deltaMin,i,cti;
+  boolean isLogedIn;
+  
+  
+  
+  logtext(0,"WebHost:" & webhost);
+  logtext(0,"WebIsLogIn start");
+  
+  logtext(0,"WebIsLogIn before " & currentuser);
+  logtext(0,"WebRemoteIPAddress " & WebRemoteIPAddress);
+  
+  foruser = webgetarg("user");
+  if(nonblank(foruser) and foruser!=left(currentuser,len(foruser)))then begin
+    WebOutString("false");
+    goto lWebIsLogInInkass;
+  end;
+  isLogedIn = WebLoginStatus==3;
+  logtext(0,"isLogedIn " & isLogedIn);
+  
+  if (isLogedIn and nonblank(currentuser)) then begin
+  	logtext(0,"WebIsLogIn" & currentuser);
+    WebOutString("true");
+  end else begin
+  	WebOutString("false");
+  end;
+  
+  logtext(0,"WebIsLogIn end");
+lWebIsLogInInkass:;
+  return;
+end;
 
 
 global webpublic updating procedure WebMoveOk()
