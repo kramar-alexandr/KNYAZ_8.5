@@ -80,6 +80,9 @@ begin
   integer deltaMin,i,cti;
   boolean isLogedIn;
   
+  logtext(0,"WebHost:" & webhost);
+
+  
   logtext(0,"WebIsLogIn start");
   
   logtext(0,"WebIsLogIn before " & currentuser);
