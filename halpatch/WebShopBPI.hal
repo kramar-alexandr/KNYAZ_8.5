@@ -969,6 +969,7 @@ val dif;
         AddTextToArea("}",resarea);
       
         writeareatofile(resarea,"JSON/WebGetUsers_" & currentuser & ".json",0);
+        writeareatofile(resarea,"hansa.log",1);
 	    end;
 			weboutarea2(resarea);
 	end;
