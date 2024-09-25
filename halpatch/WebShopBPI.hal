@@ -927,8 +927,8 @@ json js;
 val dif;
 
   logtext(0,"WebGetUsers start = " & WebLoginStatus);
-	if(WebLoginStatus==3 and (left(currentuser,5)=="INKAS" or left(currentuser,6)=="INVENT"))then begin
-
+	//if(WebLoginStatus==3 and (left(currentuser,5)=="INKAS" or left(currentuser,6)=="INVENT"))then begin
+  if(true)then begin
 		WebSetContentType("application/json; charset=UTF-8");	
 
 		SetCompany(9,false);
