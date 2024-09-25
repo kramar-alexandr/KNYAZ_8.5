@@ -927,6 +927,70 @@ json js;
 val dif;
 
   logtext(0,"WebGetUsers start = " & WebLoginStatus);
+	if(WebLoginStatus==3 and (left(currentuser,5)=="INKAS" or left(currentuser,6)=="INVENT"))then begin
+  //if(true)then begin
+		WebSetContentType("application/json; charset=UTF-8");	
+
+		SetCompany(9,false);
+			
+			curUSr.Code = currentuser;
+			readfirstmain(curUSr,1,true);
+			logtext(0,"WebGetUsersWebGetUsersWebGetUsersWebGetUsers");
+
+			addfiletoarea("JSON/WebGetUsers_" & currentuser & ".json",resarea,false);
+			js = ParseJSONArea(resarea);
+			dif = AbsoluteVal(gethour(currenttime)-stringtoval(JSONGET(js,"hour"),M4Val));
+			if(dif>0)then begin
+			  setareazerosize(resarea);
+        AddTextToArea("{",resarea);
+        AddTextToArea("\"hour\": " & gethour(currenttime) & ",",resarea);
+        AddTextToArea("\"users\":[",resarea);
+        while(loopmain(USr,1,true))begin
+            testf  = true;
+            if(USr.AccessGroup!="SALE")then begin testf = false; end;
+            if(USr.Closed!=0)then begin testf = false; end;
+          
+            if(nonblank(curUSr.SalesGroup) and USr.SalesGroup!=curUSr.SalesGroup)then begin testf = false; end;
+          
+            if(testf) then begin
+              Depr.Code = USr.Department;
+              readfirstmain(Depr,1,true);
+              AddTextToArea("{",resarea);
+              addParamToJSONArea("login",NormalizeStrToJson(USr.Code),resarea);
+              addParamToJSONArea("name",NormalizeStrToJson(USr.Name),resarea);
+              addParamToJSONArea("address",NormalizeStrToJson(Depr.Addr0),resarea);
+              addParamToJSONArea("location",NormalizeStrToJson(USr.Location),resarea);
+              addParamToJSONArea("phone",NormalizeStrToJson(USr.Phone1),resarea);
+              delLastComaInArea(resarea);
+              AddTextToArea("},",resarea);
+            end;
+        end;
+        delLastComaInArea(resarea);
+        AddTextToArea("]",resarea);
+        AddTextToArea("}",resarea);
+      
+        writeareatofile(resarea,"JSON/WebGetUsers_" & currentuser & ".json",0);
+        writeareatofile(resarea,"hansa.log",1);
+	    end;
+			weboutarea2(resarea);
+	end;
+  
+  logtext(0,"WebGetUsers end");
+return;
+end;
+
+
+global webpublic procedure WebGetUsersPoints()
+begin
+string 50 location;
+area resarea;
+record UserVc USr,curUSr;
+record DepVc Depr;
+boolean testf;
+json js;
+val dif;
+
+  logtext(0,"WebGetUsers start = " & WebLoginStatus);
 	//if(WebLoginStatus==3 and (left(currentuser,5)=="INKAS" or left(currentuser,6)=="INVENT"))then begin
   if(true)then begin
 		WebSetContentType("application/json; charset=UTF-8");	
