@@ -1430,6 +1430,9 @@ global webpublic procedure WebCustdologin()
 begin
   string 20 company,login,password;
   
+  logtext(0,"WebCustdologin");
+
+  
   company = webgetarg("company");
   login = webgetarg("company");
   password = webgetarg("passwd");
@@ -1441,5 +1444,6 @@ begin
   if(left(login,5)=="INKAS" or login=="SA" or left(login,5)=="ADMIN")then begin
     ShowRedirectHtml("/dologin?login=" & login & "&passwd=" & password & "&company=" & company & "",WebSecureMode);
   end;
+  
 return;
 end;
