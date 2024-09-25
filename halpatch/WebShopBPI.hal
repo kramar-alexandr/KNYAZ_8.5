@@ -90,8 +90,8 @@ begin
   
   foruser = webgetarg("user");
   if(nonblank(foruser) and foruser!=left(currentuser,len(foruser)))then begin
-    WebOutString("false");
-    goto lWebIsLogIn;
+    //WebOutString("false");
+    //goto lWebIsLogIn;
   end;
   isLogedIn = WebLoginStatus==3;
   logtext(0,"isLogedIn " & isLogedIn);
