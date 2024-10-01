@@ -293,7 +293,9 @@ begin
 						addParamToJSONArea("BarCode",NormalizeStrToJson(INr.BarCode),resarea);
 						addParamToJSONArea("AlternativeCode",NormalizeStrToJson(INr.AlternativeCode),resarea);
 						addParamToJSONArea("Name",NormalizeStrToJson(INr.Name),resarea);
-						addParamToJSONArea("Instock",NormalizeStrToJson(ISr.Instock),resarea);
+						if(currentuser!="INVENT")then begin
+              addParamToJSONArea("Instock",NormalizeStrToJson(ISr.Instock),resarea);
+						end;
 						addParamToJSONArea("Price",NormalizeStrToJson(price),resarea);
 						addParamToJSONArea("InMove",NormalizeStrToJson(moveQuant[INr.Code]),resarea);
 						delLastComaInArea(resarea);
