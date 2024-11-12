@@ -2104,6 +2104,8 @@ begin
   ORr.OfficialSerNr = "";
   ORr.OfficialSerNrSerie = "";
   AddItemsOfCertainGroupToOR(ORr,"Éè"); //Edit***************************Sasha2,15:35 01.03.2017
+  ORr.Location = "SORTIROVOC";
+  ORr.PriceList = "RRP3";
   ORVcRecordDefaults = res;  
   return;
 end;
