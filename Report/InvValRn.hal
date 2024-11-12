@@ -841,6 +841,7 @@ BEGIN
         OutVal(1,0,t2,M45Val,true);
       end;
       EndFormat;
+      gray_divider(0,1);
       end;
 /*      
       if (RepSpec.flags[11]==3) then begin
