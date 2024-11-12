@@ -590,6 +590,7 @@ BEGIN
   record INVc desumINr;
   string 20 desummariseditem;
   val desummarisedkoef;
+  record PLVc PLr;
 
   BlockLoad(mst);
   fManyLocations = false;
@@ -763,11 +764,18 @@ BEGIN
       groupqtyp = groupqtyp + instockwithconsig;
       nrq2p = nrq2p + instock2;      
     end;
-    if (RepSpec.ArtMode==0) then begin// Overview     
+    if (RepSpec.ArtMode==0) then begin// Overview  
+      t2 = blankval;   
       GetCostPrice(RepSpec,INp,orgINr,varf,fManyLocations,CAb,GOb.UseDiscount,roundof,instock,instockwithconsig,orginstock,t2,t,resqty);
 
 //Trace("INp.Code " & INp.Code," instock " & instock & " t " & t);  
-
+      if(RepSpec.Comparison==1 and nonblank(RepSpec.f13))then begin
+        PLr.PLCode = RepSpec.f13;
+        PLr.ArtCode = INp.Code;
+        if(readfirstmain(PLr,2,true)==false)then begin
+          goto skipitem;
+        end;
+      end;
       t = t + totcpsin;
       if (totcpsin>0) then begin
         t2 = t/instockwithconsig;
@@ -843,6 +851,8 @@ BEGIN
       EndFormat;
       gray_divider(0,1);
       end;
+      
+skipitem:;
 /*      
       if (RepSpec.flags[11]==3) then begin
         StartFormat(15);
