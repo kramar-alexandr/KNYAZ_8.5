@@ -622,28 +622,30 @@ BEGIN
     end;
   end;
   BlockLoad(GOb);
-  if (RepSpec.flags[2]==1) then begin
-    if (printf) then begin
-    if (lastgroup!=INp.Group) then begin
-      if (itemoutp==true) then begin
-        if (blank(groupsump)==false) or (blank(groupqtyp)==false) then begin
-          Gray_Divider(0,1);
-          StartFormat(15);
-          OutString(20,0,lastgroup,false);
-          GetItemGroupDescription(lastgroup,tstr);
-          OutString(100,0,tstr,false);
-          OutString(260,0,USetStr(3248),true);
-          OutVal(310,0,groupqtyp,M4Qty,true);
-          OutVal(480,0,groupsump,M45Val,true);
-          EndFormat;
-          groupsump = blankval;
-          groupqtyp = blankval;
-          Gray_Divider(0,1);
-        end;
-        groutp = false;
-      end;  
-      lastgroup = INp.Group;
-    end;
+  if(RepSpec.Comparison==0)then begin
+    if (RepSpec.flags[2]==1) then begin
+      if (printf) then begin
+      if (lastgroup!=INp.Group) then begin
+        if (itemoutp==true) then begin
+          if (blank(groupsump)==false) or (blank(groupqtyp)==false) then begin
+            Gray_Divider(0,1);
+            StartFormat(15);
+            OutString(20,0,lastgroup,false);
+            GetItemGroupDescription(lastgroup,tstr);
+            OutString(100,0,tstr,false);
+            OutString(260,0,USetStr(3248),true);
+            OutVal(310,0,groupqtyp,M4Qty,true);
+            OutVal(480,0,groupsump,M45Val,true);
+            EndFormat;
+            groupsump = blankval;
+            groupqtyp = blankval;
+            Gray_Divider(0,1);
+          end;
+          groutp = false;
+        end;  
+        lastgroup = INp.Group;
+      end;
+      end;
     end;
   end;
   itemoutp = true;
@@ -1611,19 +1613,21 @@ BEGIN
       vreptotals["itemscount"] = vreptotals["itemscount"] + 1;
     end;
   end;
-  if (RepSpec.flags[2]==1) then begin
-    Gray_Divider(0,1);
-    StartFormat(15);
-    OutString(20,0,lastgroup,false);
-    GetItemGroupDescription(lastgroup,tstr);
-    OutString(100,0,tstr,false);
-    OutString(260,0,USetStr(3248),true);
-    OutVal(310,0,groupqty,M4Qty,true);
-    OutVal(6,0,groupsum,M45Val,true);
-    groupsum = 0;
-    groupqty = 0;
-    EndFormat;
-    Gray_Divider(0,1);
+  if(RepSpec.Comparison==0)then begin
+    if (RepSpec.flags[2]==1) then begin
+      Gray_Divider(0,1);
+      StartFormat(15);
+      OutString(20,0,lastgroup,false);
+      GetItemGroupDescription(lastgroup,tstr);
+      OutString(100,0,tstr,false);
+      OutString(260,0,USetStr(3248),true);
+      OutVal(310,0,groupqty,M4Qty,true);
+      OutVal(6,0,groupsum,M45Val,true);
+      groupsum = 0;
+      groupqty = 0;
+      EndFormat;
+      Gray_Divider(0,1);
+    end;
   end;
 LILLoopIN:;
   return;
@@ -1907,24 +1911,26 @@ begin
     if (RepSpec.ArtMode==0) then begin
       Gray_Divider(0,1);
     end;  
-    StartFormat(15);
-    if (RepSpec.Media==mtFile or RepSpec.Media==mtExcel) then begin
-      OutString(0,0,"",false);
-      OutString(0,0,"",false);
-      OutString(2,0,vreptotals["itemscount"],false);
-    end else begin
-      OutString(0,0,USetStr(30067),false);
-      OutVal(2,0,vreptotals["itemscount"],M4UVal,false);
+    if(RepSpec.Comparison==0)then begin
+      StartFormat(15);
+      if (RepSpec.Media==mtFile or RepSpec.Media==mtExcel) then begin
+        OutString(0,0,"",false);
+        OutString(0,0,"",false);
+        OutString(2,0,vreptotals["itemscount"],false);
+      end else begin
+        OutString(0,0,USetStr(30067),false);
+        OutVal(2,0,vreptotals["itemscount"],M4UVal,false);
+      end;
+      OutVal(3,0,nr,M4UVal,true);
+      if (RepSpec.flags[15]==1) then begin  
+        OutValBiDi(350,0,nrq2,M4UVal,true,390);
+      end;  
+      if (RepSpec.Media==mtFile or RepSpec.Media==mtExcel) then begin
+        OutString(2,0,"",false);
+      end;
+      OutVal(6,0,sum1,M45Val,true);
+      EndFormat;
     end;
-    OutVal(3,0,nr,M4UVal,true);
-    if (RepSpec.flags[15]==1) then begin  
-      OutValBiDi(350,0,nrq2,M4UVal,true,390);
-    end;  
-    if (RepSpec.Media==mtFile or RepSpec.Media==mtExcel) then begin
-      OutString(2,0,"",false);
-    end;
-    OutVal(6,0,sum1,M45Val,true);
-    EndFormat;
   end;
 LInvValRn:; 
   EndJob;
