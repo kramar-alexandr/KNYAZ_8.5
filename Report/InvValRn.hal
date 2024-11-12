@@ -805,11 +805,13 @@ BEGIN
         if (desummarisedkoef!=0) and (RepSpec.flags[19]==2) then begin 
           instockwithconsig = Round(instockwithconsig/desummarisedkoef,DefaultRoundMode);
         end;
-        OutVal(3,0,instockwithconsig,M4UVal,true);
-        OutVal(300,0,instockwithconsig - resqty,M4UVal,false);// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 29 November 2023, 11:56:44
+        if(RepSpec.Comparison==0)then begin
+          OutVal(3,0,instockwithconsig,M4UVal,true);
+          OutVal(300,0,instockwithconsig - resqty,M4UVal,false);// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 29 November 2023, 11:56:44
 
-        if (RepSpec.flags[15]==1) then begin
-          OutValBiDi(350,0,instock2,M4UVal,true,390);
+          if (RepSpec.flags[15]==1) then begin
+            OutValBiDi(350,0,instock2,M4UVal,true,390);
+          end;
         end;
       end else begin
         StartFormat(15);
@@ -817,18 +819,24 @@ BEGIN
         OutString(2,0,left(INp.Name,15),false);
         OutVal(3,0,instock,M4UVal,true);
       end;
-      if (RepSpec.PocketPC == 0) then begin
-        OutVal(4,0,t2,M45Val,true);
+      if(RepSpec.Comparison==0)then begin
+        if (RepSpec.PocketPC == 0) then begin
+          OutVal(4,0,t2,M45Val,true);
+        end;
       end;
-      typ = M45Val;
-      if ((RepSpec.flags[16]!=0) or (roundof.decimals==2)) then begin
-        t = Round(t,DefaultRoundMode);
-        typ = M4Val;
-      end;
-      if (RepSpec.repname=="InvValVarRn") then begin
-        OutVal(1,0,t,typ,true);
+      if(RepSpec.Comparison==0)then begin
+        typ = M45Val;
+        if ((RepSpec.flags[16]!=0) or (roundof.decimals==2)) then begin
+          t = Round(t,DefaultRoundMode);
+          typ = M4Val;
+        end;
+        if (RepSpec.repname=="InvValVarRn") then begin
+          OutVal(1,0,t,typ,true);
+        end else begin
+          OutVal(6,0,t,typ,true);
+        end;
       end else begin
-        OutVal(6,0,t,typ,true);
+        OutVal(1,0,t2,M45Val,true);
       end;
       EndFormat;
       end;
@@ -1806,18 +1814,23 @@ begin
       StartFormat(15);
       OutString(0,0,USetStr(2325),false);
       OutString(2,0,USetStr(2326),false);
-      OutString(5,0,USetStr(12172),false);// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 29 November 2023, 11:39:19
-      OutStringAdjust(3,0,USetStr(2330),true,M4Val);
-      OutString(300,0,USetStr(2333),false);// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 29 November 2023, 11:56:44
-      if (RepSpec.flags[15]==1) then begin
-        OutStringAdjustBiDi(350,0,USetStr(7593),true,M4Val,390);
-      end;  
-      switch (RepSpec.flags[11]) begin
-        case 1: OutStringAdjust(4,0,USetStr(10551),true,M4Val);
-        case 2: OutStringAdjust(4,0,USetStr(/*10552*/ 50005),true,M4Val); //Edit***************************Sasha2,13:51 17.10.2016
-        otherwise OutStringAdjust(4,0,USetStr(2331),true,M4Val);
+      
+      if(RepSpec.Comparison==0)then begin
+        OutString(5,0,USetStr(12172),false);// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 29 November 2023, 11:39:19
+        OutStringAdjust(3,0,USetStr(2330),true,M4Val);
+        OutString(300,0,USetStr(2333),false);// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 29 November 2023, 11:56:44
+        if (RepSpec.flags[15]==1) then begin
+          OutStringAdjustBiDi(350,0,USetStr(7593),true,M4Val,390);
+        end;  
+        switch (RepSpec.flags[11]) begin
+          case 1: OutStringAdjust(4,0,USetStr(10551),true,M4Val);
+          case 2: OutStringAdjust(4,0,USetStr(/*10552*/ 50005),true,M4Val); //Edit***************************Sasha2,13:51 17.10.2016
+          otherwise OutStringAdjust(4,0,USetStr(2331),true,M4Val);
+        end;
+        OutStringAdjust(6,0,USetStr(2332),true,M4Val);
+      end else begin
+        OutString(1,0,USetStr(50005),true);
       end;
-      OutStringAdjust(6,0,USetStr(2332),true,M4Val);
       EndFormat;
     end else begin
       StartFormat(15);
