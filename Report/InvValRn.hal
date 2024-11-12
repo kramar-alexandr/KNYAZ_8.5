@@ -1798,7 +1798,7 @@ begin
     goto LInvValRn;
   end;
   if (RepSpec.PocketPC==0) then begin
-    SetRepCol(2,70);
+    SetRepCol(2,110);
     SetRepColBiDi(3,260,350);
     SetRepColBiDi(4,400,440);
     SetRepCol(5,200);
