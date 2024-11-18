@@ -10,8 +10,8 @@ begin
   
     startformat(15);
       outstring(0,0,"Сч/ф",false);
-      outstring(100,0,"Дата",false);
-      outstring(200,0,"Клиент",false);
+      outstring(60,0,"Дата",false);
+      outstring(150,0,"Клиент",false);
       outstring(300,0,"Сумма",false);
       outstring(400,0,"Отгружен",false);
     endformat;
@@ -29,8 +29,8 @@ begin
       if(testf)then begin
         startformat(15);
           outstring(0,"DblIVVc",IVr.SerNr,false);
-          outstring(100,0,IVr.InvDate,false);
-          outstring(200,0,IVr.Addr0,false);
+          outstring(60,0,IVr.InvDate,false);
+          outstring(150,0,IVr.Addr0,false);
           outstring(300,0,IVr.Sum4,false);
           outstring(400,0,IVr.ShipedFlag,false);
         endformat;
