@@ -32,7 +32,10 @@ begin
           outstring(60,0,IVr.InvDate,false);
           outstring(150,0,IVr.Addr0,false);
           outstring(300,0,IVr.Sum4,false);
-          outstring(400,0,IVr.ShipedFlag,false);
+          if(IVr.ShipedFlag==1)then begin
+            outstring(400,0,"X",false);
+          end;
+          
         endformat;
       end;
     end;
