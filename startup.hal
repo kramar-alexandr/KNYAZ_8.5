@@ -25,7 +25,7 @@ begin
 	Report("Финансовый отчет",MyFinResRClass,MyFinResRn,0,modSL);
 	Report("Финансовый отчет",MyFinResRClass,MyFinResRn,0,modSO);
 	
-	Report("Отгрузить",IVToShipRClass,IVToShipRn,0,modNL);
+	Report("Отгрузить",IVToShipRClass,IVToShipRn,0,modIN);
 	Report("Отгрузить",IVToShipRClass,IVToShipRn,0,modSL);
 	Report("Отгрузить",IVToShipRClass,IVToShipRn,0,modSO);
 	
