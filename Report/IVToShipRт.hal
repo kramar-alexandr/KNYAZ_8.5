@@ -35,6 +35,7 @@ begin
           if(IVr.ShipedFlag==1)then begin
             outstring(400,0,"X",false);
           end;
+          gray_divider(0,1);
           
         endformat;
       end;
