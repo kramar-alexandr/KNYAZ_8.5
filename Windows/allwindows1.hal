@@ -1980,7 +1980,7 @@ if (true) then begin
     vm = v;
   end;
   CheckBox(h4=-80,v,0,"OK",OKFlag);
-  CheckBox(h4=-80,v+vs,0,"Отгружен",ShipedFlag);
+  CheckBox(h4=-180,v,0,"Отгружен",ShipedFlag);
   TileButton(1,"Сроки");
   TileButton(2,"Товары");
   TileButton(3,"Валюта");
