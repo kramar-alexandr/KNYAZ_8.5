@@ -2045,15 +2045,15 @@ if (true) then begin
     EditField(60,-21,45,"Ит.кол-во",ViewOnly,TotQty,true,0); //Edit***************************Sasha2,15:38 06.12.2016
     if (UseTaxTemplatesforTaxCalc==false) then begin
       if (UserCanAction("ViewCostPrice",true)) then begin
-        EditField(160,-41,70,"GP %",Normal,GPProc,true,0); 
-        EditField(160,-21,70,"Итого пр.ибыль",ViewOnly,TotGP,true,0);
+        EditField(190,-41,70,"GP %",Normal,GPProc,true,0); 
+        EditField(190,-21,70,"Прибыль",ViewOnly,TotGP,true,0);
       end;
       if (HasLocalization("GBR,LTU,POL,LVA")) then begin
         EditField(320,-41,50,"Обратный #VAT#",ViewOnly,RvrsVAT,true,0);
         EditField(300,-21,70,"Без налога",ViewOnly,TAX1Sum,true,0);
       end else begin
-      EditField(290,-41,70,"Налог",ViewOnly,TAX2Sum,true,0);
-      EditField(290,-21,70,"Вн. нал.",ViewOnly,TAX1Sum,true,0);
+      //EditField(290,-41,70,"Налог",ViewOnly,TAX2Sum,true,0);
+      //EditField(290,-21,70,"Вн. нал.",ViewOnly,TAX1Sum,true,0);
       end;
       EditField(420,-41,95,"НДС",ViewOnly ,Sum3,true,0);
     end else begin
