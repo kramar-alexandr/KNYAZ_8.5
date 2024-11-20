@@ -656,7 +656,7 @@ BEGIN
       rwcnt = MatRowCnt(IVp);
       for (i=0;i<rwcnt;i=i+1) begin
         MatRowGet(IVp,i,IVrw);
-        if(currentuser!="SA")then begin// Edit ************************** BPI Ukraine - KramarAlexandr - 02, 11 08 2020 y. at 3:06:56 PM
+        if(currentuser!="SA" and currentuser!="BOSS")then begin// Edit ************************** BPI Ukraine - KramarAlexandr - 02, 11 08 2020 y. at 3:06:56 PM
 					if (ReadFirstItem(IVrw.ArtCode,INr,false,false)) then begin
 						if ((INr.ItemType==1) or (INr.ItemType==2)) then begin
 							res = 1273;
