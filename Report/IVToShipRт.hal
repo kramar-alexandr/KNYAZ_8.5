@@ -1,4 +1,6 @@
-SetLangMode(LangRussian,"RUS",0); 
+external inner procedure ExtractObj(string,var Integer,var string);
+
+SetLangMode(LangRussian,"RUS",2); 
 
 global procedure IVToShipRn()
 begin
@@ -6,14 +8,14 @@ begin
   boolean TrHs,testf;
   record CUVc CUr;
   
-  startreportnoheaderjob("éÚ„ÛÁËÚ¸");
+  startreportnoheaderjob("–û—Ç–≥—Ä—É–∑–∏—Ç—å");
   
     startformat(15);
-      outstring(0,0,"ë˜/Ù",false);
-      outstring(60,0,"Ñ‡Ú‡",false);
-      outstring(150,0,"äÎËÂÌÚ",false);
-      outstring(300,0,"ëÛÏÏ‡",false);
-      outstring(400,0,"éÚ„ÛÊÂÌ",false);
+      outstring(0,0,"–°—á/—Ñ",false);
+      outstring(60,0,"–î–∞—Ç–∞",false);
+      outstring(150,0,"–ö–ª–∏–µ–Ω—Ç",false);
+      outstring(300,0,"–°—É–º–º–∞",false);
+      outstring(400,0,"–û—Ç–≥—Ä—É–∂–µ–Ω",false);
     endformat;
   
     IVr.InvDate = currentdate;
@@ -43,5 +45,130 @@ begin
   
   endjob;
 
+return;
+end;
+
+
+function string 60 GetDispGroupType(string DispGroup)
+begin
+  string 60 res;
+  record DIVc DIr;
+  DIr.Code = DispGroup;
+  if (ReadFirstMain(DIr,1,true)) then begin
+    res = DIr.CType;  
+  end
+  else begin
+    res = "";
+  end;
+
+  GetDispGroupType = res;
+  return 
+end;
+
+function string 60 GetDispGroup(string DispGroups, string DispGroupType) 
+begin
+  string 255 s;
+  string 60 grp;
+  Integer pos;
+  
+  s= DispGroups;
+  pos = 0;
+  ExtractObj(s,pos,grp);
+  while (nonblank(grp)) begin
+    if (GetDispGroupType(grp)) == DispGroupType then begin // SBU
+      GetDispGroup = grp;
+      return;
+    end;
+    ExtractObj(s,pos,grp);
+  end; 
+  GetDispGroup = "";
+  return;
+end;
+
+global procedure TelegPriceRn(record RcVc RepSpec)
+begin
+  record INVc INr;
+  record ItemStatusVc ISr;
+  record PLVc PLr;
+  boolean TrHs,testf;
+  string 255 spec,class,classname, group;
+  integer price,i,rwcnt;
+  record CTypeVc CTyper;
+  record ORVc ORr;
+  row ORVc ORrw;
+  record DIVc DIr;
+  vector string 200 vdinames;
+
+  while(loopmain(DIr,1,true))begin
+    vdinames[DIr.Code] = DIr.Name;
+  end;
+
+  //CTyper.Code = "SIZE";
+  //readfirstmain(CTyper,1,true);
+  
+  startreportnoheaderjob("–¢–µ–ª–µ–≥—Ä–∞–º –ø—Ä–∞–π—Å");
+    
+    PLr.PLCode = "RRP3";
+    TrHs = true;
+    while(loopmain(PLr,1,TrHs))begin
+      testf = true;
+      if(PLr.PLCode!="RRP3")then begin TrHs = false; testf = false; end;
+      ISr.Code = PLr.ArtCode;
+      ISr.Location = "SORTIROVOC";
+      readfirstmain(ISr,1,true);
+
+      if(ISr.Instock<=0)then begin testf = false; end;
+
+      if(testf)then begin
+        INr.Code = PLr.ArtCode;
+        readfirstmain(INr,1,true);
+        spec = linetextget(INr,0);
+        if(blank(spec))then begin
+          spec = INr.Name;
+        end;
+        class = GetDispGroup(INr.DispGroups,"SIZE");
+        //startformat(15);
+          price = PLr.ExVatPrice;
+        //  outstring(0,0,"‚òÅ" & spec & " - " & price & " –≥—Ä–Ω",false);
+        //endformat;
+        clearrow(ORr,ORrw,1);
+        ORrw.ArtCode = PLr.ArtCode;
+        ORrw.Price = PLr.ExVatPrice;
+        ORrw.Spec = spec;
+        ORrw.Objects = class;
+        matrowput(ORr,matrowcnt(ORr),ORrw);
+
+      end;
+    
+    end;
+    SortRows(ORr,"Objects",true);
+
+    if(matrowcnt(ORr))>0 then begin
+      matrowget(ORr,0,ORrw);
+      group = ORrw.Objects;
+      startformat(15);
+        outstring(0,0,"‚òÅ" & vdinames[group],false);
+      endformat;
+    end;
+    
+    rwcnt = matrowcnt(ORr);
+    for (i=0;i<rwcnt;i=i+1) begin
+      matrowget(ORr,i,ORrw);
+
+      if(nonblank(ORrw.Objects) and group!=ORrw.Objects)then begin
+        group = ORrw.Objects;
+        startformat(15);
+          outstring(0,0,"‚≠ê" & vdinames[group] & "‚≠ê",false);
+        endformat;
+      
+      end;
+
+      startformat(15);
+        outstring(0,0,"‚òÅ" & ORrw.Spec & " - " & ORrw.Price & " –≥—Ä–Ω",false);
+      endformat;
+    end;
+
+  endjob;
+  
 return;
 end;

@@ -587,3 +587,15 @@ begin
 
   EndWindow;
 end;
+
+window TelegPriceRClass:1
+  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  real h,v,vm,vs;
+  WindowBegin("Телеграм прайс",TelegPriceRClass,CGRcW,RcType);
+  SetWRect(20,80,470,370);
+  vs = 20;
+  h=150;
+
+  EndWindow;
+end;
