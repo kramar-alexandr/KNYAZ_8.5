@@ -121,6 +121,7 @@ begin
 
       if(testf)then begin
         INr.Code = PLr.ArtCode;
+        logtext(0,INr.Code);
         readfirstmain(INr,1,true);
         spec = linetextget(INr,0);
         if(blank(spec))then begin
