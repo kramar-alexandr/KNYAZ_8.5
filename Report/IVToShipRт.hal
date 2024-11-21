@@ -148,7 +148,11 @@ begin
       matrowget(ORr,0,ORrw);
       group = ORrw.Objects;
       startformat(15);
+      endformat;
+      startformat(15);
         outstring(0,0,"☁" & vdinames[group],false);
+      endformat;
+      startformat(15);
       endformat;
     end;
     
@@ -159,9 +163,12 @@ begin
       if(nonblank(ORrw.Objects) and group!=ORrw.Objects)then begin
         group = ORrw.Objects;
         startformat(15);
+        endformat;
+        startformat(15);
           outstring(0,0,"⭐" & vdinames[group] & "⭐",false);
         endformat;
-      
+        startformat(15);
+        endformat;
       end;
 
       startformat(15);
