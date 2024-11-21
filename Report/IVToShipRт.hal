@@ -115,7 +115,7 @@ begin
       if(PLr.PLCode!="RRP3")then begin TrHs = false; testf = false; end;
       ISr.Code = PLr.ArtCode;
       ISr.Location = "SORTIROVOC";
-      readfirstmain(ISr,1,true);
+      readfirstmain(ISr,2,true);
 
       if(ISr.Instock<=0)then begin testf = false; end;
 
