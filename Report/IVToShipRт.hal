@@ -110,7 +110,7 @@ begin
     
     PLr.PLCode = "RRP3";
     TrHs = true;
-    while(loopmain(PLr,1,TrHs))begin
+    while(loopkey("PLCode",PLr,1,TrHs))begin
       testf = true;
       if(PLr.PLCode!="RRP3")then begin TrHs = false; testf = false; end;
       ISr.Code = PLr.ArtCode;
