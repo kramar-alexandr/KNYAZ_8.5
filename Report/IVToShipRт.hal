@@ -1,4 +1,4 @@
-external inner procedure ExtractObj(string,var Integer,var string);
+external procedure ExtractObj(string,var Integer,var string);
 
 SetLangMode(LangRussian,"RUS",2); 
 
