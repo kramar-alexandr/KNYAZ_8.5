@@ -145,6 +145,15 @@ begin
     SortRows(ORr,"Objects",true);
 
     if(matrowcnt(ORr))>0 then begin
+      startformat(15);
+        outstring(0,0,"📄Прайс на " & DateToString(currentdate,"DD-MM-YYYY") & "📄",false);
+      EndFormat;
+      startformat(15);
+        outstring(0,0,"(ціна за блок)",false);
+      EndFormat;
+      startformat(15);
+      endformat;
+
       matrowget(ORr,0,ORrw);
       group = ORrw.Objects;
       if(nonblank(group))then begin
@@ -176,7 +185,35 @@ begin
       startformat(15);
         outstring(0,0,"☁" & ORrw.Spec & " - " & ORrw.Price & " грн",false);
       endformat;
+
+
+
     end;
+
+    startformat(15);
+    endformat;
+
+    startformat(15);
+      outstring(0,0,"Для замовлення звяжіться з менеджером",false);
+    endformat;
+    startformat(15);
+      outstring(0,0,"📱(Vodafone) tel:+38(066)895-32-20",false);
+    endformat;
+
+
+    startformat(15);
+    endformat;
+
+    //😉Ми з задоволенням відповімо Вам на будь-які питання стосовно замовлення
+//Дзвоніть 📞, 
+//або напишіть менеджеру⬇️
+    startformat(15);
+      outstring(0,0,"😉Ми з задоволенням відповімо Вам на будь-які питання стосовно замовлення",false);
+    endformat;
+    startformat(15);
+      outstring(0,0,"Дзвоніть 📞, або напишіть менеджеру⬇️",false);
+    endformat;
+    
 
   endjob;
   
