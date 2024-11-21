@@ -147,13 +147,15 @@ begin
     if(matrowcnt(ORr))>0 then begin
       matrowget(ORr,0,ORrw);
       group = ORrw.Objects;
-      startformat(15);
-      endformat;
-      startformat(15);
-        outstring(0,0,"☁" & vdinames[group],false);
-      endformat;
-      startformat(15);
-      endformat;
+      if(nonblank(group))then begin
+        startformat(15);
+        endformat;
+        startformat(15);
+          outstring(0,0,"⭐" & vdinames[group] & "⭐",false);
+        endformat;
+        startformat(15);
+        endformat;
+      end;
     end;
     
     rwcnt = matrowcnt(ORr);
