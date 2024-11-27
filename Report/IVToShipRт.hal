@@ -151,6 +151,9 @@ begin
         outstring(0,0,"(ціна за блок)",false);
       EndFormat;
       startformat(15);
+        outstring(0,0,"❗️❗️❗️МІНІМАЛЬНЕ ЗАМОВЛЕННЯ   25 Блоків❗️❗️❗️",false);
+      EndFormat;
+      startformat(15);
       endformat;
 
       matrowget(ORr,0,ORrw);
@@ -192,6 +195,9 @@ begin
     startformat(15);
     endformat;
 
+    startformat(15);
+        outstring(0,0,"❗️❗️❗️МІНІМАЛЬНЕ ЗАМОВЛЕННЯ   25 Блоків❗️❗️❗️",false);
+      EndFormat;
     startformat(15);
       outstring(0,0,"Для замовлення звяжіться з менеджером",false);
     endformat;
