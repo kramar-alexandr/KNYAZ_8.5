@@ -169,7 +169,7 @@ begin
     
     WebSetContentType("application/json");
     
-    weboutarea(resp);
+    weboutarea2(resp);
   
 return;
 end;
