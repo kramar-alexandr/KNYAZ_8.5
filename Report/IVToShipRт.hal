@@ -296,20 +296,20 @@ begin
 
     if(matrowcnt(ORr))>0 then begin
       tstr = "📄Прайс на " & DateToString(currentdate,"DD-MM-YYYY") & "📄";
-      addtotext(tstr & chr(13) & chr(10),Letp);
+      addtotext(tstr & chr(13) & chr(10) & "\r",Letp);
       if(RepSpec.Media==mtScreen)begin
         startformat(15);
           outstring(0,0,tstr,false);
         EndFormat;
       end;
       tstr = "(Ціна за ящик)";
-      addtotext(tstr & chr(13) & chr(10),Letp);
+      addtotext(tstr & chr(13) & chr(10) & "\r",Letp);
       if(RepSpec.Media==mtScreen)begin
         startformat(15);
           outstring(0,0,tstr,false);
         EndFormat;
       end;
-      tstr = chr(13) & chr(10);
+      tstr = chr(13) & chr(10) & "\r";
       addtotext(tstr,Letp);
       if(RepSpec.Media==mtScreen)begin
         startformat(15);
@@ -319,20 +319,20 @@ begin
       matrowget(ORr,0,ORrw);
       group = ORrw.Objects;
       if(nonblank(group))then begin
-        tstr = chr(13) & chr(10);
+        tstr = chr(13) & chr(10) & "\r";
         addtotext(tstr,Letp);
         if(RepSpec.Media==mtScreen)begin
           startformat(15);
           endformat;
         end;
         tstr = "⭐" & vdinames[group] & "⭐";
-        addtotext(tstr & chr(13) & chr(10),Letp);
+        addtotext(tstr & chr(13) & chr(10) & "\r",Letp);
         if(RepSpec.Media==mtScreen)begin
           startformat(15);
             outstring(0,0,tstr,false);
           endformat;
         end;
-        tstr = chr(13) & chr(10);
+        tstr = chr(13) & chr(10) & "\r";
         addtotext(tstr,Letp);
         if(RepSpec.Media==mtScreen)begin
           startformat(15);
@@ -347,20 +347,20 @@ begin
 
       if(nonblank(ORrw.Objects) and group!=ORrw.Objects)then begin
         group = ORrw.Objects;
-        tstr = chr(13) & chr(10);
+        tstr = chr(13) & chr(10) & "\r";
         addtotext(tstr,Letp);
         if(RepSpec.Media==mtScreen)begin
           startformat(15);
           endformat;
         end;
         tstr = "⭐" & vdinames[group] & "⭐";
-        addtotext(tstr & chr(13) & chr(10),Letp);
+        addtotext(tstr & chr(13) & chr(10) & "\r",Letp);
         if(RepSpec.Media==mtScreen)begin
           startformat(15);
             outstring(0,0,tstr,false);
           endformat;
         end;
-        tstr = chr(13) & chr(10);
+        tstr = chr(13) & chr(10) & "\r";
         addtotext(tstr,Letp);
         if(RepSpec.Media==mtScreen)begin
           startformat(15);
@@ -373,14 +373,14 @@ begin
             outstring(0,"DblINVc",ORrw.ArtCode,false);
         end;
         tstr = "☁" & ORrw.Spec & " - " & ORrw.Price & " $";
-        addtotext(tstr & chr(13) & chr(10),Letp);
+        addtotext(tstr & chr(13) & chr(10) & "\r",Letp);
         if(RepSpec.Media==mtScreen)begin
           outstring(0,0,tstr,false);
         end;
       endformat;
     end;
     
-    tstr = chr(13) & chr(10);
+    tstr = chr(13) & chr(10) & "\r";
     addtotext(tstr,Letp);
     if(RepSpec.Media==mtScreen)begin
       startformat(15);
@@ -395,14 +395,14 @@ begin
       endformat;
     end;
     tstr = "📱(Vodafone) tel:+38(066)895-32-20";
-    addtotext(tstr & chr(13) & chr(10),Letp);
+    addtotext(tstr & chr(13) & chr(10) & "\r",Letp);
     if(RepSpec.Media==mtScreen)begin
       startformat(15);
         outstring(0,0,tstr,false);
       endformat;
     end;
 
-    tstr = chr(13) & chr(10);
+    tstr = chr(13) & chr(10) & "\r";
     addtotext(tstr,Letp);
     if(RepSpec.Media==mtScreen)begin
       startformat(15);
@@ -410,14 +410,14 @@ begin
     end;
     
     tstr = "😉Ми з задоволенням відповімо Вам на будь-які питання стосовно замовлення";
-    addtotext(tstr & chr(13) & chr(10),Letp);
+    addtotext(tstr & chr(13) & chr(10) & "\r",Letp);
     if(RepSpec.Media==mtScreen)begin
       startformat(15);
         outstring(0,0,tstr,false);
       endformat;
     end;
     tstr = "Дзвоніть 📞, або напишіть менеджеру⬇️";
-    addtotext(tstr & chr(13) & chr(10),Letp);
+    addtotext(tstr & chr(13) & chr(10) & "\r",Letp);
     if(RepSpec.Media==mtScreen)begin
       startformat(15);
         outstring(0,0,tstr,false);
