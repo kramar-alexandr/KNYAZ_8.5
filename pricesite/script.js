@@ -19,8 +19,8 @@ fetch('../../WebTelegPrice.hal')
             // Обрабатываем товары в группе
             for (const [name, price] of Object.entries(items)) {
                 const itemElement = document.createElement('div');
-                itemElement.className = 'col mb-2';
-                itemElement.innerHTML = `<strong>${name}:</strong> ${price}`;
+                itemElement.className = 'col mb-2 item'; // Добавили класс "item" для стилей
+                itemElement.innerHTML = `<span>${name}</span><span>${price}</span>`;
                 priceList.appendChild(itemElement);
             }
         }

@@ -1,6 +1,11 @@
-body {
-    font-family: Arial, sans-serif;
+/* Стили для товара */
+.item {
+    display: flex; /* Включаем Flexbox */
+    justify-content: space-between; /* Равномерное распределение между элементами */
+    align-items: center; /* Вертикальное выравнивание */
+    padding: 0.5rem 0; /* Отступы между товарами */
+    border-bottom: 1px solid #e0e0e0; /* Разделительная линия между товарами */
 }
-.logo {
-    max-width: 150px;
+.item:last-child {
+    border-bottom: none; /* Убираем линию у последнего элемента */
 }
