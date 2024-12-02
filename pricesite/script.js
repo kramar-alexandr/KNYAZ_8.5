@@ -11,9 +11,9 @@ fetch('../../WebTelegPrice.hal')
         // Обрабатываем каждую группу
         for (const [group, items] of Object.entries(data)) {
             // Добавляем заголовок группы
-            const groupTitle = document.createElement('h4');
-            groupTitle.textContent = group;
-            groupTitle.className = 'col-12 mt-3';
+            const groupTitle = document.createElement('div');
+            groupTitle.className = 'col-12 mt-4'; // Гарантируем, что заголовок занимает всю строку
+            groupTitle.innerHTML = `<h4>${group}</h4>`;
             priceList.appendChild(groupTitle);
 
             // Обрабатываем товары в группе
