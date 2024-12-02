@@ -152,12 +152,12 @@ begin
     SortRows(ORr,"Spec",true);
     
     
-    addstringtoarea("{",resp);
+    addtexttoarea("{",resp);
     
     getvectortags(vdicodes,adicodes);
     rwcnt = matrowcnt(ORr);
     for(i=0;i<adicodes.length;i=i+1)begin
-      addstringtoarea("\"" & vdinames[adicodes[i]] & "\":{",resp);
+      AddTextToArea("\"" & vdinames[adicodes[i]] & "\":{",resp);
       
       for(j=0;j<rwcnt;j=j+1)begin
         matrowget(ORr,j,ORrw);
@@ -166,11 +166,11 @@ begin
         end;
       end;
       delLastComaInArea(resp);
-      addstringtoarea("}",resp);
+      AddTextToArea("}",resp);
     end;
     
     delLastComaInArea(resp);
-    addstringtoarea("}",resp);
+    AddTextToArea("}",resp);
     
     matrowget(ORr,0,ORrw);
     group = ORrw.Objects;
