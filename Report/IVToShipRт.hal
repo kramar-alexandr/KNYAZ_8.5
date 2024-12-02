@@ -228,7 +228,7 @@ end;
 
 global procedure TelegOptPriceRn(record RcVc RepSpec)
 begin
-  record INVc INr;
+  record INVc INr,INrIMG;
   record ItemStatusVc ISr;
   record PLVc PLr;
   boolean TrHs,testf;
@@ -241,7 +241,8 @@ begin
   vector string 200 vdinames;
   integer defqty;
   
-  
+  INrIMG.Code = "TOP_SIGAR";
+  readfirstmain(INrIMG,1,true);
 
   while(loopmain(DIr,1,true))begin
     vdinames[DIr.Code] = DIr.Name;
@@ -251,6 +252,10 @@ begin
   //readfirstmain(CTyper,1,true);
   
   startreportnoheaderjob("Телеграм прайс");
+    
+    startformat(15);
+      OutImage(295,100,30,INrIMG);
+    endformat;
     
     PLr.PLCode = "RRP4";
     TrHs = true;
