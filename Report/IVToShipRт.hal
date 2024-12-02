@@ -162,14 +162,14 @@ begin
       for(j=0;j<rwcnt;j=j+1)begin
         matrowget(ORr,j,ORrw);
         if(ORrw.Objects==adicodes[i])then begin
-          addParamToJSONArea(ORrw.Spec,NormalizeStrToJson(ORrw.Price & " грн"),response);
+          addParamToJSONArea(ORrw.Spec,NormalizeStrToJson(ORrw.Price & " грн"),resp);
         end;
       end;
-      delLastComaInArea(response);
+      delLastComaInArea(resp);
       addstringtoarea("]",resp);
     end;
     
-    delLastComaInArea(response);
+    delLastComaInArea(resp);
     addstringtoarea("}",resp);
     
     matrowget(ORr,0,ORrw);
