@@ -241,7 +241,7 @@ begin
   vector string 200 vdinames;
   integer defqty;
   
-  defqty = 50;
+  
 
   while(loopmain(DIr,1,true))begin
     vdinames[DIr.Code] = DIr.Name;
@@ -267,6 +267,7 @@ begin
         INr.Code = PLr.ArtCode;
         readfirstmain(INr,1,true);
         
+        defqty = 50;
         if(INr.UnitCoefficient>0)then begin
           defqty = INr.UnitCoefficient;
         end;
