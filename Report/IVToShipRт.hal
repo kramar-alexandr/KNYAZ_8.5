@@ -1,4 +1,7 @@
 external procedure ExtractObj(string,var Integer,var string);
+external procedure addParamToJSONArea(string, string, var area);
+external procedure delLastComaInArea(var area);
+external function string 255 NormalizeStrToJson(string);
 
 SetLangMode(LangRussian,"RUS",2); 
 
@@ -94,17 +97,20 @@ begin
   record PLVc PLr;
   boolean TrHs,testf;
   string 255 spec,class,classname, group;
-  integer price,i,rwcnt;
+  integer price,i,rwcnt,j;
   record CTypeVc CTyper;
   record ORVc ORr;
   row ORVc ORrw;
   record DIVc DIr;
   vector string 200 vdinames;
+  vector boolean vdicodes;
+  array string 20 adicodes;
   area resp;
 
   while(loopmain(DIr,1,true))begin
     vdinames[DIr.Code] = DIr.Name;
   end;
+  vdinames["0000"] = "Без групи";
     
     PLr.PLCode = "RRP3";
     TrHs = true;
@@ -125,6 +131,10 @@ begin
           spec = INr.Name;
         end;
         class = GetDispGroup(INr.DispGroups,"SIZE");
+        if(blank(class))then begin
+          class = "0000";
+        end;
+        vdicodes[class] = true;
         //startformat(15);
           price = PLr.ExVatPrice;
         //  outstring(0,0,"☁" & spec & " - " & price & " грн",false);
@@ -139,33 +149,37 @@ begin
       end;
     
     end;
-    SortRows(ORr,"Objects",true);
+    SortRows(ORr,"Spec",true);
+    
     
     addstringtoarea("{",resp);
+    
+    getvectortags(vdicodes,adicodes);
+    rwcnt = matrowcnt(ORr);
+    for(i=0;i<adicodes.length;i=i+1)begin
+      addstringtoarea("\"" & vdinames[adicodes[i]] & "\":[",resp);
+      
+      for(j=0;j<rwcnt;j=j+1)begin
+        matrowget(ORr,j,ORrw);
+        if(ORrw.Objects==adicodes[i])then begin
+          addParamToJSONArea(ORrw.Spec,NormalizeStrToJson(ORrw.Price & " грн"),response);
+        end;
+      end;
+      delLastComaInArea(response);
+      addstringtoarea("]",resp);
+    end;
+    
+    delLastComaInArea(response);
+    addstringtoarea("}",resp);
     
     matrowget(ORr,0,ORrw);
     group = ORrw.Objects;
     if(blank(group))then begin
       group = "Не визначено";
     end;
-    addstringtoarea("\"" & vdinames[group] & "\":[",resp);
     
-    rwcnt = matrowcnt(ORr);
-    for (i=0;i<rwcnt;i=i+1) begin
-      matrowget(ORr,i,ORrw);
-
-      if(nonblank(ORrw.Objects) and group!=ORrw.Objects)then begin
-        group = ORrw.Objects;
-        addstringtoarea("]\"" & vdinames[group] & "\":[",resp);
-      end;
-      
-      addstringtoarea("\"" & ORrw.Spec & "\":\"" & ORrw.Price & "грн\"",resp);
-      
-      addstringtoarea("]",resp);
-      
-    end;
     
-    addstringtoarea("}",resp);
+    
     
     WebSetContentType("application/json");
     
