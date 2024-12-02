@@ -30,6 +30,7 @@ begin
 	Report("Отгрузить",IVToShipRClass,IVToShipRn,0,modSO);
 	
 	Report("Телеграм прайс",TelegPriceRClass,TelegPriceRn,0,modDI);
+	Report("Телеграм прайс ОПТ",TelegPriceRClass,TelegOptPriceRn,0,modDI);
 	
 	
   Import("Импортировать товары",INImportFromFMFormatIClass,INImportFromFMFormatIn,modIN);

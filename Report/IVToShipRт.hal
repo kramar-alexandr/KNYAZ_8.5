@@ -224,3 +224,143 @@ begin
   
 return;
 end;
+
+
+global procedure TelegOptPriceRn(record RcVc RepSpec)
+begin
+  record INVc INr;
+  record ItemStatusVc ISr;
+  record PLVc PLr;
+  boolean TrHs,testf;
+  string 255 spec,class,classname, group;
+  integer price,i,rwcnt;
+  record CTypeVc CTyper;
+  record ORVc ORr;
+  row ORVc ORrw;
+  record DIVc DIr;
+  vector string 200 vdinames;
+  integer defqty;
+  
+  defqty = 50;
+
+  while(loopmain(DIr,1,true))begin
+    vdinames[DIr.Code] = DIr.Name;
+  end;
+
+  //CTyper.Code = "SIZE";
+  //readfirstmain(CTyper,1,true);
+  
+  startreportnoheaderjob("Телеграм прайс");
+    
+    PLr.PLCode = "RRP4";
+    TrHs = true;
+    while(loopkey("PLCode",PLr,1,TrHs))begin
+      testf = true;
+      if(PLr.PLCode!="RRP3")then begin TrHs = false; testf = false; end;
+      ISr.Code = PLr.ArtCode;
+      ISr.Location = "SORTIROVOC";
+      readfirstmain(ISr,2,true);
+
+      if(ISr.Instock<=0)then begin testf = false; end;
+
+      if(testf)then begin
+        INr.Code = PLr.ArtCode;
+        readfirstmain(INr,1,true);
+        
+        if(INr.UnitCoefficient>0)then begin
+          defqty = INr.UnitCoefficient;
+        end;
+        
+        spec = linetextget(INr,0);
+        if(blank(spec))then begin
+          spec = INr.Name;
+        end;
+        class = GetDispGroup(INr.DispGroups,"SIZE");
+        //startformat(15);
+          price = PLr.ExVatPrice;
+        //  outstring(0,0,"☁" & spec & " - " & price & " грн",false);
+        //endformat;
+        clearrow(ORr,ORrw,1);
+        ORrw.ArtCode = PLr.ArtCode;
+        ORrw.Price = PLr.ExVatPrice*defqty;
+        ORrw.Spec = spec;
+        ORrw.Objects = class;
+        matrowput(ORr,matrowcnt(ORr),ORrw);
+
+      end;
+    
+    end;
+    SortRows(ORr,"Objects",true);
+
+    if(matrowcnt(ORr))>0 then begin
+      startformat(15);
+        outstring(0,0,"📄Прайс на " & DateToString(currentdate,"DD-MM-YYYY") & "📄",false);
+      EndFormat;
+      startformat(15);
+        outstring(0,0,"(Ціна за ящик)",false);
+      EndFormat;
+      startformat(15);
+      endformat;
+
+      matrowget(ORr,0,ORrw);
+      group = ORrw.Objects;
+      if(nonblank(group))then begin
+        startformat(15);
+        endformat;
+        startformat(15);
+          outstring(0,0,"⭐" & vdinames[group] & "⭐",false);
+        endformat;
+        startformat(15);
+        endformat;
+      end;
+    end;
+    
+    rwcnt = matrowcnt(ORr);
+    for (i=0;i<rwcnt;i=i+1) begin
+      matrowget(ORr,i,ORrw);
+
+      if(nonblank(ORrw.Objects) and group!=ORrw.Objects)then begin
+        group = ORrw.Objects;
+        startformat(15);
+        endformat;
+        startformat(15);
+          outstring(0,0,"⭐" & vdinames[group] & "⭐",false);
+        endformat;
+        startformat(15);
+        endformat;
+      end;
+
+      startformat(15);
+        if(RepSpec.Media==mtScreen)then begin
+            outstring(0,"DblINVc",ORrw.ArtCode,false);
+        end;
+        outstring(0,0,"☁" & ORrw.Spec & " - " & ORrw.Price & " $",false);
+      endformat;
+    end;
+
+    startformat(15);
+    endformat;
+
+    startformat(15);
+      outstring(0,0,"Для замовлення звяжіться з менеджером",false);
+    endformat;
+    startformat(15);
+      outstring(0,0,"📱(Vodafone) tel:+38(066)895-32-20",false);
+    endformat;
+
+
+    startformat(15);
+    endformat;
+
+    startformat(15);
+      outstring(0,0,"😉Ми з задоволенням відповімо Вам на будь-які питання стосовно замовлення",false);
+    endformat;
+    startformat(15);
+      outstring(0,0,"Дзвоніть 📞, або напишіть менеджеру⬇️",false);
+    endformat;
+
+
+  endjob;
+  
+return;
+end;
