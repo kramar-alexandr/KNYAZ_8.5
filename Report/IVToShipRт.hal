@@ -253,9 +253,9 @@ begin
   
   startreportnoheaderjob("Телеграм прайс");
     
-    startformat(15);
-      OutImage(295,100,30,INrIMG);
-    endformat;
+    //startformat(15);
+      //OutImage(295,100,30,INrIMG);
+    //endformat;
     
     PLr.PLCode = "RRP4";
     TrHs = true;
