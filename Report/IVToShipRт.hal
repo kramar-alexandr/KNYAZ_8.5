@@ -186,7 +186,7 @@ begin
 
       startformat(15);
         if(RepSpec.Media==mtScreen)then begin
-            outstring(0,"DblIVVc",ORrw.ArtCode,false);
+            outstring(0,"DblINVc",ORrw.ArtCode,false);
         end;
         outstring(0,0,"☁" & ORrw.Spec & " - " & ORrw.Price & " грн",false);
       endformat;
