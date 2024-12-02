@@ -159,7 +159,7 @@ begin
         addstringtoarea("]\"" & vdinames[group] & "\":[",resp);
       end;
       
-      addstringtoarea("\"" & ORrw.Spec & "\":" & ORrw.Price & "грн",resp);
+      addstringtoarea("\"" & ORrw.Spec & "\":\"" & ORrw.Price & "грн\"",resp);
       
       addstringtoarea("]",resp);
       
