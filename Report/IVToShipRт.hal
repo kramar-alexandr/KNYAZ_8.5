@@ -166,7 +166,7 @@ begin
         end;
       end;
       delLastComaInArea(resp);
-      AddTextToArea("}",resp);
+      AddTextToArea("},",resp);
     end;
     
     delLastComaInArea(resp);
