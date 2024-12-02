@@ -1,5 +1,5 @@
 // Загружаем JSON и отображаем его
-fetch('./WebTelegPrice.hal')
+fetch('../../WebTelegPrice.hal')
     .then(response => response.json())
     .then(data => {
         const priceList = document.getElementById('price-list');
