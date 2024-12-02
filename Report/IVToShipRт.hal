@@ -232,7 +232,7 @@ begin
   record ItemStatusVc ISr;
   record PLVc PLr;
   boolean TrHs,testf;
-  string 255 spec,class,classname, group;
+  string 255 spec,class,classname, group,tstr;
   integer price,i,rwcnt;
   record CTypeVc CTyper;
   record ORVc ORr;
@@ -240,6 +240,7 @@ begin
   record DIVc DIr;
   vector string 200 vdinames;
   integer defqty;
+  record LetVc Letp;
   
   
 
@@ -294,23 +295,29 @@ begin
     SortRows(ORr,"Objects",true);
 
     if(matrowcnt(ORr))>0 then begin
+      tstr = "📄Прайс на " & DateToString(currentdate,"DD-MM-YYYY") & "📄";
       startformat(15);
-        outstring(0,0,"📄Прайс на " & DateToString(currentdate,"DD-MM-YYYY") & "📄",false);
+        outstring(0,0,tstr,false);
       EndFormat;
+      tstr = "(Ціна за ящик)";
       startformat(15);
-        outstring(0,0,"(Ціна за ящик)",false);
+        outstring(0,0,tstr,false);
       EndFormat;
+      tstr = chr(13) & chr(10);
       startformat(15);
       endformat;
 
       matrowget(ORr,0,ORrw);
       group = ORrw.Objects;
       if(nonblank(group))then begin
+        tstr = chr(13) & chr(10);
         startformat(15);
         endformat;
+        tstr = "⭐" & vdinames[group] & "⭐";
         startformat(15);
-          outstring(0,0,"⭐" & vdinames[group] & "⭐",false);
+          outstring(0,0,tstr,false);
         endformat;
+        tstr = chr(13) & chr(10);
         startformat(15);
         endformat;
       end;
@@ -322,11 +329,14 @@ begin
 
       if(nonblank(ORrw.Objects) and group!=ORrw.Objects)then begin
         group = ORrw.Objects;
+        tstr = chr(13) & chr(10);
         startformat(15);
         endformat;
+        tstr = "⭐" & vdinames[group] & "⭐";
         startformat(15);
-          outstring(0,0,"⭐" & vdinames[group] & "⭐",false);
+          outstring(0,0,tstr,false);
         endformat;
+        tstr = chr(13) & chr(10);
         startformat(15);
         endformat;
       end;
@@ -335,29 +345,34 @@ begin
         if(RepSpec.Media==mtScreen)then begin
             outstring(0,"DblINVc",ORrw.ArtCode,false);
         end;
-        outstring(0,0,"☁" & ORrw.Spec & " - " & ORrw.Price & " $",false);
+        tstr = "☁" & ORrw.Spec & " - " & ORrw.Price & " $";
+        outstring(0,0,tstr,false);
       endformat;
     end;
 
     startformat(15);
     endformat;
-
+    
+    tstr = "Для замовлення звяжіться з менеджером";
     startformat(15);
-      outstring(0,0,"Для замовлення звяжіться з менеджером",false);
+      outstring(0,0,tstr,false);
     endformat;
+    tstr = "📱(Vodafone) tel:+38(066)895-32-20";
     startformat(15);
-      outstring(0,0,"📱(Vodafone) tel:+38(066)895-32-20",false);
-    endformat;
-
-
-    startformat(15);
+      outstring(0,0,tstr,false);
     endformat;
 
+    tstr = chr(13) & chr(10);
     startformat(15);
-      outstring(0,0,"😉Ми з задоволенням відповімо Вам на будь-які питання стосовно замовлення",false);
     endformat;
+    
+    tstr = "😉Ми з задоволенням відповімо Вам на будь-які питання стосовно замовлення";
     startformat(15);
-      outstring(0,0,"Дзвоніть 📞, або напишіть менеджеру⬇️",false);
+      outstring(0,0,tstr,false);
+    endformat;
+    tstr = "Дзвоніть 📞, або напишіть менеджеру⬇️";
+    startformat(15);
+      outstring(0,0,tstr,false);
     endformat;
 
 
