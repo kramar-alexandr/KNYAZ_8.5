@@ -256,9 +256,9 @@ begin
     TrHs = true;
     while(loopkey("PLCode",PLr,1,TrHs))begin
       testf = true;
-      if(PLr.PLCode!="RRP3")then begin TrHs = false; testf = false; end;
+      if(PLr.PLCode!="RRP4")then begin TrHs = false; testf = false; end;
       ISr.Code = PLr.ArtCode;
-      ISr.Location = "SORTIROVOC";
+      ISr.Location = "OSN";
       readfirstmain(ISr,2,true);
 
       if(ISr.Instock<=0)then begin testf = false; end;
