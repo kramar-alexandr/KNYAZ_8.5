@@ -16,15 +16,13 @@ fetch('../../WebTelegPrice.hal')
             groupTitle.className = 'col-12 mt-3';
             priceList.appendChild(groupTitle);
 
-            // Добавляем товары из группы
-            items.forEach(item => {
-                for (const [name, price] of Object.entries(item)) {
-                    const itemElement = document.createElement('div');
-                    itemElement.className = 'col mb-2';
-                    itemElement.innerHTML = `<strong>${name}:</strong> ${price}`;
-                    priceList.appendChild(itemElement);
-                }
-            });
+            // Обрабатываем товары в группе
+            for (const [name, price] of Object.entries(items)) {
+                const itemElement = document.createElement('div');
+                itemElement.className = 'col mb-2';
+                itemElement.innerHTML = `<strong>${name}:</strong> ${price}`;
+                priceList.appendChild(itemElement);
+            }
         }
     })
     .catch(error => console.error('Ошибка загрузки данных:', error));
