@@ -1,0 +1,27 @@
+.item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    border-bottom: 1px solid #e0e0e0;
+    background-color: #f9f9f9; /* Лёгкий фон для читаемости */
+    border-radius: 4px; /* Закругленные углы */
+    font-size: 10px;
+}
+.item:last-child {
+    border-bottom: none;
+}
+
+.logo {
+    width: 100px; /* Ширина логотипа */
+    height: auto; /* Автоматическая высота для сохранения пропорций */
+}
+
+.group-title {
+    width: 100%; /* Гарантирует, что элемент занимает всю ширину родителя */
+    text-align: left; /* Опционально: выравнивание текста */
+    margin-top: 1rem; /* Отступ сверху */
+    font-size: 20px;
+}

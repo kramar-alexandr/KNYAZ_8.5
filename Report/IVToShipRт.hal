@@ -329,6 +329,109 @@ return;
 end;
 
 
+global webpublic procedure WebTelegPriceOPT()
+begin
+  record INVc INr;
+  record ItemStatusVc ISr;
+  record PLVc PLr;
+  boolean TrHs,testf;
+  string 255 spec,class,classname, group;
+  integer price,i,rwcnt,j;
+  record CTypeVc CTyper;
+  record ORVc ORr;
+  row ORVc ORrw;
+  record DIVc DIr;
+  vector string 200 vdinames;
+  vector boolean vdicodes;
+  array string 20 adicodes;
+  area resp;
+  integer defqty;
+
+  while(loopmain(DIr,1,true))begin
+    vdinames[DIr.Code] = DIr.Name;
+  end;
+  vdinames["0000"] = "Без групи";
+    
+    PLr.PLCode = "RRP4";
+    TrHs = true;
+    while(loopkey("PLCode",PLr,1,TrHs))begin
+      testf = true;
+      if(PLr.PLCode!="RRP4")then begin TrHs = false; testf = false; end;
+      ISr.Code = PLr.ArtCode;
+      ISr.Location = "OSN";
+      readfirstmain(ISr,2,true);
+
+      if(ISr.Instock<=0)then begin testf = false; end;
+
+      if(testf)then begin
+        INr.Code = PLr.ArtCode;
+        readfirstmain(INr,1,true);
+        spec = linetextget(INr,0);
+        if(blank(spec))then begin
+          spec = INr.Name;
+        end;
+        class = GetDispGroup(INr.DispGroups,"SIZE");
+        if(blank(class))then begin
+          class = "0000";
+        end;
+        vdicodes[class] = true;
+        //startformat(15);
+          price = PLr.ExVatPrice;
+        //  outstring(0,0,"☁" & spec & " - " & price & " грн",false);
+        //endformat;
+        clearrow(ORr,ORrw,1);
+        ORrw.ArtCode = PLr.ArtCode;
+        defqty = 50;
+        if(INr.UnitCoefficient>0)then begin
+          defqty = INr.UnitCoefficient;
+        end;
+        ORrw.Price = PLr.ExVatPrice*defqty;
+        ORrw.Spec = spec;
+        ORrw.Objects = class;
+        matrowput(ORr,matrowcnt(ORr),ORrw);
+
+      end;
+    
+    end;
+    SortRows(ORr,"Spec",true);
+    
+    
+    addtexttoarea("{",resp);
+    
+    getvectortags(vdicodes,adicodes);
+    rwcnt = matrowcnt(ORr);
+    for(i=0;i<adicodes.length;i=i+1)begin
+      AddTextToArea("\"" & vdinames[adicodes[i]] & "\":{",resp);
+      
+      for(j=0;j<rwcnt;j=j+1)begin
+        matrowget(ORr,j,ORrw);
+        if(ORrw.Objects==adicodes[i])then begin
+          addParamToJSONArea(ORrw.Spec,NormalizeStrToJson(ORrw.Price & "$"),resp);
+        end;
+      end;
+      delLastComaInArea(resp);
+      AddTextToArea("},",resp);
+    end;
+    
+    delLastComaInArea(resp);
+    AddTextToArea("}",resp);
+    
+    matrowget(ORr,0,ORrw);
+    group = ORrw.Objects;
+    if(blank(group))then begin
+      group = "Не визначено";
+    end;
+    
+    
+    
+    
+    WebSetContentType("application/json");
+    
+    weboutarea2(resp);
+  
+return;
+end;
+
 global procedure TelegOptPriceRn(record RcVc RepSpec)
 begin
   record INVc INr,INrIMG;
