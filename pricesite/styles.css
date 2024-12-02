@@ -10,3 +10,8 @@
 .item:last-child {
     border-bottom: none;
 }
+
+.logo {
+    width: 50px; /* Ширина логотипа */
+    height: auto; /* Автоматическая высота для сохранения пропорций */
+}
