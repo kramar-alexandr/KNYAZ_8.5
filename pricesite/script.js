@@ -12,7 +12,7 @@ fetch('../../WebTelegPrice.hal')
         for (const [group, items] of Object.entries(data)) {
             // Добавляем заголовок группы
             const groupTitle = document.createElement('div');
-            groupTitle.className = 'col-12 mt-4'; // Гарантируем, что заголовок занимает всю строку
+            groupTitle.className = 'group-title'; // Используем пользовательский класс
             groupTitle.innerHTML = `<h4>${group}</h4>`;
             priceList.appendChild(groupTitle);
 
