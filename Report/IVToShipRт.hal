@@ -558,8 +558,8 @@ begin
     startformat(15);
       outstring(0,0,"Для замовлення звяжіться з менеджером",false);
     endformat;
-    startformat(15);
-      outstring(0,0,"📱(Vodafone) tel:+38(066)895-32-20",false);
+    startformat(15);//0950947946
+      outstring(0,0,"📱(Vodafone) tel:+38(095)094-79-46",false);
     endformat;
 
 
