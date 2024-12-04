@@ -238,13 +238,14 @@ begin
         ORrw.ArtCode = PLr.ArtCode;
         ORrw.Price = PLr.ExVatPrice;
         ORrw.Spec = spec;
-        ORrw.Objects = class & left(spec,4);
+        ORrw.Objects = class;
+        ORrw.SerialNr = class & left(spec,4);
         matrowput(ORr,matrowcnt(ORr),ORrw);
 
       end;
     
     end;
-    SortRows(ORr,"Objects",true);
+    SortRows(ORr,"SerialNr",true);
 
     if(matrowcnt(ORr))>0 then begin
       startformat(15);
@@ -387,7 +388,7 @@ begin
         end;
         ORrw.Price = PLr.ExVatPrice*defqty;
         ORrw.Spec = spec;
-        ORrw.Objects = class & left(spec,4);
+        ORrw.Objects = class;
         matrowput(ORr,matrowcnt(ORr),ORrw);
 
       end;
@@ -497,12 +498,13 @@ begin
         ORrw.Price = PLr.ExVatPrice*defqty;
         ORrw.Spec = spec;
         ORrw.Objects = class;
+        ORrw.SerialNr = class & left(spec,4);
         matrowput(ORr,matrowcnt(ORr),ORrw);
 
       end;
     
     end;
-    SortRows(ORr,"Objects",true);
+    SortRows(ORr,"SerialNr",true);
 
     if(matrowcnt(ORr))>0 then begin
       startformat(15);
