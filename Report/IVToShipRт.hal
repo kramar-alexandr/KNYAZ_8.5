@@ -239,7 +239,7 @@ begin
         ORrw.Price = PLr.ExVatPrice;
         ORrw.Spec = spec;
         ORrw.Objects = class;
-        ORrw.SerialNr = class & left(spec,4);
+        ORrw.SerialNr = vdinames[class] & left(spec,4);
         matrowput(ORr,matrowcnt(ORr),ORrw);
       end;
     
@@ -499,7 +499,7 @@ begin
         ORrw.Price = PLr.ExVatPrice*defqty;
         ORrw.Spec = spec;
         ORrw.Objects = class;
-        ORrw.SerialNr = class & left(spec,4);
+        ORrw.SerialNr = vdinames[class] & left(spec,4);
         matrowput(ORr,matrowcnt(ORr),ORrw);
 
       end;
