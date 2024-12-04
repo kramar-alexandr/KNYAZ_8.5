@@ -1,0 +1,17 @@
+global updating procedure FixPLNamesMn()
+begin
+  record PLVc PLr;
+  record INVc INr;
+  
+  while(loopmain(PLr,1,true))begin
+    INr.Code = PLr.ArtCode;
+    if(readfirstmain(INr,1,true))then begin
+      if(INr.Name!=PLr.Comment)then begin
+        PLr.Comment = INr.Name;
+        recordstore(PLr,true);
+      end;
+    end;
+  end;
+  
+return;
+end;
