@@ -7,6 +7,7 @@ begin
     INr.Code = PLr.ArtCode;
     if(readfirstmain(INr,1,true))then begin
       if(INr.Name!=PLr.Comment)then begin
+        logtext(0,"FixPLNamesMn " & PLr.Comment & " => " & INr.Name);
         PLr.Comment = INr.Name;
         recordstore(PLr,true);
       end;
