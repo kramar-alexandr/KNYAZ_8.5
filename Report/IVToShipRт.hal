@@ -238,7 +238,7 @@ begin
         ORrw.ArtCode = PLr.ArtCode;
         ORrw.Price = PLr.ExVatPrice;
         ORrw.Spec = spec;
-        ORrw.Objects = class;
+        ORrw.Objects = class & left(spec,4);
         matrowput(ORr,matrowcnt(ORr),ORrw);
 
       end;
@@ -387,7 +387,7 @@ begin
         end;
         ORrw.Price = PLr.ExVatPrice*defqty;
         ORrw.Spec = spec;
-        ORrw.Objects = class;
+        ORrw.Objects = class & left(spec,4);
         matrowput(ORr,matrowcnt(ORr),ORrw);
 
       end;
