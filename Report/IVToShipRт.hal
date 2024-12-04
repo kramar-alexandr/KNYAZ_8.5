@@ -261,7 +261,7 @@ begin
 
       matrowget(ORr,0,ORrw);
       group = ORrw.Objects;
-      logtext(0,"ORrw.SerialNr " & ORrw.SerialNr);
+      
 
       if(nonblank(group))then begin
         startformat(15);
@@ -277,7 +277,7 @@ begin
     rwcnt = matrowcnt(ORr);
     for (i=0;i<rwcnt;i=i+1) begin
       matrowget(ORr,i,ORrw);
-
+      logtext(0,"ORrw.SerialNr " & ORrw.SerialNr);
       if(nonblank(ORrw.Objects) and group!=ORrw.Objects)then begin
         group = ORrw.Objects;
         startformat(15);
