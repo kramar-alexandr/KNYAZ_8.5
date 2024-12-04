@@ -241,7 +241,6 @@ begin
         ORrw.Objects = class;
         ORrw.SerialNr = class & left(spec,4);
         matrowput(ORr,matrowcnt(ORr),ORrw);
-
       end;
     
     end;
@@ -262,6 +261,8 @@ begin
 
       matrowget(ORr,0,ORrw);
       group = ORrw.Objects;
+      logtext(0,"ORrw.SerialNr " & ORrw.SerialNr);
+
       if(nonblank(group))then begin
         startformat(15);
         endformat;
