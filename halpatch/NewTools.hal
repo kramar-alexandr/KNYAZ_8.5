@@ -3,7 +3,6 @@ external function Boolean PasteInvIn2OPr(var record OPVc,Integer,Date,Integer,va
 external procedure OPVc_PasteVECode(var record OPVc,Integer);
 external procedure OPVc_PasteRecVal(var record OPVc,Integer);
 external procedure NoDupObjs(string,var string);
-external updating procedure RemoveEmptyIVCashCallback(array LongInt);
 external function Boolean PasteInvIn2IPr(var record IPVc,Integer,Date,var val,Boolean,var Boolean);
 remote function Integer PUVc_PasteSellPrice(var record PUVc,Integer,Boolean); //Edit***************************Sasha2,16:59 03.03.2017
 external procedure PUSumUp(var record PUVc); //Edit***************************Sasha2,16:59 03.03.2017

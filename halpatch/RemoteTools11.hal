@@ -25,7 +25,6 @@ external procedure GetSalesGroup(string,var string);
 external procedure GetARAcc(string,var string);
 external function Boolean CheckIfIVOpen(Date,record IVVc,string,var val,Boolean,Boolean);
 external function Boolean IVVc_PasteArtCode(var record IVVc,Integer,var string,var string,Boolean,var Integer);
-external procedure IVOpenPrepExists(string);
 external procedure IVGetRate(var record IVVc);
 external procedure CalcSum(val,val,val,val,var val,Integer);
 external procedure CalculateFreightWeight(record IVVc,Boolean);

@@ -1,9 +1,5 @@
-external procedure MySendAsyncWebRequest(string,string,boolean,string,string,string,string,area,string,integer);
 external function string 255 StrReplace(string,string,string);// Edit ************************** Tuesday, 3 October 2017 17:25:37
-external procedure FindAndStoreINVcImgLink(record INVc,integer,var string,var string);
-external procedure MessageBoxToUser(string,integer,string,string);
 external function Boolean LoggedInTest();
-external procedure FindAndStoreINVcImgLink(record INVc,integer,var string,var string);
 external procedure ExtractObj(string,var Integer,var string);
 external updating procedure WebUpdateBalanceForPoints;
 

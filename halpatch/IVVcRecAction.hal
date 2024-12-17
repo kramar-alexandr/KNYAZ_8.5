@@ -3,7 +3,6 @@ external function Boolean HasSalesman();
 external updating procedure CheckCreateSetDefaultCustomCode(var record IVVc);
 external function Boolean IsEnterprise();
 external updating function LongInt IVVcSVNFiscalization(Boolean,var record IVVc,var string);
-external function Boolean AssignOfficialSerNr();
 external function Boolean LegalRecordNumberInRange(string,string,string);
 external function string 255 GetLegalInvoiceNrString(row LegalInvNrBlock,string);
 external procedure NextM4Number(string,var string);
@@ -717,11 +716,6 @@ begin
         end;
       end;
     end;
-    if (HasLocalization("ARG,MEX")) then begin
-      if (AssignOfficialSerNr==false) then begin
-        FindNextIVVcOfficialSerialNr(IVp);
-      end;
-    end;
   end;
   if (ValidateOfficialSerialNrChronology("IVVc",IVp.OfficialSerNr,IVp.SerNr,IVp.InvDate,td)==false) then begin
     RecordCheckError(26201," " & td,-1,"InvDate");  
@@ -757,64 +751,7 @@ begin
         goto L99;
       end;
     end;
-    if (HasLocalization("ARG")) then begin
-      if (AssignOfficialSerNr==false) then begin
-        RecordCopy(locIVr,IVp);
-        locIVr.SerNr = -1;
-        locIVr.OfficialSerNr = "";
-        FindNextIVVcOfficialSerialNr(locIVr);
-        GetLegalInvNrRow(locIVr.OfficialSerNr,LINrb2rw);
-        GetLegalInvNrRow(IVp.OfficialSerNr,LINrbrw);
-        if (LINrbrw.SelectionType!=kLegalInvNrSelectionTypeManual) then begin
-          if (LINrb2rw.Serie!=LINrbrw.Serie) then begin
-            RecordCheckError(1557,"",-1,"OfficialSerNr");      
-            res = -1;
-            goto L99;
-          end;
-          tstr = GetLegalInvoiceNrString(LINrbrw,IVp.OfficialSerNr);
-          if (LegalRecordNumberInRange(tstr,LINrb2rw.TSerStart,LINrb2rw.TSerEnd)==false) then begin
-            RecordCheckError(1557,"",-1,"OfficialSerNr");
-            res = -1;
-            goto L99;
-          end;
-        end;
-        if (CheckIfNextLegalSerNr(IVp.SerNr,IVp.OfficialSerNr,IVp.TransDate,CUr)==false) then begin
-          RecordCheckError(1557,"",-1,"OfficialSerNr");      
-          res = -1;
-          goto L99;
-        end;
-      end;
-      switch (LINrbrw.OutArgEInvoices) begin
-        case kOutArgEInvoicesSendWithCAEA:
-          BlockLoad(EIb);
-          if (EIb.ArgSelfBilling!=0) then begin
-            if (nonblankdate(EIb.ScdLastFortnightCAEAStartDate)) and (nonblankdate(EIb.ScdLastFortnightCAEAExpiryDate)) then begin
-              if (DateInRange(IVp.InvDate,EIb.ScdLastFortnightCAEAStartDate,EIb.ScdLastFortnightCAEAExpiryDate)) then begin
-                IVp.CAEAStartDate = EIb.ScdLastFortnightCAEAStartDate;
-                IVp.CAEAExpiryDate = EIb.ScdLastFortnightCAEAExpiryDate;
-                IVp.CAE = EIb.ScdLastFortnightCAEA;
-                IVp.CAEAFlag = 1;
-              end;
-            end;
-            if (nonblankdate(EIb.LastFortnightCAEAStartDate)) and (nonblankdate(EIb.LastFortnightCAEAExpiryDate)) then begin
-              if (DateInRange(IVp.InvDate,EIb.LastFortnightCAEAStartDate,EIb.LastFortnightCAEAExpiryDate)) then begin
-                IVp.CAEAStartDate = EIb.LastFortnightCAEAStartDate;
-                IVp.CAEAExpiryDate = EIb.LastFortnightCAEAExpiryDate;
-                IVp.CAE = EIb.LastFortnightCAEA;
-                IVp.CAEAFlag = 1;
-              end;
-            end;
-            if (nonblankdate(EIb.CAEAStartDate)) and (nonblankdate(EIb.CAEAExpiryDate)) then begin
-              if (DateInRange(IVp.InvDate,EIb.CAEAStartDate,EIb.CAEAExpiryDate)) then begin
-                IVp.CAEAStartDate = EIb.CAEAStartDate;
-                IVp.CAEAExpiryDate = EIb.CAEAExpiryDate;
-                IVp.CAE = EIb.CAEA;
-                IVp.CAEAFlag = 1;
-              end;
-            end;
-          end;
-      end;
-    end;
+    
     if (HasLocalization("PRT")) then begin
       GetLegalInvNrRow(IVp.OfficialSerNr,LINrbrw);
       if (LINrbrw.SelectionType==kLegalInvNrSelectionTypeManual) then begin
