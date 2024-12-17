@@ -1773,9 +1773,9 @@ LkInvoiceTypeCash:;
           res = -1;
           goto L99;
         end; 
-      case kInvoiceTypeCreditSpecialSales: goto LkInvoiceTypeCredit;
+      case kInvoiceTypeCreditSpecialSales: goto LkInvoiceTypeCredit1;
       case kInvoiceTypeCredit:
-        LkInvoiceTypeCredit:;
+        LkInvoiceTypeCredit1:;
         if (credinv==false)  then begin
           RecordCheckError(1274,StringFromStringSet(3,"CredInvOK"),-1,"SerNr");      
           res = -1;
