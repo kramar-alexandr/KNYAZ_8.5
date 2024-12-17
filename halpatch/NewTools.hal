@@ -1,0 +1,518 @@
+external procedure ExtractObj(string,var Integer,var string);
+external function Boolean PasteInvIn2OPr(var record OPVc,Integer,Date,Integer,val,var string,Boolean,var Boolean);
+external procedure OPVc_PasteVECode(var record OPVc,Integer);
+external procedure OPVc_PasteRecVal(var record OPVc,Integer);
+external procedure NoDupObjs(string,var string);
+external updating procedure RemoveEmptyIVCashCallback(array LongInt);
+external function Boolean PasteInvIn2IPr(var record IPVc,Integer,Date,var val,Boolean,var Boolean);
+remote function Integer PUVc_PasteSellPrice(var record PUVc,Integer,Boolean); //Edit***************************Sasha2,16:59 03.03.2017
+external procedure PUSumUp(var record PUVc); //Edit***************************Sasha2,16:59 03.03.2017
+external function val AbsoluteVal(val);
+external procedure AddEuroCurncyTrRow(record TRVc,string,string,string,string,val,Boolean,Boolean,var val,string,val,val,val,val,val,val,val,LongInt,Boolean,string);
+external function Integer CountObjects(string);
+external procedure TRSumup(var record TRVc,var val);
+external function Boolean GetAccName(string,var string,Integer);
+external function roundmode DefaultRoundMode();
+external function Integer GetIntYc(Date);
+remote procedure SyncCurrWithNBUMn();
+remote procedure ReserveRecalcMnTime();
+
+
+
+global //Edit***************************Sasha2,11:22 22.09.2016 {
+updating procedure RegistersRemoveOptionallyMn(record RcVc RepSpec)
+begin
+  record INVc INr;
+	Boolean TrHs;
+	
+  if (RepSpec.flags[0]==1) then begin
+  	while (LoopMain(INr,1,true)) begin
+  		recorddelete(INr);
+  		StepBack(INr);
+  	end;
+  end;
+
+return;
+end; //Edit***************************Sasha2,11:22 22.09.2016 }
+
+
+global
+function string 255 RetrieveStoreObject(var record ARVc APr) //for APSClass CalculatedColumn. APSClass uses APVc, but this function works with ARVc!
+begin
+  record VIVc VIr;
+  record ObjVc Objr;
+  string 20 storeObj,curObj;
+  Integer pos;
+  
+    VIr.SerNr = APr.InvoiceNr;
+    if (ReadFirstMain(VIr,1,true)) then begin
+      pos = 0;
+      ExtractObj(VIr.Objects,pos,curObj);
+      while (nonblank(curObj)) begin
+        Objr.Code = curObj;
+        if (ReadFirstMain(Objr,1,true) and Objr.OTCode=="STORE") then begin
+          storeObj = Objr.Code;
+          pos = len(VIr.Objects);
+        end;
+        ExtractObj(VIr.Objects,pos,curObj);
+      end;
+    end;
+  
+  RetrieveStoreObject = storeObj;
+  return;
+end;
+
+global
+updating procedure GetItemStatusInfoForOrder(var record ORVc ORr)
+BEGIN
+  record ItemStatusVc ISr;
+  row ORVc ORrw;
+  Integer rwcnt,i;
+  
+    if (NonBlank(ORr.Location)) then begin
+      rwcnt = MatRowCnt(ORr);
+      for (i=0;i<rwcnt;i=i+1) begin
+        MatRowGet(ORr,i,ORrw);
+        if (NonBlank(ORrw.ArtCode)) then begin
+          ISr.Code = ORrw.ArtCode;
+          ISr.Location = ORr.Location;
+          if (ReadFirstMain(ISr,2,true)) then begin
+            ORrw.TotOrdQuant = ISr.Instock - ISr.OrddOut;
+            MatRowPut(ORr,i,ORrw);
+          end;
+        end;
+      end;
+    end;
+  
+LGetItemStatusInfoForOrder:;
+
+  RETURN;
+END;
+
+procedure GenerateOPVcFromVI(record VIVc VIr,var record OPVc OPr,var Integer result,var boolean createf)
+begin
+  record OPVc OP2r;
+  record OPrsVc OPrsr;
+  row OPVc OPrw,OP2rw;
+  row VIVc VIrw;
+  string 255 warning,objs;
+  Boolean installmentf,TrHs,testf;
+  val chk,bal;
+  Integer rownr,rwcnt,i;
+  
+  rwcnt = MatRowCnt(VIr);
+  for (i=0;i<rwcnt;i=i+1) begin
+    MatRowGet(VIr,i,VIrw);
+    if (VIrw.stp==kInvoiceRowTypePrepayment) then begin
+      bal = bal + VIrw.PrepayAmount;
+    end;
+  end;
+  
+  OPrsr.VINr = VIr.SerNr;
+  OPrsr.TransType = 1;
+  TrHs = true;
+  while (LoopKey("VIKey",OPrsr,2,TrHs)) begin
+    testf = true;
+    if (OPrsr.VINr!=VIr.SerNr or OPrsr.TransType!=1) then begin TrHs = false; testf = false; end;
+    if (OPrsr.VECode!=VIr.VECode) then begin testf = false; end;
+    if (testf) then begin
+      OP2r.SerNr = OPrsr.TransNr;
+      if (ReadFirstMain(OP2r,1,true)) then begin
+        rwcnt = MatRowCnt(OP2r);
+        for (i=0;i<rwcnt;i=i+1) begin
+          MatRowGet(OP2r,i,OP2rw);
+          if (OP2rw.VISerNr==VIr.SerNr) then begin
+            bal = bal + OP2rw.RecVal;
+            i = rwcnt;
+          end;
+        end;
+      end;
+    end;
+  end;
+  
+  bal = VIr.PayVal - bal;
+  if (bal<=0) then begin
+    createf = false;
+    goto LGenerateOPVcFromVI;
+  end;
+  
+  RECORDNEW(OPr);
+  OPr.PayDate = VIr.InvDate;
+  OPr.TransDate = VIr.InvDate;
+  rownr = 0;
+  ClearRow(OPr,OPrw,kPaymentRowTypeNormal);
+  OPrw.VISerNr = VIr.SerNr;
+  MatRowPut(OPr,rownr,OPrw);
+  if (PasteInvIn2OPr(OPr,rownr,OPr.TransDate,1,chk,warning,false,installmentf)==false) then begin
+    result = -1;
+    goto LGenerateOPVcFromVI;
+  end;
+  if (installmentf) then begin
+    result = 20772;
+    goto LGenerateOPVcFromVI;
+  end;
+  MatRowGet(OPr,rownr,OPrw);
+  OPrw.VECode = VIr.VECode;
+  MatRowPut(OPr,rownr,OPrw);
+  OPVc_PasteVECode(OPr,rownr);
+  MatRowGet(OPr,rownr,OPrw);
+  if (VIr.InvType==kInvoiceTypeCredit)then begin
+    bal = bal * -1;
+  end;
+  OPrw.RecVal = bal;
+  MatRowPut(OPr,rownr,OPrw);
+  OPVc_PasteRecVal(OPr,rownr);
+  MatRowGet(OPr,rownr,OPrw);
+  OPrw.Objects = OPrw.Objects & "," & VIr.Objects;
+  NoDupObjs(OPrw.Objects,objs);
+  OPrw.Objects = objs;
+  MatRowPut(OPr,rownr,OPrw);
+  
+LGenerateOPVcFromVI:;
+  return;
+end;
+
+global
+updating function Integer CreateOPFromVI(record VIVc VIr,var record OPVc OPr)
+begin
+  Integer res;
+  boolean createf;
+  
+  createf = true;
+  GenerateOPVcFromVI(VIr,OPr,res,createf);
+  
+  if (createf) then begin
+    if (OPr.SerNr==-1) then begin
+      OPr.SerNr = NextSerNr("OPVc",OPr.TransDate,-1,false,"");
+    end;
+    if (RecordInsert(OPr,true)) then begin
+      CreateRecordLink(VIr,CurrentCompany,OPr,CurrentCompany);  
+      CreateRecordLink(OPr,CurrentCompany,VIr,CurrentCompany);
+    end else begin
+      res = -1;
+    end;
+  end;
+ 
+LCreateOPFromVI:;  
+  CreateOPFromVI = res;
+  return;
+end;
+
+global
+updating function Integer CreateAutoPaidOPFromVI(record VIVc VIr)
+begin
+  record OPVc OPr,OP2r;
+  record ObjVc Objr; 
+  Integer res,pos;
+  boolean createf;
+  string 20 pmcode,curObj;
+  
+  createf = true;
+  GenerateOPVcFromVI(VIr,OPr,res,createf);
+  
+  if (createf) then begin
+    /*pos = 0;
+    ExtractObj(VIr.Objects,pos,curObj);
+    while (nonblank(curObj)) begin
+      Objr.Code = curObj;
+      if (ReadFirstMain(Objr,1,true) and Objr.OTCode=="STORE") then begin
+        switch (Objr.Code) begin
+          case "PEROVA":
+            pmcode = "C1";
+            pos = len(VIr.Objects);
+          case "STALSKOGO":
+            pmcode = "C2";
+            pos = len(VIr.Objects);
+        end;
+      end;
+      ExtractObj(VIr.Objects,pos,curObj);
+    end;*/
+    switch (CurrentCompany) begin
+      case 1: pmcode = "C1";
+      case 3: pmcode = "C2";
+    end;
+    if (NonBlank(pmcode)) then begin
+      OPr.PayMode = pmcode;
+      if (OPr.SerNr==-1) then begin
+        OPr.SerNr = NextSerNr("OPVc",OPr.TransDate,-1,false,"");
+      end;
+      OPr.OrderedFlag = 1;
+      if (RecordInsert(OPr,true)) then begin
+        CreateRecordLink(VIr,CurrentCompany,OPr,CurrentCompany);  
+        CreateRecordLink(OPr,CurrentCompany,VIr,CurrentCompany);
+        RecordCopy(OP2r,OPr);
+        OPr.DoneFlag = 1;
+        if (RecordUpdate(OP2r,OPr,true)!=0) then begin
+          res = -1;
+        end;
+      end else begin
+        res = -1;
+      end;
+    end;
+  end;
+ 
+LCreateAutoPaidOPFromVI:;  
+  CreateAutoPaidOPFromVI = res;
+  return;
+end;
+
+global
+updating function Integer DeleteAutoPaidOPFromVI(record VIVc VIr)
+begin
+  record OPVc OPr,OP2r;
+  record OPrsVc OPrsr;
+  Integer res,rwcnt;
+  Boolean TrHs,testf;
+  
+  res = 0;
+  
+  OPrsr.VINr = VIr.SerNr;
+  OPrsr.TransType = 1;
+  TrHs = true;
+  while (LoopKey("VIKey",OPrsr,2,TrHs)) begin
+    testf = true;
+    if (OPrsr.VINr!=VIr.SerNr or OPrsr.TransType!=1) then begin TrHs = false; testf = false; end;
+    if (OPrsr.VECode!=VIr.VECode) then begin testf = false; end;
+    if (testf) then begin
+      OPr.SerNr = OPrsr.TransNr;
+      if (ReadFirstMain(OPr,1,true)) then begin
+        rwcnt = MatRowCnt(OPr);
+        if (rwcnt==1) then begin
+          RecordCopy(OP2r,OPr);
+          OPr.DoneFlag = 0;
+          if (RecordUpdate(OP2r,OPr,true)==0) then begin
+            RecordCopy(OP2r,OPr);
+            OPr.OrderedFlag = 0;
+            if (RecordUpdate(OP2r,OPr,true)==0) then begin
+              RecordDelete(OPr);
+              StepBack(OPrsr);
+            end;
+          end;
+        end;
+      end;
+    end;
+  end;
+ 
+LDeleteAutoPaidOPFromVI:;  
+  DeleteAutoPaidOPFromVI = res;
+  return;
+end;
+
+global //Edit***************************Sasha2,11:22 22.09.2016 {
+updating procedure SetUnitTextInItemIfNeededMn(record RcVc RepSpec)
+begin
+  record INVc INr;	
+
+	 if (NonBlank(RepSpec.f1)) then begin
+	   INr.Code = "";
+	   while (LoopMain(INr,1,true)) begin
+  		if (Blank(INr.Unittext)) then begin
+  		  INr.Unittext = RepSpec.f1;
+  		  RECORDSTORE(INr,true);
+  		end;
+  	end;
+	 end;
+
+return;
+end; //Edit***************************Sasha2,11:22 22.09.2016 }
+
+
+global //Edit***************************Sasha2,16:35 14.12.2016 {
+updating procedure UpdateTextFieldsForQuickSearchMn(record RcVc RepSpec)
+begin
+  record PUVc PUr;
+  record POVc POr;
+  record VIVc VIr;
+  record OPVc OPr;
+  record CLinVc CLinr;
+  record CLoutVc CLoutr;
+  record IVCashVc IVCashr;
+  
+    if (RepSpec.flags[0]==1) then begin
+      PUr.SerNr = -1;
+      while (LoopMain(PUr,1,true)) begin
+        PUr.TransDateText = PUr.TransDate;
+        RECORDSTORE(PUr,true);
+      end;
+    end;
+    
+    if (RepSpec.flags[1]==1) then begin
+      POr.SerNr = -1;
+      while (LoopMain(POr,1,true)) begin
+        POr.TransDateText = POr.TransDate;
+        POr.Sum4Text = POr.Sum4;
+        RECORDSTORE(POr,true);
+      end;
+    end;
+    
+    if (RepSpec.flags[2]==1) then begin
+      VIr.SerNr = -1;
+      while (LoopMain(VIr,1,true)) begin
+        VIr.InvDateText = VIr.InvDate;
+        VIr.PayValText = VIr.PayVal;
+        RECORDSTORE(VIr,true);
+      end;
+    end;
+    
+    if (RepSpec.flags[3]==1) then begin
+      OPr.SerNr = -1;
+      while (LoopMain(OPr,1,true)) begin
+        OPr.PayDateText = OPr.PayDate;
+        OPr.CurPayValText = OPr.CurPayVal;
+        RECORDSTORE(OPr,true);
+      end;
+    end;
+    
+    if (RepSpec.flags[4]==1) then begin
+      CLinr.SerNr = -1;
+      while (LoopMain(CLinr,1,true)) begin
+        CLinr.TransDateText = CLinr.TransDate;
+        CLinr.TotalText = CLinr.Total;
+        RECORDSTORE(CLinr,true);
+      end;
+    end;
+    
+    if (RepSpec.flags[5]==1) then begin
+      CLoutr.SerNr = -1;
+      while (LoopMain(CLoutr,1,true)) begin
+        CLoutr.TransDateText = CLoutr.TransDate;
+        CLoutr.TotalText = CLoutr.Total;
+        RECORDSTORE(CLoutr,true);
+      end;
+    end;
+    
+    if (RepSpec.flags[6]==1) then begin
+      IVCashr.SerNr = -1;
+      while (LoopMain(IVCashr,1,true)) begin
+        IVCashr.InvDateText = IVCashr.InvDate;
+        IVCashr.Sum4Text = IVCashr.Sum4;
+        RECORDSTORE(IVCashr,true);
+      end;
+    end;
+
+  return;
+end; //Edit***************************Sasha2,16:35 14.12.2016 }
+
+global
+updating function Integer ExecuteCrateIPFromIVD(record IVVc IVr,var LongInt IPSerNr)
+begin
+  record ARVc ARr;
+  record IPVc IPr;
+  val chk;
+  Boolean installmentf,testf;
+  row IPVc IPrw;
+  Integer res,rownr;
+    
+    res = 0;
+    IPSerNr = -1;
+    ARr.InvoiceNr = IVr.SerNr;
+    if (ReadFirstMain(ARr,1,true)) then begin
+      testf = true;
+      if (IVr.InvType!=kInvoiceTypeNormal) then begin testf = false; end;
+      if (testf) then begin
+        RECORDNEW(IPr);
+        rownr = MatRowCnt(IPr);
+        ClearRow(IPr,IPrw,1);
+        IPrw.InvoiceNr = IVr.SerNr;
+        MatRowPut(IPr,rownr,IPrw);
+        if (PasteInvIn2IPr(IPr,rownr,IPr.TransDate,chk,false,installmentf)) then begin
+          if (MatRowCnt(IPr)>0) then begin
+            if (IPr.SerNr==-1) then begin
+              IPr.SerNr = NextSerNr("IPVc",IPr.TransDate,-1,false,""); 
+            end;
+            if (RecordStore(IPr,false)) then begin
+              IPSerNr = IPr.SerNr;
+            end;       
+          end;
+        end else begin
+          res = 23192;
+        end;
+      end;
+    /*end else begin
+      res = 1546;  */
+    end;
+
+LExecuteCrateIPFromIVD:;  
+  ExecuteCrateIPFromIVD = res;
+  return;
+end;
+
+global //Edit***************************Sasha2,16:12 03.03.2017 {
+updating procedure RecalcMarkUpsInPUMn(record RcVc RepSpec)
+begin
+  record PUVc PUr;
+  row PUVc PUrw;
+  record INVc INr;
+  boolean TrHs,testf;
+  integer pos,rwcnt,i;
+  string 20 curSerNr;
+    
+    pos = 0;
+    ExtractObj(RepSpec.f1,pos,curSerNr);
+    while (nonblank(curSerNr)) begin
+      PUr.SerNr = StringToLongInt(curSerNr);
+      if (ReadFirstMain(PUr,1,true)) then begin
+        rwcnt = matrowcnt(PUr);
+        for (i=0;i<rwcnt;i=i+1) begin
+          MatRowGet(PUr,i,PUrw);
+          if (NonBlank(PUrw.ArtCode)) then begin
+            if (PUrw.SellPrice==BlankVal) then begin
+              INr.Code = PUrw.ArtCode;
+              ReadFirstMain(INr,1,true);
+              PUrw.SellPrice = INr.UPrice1;
+              MatRowPut(PUr,i,PUrw);
+              PUVc_PasteSellPrice(PUr,i,true);
+              MatRowGet(PUr,i,PUrw);
+            end;
+            if (PUrw.SellPrice!=BlankVal) then begin
+              PUrw.rowGP = ((PUrw.SellPrice/PUrw.CostPrice)-1)*100;
+              MatRowPut(PUr,i,PUrw);
+            end;
+          end;
+        end;
+        PUSumUp(PUr);
+        RECORDSTORE(PUr,true);
+      end;
+      ExtractObj(RepSpec.f1,pos,curSerNr);
+    end;
+
+  return;
+end; //Edit***************************Sasha2,16:12 03.03.2017 }
+
+
+
+global //Edit***************************Sasha2,17:59 13.03.2017 {
+updating procedure CustTimeTableAction()
+begin
+
+    SetCompany(9,false);
+    
+    if(getminute(currenttime)==5 and gethour(currenttime)<=23 and gethour(currenttime)>=17)then begin
+      SyncCurrWithNBUMn;
+    end;
+		
+return;
+end; //Edit***************************Sasha2,17:59 13.03.2017 }
+
+
+global webpublic updating procedure WebRefreshBarCodes()
+begin
+	  record BarcodeVc Barcoder,oldBarcoder;
+		
+		logtext(0,"WebRefreshBarCodes");
+		
+		setcompany(1,false);
+		resetloop(Barcoder);
+		while(loopmain(Barcoder,1,true))begin
+			recordcopy(oldBarcoder,Barcoder);
+			recordupdate(oldBarcoder,Barcoder,true);
+		end;
+		setcompany(3,false);
+		resetloop(Barcoder);
+		while(loopmain(Barcoder,1,true))begin
+			recordcopy(oldBarcoder,Barcoder);
+			recordupdate(oldBarcoder,Barcoder,true);
+		end;
+		logtext(0,"WebRefreshBarCodes");
+return;
+end;
