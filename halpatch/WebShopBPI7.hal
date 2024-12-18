@@ -191,7 +191,7 @@ begin
 		logtext(0,"WebSendInvent");
 		USr.Code = webgetarg("foruser");
 		readfirstmain(USr,1,true);
-		webgetpostdata(postdata);
+		WebGetRawPostData(postdata);
 		writeareatofile(postdata,"WebSendInvent.txt",0);
 		jsonobj = ParseJSONArea(postdata);
 		logtext(0,"SERNR  " & JSONGet(jsonobj,"SerNr"));
@@ -315,7 +315,7 @@ begin
 		logtext(0,"WebSendSale");
 		USr.Code = currentuser;
 		readfirstmain(USr,1,true);
-		webgetpostdata(postdata);
+		WebGetRawPostData(postdata);
 		writeareatofile(postdata,"WebSendSale.txt",0);
 		jsonobj = ParseJSONArea(postdata);
 		CredInv = JSONGet(jsonobj,"CredInv");
@@ -657,7 +657,7 @@ string 100 saler;
 		saler = WebGetArg("foruser");
 		US2r.Code = saler;
 		readfirstmain(US2r,1,true);
-		webgetpostdata(postdata);
+		WebGetRawPostData(postdata);
 		jsonobj = ParseJSONArea(postdata);
 		writeareatofile(postdata,"WebPushCashDoks.txt",0);
 		

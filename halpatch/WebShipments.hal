@@ -82,7 +82,7 @@ begin
 	record SHVc SHr;
 	
 	SetCompany(9,false);
-	webgetpostdata(resarea);
+	WebGetRawPostData(resarea);
 	
 	jsonobj = ParseJSONArea(resarea);
 	logtext(0,"WebUpdateShipments");

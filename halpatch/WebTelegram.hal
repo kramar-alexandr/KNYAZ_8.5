@@ -124,7 +124,7 @@ json jsonobj;
 
   SetCompany(9,false);
   
-  webgetpostdata(postdata);
+  WebGetRawPostData(postdata);
   jsonobj = ParseJSONArea(postdata);
   
   USr.Code = JSONGet(jsonobj,"code");
@@ -324,7 +324,7 @@ record UserVc US2r;
   logtext(0,"WebPostCreatedCLOutTelegram start");
   
   SetCompany(9,false);
-    webgetpostdata(postdata);
+    WebGetRawPostData(postdata);
     jsonobj = ParseJSONArea(postdata);
     
     user = JSONGet(jsonobj,"user");
@@ -450,7 +450,7 @@ string 100 saler;
 		WebSetContentType("application/json; charset=UTF-8");	
 		SetCompany(9,false);	
 
-		webgetpostdata(postdata);
+		WebGetRawPostData(postdata);
 		jsonobj = ParseJSONArea(postdata);
 		
 		user = JSONGet(jsonobj,"user");
@@ -617,7 +617,7 @@ begin
   string 100 alerttime,token;
   string 255 script;
   
-  webgetpostdata(postdata);
+  WebGetRawPostData(postdata);
   logtext(0,"WebAlert");
   jsonobj = ParseJSONArea(postdata);
     

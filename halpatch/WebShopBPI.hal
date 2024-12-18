@@ -461,7 +461,7 @@ area postdata;
 		logtext(0,"WebRemoteIPAddress " & WebRemoteIPAddress);
 		USr.Code = webgetarg("foruser");
 		if (readfirstmain(USr,1,true)) then begin
-			webgetpostdata(postdata);
+			WebGetRawPostData(postdata);
 			writeareatofile(postdata,"WebSendCLOut.txt",0);
 			jsonobj = ParseJSONArea(postdata);
 		
@@ -574,7 +574,7 @@ begin
 		logtext(0,"WebRemoteIPAddress " & WebRemoteIPAddress);
 		USr.Code = webgetarg("foruser");
 		readfirstmain(USr,1,true);
-		webgetpostdata(postdata);
+		WebGetRawPostData(postdata);
 		writeareatofile(postdata,"WebSendInvent.txt",0);
 		jsonobj = ParseJSONArea(postdata);
 		OKFlag = JSONGet(jsonobj,"OKFlag");
@@ -708,7 +708,7 @@ begin
 		logtext(0,"WebRemoteIPAddress " & WebRemoteIPAddress);
 		USr.Code = currentuser;
 		readfirstmain(USr,1,true);
-		webgetpostdata(postdata);
+		WebGetRawPostData(postdata);
 		writeareatofile(postdata,"WebSendSale.txt",0);
 		jsonobj = ParseJSONArea(postdata);
 		OKFlag = JSONGet(jsonobj,"OKFlag");
@@ -1210,7 +1210,7 @@ string 100 saler;
 		saler = WebGetArg("foruser");
 		US2r.Code = saler;
 		readfirstmain(US2r,1,true);
-		webgetpostdata(postdata);
+		WebGetRawPostData(postdata);
 		jsonobj = ParseJSONArea(postdata);
 		writeareatofile(postdata,"WebPushCashDoks.txt",0);
 		
@@ -1474,7 +1474,7 @@ begin
 		logtext(0,"WebRemoteIPAddress " & WebRemoteIPAddress);
 		USr.Code = currentuser;
 		readfirstmain(USr,1,true);
-		webgetpostdata(postdata);
+		WebGetRawPostData(postdata);
 		writeareatofile(postdata,"WebSendSale.txt",0);
 		jsonobj = ParseJSONArea(postdata);
 		if(nonblank(JSONGet(jsonobj,"SerNr")))then begin
