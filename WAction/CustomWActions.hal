@@ -1,0 +1,992 @@
+external procedure FindRepDefHeader(string,string,var string);
+remote updating function Integer CreateOPFromVI(record VIVc,var record OPVc);
+external updating procedure YesProceedItemsReturnTClass();
+remote updating function Integer ExecuteCrateIPFromIVD(record IVVc,var longint);
+external function LongInt CheckDaySessionCashiersIsValid(date,time);
+external function Integer CountObjects(string);
+external procedure ExtractObj(string,var Integer,var string); 
+remote procedure  StockMovVc_CheckStockMovement(var record StockMovVc);
+remote procedure  StockMovVc_CheckInstockFildsMn(var record StockMovVc);
+remote procedure StockMovVc_PasteSentQuant(var record StockMovVc,Integer);
+
+
+SetLangMode(LangRussian,"RUS",0); 
+
+global //Edit***************************Sasha2,13:36 07.12.2016 {
+function Boolean CCPayTouchScreenSelfDClassOnEnterKey(Integer wn,string fieldname,Integer fn,Integer rownr)
+begin
+  Boolean res;
+  record RcVc RepSpec;
+  
+  GetWindowRecord(wn,RepSpec);
+  if (fieldname=="f1") then begin
+    if (nonblank(RepSpec.f1)) then begin
+      SelectButton(wn,"ProceedCCPayTouchScreenSelfDClass");
+    end else begin
+      WindowFieldGoto(wn,RepSpec,-1,"f1",false);
+    end;
+    res = false;
+  end;
+
+  CCPayTouchScreenSelfDClassOnEnterKey = res;
+  return;
+end; //Edit***************************Sasha2,13:36 07.12.2016 }
+
+global //Edit***************************Sasha2,13:36 07.12.2016 {
+function Boolean DaySessionCashiersRCLassOnEnterKey(Integer wn,string fieldname,Integer fn,Integer rownr)
+begin
+  Boolean res;
+  record RcVc RepSpec;
+  
+  GetWindowRecord(wn,RepSpec); MessageBox(0,"DaySessionCashiersRCLassOnEnterKey");
+  if (fieldname=="f2") then begin
+    if (nonblank(RepSpec.f2)) then begin
+      SelectButton(wn,"ProceedDaySessionAuthentication");
+    end;
+    res = false;
+  end;
+
+  DaySessionCashiersRCLassOnEnterKey = res;
+  return;
+end; //Edit***************************Sasha2,13:36 07.12.2016 }
+
+
+global
+procedure PriceRClassReportDefaults(Integer wn)
+begin
+  record RcVc RepSpec;
+  record VarietyBlock Varb;
+  
+  BlockLoad(Varb);  
+  DeselectWindow(wn,false);
+  GetWindowRecord(wn,RepSpec);
+  ReportDefaults(RepSpec,"PriceRClass");  
+  RepSpec.flags[2] = 2;// Edit ************************** BPI Ukraine - KramarAlexandr - 04, 05 11 2020 y. at 5:03:23 PM
+  RepSpec.flags[8] = 1;
+  RepSpec.flags[9] = 1;  
+  RepSpec.flags[7] = Varb.AutoVarietyDef;
+  PutWindowRecord(wn,RepSpec);
+  SelectWindow(wn);
+  return;
+end;
+
+
+
+global
+procedure INRClassReportDefaults(Integer wn)
+begin
+  record RcVc RepSpec;
+  record VarietyBlock Varb;
+  record Uservc USr;
+  
+  
+    
+  BlockLoad(Varb);  
+  DeselectWindow(wn,false);
+  GetWindowRecord(wn,RepSpec);
+  ReportDefaults(RepSpec,"INRClass"); 
+   
+  USr.Code = currentuser;
+  if(readfirstmain(USr,1,true))then begin
+  	if(nonblank(USr.SalesGroup) and nonblank(USr.Location))then begin
+  		RepSpec.f2 = USr.Location;
+  	end;
+  end;
+  
+  RepSpec.flags[11] = 2;
+  RepSpec.flags[22] = Varb.AutoVarietyDef;
+  PutWindowRecord(wn,RepSpec);
+  SelectWindow(wn);
+  return;
+end;
+
+global
+procedure BalRClassReportDefaults(Integer wn)
+BEGIN
+  record RcVc RepSpec;
+  string 255 tstr;
+  
+  DeselectWindow(wn,false);
+  GetWindowRecord(wn,RepSpec);
+  ReportDefaults(RepSpec,"BalRClass");  
+  FindRepDefHeader(RepSpec.repname,RepSpec.shortname,tstr);
+  RepSpec.f1 = tstr;
+  RepSpec.AccSpec = 2; //Edit***************************Sasha2,11:12 17.10.2016
+  if (HasLocalization("HRV")) then begin
+    RepSpec.flags[20] = 1;
+  end;
+  PutWindowRecord(wn,RepSpec);
+  SelectWindow(wn);
+  RETURN;
+END;
+
+procedure DoResRClassReportDefaults(Integer wn)
+begin
+  record RcVc RepSpec;
+  string 255 tstr;
+  
+  DeselectWindow(wn,false);
+  GetWindowRecord(wn,RepSpec);
+  ReportDefaults(RepSpec,"ResRClass");  
+  FindRepDefHeader(RepSpec.repname,RepSpec.shortname,tstr);
+  RepSpec.f1 = tstr;
+  RepSpec.flags[1] = 1;
+  RepSpec.Stext = RepSpec.Period2Str;
+  RepSpec.AccSpec = 2; //Edit***************************Sasha2,11:15 17.10.2016
+  RepSpec.Comparison = 1; //Edit***************************Sasha2,11:15 17.10.2016
+  PutWindowRecord(wn,RepSpec);
+  SelectWindow(wn);
+  return;
+end;
+
+global
+procedure ProdOrdRClassReportDefaults(Integer wn)
+begin
+  record RcVc RepSpec;
+  string 255 tstr;
+  
+  DeselectWindow(wn,false);
+  GetWindowRecord(wn,RepSpec);
+  ReportDefaults(RepSpec,"ProdOrdRClass");  
+  FindRepDefHeader(RepSpec.repname,RepSpec.shortname,tstr);
+  
+  RepSpec.Period2Str = CurrentDate & ":" & CurrentDate;
+  RepSpec.ArtMode = 1;
+  RepSpec.flags[8] = 1;
+  RepSpec.flags[6] = 1;
+
+  PutWindowRecord(wn,RepSpec);
+  SelectWindow(wn);
+  
+  return;
+end;
+
+global
+procedure DblItemMarkUpReport(string dblstr,string l,Integer currepwn)
+begin
+  Integer wn;
+  record RcVc RepSpec;
+  
+  if (nonblank(dblstr)) then begin
+    wn = CurWindow;
+    if (GetWindowClass(wn)=="RepWClass") then begin
+      /*ReportDefaults(RepSpec,"MarkUpRClass");    
+      RepSpec.repname = "MarkUpRn";
+      RepSpec.Media = mtScreen;*/
+      DeselectWindow(wn,false);
+      GetWindowRecord(wn,RepSpec);
+      RepSpec.f1 = dblstr;
+      RepSpec.ArtMode = 1;
+      
+      RunReport(RepSpec,0);   
+    end;
+
+  end;
+
+  return;
+end;
+
+global
+procedure MarkUpRClassReportDefaults(Integer wn)
+begin
+  record RcVc RepSpec;
+  string 255 tstr;
+  
+  DeselectWindow(wn,false);
+  GetWindowRecord(wn,RepSpec);
+  ReportDefaults(RepSpec,"MarkUpRClass");  
+  FindRepDefHeader(RepSpec.repname,RepSpec.shortname,tstr);
+
+  RepSpec.flags[0] = 1;
+
+  PutWindowRecord(wn,RepSpec);
+  SelectWindow(wn);
+  
+  return;
+end;
+
+global
+procedure ResRClassReportDefaults(Integer wn)
+begin
+  DoResRClassReportDefaults(wn);
+  return;
+end;
+
+global
+updating procedure CreateOPFromVIDsm()
+BEGIN
+  record VIVc VIr; 
+  record OPVc OPr;
+  Integer wn,nwn,err;
+  Integer acclevel;
+
+  wn = CurWindow;
+  acclevel = UserRegisterAccess("VIVc");
+  //if (acclevel==kAccessLevelFull) or (acclevel==kAccessLevelReadNew) or (acclevel==kAccessLevelBrowseNew) then begin
+    if (WindowState(wn)==Rs_normal) then begin
+      GetWindowRecord(wn,VIr);     
+      if (VIr.OKFlag!=0) then begin      
+        err = CreateOPFromVI(VIr,OPr);
+        if  (err==0) then begin
+          if (MatRowCnt(OPr)>0) then begin
+            nwn = OpenWindow("OPDClass",1,0,"","",OPr);
+            /*if (WindowDoOK(nwn,0)) then begin
+              CreateRecordLink(VIr,CurrentCompany,OPr,CurrentCompany);  
+              CreateRecordLink(OPr,CurrentCompany,VIr,CurrentCompany);  
+              UpdateBrowses("VIVc");
+            end;*/    
+          end else begin
+            MessageBox(0,USetStr(22058) & " " & USetStr(50007) & " "  & USetStr(20102));
+          end;   
+        end else begin
+          MessageBox(20802," " & USetStr(err));
+        end;
+      end else begin
+        MessageBox(0,USetStr(50006));
+      end;
+    end else begin
+      MessageBox(0,USetStr(1356));
+    end;
+  //end;
+  RETURN;
+END;
+
+global //Edit***************************Sasha2,14:39 03.10.2016 {
+updating procedure ClearUpSalesmanForAllPosInvoices()
+begin
+  record IVCashVc IVCashr,IVCashCurr;
+  Boolean TrHs,testf;
+  integer wn;
+  
+  wn = curwindow;
+  
+    IVcashr.TransDate = CurrentDate;
+    IVcashr.SalesMan = "ZZZZZZZZZ";
+    TrHs = true;
+    while (LoopBackKey("SalesMan",IVcashr,1,TrHs)) begin
+      testf = true;
+      if (Blank(IVcashr.SalesMan)) then begin
+      	TrHs = false;
+        testf = false; 
+      end;
+      if(IVcashr.TransDate<addday(CurrentDate,-7))then begin
+      	//TrHs = false;
+      end;
+      if (testf) then begin
+        IVcashr.InvComment = IVcashr.InvComment & " SalesMan:" & IVcashr.SalesMan & ".HDALL";
+        IVcashr.SalesMan = "";
+        RECORDSTORE(IVcashr,true);
+      end;
+    end;
+    LogText(0,"ClearUpSalesmanForAllPosInvoices");
+    closewindow(wn);
+    MessageBox(0,"Готово");
+  return;
+end; //Edit***************************Sasha2,14:39 03.10.2016 }
+
+global //Edit***************************Sasha2,14:39 03.10.2016 {
+updating procedure GetNextIVcashInvoice()
+begin
+  record IVCashVc IVCashr;
+  Boolean TrHs,testf;
+  Integer wn;
+    
+    wn = CurWindow;
+    if (GetWindowClass(wn)=="NPTSIVCashDClass") then begin
+      testf = true;
+      if (WindowState(wn)==Rs_insert) then begin
+        testf = WindowDoOK(wn,0);
+      end;
+      if (testf) then begin
+        DeselectWindow(wn,false);
+        GetWindowRecord(wn,IVCashr);
+        if (LoopMain(IVCashr,1,true) and LoopMain(IVCashr,1,true)) then begin
+          if (NonBlank(IVcashr.SalesMan)) then begin
+            CloseWindow(wn);
+            OpenWindow("NPTSIVCashDClass",1,0,"","",IVCashr);
+          end;
+        end;
+        WindowFieldGoto(wn,IVCashr,-1,"ivcashcommand",true);
+      end;
+    end;
+  return;
+end; //Edit***************************Sasha2,14:39 03.10.2016 }
+
+global //Edit***************************Sasha2,14:39 03.10.2016 {
+updating procedure GetPrevIVcashInvoice()
+begin
+  record IVCashVc IVCashr;
+  Boolean TrHs,testf;
+  Integer wn;
+    
+    wn = CurWindow;
+    if (GetWindowClass(wn)=="NPTSIVCashDClass") then begin
+      testf = true;
+      if (WindowState(wn)==Rs_insert) then begin
+        testf = WindowDoOK(wn,0);
+      end;
+      if (testf) then begin
+        DeselectWindow(wn,false);
+        GetWindowRecord(wn,IVCashr);
+        if (LoopBackKey("SerNr",IVCashr,1,true) and LoopBackKey("SerNr",IVCashr,1,true)) then begin
+          if (NonBlank(IVcashr.SalesMan)) then begin
+            CloseWindow(wn);
+            OpenWindow("NPTSIVCashDClass",1,0,"","",IVCashr);
+          end;
+        end;
+        WindowFieldGoto(wn,IVCashr,-1,"ivcashcommand",true);
+      end;
+    end;
+  return;
+end; //Edit***************************Sasha2,14:39 03.10.2016 }
+
+global //Edit***************************Sasha2,15:15 15.12.2016 {
+procedure LookUpLastOpenIVCashWithItems(var LongInt lastOpenIVCasNr)
+begin
+  record IVCashVc IVCashr;
+  Boolean TrHs,testf;
+  
+    lastOpenIVCasNr = -1;
+    IVCashr.OKFlag = 0;
+    TrHs = true;
+    while (LoopBackKey("OKFlag",IVCashr,1,TrHs)) begin
+      testf = true;
+      if (IVCashr.OKFlag!=0) then begin TrHs = false; testf = false; end;
+      if (MatRowCnt(IVCashr)==0) then begin testf = false; end;
+      if (testf) then begin
+        TrHs = false;
+        lastOpenIVCasNr = IVCashr.SerNr;
+      end;
+    end;
+
+  return;
+end; //Edit***************************Sasha2,15:15 15.12.2016 }
+
+global //Edit***************************Sasha2,14:39 03.10.2016 {
+updating procedure OpenNewIVcashInvoice()
+begin
+  record IVCashVc IVCashr;
+  Boolean TrHs,testf;
+  Integer wn,wn2;
+  LongInt lastOpenIVCasNr;
+  Boolean openNewF;
+    
+    //RECORDNEW(IVCashr);
+    wn = CurWindow;
+    switch (GetWindowClass(wn)) begin
+      case "NPTSIVCashDClass":
+        testf = true;
+        if (WindowState(wn)==Rs_insert) then begin
+          testf = false; /*WindowDoOK(wn,0)*/
+        end;
+        if (testf) then begin
+          openNewF = true;
+          LookUpLastOpenIVCashWithItems(lastOpenIVCasNr);
+          if (lastOpenIVCasNr>-1) then begin
+            IVCashr.SerNr = lastOpenIVCasNr;
+            if (ReadFirstMain(IVCashr,1,true)) then begin
+              CloseWindow(wn);
+              wn2 = OpenWindow("NPTSIVCashDClass",1,0,"","",IVCashr);
+              PutWindowString(wn2,"CustomerDisplayData_Line1",USetStr(10382) & ": " & IVCashr.InvDate & "  " & Left(IVCashr.TransTime,5)); 
+              PutWindowString(wn2,"CustomerDisplayData_Line2",USetStr(50010)); 
+              openNewF = false;
+            end;
+          end;
+          if (openNewF) then begin
+            WINDOWDONEW(wn,0);
+          end;
+        end;
+      otherwise
+        wn = OpenWindow("NPTSIVCashLClass",1,0,"","",IVCashr);
+        openNewF = true;
+        LookUpLastOpenIVCashWithItems(lastOpenIVCasNr);
+        if (lastOpenIVCasNr>-1) then begin
+          IVCashr.SerNr = lastOpenIVCasNr;
+          if (ReadFirstMain(IVCashr,1,true)) then begin
+            wn2 = OpenWindow("NPTSIVCashDClass",1,0,"","",IVCashr);
+            PutWindowString(wn2,"CustomerDisplayData_Line1",USetStr(10382) & ": " & IVCashr.InvDate & "  " & Left(IVCashr.TransTime,5)); 
+            PutWindowString(wn2,"CustomerDisplayData_Line2",USetStr(50010)); 
+            openNewF = false;
+          end;
+        end;
+        if (openNewF) then begin
+          WindowDoNew(wn,0);
+        end;
+    end;
+    //OpenWindow("NPTSIVCashDClass",1,wn,"","",IVCashr);
+  return;
+end; //Edit***************************Sasha2,14:39 03.10.2016 }
+
+global //Edit***************************Sasha2,14:39 03.10.2016 {
+updating procedure OpenFiscalPrintingSetting()
+begin
+  record RcVc RepSpec;
+  Boolean TrHs,testf;
+  Integer wn;
+    
+    RECORDNEW(RepSpec);
+    OpenWindow("FiscalPrintingTClass",1,0,"","",RepSpec);
+  return;
+end; //Edit***************************Sasha2,14:39 03.10.2016 }
+
+global //Edit***************************Sasha2,14:39 03.10.2016 {
+procedure ShowMoneyInBoxForIVCash()
+begin
+  record FiscalSetLocalBlock Fiskalblock;
+  Integer wn;
+  string 30 inBoxFilePath;
+  area inBoxArea;
+  val money;
+    
+    BlockLoad(Fiskalblock);
+    inBoxFilePath = Fiskalblock.StoragePath & "\\" & "InBox.txt";
+    
+    wn = CurWindow;
+    if (GetWindowClass(wn)=="NPTSIVCashDClass") then begin
+      money = -1;
+      if (FileExists(inBoxFilePath)) then begin
+        AddFileToArea(inBoxFilePath,inBoxArea,false);
+        money = StringToVal(GetStringFromArea(inBoxArea,0,255),M4Val);
+        if(currentuser=="PER1")then begin
+          money = money/100;
+        end;
+      end;
+      PutWindowString(wn,"DisplayMoneyInBox",money); 
+    end;
+  return;
+end; //Edit***************************Sasha2,14:39 03.10.2016 }
+
+global
+function Boolean NPTSIVCashLClassOnOpenWindow(Integer wn)
+begin
+  
+    SetWindowSubset(wn,CurrentUser);
+  
+  NPTSIVCashLClassOnOpenWindow = false;
+end;
+
+//Edit***************************Sasha2,13:28 14.12.2016 {
+function Boolean ProceedItemsReturnTClassf1EFAfter(Integer wn,Boolean changedf)
+begin
+  Boolean res;
+  record RcVc RepSpec;
+  
+  if (changedf) then begin
+    GetWindowRecord(wn,RepSpec);
+    if (nonblank(RepSpec.f1)) then begin
+      queued.YesProceedItemsReturnTClass;
+      res = true; 
+    end;
+  end;
+  
+  ProceedItemsReturnTClassf1EFAfter = res;
+  return;
+end; //Edit***************************Sasha2,13:28 14.12.2016 }
+
+
+global //Edit***************************Sasha2,13:23 14.12.2016 {
+function Boolean ProceedItemsReturnTClassAfterEditField(Integer wn,string fieldname,Integer fn, Integer rownr,Integer changed)
+begin
+  Boolean res;
+  
+  switch (fieldname) begin
+    case "f1": res = ProceedItemsReturnTClassf1EFAfter(wn,changed!=0);
+  end;
+  
+  ProceedItemsReturnTClassAfterEditField = res;
+  return;
+end; //Edit***************************Sasha2,13:23 14.12.2016 }
+
+global
+procedure PrintLabelsDsm()
+BEGIN
+  record RcVc RepSpec;
+  record PUVc PUr;
+  record StockMovVc SMr;
+  Integer wn;
+
+  wn = CurWindow;
+  if (wn>0) then begin
+    switch (GetWindowFileName(wn)) begin
+      case "PUVc":
+        GetWindowRecord(wn,PUr);
+        RepSpec.f1 = PUr.SerNr;
+        RepSpec.f2 = PUr.Location; //Edit***************************Sasha2,10:25 30.09.2015
+        RepSpec.f3 = "PUVc";
+        RepSpec.Media = mtPrinter;
+        //RepSpec.ArtMode = 6;
+        RepSpec.repname = "PULabForm";
+        //RepSpec.JobDf = 1;
+        //RepSpec.Custf = WindowsMode;
+        PrintDocument(RepSpec,"PULabForm",false);
+        //OpenWindow("PULabMyRClass",1,wn,"","",RepSpec);
+    end;
+  end;
+  
+  
+  //if (PrintDocument(RepSpec,"PULabForm",false)) then begin end;
+  
+  RETURN;
+END;
+
+global //Edit***************************Sasha2,16:59 16.01.2017 {
+updating procedure CrateIPFromIVD()
+begin
+  record IVVc IVr;
+  record IPVc IPr;
+  Integer res,wn,nwn,normalstate;
+  LongInt IPSerNr;
+
+  normalstate = 0;//Rs_normal
+  wn = CurWindow;
+  DeselectWindow(wn,false);
+  if (WindowState(wn)==normalstate) then begin
+    GetWindowRecord(wn,IVr);
+    if ((IVr.OKFlag!=0) and (IVr.InvType!=kInvoiceTypeCredit and IVr.InvType!=kInvoiceTypeCreditSpecialSales)) then begin
+      res = ExecuteCrateIPFromIVD(IVr,IPSerNr);
+      if (res==0) then begin
+        if (IPSerNr>-1) then begin
+          IPr.SerNr = IPSerNr;
+          ReadFirstMain(IPr,1,true);
+          nwn = OpenWindow("IPDClass",1,0,"","",IPr);
+        end;
+      end else begin
+        MessageBox(res,"");
+      end;
+    end else begin
+      MessageBox(12556,"");      
+    end;
+  end else begin
+    MessageBox(22902,"");      
+  end;
+  return;
+end; //Edit***************************Sasha2,16:59 16.01.2017 }
+
+global //Edit***************************Sasha2,15:39 07.03.2017 {
+procedure OpenDaySessionAuthenticationWin()
+begin
+	record RcVc RepSpec;
+	integer nwn,mwn;
+
+	mwn = curwindow;
+	nwn = OpenWindow("DaySessionCashiersRCLass",1,mwn,"","",RepSpec);
+	WindowFieldGoto(nwn,RepSpec,-1,"f2",false);
+	
+return;
+end; //Edit***************************Sasha2,15:39 07.03.2017 }
+
+global //Edit***************************Sasha2,15:39 07.03.2017 {
+updating procedure CancelDaySessionAuthentication()
+begin
+	integer wn;
+	wn = curwindow;
+	closewindow(wn);
+return;
+end; //Edit***************************Sasha2,15:39 07.03.2017 }
+
+global //Edit***************************Sasha2,16:20 09.03.2017 {
+procedure UpdateDaySessionDataLines(Integer wn,var record IVCashVc IVCashr)
+begin
+  string 20 curStr;
+  Integer pos,lineCnt;
+  record CUVc CUr;
+  
+    PutWindowString(wn,"DaySessionDataLine1",""); //Edit***************************Sasha2,13:41 09.03.2017 {
+    PutWindowString(wn,"DaySessionDataLine2","");
+    PutWindowString(wn,"DaySessionDataLine3","");
+    if (NonBlank(IVCashr.DaySessionCashiers)) then begin
+      PutWindowString(wn,"DaySessionDataLine1",UsetStr(50014) & CountObjects(IVCashr.DaySessionCashiers));
+      pos = 0;
+      lineCnt = 2;
+      ExtractObj(IVCashr.DaySessionCashiers,pos,curStr);
+      while (NonBlank(curStr)) begin
+        CUr.Code = curStr;
+        if (ReadFirstMain(CUr,1,true)) then begin
+          PutWindowString(wn,"DaySessionDataLine" & lineCnt,CUr.Name);
+          lineCnt = lineCnt + 1;
+        end;
+        ExtractObj(IVCashr.DaySessionCashiers,pos,curStr);
+      end;
+    end; //Edit***************************Sasha2,13:41 09.03.2017 }
+    
+  return;
+end; //Edit***************************Sasha2,16:20 09.03.2017 }
+
+
+
+global function Boolean HasIntegratedNL()
+begin
+		HasIntegratedNL = true;
+return;
+end;
+
+
+global procedure DelBlankRowPUDsm()
+begin
+	record PUVc PUr;
+	row PUVc PUrw;
+	integer wn,i,rwcnt;
+	
+	wn = curwindow;
+	getwindowrecord(wn,PUr);
+	rwcnt = matrowcnt(PUr);
+	
+	for(i=0;i<rwcnt;i=i+1)begin
+		matrowget(PUr,i,PUrw);
+		if(blank(PUrw.ArtCode))then begin
+			matrowdelete(PUr,i);
+			i=i-1;
+			rwcnt = rwcnt - 1;
+		end;
+	end;
+	putwindowrecord(wn,PUr);
+	
+	
+return;
+end;
+
+
+// By Ira
+global procedure CheckStockMovement()
+begin
+	record StockMovVc SMr;
+	record INVc INr;
+	record ItemStatusVc ISr1, ISr2;
+	
+	row StockMovVc SMrw;
+	integer wn,i,rwcnt;
+	boolean b;
+	
+	wn = curwindow;
+	deselectwindow(wn,true);
+	getwindowrecord(wn,SMr);
+
+	
+	b = true;
+	
+	if(blank(SMr.FrLocation) or blank(SMr.ToLocation))then begin
+		messagebox(0, "Заполните склады");
+		b = false;
+	end;
+	
+	if(b)then begin
+		StockMovVc_CheckStockMovement(SMr);
+		putwindowrecord(wn,SMr);
+	end;
+return;
+end;
+
+
+
+
+
+
+// By Ira
+global procedure CheckInstockFildsStockMovementMn()
+begin
+	record StockMovVc SMr;
+	record INVc INr;
+	record ItemStatusVc ISr1, ISr2;
+	
+	row StockMovVc SMrw;
+	integer wn,i,rwcnt;
+	boolean b;
+	
+	wn = curwindow;
+	deselectwindow(wn,true);
+	getwindowrecord(wn,SMr);
+
+	
+	b = true;
+	
+	if(blank(SMr.FrLocation) or blank(SMr.ToLocation))then begin
+		messagebox(0, "Заполните склады");
+		b = false;
+	end;
+	
+	if(b)then begin
+		StockMovVc_CheckInstockFildsMn(SMr);
+		putwindowrecord(wn,SMr);
+	end;
+return;
+end;
+
+
+
+
+
+
+// by Ira
+global procedure DelBlankRowIVDsm()
+begin
+	record IVVc IVr;
+	row IVVc IVrw;
+	integer wn,i,rwcnt;
+	
+	wn = curwindow;
+	getwindowrecord(wn,IVr);
+	rwcnt = matrowcnt(IVr);
+	
+	for(i=0;i<rwcnt;i=i+1)begin
+		matrowget(IVr,i,IVrw);
+		if(blank(IVrw.ArtCode))then begin
+			matrowdelete(IVr,i);
+			i=i-1;
+			rwcnt = rwcnt - 1;
+		end;
+	end;
+	putwindowrecord(wn,IVr);
+	
+	
+return;
+end;
+
+
+global procedure DelBlankRowSMDsm()
+begin
+	record StockMovVc SMr;
+	row StockMovVc SMrw;
+	integer wn,i,rwcnt;
+	
+	wn = curwindow;
+	getwindowrecord(wn,SMr);
+	rwcnt = matrowcnt(SMr);
+	
+	for(i=0;i<rwcnt;i=i+1)begin
+		matrowget(SMr,i,SMrw);
+		if(blank(SMrw.ArtCode))then begin
+			matrowdelete(SMr,i);
+			i=i-1;
+			rwcnt = rwcnt - 1;
+		end;
+	end;
+	putwindowrecord(wn,SMr);
+	
+	
+return;
+end;
+
+
+
+global procedure DelBlankRowSTDsm()
+begin
+	record StockTakeVc STr;
+	row StockTakeVc STrw;
+	integer wn,i,rwcnt;
+	
+	wn = curwindow;
+	getwindowrecord(wn,STr);
+	rwcnt = matrowcnt(STr);
+	
+	for(i=0;i<rwcnt;i=i+1)begin
+		matrowget(STr,i,STrw);
+		if(blank(STrw.ArtCode))then begin
+			matrowdelete(STr,i);
+			i=i-1;
+			rwcnt = rwcnt - 1;
+		end;
+	end;
+	putwindowrecord(wn,STr);
+return;
+end;
+
+
+
+
+global procedure DelBlankRowSDDsm()
+begin
+	record SDVc SDr;
+	row SDVc SDrw;
+	integer wn,i,rwcnt;
+	
+	wn = curwindow;
+	getwindowrecord(wn,SDr);
+	rwcnt = matrowcnt(SDr);
+	
+	for(i=0;i<rwcnt;i=i+1)begin
+		matrowget(SDr,i,SDrw);
+		if(blank(SDrw.ArtCode))then begin
+			matrowdelete(SDr,i);
+			i=i-1;
+			rwcnt = rwcnt - 1;
+		end;
+	end;
+	putwindowrecord(wn,SDr);
+	
+	
+return;
+end;
+
+global procedure DelBlankRowPODsm()
+begin
+	record POVc POr;
+	row POVc POrw;
+	integer wn,i,rwcnt;
+	
+	wn = curwindow;
+	getwindowrecord(wn,POr);
+	rwcnt = matrowcnt(POr);
+	
+	for(i=0;i<rwcnt;i=i+1)begin
+		matrowget(POr,i,POrw);
+		if(blank(POrw.ArtCode))then begin
+			matrowdelete(POr,i);
+			i=i-1;
+			rwcnt = rwcnt - 1;
+		end;
+	end;
+	putwindowrecord(wn,POr);
+	
+	
+return;
+end;
+
+
+
+
+
+
+function Boolean FindInMathGeneral2( string RegisterName, record StockMovVc SMovr, string search, integer from, var integer RowNumber) // _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_- Anton Preisinger 12:00 01.07.2021
+begin					
+  row SHVc SHrw;
+	row StockMovVc SMovrw;
+	record SHVc SHr;
+  boolean res;
+  Integer i,rwcnt;
+
+  res=false;
+
+ 
+	rwcnt = MatRowCnt(SMovr);
+	for (i = from;i<rwcnt;i=i+1) begin
+			MatRowGet(SMovr,i,SMovrw);
+				if(search==SMovrw.ArtCode) then begin
+					RowNumber = i;
+					res = true;
+					goto LFindInMathGeneral2;
+				end;		  
+      
+  end;  
+
+  LFindInMathGeneral2:;	
+  FindInMathGeneral2 = res;
+return;
+end;
+
+
+
+
+
+
+
+
+global  // _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_- Anton Preisinger 12:00 01.07.2021
+updating function boolean Remote_StockMove_AddOneItemTo(record RcVc RepSpec,var record StockMovVc SMr,var integer RowNumber, var integer warn)
+
+begin
+	record INVc INr,INr1;
+	row StockMovVc SMrw;
+	record BarcodeVc Barcoder;
+	integer wn,mwn,curRow,rwcnt;
+	Boolean key,put,res;
+	string 30 searchstr;
+	integer sQuant,sSentQuant;
+
+	sSentQuant = 3;	
+  sQuant = 2;
+
+	rwcnt = MatRowCnt(SMr);
+	res = false;
+
+	searchstr = RepSpec.f2;
+	warn = 0;
+
+	INr1.Code = searchstr;
+	if(ReadFirstMain(INr1,1,true)) then begin
+		INr.Code = INr1.Code;
+		key = true;
+	end else begin
+		RecordClear(INr1);
+		INr1.BarCode = searchstr;
+		if(ReadFirstKey("BarCode",INr1,1,true)) then begin
+			INr.Code = INr1.Code;
+			key = true;
+		end else begin
+			RecordClear(INr1);
+			INr1.AlternativeCode = searchstr;
+			if(ReadFirstKey("AlternativeCode",INr1,1,true)) then begin
+				INr.Code = INr1.Code;
+				key = true;
+			end else begin
+				Barcoder.Barcode = searchstr;
+				if (ReadFirstMain(Barcoder,1,true)) then begin
+					INr.Code = Barcoder.Itemcode;
+					key = true;					
+				end;
+			end;
+		end;
+	end;
+
+	curRow = 0;
+	RowNumber = 0;
+	put = false;
+
+	if(key) then begin
+			while	(curRow < rwcnt) begin	 //we try to find the same item in next rows
+				if(FindInMathGeneral2("StockMovVc",SMr,INr.Code,curRow,RowNumber)==true) then begin
+						MatRowGet(SMr,RowNumber,SMrw);
+								if (SMrw.SentQuant < SMrw.OrdQuant) then begin
+									SMrw.SentQuant = SMrw.SentQuant+1;
+									put = true;
+								end;
+								if (put) then begin
+										MatRowPut(SMr,RowNumber,SMrw);
+										res = true;
+										StockMovVc_PasteSentQuant(SMr,RowNumber);
+										goto LStockMove_AddOneItemTo;
+								end else begin
+          					curRow = curRow+1; //we try to find the same item in next rows
+								end;
+
+					end else begin
+						Beep;
+						warn = 1;
+						goto LStockMove_AddOneItemTo;
+					end;
+			end;
+			warn = 1;
+	end else begin
+			warn = 2;
+	end;	
+
+	LStockMove_AddOneItemTo:;
+	Remote_StockMove_AddOneItemTo = res;
+return;  
+end;
+
+global
+updating procedure AcceptedIVLsm()
+BEGIN
+  Integer wn;
+  record IVVc IVr,oldIVr;
+  LongInt i;
+  record AutoActionBlock AAb;
+  Boolean tmpf;
+  string 20 docname;
+  
+  wn = CurWindow;
+  i = 1;
+  // GetRecordFromBrowse(IVr,wn,i);
+  while (GetRecordFromBrowse(IVr,wn,i)) begin
+	if (IVr.AcceptedFlag==0) then begin
+	  IVr.AcceptedFlag = 1;
+	  RecordStore(IVr,true);
+	end else begin
+	  IVr.AcceptedFlag = 0;
+	  RecordStore(IVr,true);
+	end;
+	i = i + 1;
+  end;
+  UpdateBrowses("IVVc");
+  RETURN;
+END;
