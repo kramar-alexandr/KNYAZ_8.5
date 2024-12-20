@@ -394,7 +394,7 @@ begin
   TrHs = true;
   while(loopkey("AcceptedFlag",IVr,1,TrHs))begin
     if(IVr.AcceptedFlag==0)then begin
-      if(IVr.InvDate<stringtodate("01/09/2023"))then begin
+      if(IVr.InvDate<stringtodate("19/12/2024"))then begin
         IVr.AcceptedFlag = 1;
         recordstore(IVr,true);
         stepback(IVr);
