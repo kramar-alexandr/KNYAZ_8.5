@@ -3990,10 +3990,10 @@ begin
         if(currentuser=="SA" or currentuser=="BOSS")then begin
           MatCol(1,pos,"На скл.",0,InStock,true,0);
         end;
-        pos = pos + 62;
+       // pos = pos + 62;
         if (HasSerialNumbers) then begin
-          MatCol(1,pos,"Нр.серии",0,SerialNr,false,SerialNrSClass);  
-          pos = pos + 120;
+          //MatCol(1,pos,"Нр.серии",0,SerialNr,false,SerialNrSClass);  
+          //pos = pos + 120;
         end;
         MatCol(1,pos,"Наименование",0,Spec,false,0);
       end else begin
@@ -4004,7 +4004,7 @@ begin
         MatCol(1,pos,"Описание",0,Spec,false,0);
       end;
       if (HasMultiLocations) then begin
-        MatCol(1,-160,"Склад",0,Location,false,LocationSClass);  
+        //MatCol(1,-160,"Склад",0,Location,false,LocationSClass);  
       end;
     end;
     if (IsEnterprise) then begin
