@@ -3955,65 +3955,34 @@ begin
     end;
     MatrixBegin(4,v,-50,-35,-,200);
     Flip(0); flipnr = flipnr + 1;
-    if (HasJewelleryInterface) then begin
-      MatCol(1,32,"Серийный номер",0,SerialNr,false,SerialNrSClass);
-      EnterSkip(Quant);
-      MatCol(1,130,"Товар",0,ArtCode,false,INSClass);
-      EnterSkip(ArtCode);
-      if (HasVarieties) then begin
-        MatCol(1,192,"Рассч.",0,Qty,true,MATVARINSClass);
-      end else begin
-        MatCol(1,192,"Рассч.",0,Qty,true,0);
-      end;
-      if (HasAdvancedStock) then begin
-        if(currentuser=="SA" or currentuser=="BOSS")then begin
-          MatCol(1,254,"На складе",0,InStock,true,0);
-        end;
-        MatCol(1,314,"Описание",0,Spec,false,0);
-      end else begin
-        MatCol(1,254,"Описание",0,Spec,false,0);
-      end;
-    end else begin
-      MatCol(1,32,"Товар",0,ArtCode,false,INSClass);
-      EnterSkip(Qty);// Edit ************************** BPI Ukraine - KramarAlexandr - 04, 01 10 2020 y. at 2:25:44 PM
-  //  MatCol(1,94,"Var",0,VARList,false,VARSClass);
-  //  MatCol(1,144,"Qty",0,Qty,true,0);
-      if (HasVarieties) then begin
-        MatCol(1,94,"К-во",0,Qty,true,MATVARINSClass);
-        EnterSkip(ArtCode);// Edit ************************** BPI Ukraine - KramarAlexandr - 04, 01 10 2020 y. at 2:25:42 PM
-      end else begin
-        MatCol(1,94,"Рассч.",0,Qty,true,0);
-				EnterSkip(ArtCode);// Edit ************************** BPI Ukraine - KramarAlexandr - 04, 01 10 2020 y. at 2:25:39 PM
-      end;
-      pos = 154;
-      if (HasAdvancedStock) then begin
-        if(currentuser=="SA" or currentuser=="BOSS")then begin
-          MatCol(1,pos,"На скл.",0,InStock,true,0);
-        end;
-       // pos = pos + 62;
-        if (HasSerialNumbers) then begin
-          //MatCol(1,pos,"Нр.серии",0,SerialNr,false,SerialNrSClass);  
-          //pos = pos + 120;
-        end;
-        MatCol(1,pos,"Наименование",0,Spec,false,0);
-      end else begin
-        if (HasSerialNumbers) then begin
-          MatCol(1,pos,"Серийный №",0,SerialNr,false,SerialNrSClass); 
-          pos = pos + 120;
-        end;
-        MatCol(1,pos,"Описание",0,Spec,false,0);
-      end;
-      if (HasMultiLocations) then begin
-        //MatCol(1,-160,"Склад",0,Location,false,LocationSClass);  
-      end;
+
+    MatCol(1,32,"Товар",0,ArtCode,false,INSClass);
+    EnterSkip(Qty);// Edit ************************** BPI Ukraine - KramarAlexandr - 04, 01 10 2020 y. at 2:25:44 PM
+//  MatCol(1,94,"Var",0,VARList,false,VARSClass);
+//  MatCol(1,144,"Qty",0,Qty,true,0);
+    MatCol(1,140,"Кол-во",0,Qty,true,0);
+    EnterSkip(ArtCode);// Edit ************************** BPI Ukraine - KramarAlexandr - 04, 01 10 2020 y. at 2:25:39 PM
+    pos = 154;
+      if(currentuser=="SA" or currentuser=="BOSS")then begin
+      MatCol(1,240,"На скл.",0,InStock,true,0);
+    end;
+   // pos = pos + 62;
+    if (HasSerialNumbers) then begin
+      //MatCol(1,pos,"Нр.серии",0,SerialNr,false,SerialNrSClass);  
+      //pos = pos + 120;
+    end;
+    MatCol(1,300,"Наименование",0,Spec,false,0);
+
+    if (HasMultiLocations) then begin
+      //MatCol(1,-160,"Склад",0,Location,false,LocationSClass);  
     end;
     if (IsEnterprise) then begin
       Flip(flipnr); flipnr = flipnr + 1;
-      MatCol(1,-160,"Склад",0,Location,false,LocationSClass);
+      MatCol(1,-100,"Склад",0,Location,false,LocationSClass);
       if (HasModWHM) then begin
-        MatCol(1,-100,"Позиция",0,Position,false,PosSClass);
+        //MatCol(1,-100,"Позиция",0,Position,false,PosSClass);
       end;
-      MatCol(1,-40,"Коэфф.",0,Coefficient,false,0);
+      //MatCol(1,-40,"Коэфф.",0,Coefficient,false,0);
       Flip(flipnr); flipnr = flipnr + 1;
       MatCol(1,-125,"Отпускная цена",0,BasePrice,true,0);
       MatCol(1,-40,"Коэф",0,Coefficient,false,0);
