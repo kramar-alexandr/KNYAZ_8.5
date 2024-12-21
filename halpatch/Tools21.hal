@@ -1150,7 +1150,8 @@ begin
     res = 20650;
     goto LIsUnOKAllowed_StockMovVc;
   end;
-LIsUnOKAllowed_StockMovVc:;  
+LIsUnOKAllowed_StockMovVc:; 
+  res = true; 
   IsUnOKAllowed_StockMovVc = res;
   return;
 end;
