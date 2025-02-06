@@ -106,7 +106,10 @@ begin
   vector boolean vdicodes;
   array string 20 adicodes;
   area resp;
+  
+  logtext(0,"WebTelegPrice");
 
+  
   while(loopmain(DIr,1,true))begin
     vdinames[DIr.Code] = DIr.Name;
   end;
@@ -348,7 +351,10 @@ begin
   array string 20 adicodes;
   area resp;
   integer defqty;
+  
+  logtext(0,"WebTelegPriceOPT");
 
+  
   while(loopmain(DIr,1,true))begin
     vdinames[DIr.Code] = DIr.Name;
   end;
