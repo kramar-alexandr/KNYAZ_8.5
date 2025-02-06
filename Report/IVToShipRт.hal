@@ -108,7 +108,8 @@ begin
   area resp;
   
   logtext(0,"WebTelegPrice");
-
+  
+  setcompany(9,false);
   
   while(loopmain(DIr,1,true))begin
     vdinames[DIr.Code] = DIr.Name;
@@ -353,7 +354,8 @@ begin
   integer defqty;
   
   logtext(0,"WebTelegPriceOPT");
-
+  
+  setcompany(9,false);
   
   while(loopmain(DIr,1,true))begin
     vdinames[DIr.Code] = DIr.Name;
