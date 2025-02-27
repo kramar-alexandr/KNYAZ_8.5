@@ -293,7 +293,7 @@ begin
 						addParamToJSONArea("BarCode",NormalizeStrToJson(INr.BarCode),resarea);
 						addParamToJSONArea("AlternativeCode",NormalizeStrToJson(INr.AlternativeCode),resarea);
 						addParamToJSONArea("Name",NormalizeStrToJson(INr.Name),resarea);
-						if(currentuser!="INVENT")then begin
+						if(currentuser!="INVENT" and currentuser!="OSN")then begin
               addParamToJSONArea("Instock",NormalizeStrToJson(ISr.Instock),resarea);
 						end;
 						addParamToJSONArea("Price",NormalizeStrToJson(price),resarea);
@@ -964,7 +964,7 @@ json js;
 val dif;
 
   logtext(0,"WebGetUsers start = " & WebLoginStatus);
-	if(WebLoginStatus==3 and (left(currentuser,5)=="INKAS" or left(currentuser,6)=="INVENT" or left(currentuser,6)=="OSN"))then begin
+	if(WebLoginStatus==3 and (left(currentuser,5)=="INKAS" or left(currentuser,6)=="INVENT" or left(currentuser,3)=="OSN"))then begin
   //if(true)then begin
 		WebSetContentType("application/json; charset=UTF-8");	
 
