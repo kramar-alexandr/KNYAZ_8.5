@@ -6,7 +6,7 @@ fetch('../../WebTelegPrice.hal')
         
         // Установим текущую дату
         openDate.textContent = new Date().toLocaleDateString();
-
+        console.log(data);
         // Преобразуем объект в массив и сортируем по количеству элементов в группе
         const sortedGroups = data.sort((a, b) => Object.keys(b[1]).length - Object.keys(a[1]).length);
         console.log(sortedGroups);
