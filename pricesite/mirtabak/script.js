@@ -24,7 +24,7 @@ fetch('../../WebTelegPriceOPT.hal')
 
             // Контейнер для товаров в два столбца
             const itemsContainer = document.createElement('div');
-            itemsContainer.className = 'row row-cols-1 row-cols-md-2'; // Два столбца для товаров
+            itemsContainer.className = 'row row-cols-1 row-cols-md-1'; // Два столбца для товаров
 
             // Обрабатываем товары в группе
             for (const [name, price] of Object.entries(items)) {
