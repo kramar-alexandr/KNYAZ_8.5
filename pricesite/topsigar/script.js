@@ -7,11 +7,8 @@ fetch('../../WebTelegPrice.hal')
         // Установим текущую дату
         openDate.textContent = new Date().toLocaleDateString();
 
-        // Преобразуем объект в массив и сортируем по количеству элементов в группе
-        const sortedGroups = Object.entries(data).sort((a, b) => b[1].length - a[1].length);
-
         // Обрабатываем каждую группу
-        for (const [group, items] of sortedGroups) {
+        for (const [group, items] of Object.entries(data)) {
             // Создаем контейнер группы
             const groupContainer = document.createElement('div');
             groupContainer.className = 'group-container'; // Новый класс для управления переносами
