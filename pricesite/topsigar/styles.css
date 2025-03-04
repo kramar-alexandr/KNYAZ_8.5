@@ -25,3 +25,13 @@
     margin-top: 1rem; /* Отступ сверху */
     font-size: 20px;
 }
+
+@media print {
+    .row-cols-md-2 {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .row-cols-md-2 .col {
+        width: 50%;
+    }
+}
