@@ -34,4 +34,7 @@
     .row-cols-md-2 .col {
         width: 50%;
     }
+    .group-container {
+        page-break-inside: avoid;
+    }
 }
