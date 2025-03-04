@@ -27,11 +27,11 @@
 }
 
 @media print {
-    .row-cols-md-2 {
+    .row-cols-md-1 {
         display: flex;
         flex-wrap: wrap;
     }
-    .row-cols-md-2 .col {
+    .row-cols-md-1 .col {
         width: 50%;
     }
     .group-container {
