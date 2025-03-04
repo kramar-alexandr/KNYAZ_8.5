@@ -9,7 +9,7 @@ fetch('../../WebTelegPrice.hal')
 
         // Преобразуем объект в массив и сортируем по количеству элементов в группе
         const sortedGroups = Object.entries(data).sort((a, b) => b[1].length - a[1].length);
-
+        console.log(sortedGroups);
         // Обрабатываем каждую группу
         for (const [group, items] of sortedGroups) {
             // Создаем контейнер группы
