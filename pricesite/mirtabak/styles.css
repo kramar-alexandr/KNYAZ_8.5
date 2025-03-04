@@ -32,7 +32,7 @@
         flex-wrap: wrap;
     }
     .row-cols-md-1 .col {
-        width: 50%;
+        width: 100%;
     }
     .group-container {
         page-break-inside: avoid;
