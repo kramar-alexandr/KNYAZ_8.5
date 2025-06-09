@@ -101,9 +101,7 @@ boolean testf;
   delLastComaInArea(resarea);
   AddTextToArea("]",resarea);
 
-
-  weboutarea2(resarea);
-  
+  WriteAreaToFile(resarea,"hansa.log",1);
   logtext(0,"WebGetUsersTelegram end");
 return;
 end;
