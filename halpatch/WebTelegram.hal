@@ -200,6 +200,7 @@ logtext(0,"WebGetLocationsTelegram start");
 
   location = webgetarg("location");
 	SetCompany(9,false);
+  LogText(0,"WebGetLocationsTelegram location " & location);
 	WebSetContentType("application/json; charset=UTF-8");	
 
   AddTextToArea("[",resarea);
@@ -465,7 +466,7 @@ string 100 saler;
 			CLOutr.Person = USr.Code;
 			CLOutr.RefStr = user;
 			CLOutr.CorspCode = "CASH_OUT";
-			CLOutr.Comment = "€нкассациЯ " & currentdate & " " & user;
+			CLOutr.Comment = "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ " & currentdate & " " & user;
 			CLOutr.Total = sum;
 			CLOutr.NetVal = sum;
 			CLOutr.CurncyCode = "UAH";
@@ -483,7 +484,7 @@ string 100 saler;
 			CLInr.Person = USr.Code;
 			CLInr.RefStr = USr.Code;
 			CLInr.CorspCode = "CASH_OUT";
-			CLInr.Comment = "€нкассациЯ " & currentdate & " c " & CLOutr.Person;
+			CLInr.Comment = "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ " & currentdate & " c " & CLOutr.Person;
 			CLInr.Total = sum;
 			CLInr.CurncyCode = "UAH";
 			CLInVc_PasteCurncyCode(CLInr);
