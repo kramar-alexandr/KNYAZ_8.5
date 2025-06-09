@@ -252,9 +252,8 @@ logtext(0,"WebGetLocationsTelegram start");
   delLastComaInArea(resarea);
   AddTextToArea("]",resarea);
 
-
+WriteAreaToFile(resarea,"hansa.log",1);
 weboutarea2(resarea);
-
 logtext(0,"WebGetLocationsTelegram end");
 
 return;
