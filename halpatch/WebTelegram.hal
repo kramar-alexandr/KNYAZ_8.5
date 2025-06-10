@@ -190,14 +190,15 @@ global webpublic procedure WebGetLocationsTelegram()
 begin
 area resarea;
 record LocationVc Locr;
-string 100 location;
-boolean TrHs,TrHs2,testf;
+string 100 location,group;
+boolean TrHs,TrHs2,testf,testf2;
 record UserVc USr;
 record CLOutVc CLOutr;
 
 logtext(0,"WebGetLocationsTelegram start");
 
   location = webgetarg("location");
+  group = webgetarg("group");
 	SetCompany(9,false);
   LogText(0,"WebGetLocationsTelegram location " & location);
 	WebSetContentType("application/json; charset=UTF-8");	
@@ -206,46 +207,54 @@ logtext(0,"WebGetLocationsTelegram start");
   Locr.Code = location;
   TrHs = true;
   while(loopmain(Locr,1,TrHs))begin
+    testf2 = true;
     if(nonblank(location) and location!=Locr.Code)then begin
       TrHs = false;
     end;
     USr.Code = Locr.Code;
     readfirstmain(USr,1,true);
-    if (nonblank(Locr.Group) and TrHs and USr.Closed==0 and nonblank(USr.Code)) then begin
-      AddTextToArea("{",resarea);
-      addParamToJSONArea("code",NormalizeStrToJson(Locr.Code),resarea);
-      addParamToJSONArea("name",NormalizeStrToJson(Locr.Name),resarea);
-      addParamToJSONArea("group",NormalizeStrToJson(Locr.Group),resarea);
-      addParamToJSONArea("objects",NormalizeStrToJson(Locr.Objects),resarea);
-      addParamToJSONArea("balance",NormalizeStrToJson(Locr.BalanceSum),resarea);
-      addParamToJSONArea("expenses",NormalizeStrToJson(Locr.RashodSum),resarea);
-      addParamToJSONArea("total",NormalizeStrToJson(Locr.BalanceSum - Locr.RashodSum),resarea);
-      if(nonblank(location))then begin
-        AddTextToArea(" \"daylyExpenses\":[",resarea);
-          CLOutr.TransDate = currentdate;
-          TrHs = true;
-          while(loopkey("TransDate",CLOutr,1,TrHs))begin
-            testf = true;
-            if(CLOutr.Objects!=USr.PersObjx)then begin testf = false; end;
-    
-            if(testf)then begin
-              AddTextToArea("{",resarea);
-              addParamToJSONArea("code",NormalizeStrToJson(CLOutr.SerNr),resarea);
-              addParamToJSONArea("type",NormalizeStrToJson(CLOutr.CorspCode),resarea);
-              addParamToJSONArea("comment",NormalizeStrToJson(CLOutr.Comment),resarea);
-              addParamToJSONArea("sum",NormalizeStrToJson(CLOutr.Total),resarea);
-              addParamToJSONArea("date",NormalizeStrToJson(CLOutr.TransDate),resarea);
-              delLastComaInArea(resarea);
-              AddTextToArea("},",resarea);
-            end;
-          end;
-          delLastComaInArea(resarea);
+    if(nonblank(group) and USr.SalesGroup!=group)then begin
+      testf2 = false;    
+    end;
+
+    if(testf2)then begin
       
-        AddTextToArea("]",resarea);
-      end else begin
-        delLastComaInArea(resarea);
+      if (nonblank(Locr.Group) and TrHs and USr.Closed==0 and nonblank(USr.Code)) then begin
+        AddTextToArea("{",resarea);
+        addParamToJSONArea("code",NormalizeStrToJson(Locr.Code),resarea);
+        addParamToJSONArea("name",NormalizeStrToJson(Locr.Name),resarea);
+        addParamToJSONArea("group",NormalizeStrToJson(Locr.Group),resarea);
+        addParamToJSONArea("objects",NormalizeStrToJson(Locr.Objects),resarea);
+        addParamToJSONArea("balance",NormalizeStrToJson(Locr.BalanceSum),resarea);
+        addParamToJSONArea("expenses",NormalizeStrToJson(Locr.RashodSum),resarea);
+        addParamToJSONArea("total",NormalizeStrToJson(Locr.BalanceSum - Locr.RashodSum),resarea);
+        if(nonblank(location))then begin
+          AddTextToArea(" \"daylyExpenses\":[",resarea);
+            CLOutr.TransDate = currentdate;
+            TrHs = true;
+            while(loopkey("TransDate",CLOutr,1,TrHs))begin
+              testf = true;
+              if(CLOutr.Objects!=USr.PersObjx)then begin testf = false; end;
+      
+              if(testf)then begin
+                AddTextToArea("{",resarea);
+                addParamToJSONArea("code",NormalizeStrToJson(CLOutr.SerNr),resarea);
+                addParamToJSONArea("type",NormalizeStrToJson(CLOutr.CorspCode),resarea);
+                addParamToJSONArea("comment",NormalizeStrToJson(CLOutr.Comment),resarea);
+                addParamToJSONArea("sum",NormalizeStrToJson(CLOutr.Total),resarea);
+                addParamToJSONArea("date",NormalizeStrToJson(CLOutr.TransDate),resarea);
+                delLastComaInArea(resarea);
+                AddTextToArea("},",resarea);
+              end;
+            end;
+            delLastComaInArea(resarea);
+        
+          AddTextToArea("]",resarea);
+        end else begin
+          delLastComaInArea(resarea);
+        end;
+        AddTextToArea("},",resarea);
       end;
-      AddTextToArea("},",resarea);
     end;
   end;
   delLastComaInArea(resarea);
