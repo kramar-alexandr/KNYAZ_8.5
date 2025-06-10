@@ -201,6 +201,7 @@ logtext(0,"WebGetLocationsTelegram start");
   group = webgetarg("group");
 	SetCompany(9,false);
   LogText(0,"WebGetLocationsTelegram location " & location);
+  LogText(0,"WebGetLocationsTelegram group " & group);
 	WebSetContentType("application/json; charset=UTF-8");	
 
   AddTextToArea("[",resarea);
