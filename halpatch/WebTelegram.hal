@@ -190,7 +190,7 @@ global webpublic procedure WebGetLocationsTelegram()
 begin
 area resarea;
 record LocationVc Locr;
-string 100 location,group;
+string 100 location,user,group;
 boolean TrHs,TrHs2,testf,testf2;
 record UserVc USr;
 record CLOutVc CLOutr;
@@ -198,11 +198,17 @@ record CLOutVc CLOutr;
 logtext(0,"WebGetLocationsTelegram start");
 
   location = webgetarg("location");
-  group = webgetarg("group");
+  user = webgetarg("group");
 	SetCompany(9,false);
   LogText(0,"WebGetLocationsTelegram location " & location);
-  LogText(0,"WebGetLocationsTelegram group " & group);
+  LogText(0,"WebGetLocationsTelegram user " & user);
 	WebSetContentType("application/json; charset=UTF-8");	
+  if(nonblank(user))then begin
+    USr.Code = user;
+    readfirstmain(USr,1,true);
+    group = USr.SalesGroup;
+  end;
+   
 
   AddTextToArea("[",resarea);
   Locr.Code = location;
