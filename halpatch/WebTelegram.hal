@@ -198,7 +198,7 @@ record CLOutVc CLOutr;
 logtext(0,"WebGetLocationsTelegram start");
 
   location = webgetarg("location");
-  user = webgetarg("group");
+  user = webgetarg("user");
 	SetCompany(9,false);
   LogText(0,"WebGetLocationsTelegram location " & location);
   LogText(0,"WebGetLocationsTelegram user " & user);
