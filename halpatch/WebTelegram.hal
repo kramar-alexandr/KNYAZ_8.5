@@ -217,6 +217,7 @@ logtext(0,"WebGetLocationsTelegram start");
     testf2 = true;
     if(nonblank(location) and location!=Locr.Code)then begin
       TrHs = false;
+      testf2 = false;
     end;
     USr.Code = Locr.Code;
     readfirstmain(USr,1,true);
@@ -227,7 +228,6 @@ logtext(0,"WebGetLocationsTelegram start");
         if(!setinset(Locr.Code,USr.TelLocation))then begin
           testf2 = false;  
         end;
-        testf2 = false;  
       end;  
     end;
 
