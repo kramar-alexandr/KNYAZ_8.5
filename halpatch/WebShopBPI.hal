@@ -998,6 +998,7 @@ val dif;
 						end;
           
             if(testf) then begin
+							logtext(0,"WebGetUsers " & USr.Code & " " & USr.Name);
               Depr.Code = USr.Department;
               readfirstmain(Depr,1,true);
               AddTextToArea("{",resarea);
@@ -1069,6 +1070,7 @@ val dif;
 						end;
           
             if(testf) then begin
+							logtext(0,"WebGetUsersPoints " & USr.Code & " " & USr.Name);
               Depr.Code = USr.Department;
               readfirstmain(Depr,1,true);
               AddTextToArea("{",resarea);
