@@ -221,7 +221,14 @@ logtext(0,"WebGetLocationsTelegram start");
     USr.Code = Locr.Code;
     readfirstmain(USr,1,true);
     if(nonblank(group) and USr.SalesGroup!=group)then begin
-      testf2 = false;    
+      if(blank(USr.TelLocation))then begin
+        testf2 = false;  
+      end else begin
+        if(!setinset(Locr.Code,USr.TelLocation))then begin
+          testf2 = false;  
+        end;
+        testf2 = false;  
+      end;  
     end;
 
     if(testf2)then begin
