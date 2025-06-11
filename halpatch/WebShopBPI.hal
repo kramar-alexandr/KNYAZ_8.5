@@ -989,6 +989,8 @@ val dif;
 
 						if(testf)then begin
 							if(nonblank(curUSr.SalesGroup) and USr.SalesGroup!=curUSr.SalesGroup)then begin 
+								testf = false;
+							end else begin
 								if(!testf and nonblank(curUSr.TelLocation) and setinset(USr.SalesGroup,curUSr.TelLocation))then begin
 									testf = true;
 								end;
@@ -1059,6 +1061,7 @@ val dif;
           
             if(testf)then begin
 							if(nonblank(curUSr.SalesGroup) and USr.SalesGroup!=curUSr.SalesGroup)then begin 
+								testf = false;
 								if(!testf and nonblank(curUSr.TelLocation) and setinset(USr.SalesGroup,curUSr.TelLocation))then begin
 									testf = true;
 								end;
