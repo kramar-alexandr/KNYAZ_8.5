@@ -191,6 +191,7 @@ begin
 area resarea;
 record LocationVc Locr;
 string 100 location,user,group;
+string 200 addlocations;
 boolean TrHs,TrHs2,testf,testf2;
 record UserVc USr;
 record CLOutVc CLOutr;
@@ -207,6 +208,7 @@ logtext(0,"WebGetLocationsTelegram start");
     USr.Code = user;
     readfirstmain(USr,1,true);
     group = USr.SalesGroup;
+    addlocations = USr.TelLocation;
   end;
    
 
@@ -222,10 +224,10 @@ logtext(0,"WebGetLocationsTelegram start");
     USr.Code = Locr.Code;
     readfirstmain(USr,1,true);
     if(nonblank(group) and USr.SalesGroup!=group)then begin
-      if(blank(USr.TelLocation))then begin
+      if(blank(addlocations))then begin
         testf2 = false;  
       end else begin
-        if(!setinset(Locr.Code,USr.TelLocation))then begin
+        if(!setinset(Locr.Code,addlocations))then begin
           testf2 = false;  
         end;
       end;  
