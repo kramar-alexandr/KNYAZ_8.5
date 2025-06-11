@@ -986,8 +986,14 @@ val dif;
             testf  = true;
             if(USr.AccessGroup!="SALE")then begin testf = false; end;
             if(USr.Closed!=0)then begin testf = false; end;
-          
-            if(nonblank(curUSr.SalesGroup) and USr.SalesGroup!=curUSr.SalesGroup)then begin testf = false; end;
+
+						if(testf)then begin
+							if(nonblank(curUSr.SalesGroup) and USr.SalesGroup!=curUSr.SalesGroup)then begin 
+								if(!testf and nonblank(curUSr.TelLocation) and setinset(USr.SalesGroup,curUSr.TelLocation))then begin
+									testf = true;
+								end;
+							end;
+						end;
           
             if(testf) then begin
               Depr.Code = USr.Department;
