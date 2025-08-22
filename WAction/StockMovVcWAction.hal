@@ -977,6 +977,10 @@ BEGIN
           if (StockMovr.OKFlag!=0) then begin res = false; end;
       end;
   end;
+  
+  if(currentuser=="SA")then begin// Edit ************************** BPI Ukraine - KramarAlexandr - Friday, 22 August 2025 at 10:02:17
+    res = true;
+  end;
   StockMovDClassActiveEditField = res;
   RETURN;
 END;
