@@ -1,7 +1,7 @@
 external function roundmode SetRoundModeD(Integer);
 external procedure GetFullCurncyRate (var string,Date,var val,var val,var val,var val,var val);
 
-SetLangMode(LangRussian,"RUS",0);
+SetLangMode(LangRussian,"RUS",2);
 
 global procedure MyFinResRn(record RcVc RepSpec)
 begin
@@ -33,7 +33,7 @@ begin
   val UAH4,USD4,USDTOT4;
   val UAH5,USD5,USDTOT5;
   
-  startreportnoheaderjob("”инансовый отчет");
+  startreportnoheaderjob("Р¤РёРЅР°РЅСЃРѕРІС‹Р№ РѕС‚С‡РµС‚");
     
     IVr.InvDate = RepSpec.sStartDate;
     TrHs = true;
@@ -58,7 +58,7 @@ begin
             cred = -1;
           end;
           if(IVrw.stp==1 and nonblank(IVrw.ArtCode) and IVrw.Quant!=0)then begin   
-            if(IVr.CustCode!="Ћ’_ЂЌЂ’Ћ‹€—Ђ")then begin         
+            if(IVr.CustCode!="РћРў_РђРќРђРўРћР›РР§Рђ")then begin         
               if(IVr.PayDeal!="O")then begin
                 vKeysCust[IVr.CustCode] = true;
                 vFinData[IVr.CustCode & ":DOLG:" & IVr.CurncyCode & ":SUM"] = vFinData[IVr.CustCode & ":DOLG:" & IVr.CurncyCode & ":SUM"] + IVrw.Sum;
@@ -70,17 +70,17 @@ begin
                 vFinData[IVr.Location & ":BSUM"] = vFinData[IVr.Location & ":BSUM"] + IVrw.Sum/rate;
               end;
             end else begin
-              vFinData["Ћ’_ЂЌЂ’Ћ‹€—Ђ:" & IVr.CurncyCode] = vFinData["Ћ’_ЂЌЂ’Ћ‹€—Ђ:" & IVr.CurncyCode] + IVrw.Sum;
+              vFinData["РћРў_РђРќРђРўРћР›РР§Рђ:" & IVr.CurncyCode] = vFinData["РћРў_РђРќРђРўРћР›РР§Рђ:" & IVr.CurncyCode] + IVrw.Sum;
               fr = IVr.FrRate;
               if(IVr.CurncyCode=="UAH")then begin
-                vFinData["FIFO:Ћ’_ЂЌЂ’Ћ‹€—Ђ:" & IVr.CurncyCode] = vFinData["FIFO:Ћ’_ЂЌЂ’Ћ‹€—Ђ:" & IVr.CurncyCode] + IVrw.FIFORowVal*cred*fr;
+                vFinData["FIFO:РћРў_РђРќРђРўРћР›РР§Рђ:" & IVr.CurncyCode] = vFinData["FIFO:РћРў_РђРќРђРўРћР›РР§Рђ:" & IVr.CurncyCode] + IVrw.FIFORowVal*cred*fr;
               end else begin
                 curcode = "UAH";
                 GetFullCurncyRate(curcode,IVr.InvDate,fr,to1,to2,br1,br2);
                 if(fr==0)then begin
                   fr = 1;
                 end;
-                vFinData["FIFO:Ћ’_ЂЌЂ’Ћ‹€—Ђ:" & IVr.CurncyCode] = vFinData["FIFO:Ћ’_ЂЌЂ’Ћ‹€—Ђ:" & IVr.CurncyCode] + IVrw.FIFORowVal*cred*fr;
+                vFinData["FIFO:РћРў_РђРќРђРўРћР›РР§Рђ:" & IVr.CurncyCode] = vFinData["FIFO:РћРў_РђРќРђРўРћР›РР§Рђ:" & IVr.CurncyCode] + IVrw.FIFORowVal*cred*fr;
               end;
             end;
             
@@ -104,14 +104,14 @@ begin
           vFinData[CLOutr.Person & ":SPEND:BSUM"] = vFinData[CLOutr.Person & ":SPEND:BSUM"] + CLOutr.Total/rate;
         end else begin
           if(CLOutr.CurncyCode=="UAH")then begin
-            vFinData["Ћ’_ЂЌЂ’Ћ‹€—Ђ:SPEND"] = vFinData["Ћ’_ЂЌЂ’Ћ‹€—Ђ:SPEND"] + CLOutr.Total;
+            vFinData["РћРў_РђРќРђРўРћР›РР§Рђ:SPEND"] = vFinData["РћРў_РђРќРђРўРћР›РР§Рђ:SPEND"] + CLOutr.Total;
           end else begin
             curcode = "UAH";
             GetFullCurncyRate(curcode,CLOutr.TransDate,fr,to1,to2,br1,br2);
             if(fr==0)then begin
               fr = 1;
             end;
-            vFinData["Ћ’_ЂЌЂ’Ћ‹€—Ђ:SPEND"] = vFinData["Ћ’_ЂЌЂ’Ћ‹€—Ђ:SPEND"] + CLOutr.Total * fr;
+            vFinData["РћРў_РђРќРђРўРћР›РР§Рђ:SPEND"] = vFinData["РћРў_РђРќРђРўРћР›РР§Рђ:SPEND"] + CLOutr.Total * fr;
           end;
         end;
         
@@ -148,17 +148,17 @@ begin
     end;
     
     startformat(15);
-      outstring(0,0,"Џродажи на точках за наличку",false);
+      outstring(0,0,"РџСЂРѕРґР°Р¶Рё РЅР° С‚РѕС‡РєР°С… Р·Р° РЅР°Р»РёС‡РєСѓ",false);
     endformat;
     startformat(15);
-      outstring(0,0,"’очка",false);
-      outstring(130,0,"‚ыторг (по курсуUSD)",true);
-      outstring(180,0,"(ѓрн)",true);
+      outstring(0,0,"РўРѕС‡РєР°",false);
+      outstring(130,0,"Р’С‹С‚РѕСЂРі (РїРѕ РєСѓСЂСЃСѓUSD)",true);
+      outstring(180,0,"(Р“СЂРЅ)",true);
       outstring(220,0,"(USD)",true);
-      outstring(310,0,"‘ебестоимость (USD)",true);
-      outstring(380,0,"‡атраты (USD)",true);
-      outstring(420,0,"(ѓђЌ)",true);
-      outstring(1,0,"Џрибыль(USD)",true);
+      outstring(310,0,"РЎРµР±РµСЃС‚РѕРёРјРѕСЃС‚СЊ (USD)",true);
+      outstring(380,0,"Р—Р°С‚СЂР°С‚С‹ (USD)",true);
+      outstring(420,0,"(Р“Р Рќ)",true);
+      outstring(1,0,"РџСЂРёР±С‹Р»СЊ(USD)",true);
     endformat;
     
     getvectortags(vKeysLoc,akeysLoc);
@@ -198,7 +198,7 @@ begin
     gray_divider(0,1);
     
     startformat(15);
-      outstring(0,0,"€того",false);
+      outstring(0,0,"РС‚РѕРіРѕ",false);
       outstring(130,0,total1,true);
       outstring(180,0,total2,true);
       outstring(220,0,total3,true);
@@ -224,23 +224,23 @@ begin
     startformat(15);
     endformat;
     startformat(15);
-      outstring(0,0,"Џродажи в долг",false);
+      outstring(0,0,"РџСЂРѕРґР°Р¶Рё РІ РґРѕР»Рі",false);
     endformat;
     startformat(15);
-      outstring(0,0,"Љлиент",false);
-      outstring(130,0,"‚ыторг (USD)",true);
-      outstring(180,0,"(ѓрн)",true);
+      outstring(0,0,"РљР»РёРµРЅС‚",false);
+      outstring(130,0,"Р’С‹С‚РѕСЂРі (USD)",true);
+      outstring(180,0,"(Р“СЂРЅ)",true);
       outstring(220,0,"(USD)",true);
-      outstring(290,0,"‘тоимость (USD)",true);
-      outstring(340,0,"Џрибыль(USD)",true);
-      outstring(390,0,"‚озврат(USD)",true);
+      outstring(290,0,"РЎС‚РѕРёРјРѕСЃС‚СЊ (USD)",true);
+      outstring(340,0,"РџСЂРёР±С‹Р»СЊ(USD)",true);
+      outstring(390,0,"Р’РѕР·РІСЂР°С‚(USD)",true);
       outstring(430,0,"(UAH)",true);
-      outstring(1,0,"Џришло(USD)",true);
+      outstring(1,0,"РџСЂРёС€Р»Рѕ(USD)",true);
     endformat;
     gray_divider(0,1);
     getvectortags(vKeysCust,akeysCust);
     for(j=0;j<akeysCust.length;j=j+1)begin
-      if(vFinData[akeysCust[j] & ":DOLG:BSUM"]!=0 and akeysCust[j]!="Ћ’_ЂЌЂ’Ћ‹€—Ђ")then begin
+      if(vFinData[akeysCust[j] & ":DOLG:BSUM"]!=0 and akeysCust[j]!="РћРў_РђРќРђРўРћР›РР§Рђ")then begin
         CUr.Code = akeysCust[j];
         readfirstmain(CUr,1,true);
         startformat(15);
@@ -275,7 +275,7 @@ begin
     Gray_Divider(0,1);
     
     startformat(15);
-      outstring(0,0,"€того",false);
+      outstring(0,0,"РС‚РѕРіРѕ",false);
       outval(130,0,total1,m4val,true);
       outval(180,0,total2,m4val,true);
       outval(220,0,total3,m4val,true);
@@ -296,7 +296,7 @@ begin
       startformat(15);
       endformat;
       startformat(15);
-        outstring(0,0,"’укщие долги клиентов",false);
+        outstring(0,0,"РўСѓРєС‰РёРµ РґРѕР»РіРё РєР»РёРµРЅС‚РѕРІ",false);
       endformat;
       
       total1 = blankval;
@@ -309,21 +309,21 @@ begin
       total8 = blankval;
       
       startformat(15);
-        outstring(0,0,"Љлиент",false);
-        outstring(100,0,"„ата долга",true);
-        outstring(150,0,"‘ч/ф",true);
-        outstring(300,0,"‘умма(USD)",true);
-        outstring(400,0,"‘умма(UAH)",true);
-        outstring(1,0,"‚сего(по курсу USD)",true);
+        outstring(0,0,"РљР»РёРµРЅС‚",false);
+        outstring(100,0,"Р”Р°С‚Р° РґРѕР»РіР°",true);
+        outstring(150,0,"РЎС‡/С„",true);
+        outstring(300,0,"РЎСѓРјРјР°(USD)",true);
+        outstring(400,0,"РЎСѓРјРјР°(UAH)",true);
+        outstring(1,0,"Р’СЃРµРіРѕ(РїРѕ РєСѓСЂСЃСѓ USD)",true);
       endformat;
       
       
       ARr.CustCode = "";
       while(loopkey("CustCode",ARr,1,true))begin
-        if(ARr.CustCode!="Ћ’_ЂЌЂ’Ћ‹€—Ђ")then begin
+        if(ARr.CustCode!="РћРў_РђРќРђРўРћР›РР§Рђ")then begin
           if(nonblank(curcust) and ARr.CustCode!=curcust)then begin
             startformat(15);
-              outstring(0,0,"€того",false);
+              outstring(0,0,"РС‚РѕРіРѕ",false);
               outstring(100,0,"",true);
               outstring(150,0,"",true);
               outstring(300,0,total1,true);
@@ -363,20 +363,20 @@ begin
             total6 = total6 + ARr.BookRVal;
           endformat;
         end else begin
-          vFinData["Ћ’_ЂЌЂ’Ћ‹€—Ђ:DOLG"] = vFinData["Ћ’_ЂЌЂ’Ћ‹€—Ђ:DOLG"] + ARr.RVal;
+          vFinData["РћРў_РђРќРђРўРћР›РР§Рђ:DOLG"] = vFinData["РћРў_РђРќРђРўРћР›РР§Рђ:DOLG"] + ARr.RVal;
         end;
       end;
       startformat(15);
         outstring(0,0,"",false);
         outstring(100,0,"",true);
-        outstring(150,0,"€того",true);
+        outstring(150,0,"РС‚РѕРіРѕ",true);
         outstring(300,0,total1,true);
         outstring(400,0,total2,true);
         outstring(1,0,total3,true);
       endformat;
     Gray_Divider(0,1);
     startformat(15);
-      outstring(0,0,"€’ЋѓЋ",false);
+      outstring(0,0,"РРўРћР“Рћ",false);
       outstring(100,0,"",true);
       outstring(150,0,"",true);
       outstring(300,0,total4,true);
@@ -388,15 +388,15 @@ begin
     startformat(15);
     endformat;
     startformat(15);
-      outstring(0,0,"‡атраты не по точкам",false);
+      outstring(0,0,"Р—Р°С‚СЂР°С‚С‹ РЅРµ РїРѕ С‚РѕС‡РєР°Рј",false);
     endformat;
     
     getvectortags(vSpend,akeysSpend);
     startformat(15);
-      outstring(0,0,"‡атрата",false);
-      outstring(150,0,"ѓђЌ",true);
+      outstring(0,0,"Р—Р°С‚СЂР°С‚Р°",false);
+      outstring(150,0,"Р“Р Рќ",true);
       outstring(300,0,"USD",true);
-      outstring(1,0,"€того(по курсу в USD)",true);
+      outstring(1,0,"РС‚РѕРіРѕ(РїРѕ РєСѓСЂСЃСѓ РІ USD)",true);
     endformat;
     total1 = blankval;
     total2 = blankval;
@@ -418,7 +418,7 @@ begin
     end;
     Gray_Divider(0,1);
     startformat(15);
-      outstring(0,0,"€того",false);
+      outstring(0,0,"РС‚РѕРіРѕ",false);
       outval(150,0,total1,m4val,true);
       outval(300,0,total2,m4val,true);
       outval(1,0,total3,m4val,true);
@@ -434,7 +434,7 @@ begin
     startformat(15);
     endformat;
     startformat(15);
-      outstring(0,0,"Ћплата поставщикам",false);
+      outstring(0,0,"РћРїР»Р°С‚Р° РїРѕСЃС‚Р°РІС‰РёРєР°Рј",false);
     endformat;
     
     OPr.TransDate = RepSpec.sStartDate;
@@ -463,9 +463,9 @@ begin
     total2 = blankval;
     total3 = blankval;
     startformat(15);
-      outstring(0,0,"Џоставщик",false);
-      outstring(200,0,"„олг на сегоднЯ",true);
-      outstring(1,0,"Ћплата за период(USD)",true);
+      outstring(0,0,"РџРѕСЃС‚Р°РІС‰РёРє",false);
+      outstring(200,0,"Р”РѕР»Рі РЅР° СЃРµРіРѕРґРЅСЏ",true);
+      outstring(1,0,"РћРїР»Р°С‚Р° Р·Р° РїРµСЂРёРѕРґ(USD)",true);
     endformat;
     
     getvectortags(vVend,akeysVend);
@@ -482,7 +482,7 @@ begin
     end;
     gray_divider(0,1);
     startformat(15);
-      outstring(0,0,"€того",false);
+      outstring(0,0,"РС‚РѕРіРѕ",false);
       outval(200,0,total1,m4val,true);
       outval(1,0,total2,m4val,true);
     endformat;
@@ -494,45 +494,45 @@ begin
   
   Black_Divider(0,1);
   startformat(15);
-    outstring(200,0,"€’ЋѓЋ",true);
-    outstring(300,0,"ѓђЌ",true);
+    outstring(200,0,"РРўРћР“Рћ",true);
+    outstring(300,0,"Р“Р Рќ",true);
     outstring(400,0,"USD",true);
-    outstring(1,0,"Џо Љурсу в USD",true);
+    outstring(1,0,"РџРѕ РљСѓСЂСЃСѓ РІ USD",true);
   endformat;
   
   startformat(15);
-    outstring(200,0,"Џђ€•Ћ„ „…Ќ…ѓ ЏЋ ’Ћ—ЉЂЊ ЌЂ‹.",true);
+    outstring(200,0,"РџР РРҐРћР” Р”Р•РќР•Р“ РџРћ РўРћР§РљРђРњ РќРђР›.",true);
     outval(300,0,UAH1,m4val,true);
     outval(400,0,USD1,m4val,true);
     outval(1,0,USDTOT1,m4val,true);
   endformat;
   startformat(15);
-    outstring(200,0,"‡Ђ’ђЂ’› ЌЂ ’Ћ—Љ€",true);
+    outstring(200,0,"Р—РђРўР РђРўР« РќРђ РўРћР§РљР",true);
     outval(300,0,-UAH5,m4val,true);
     outval(400,0,-USD5,m4val,true);
     outval(1,0,-USDTOT5,m4val,true);
   endformat;
   startformat(15);
-    outstring(200,0,"‚Ћ‡‚ђЂ’ „Ћ‹ѓЋ‚ Љ‹€…Ќ’Ћ‚",true);
+    outstring(200,0,"Р’РћР—Р’Р РђРў Р”РћР›Р“РћР’ РљР›РР•РќРўРћР’",true);
     outval(300,0,UAH2,m4val,true);
     outval(400,0,USD2,m4val,true);
     outval(1,0,USDTOT2,m4val,true);
   endformat;
   startformat(15);
-    outstring(200,0,"ЋЃ™€… ‡Ђ’ђЂ’›",true);
+    outstring(200,0,"РћР‘Р©РР• Р—РђРўР РђРўР«",true);
     outval(300,0,-UAH3,m4val,true);
     outval(400,0,-USD3,m4val,true);
     outval(1,0,-USDTOT3,m4val,true);
   endformat;
   startformat(15);
-    outstring(200,0,"ЋЏ‹Ђ’› ЏЋ‘’Ђ‚™€ЉЂЊ",true);
+    outstring(200,0,"РћРџР›РђРўР« РџРћРЎРўРђР’Р©РРљРђРњ",true);
     outval(300,0,-UAH4,m4val,true);
     outval(400,0,-USD4,m4val,true);
     outval(1,0,-USDTOT4,m4val,true);
   endformat;
   Gray_Divider(0,1);
   startformat(15);
-    outstring(200,0,"€’ЋѓЋ",true);
+    outstring(200,0,"РРўРћР“Рћ",true);
     outval(300,0,UAH1+UAH2-UAH5-UAH3-UAH4,m4val,true);
     outval(400,0,USD1+USD2-USD5-USD3-USD4,m4val,true);
     outval(1,0,USDTOT1+USDTOT2-USDTOT5-USDTOT3-USDTOT4,m4val,true);
@@ -543,35 +543,35 @@ begin
   startformat(15);
   endformat;
   startformat(15);
-    outstring(100,0,"ђасчеты с Ђлександром",true);
+    outstring(100,0,"Р Р°СЃС‡РµС‚С‹ СЃ РђР»РµРєСЃР°РЅРґСЂРѕРј",true);
   endformat;
   Gray_Divider(0,1);
   
   /*
-  vFinData["Ћ’_ЂЌЂ’Ћ‹€—Ђ:" & IVr.CurncyCode] = vFinData["Ћ’_ЂЌЂ’Ћ‹€—Ђ:" & IVr.CurncyCode] + IVrw.Sum;
+  vFinData["РћРў_РђРќРђРўРћР›РР§Рђ:" & IVr.CurncyCode] = vFinData["РћРў_РђРќРђРўРћР›РР§Рђ:" & IVr.CurncyCode] + IVrw.Sum;
               if(rate==1)then begin
                 GetFullCurncyRate(IVr.CurncyCode,IVr.InvDate,fr,to1,to2,br1,br2);
               end;
               if(fr==0)then begin
                 fr = 1;
               end;
-              vFinData["FIFO:Ћ’_ЂЌЂ’Ћ‹€—Ђ:" & IVr.CurncyCode] = vFinData["FIFO:Ћ’_ЂЌЂ’Ћ‹€—Ђ:" & IVr.CurncyCode] + IVrw.FIFORowVal*cred*fr;
+              vFinData["FIFO:РћРў_РђРќРђРўРћР›РР§Рђ:" & IVr.CurncyCode] = vFinData["FIFO:РћРў_РђРќРђРўРћР›РР§Рђ:" & IVr.CurncyCode] + IVrw.FIFORowVal*cred*fr;
 
   */
   
   
   startformat(15);
-    outstring(100,0,"Џродажи Ђлександра в период",true);
-    outval(300,0,vFinData["Ћ’_ЂЌЂ’Ћ‹€—Ђ:" & "UAH"],m4val,true);
-    outstring(310,0,"ѓђЌ",false);
-    //outval(400,0,vFinData["Ћ’_ЂЌЂ’Ћ‹€—Ђ:" & "USD"],m4val,true);
+    outstring(100,0,"РџСЂРѕРґР°Р¶Рё РђР»РµРєСЃР°РЅРґСЂР° РІ РїРµСЂРёРѕРґ",true);
+    outval(300,0,vFinData["РћРў_РђРќРђРўРћР›РР§Рђ:" & "UAH"],m4val,true);
+    outstring(310,0,"Р“Р Рќ",false);
+    //outval(400,0,vFinData["РћРў_РђРќРђРўРћР›РР§Рђ:" & "USD"],m4val,true);
     //outstring(410,0,"USD",false);
   endformat;
   startformat(15);
-    outstring(100,0,"‘ебестоимость продаж александра",true);
-    outval(300,0,vFinData["FIFO:Ћ’_ЂЌЂ’Ћ‹€—Ђ:" & "UAH"],m4val,true);
-    outstring(310,0,"ѓђЌ",false);
-    //outval(400,0,vFinData["FIFO:Ћ’_ЂЌЂ’Ћ‹€—Ђ:" & "USD"],m4val,true);
+    outstring(100,0,"РЎРµР±РµСЃС‚РѕРёРјРѕСЃС‚СЊ РїСЂРѕРґР°Р¶ Р°Р»РµРєСЃР°РЅРґСЂР°",true);
+    outval(300,0,vFinData["FIFO:РћРў_РђРќРђРўРћР›РР§Рђ:" & "UAH"],m4val,true);
+    outstring(310,0,"Р“Р Рќ",false);
+    //outval(400,0,vFinData["FIFO:РћРў_РђРќРђРўРћР›РР§Рђ:" & "USD"],m4val,true);
     //outstring(410,0,"USD",false);
   endformat;
   Gray_Divider(0,1);
@@ -580,28 +580,28 @@ begin
   total3 = blankval;
   
   startformat(15);
-    outstring(100,0,"‡аработок Ђлександра ѓђЌ",true);
-    total1 = vFinData["Ћ’_ЂЌЂ’Ћ‹€—Ђ:" & "UAH"] - vFinData["FIFO:Ћ’_ЂЌЂ’Ћ‹€—Ђ:" & "UAH"];    
+    outstring(100,0,"Р—Р°СЂР°Р±РѕС‚РѕРє РђР»РµРєСЃР°РЅРґСЂР° Р“Р Рќ",true);
+    total1 = vFinData["РћРў_РђРќРђРўРћР›РР§Рђ:" & "UAH"] - vFinData["FIFO:РћРў_РђРќРђРўРћР›РР§Рђ:" & "UAH"];    
     outval(450,0,total1,m4val,true);
-    outstring(1,0,"ѓђЌ",true);
+    outstring(1,0,"Р“Р Рќ",true);
   endformat;
   startformat(15);
-    outstring(100,0,"„олг Ђлександра за товар",true);
-    total3 = vFinData["Ћ’_ЂЌЂ’Ћ‹€—Ђ:DOLG"];    
+    outstring(100,0,"Р”РѕР»Рі РђР»РµРєСЃР°РЅРґСЂР° Р·Р° С‚РѕРІР°СЂ",true);
+    total3 = vFinData["РћРў_РђРќРђРўРћР›РР§Рђ:DOLG"];    
     outval(450,0,total3,m4val,true);
-    outstring(1,0,"ѓђЌ",true);
+    outstring(1,0,"Р“Р Рќ",true);
   endformat;
   startformat(15);
-    outstring(100,0,"‡атраты на Aлександра",true);
-    total2 = vFinData["Ћ’_ЂЌЂ’Ћ‹€—Ђ:SPEND"];    
+    outstring(100,0,"Р—Р°С‚СЂР°С‚С‹ РЅР° AР»РµРєСЃР°РЅРґСЂР°",true);
+    total2 = vFinData["РћРў_РђРќРђРўРћР›РР§Рђ:SPEND"];    
     outval(450,0,total2,m4val,true);
-    outstring(1,0,"ѓђЌ",true);
+    outstring(1,0,"Р“Р Рќ",true);
   endformat;
   Gray_Divider(0,1);
   startformat(15);
-    outstring(100,0,"‡аработок минус ‡атраты",true);
+    outstring(100,0,"Р—Р°СЂР°Р±РѕС‚РѕРє РјРёРЅСѓСЃ Р—Р°С‚СЂР°С‚С‹",true);
     outval(450,0,total1-total2,m4val,true);
-    outstring(1,0,"ѓђЌ",true);
+    outstring(1,0,"Р“Р Рќ",true);
   endformat;
   
   

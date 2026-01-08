@@ -2,7 +2,7 @@ external procedure HT2Per(Date,Date,var string);
 external procedure HTITs(string,string,var string);
 external procedure ExtractObjWithSeparator(string,string,Boolean,var Integer,var string);
 
-SetLangMode(LangRussian,"RUS",0); 
+SetLangMode(LangRussian,"RUS",2); 
 
 
 global
@@ -18,7 +18,7 @@ begin
   Boolean TrHs,testf,TrHs1;
   val totMarkUp;
 
-  StartReportJob("Ћтчет по наценкам");
+  StartReportJob("РћС‚С‡РµС‚ РїРѕ РЅР°С†РµРЅРєР°Рј");
   rw = 1;
   //HT2Per(RepSpec.sStartDate,RepSpec.sEndDate,tstr);
   //Header(rw,tstr,1);
@@ -33,25 +33,25 @@ begin
   testf = true;
   if (RepSpec.ArtMode==1 and Blank(RepSpec.f1)) then begin
     StartFormat(15);
-      OutString(pos,0,"‚ подробном режиме отчета нужно указать конкретный товар",false);
+      OutString(pos,0,"Р’ РїРѕРґСЂРѕР±РЅРѕРј СЂРµР¶РёРјРµ РѕС‚С‡РµС‚Р° РЅСѓР¶РЅРѕ СѓРєР°Р·Р°С‚СЊ РєРѕРЅРєСЂРµС‚РЅС‹Р№ С‚РѕРІР°СЂ",false);
     EndFormat;
     testf = false;
   end;
   if (testf) then begin
     StartFormat(15);
       pos = 0;
-      OutString(pos,0,USetStr(2462),false); pos = pos+70; //’овар
-      OutString(pos,0,USetStr(2463),false); pos = pos+200; //Ќаимен.
+      OutString(pos,0,USetStr(2462),false); pos = pos+70; //РўРѕРІР°СЂ
+      OutString(pos,0,USetStr(2463),false); pos = pos+200; //РќР°РёРјРµРЅ.
       if (RepSpec.ArtMode==1) then begin
-        OutString(pos,0,USetStr(2605),false); pos = pos+30; //Џост.
-        OutString(pos,0,USetStr(3272),false); pos = pos+40; //‘трока
-        OutString(pos,0,USetStr(2464) & "(" & USetStr(2605) & ")",false); pos = pos+50; //Љ-во
+        OutString(pos,0,USetStr(2605),false); pos = pos+30; //РџРѕСЃС‚.
+        OutString(pos,0,USetStr(3272),false); pos = pos+40; //РЎС‚СЂРѕРєР°
+        OutString(pos,0,USetStr(2464) & "(" & USetStr(2605) & ")",false); pos = pos+50; //Рљ-РІРѕ
       end else begin
         pos = pos+70;
-        OutString(pos,0,USetStr(2464),false); pos = pos+50; //Љ-во
+        OutString(pos,0,USetStr(2464),false); pos = pos+50; //Рљ-РІРѕ
       end;
-      OutString(pos,0,USetStr(2465),false); pos = pos+50; //–ена
-      OutString(pos,0,USetStr(3548) & ",%",false); pos = pos+50; //Ќаценка
+      OutString(pos,0,USetStr(2465),false); pos = pos+50; //Р¦РµРЅР°
+      OutString(pos,0,USetStr(3548) & ",%",false); pos = pos+50; //РќР°С†РµРЅРєР°
     EndFormat;
       
     Black_Divider(0,1);

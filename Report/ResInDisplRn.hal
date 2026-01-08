@@ -1,4 +1,4 @@
-SetLangMode(LangRussian,"RUS",0); 
+SetLangMode(LangRussian,"RUS",2); 
 
 
 function val GetMax(val firstVal,val secondVal) // Edit ************* Ihor Trubachov 20*08*2021
@@ -27,14 +27,14 @@ begin
 	val difVal;
 	Boolean testf;
 
-  StartReportJob("Ћтчет по резервам в премещениЯх");
+  StartReportJob("РћС‚С‡РµС‚ РїРѕ СЂРµР·РµСЂРІР°Рј РІ РїСЂРµРјРµС‰РµРЅРёСЏС…");
 
   EndHeader;
   
 	StartFormat(15);
-	OutString(20,0,"Љод товара",false); 
-  OutString(100,0,"Ќомер перемещениЯ",false); 
-  OutString(200,0,"ђазница",false);
+	OutString(20,0,"РљРѕРґ С‚РѕРІР°СЂР°",false); 
+  OutString(100,0,"РќРѕРјРµСЂ РїРµСЂРµРјРµС‰РµРЅРёСЏ",false); 
+  OutString(200,0,"Р Р°Р·РЅРёС†Р°",false);
 	EndFormat;
 	
   Black_Divider(0,1);

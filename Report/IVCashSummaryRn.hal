@@ -1,7 +1,7 @@
 external procedure HT2Per(Date,Date,var string);
 external procedure ExtractObjWithSeparator(string,string,Boolean,var Integer,var string);
 
-SetLangMode(LangRussian,"RUS",0); 
+SetLangMode(LangRussian,"RUS",2); 
 
 function Boolean IVCashHasPaymentMode(record DefCashBlock DCb,record IVCashVc IVCashr,string PaymentMode)
 begin
@@ -107,7 +107,7 @@ begin
 
   BlockLoad(CDb);
 
-  StartReportJob("Ћтчет по кассе по днЯм");
+  StartReportJob("РћС‚С‡РµС‚ РїРѕ РєР°СЃСЃРµ РїРѕ РґРЅСЏРј");
   rw = 1;
   HT2Per(RepSpec.sStartDate,RepSpec.sEndDate,tstr);
   Header(rw,tstr,1);
@@ -118,10 +118,10 @@ begin
   TotSum = 0;
 
   StartFormat(15);
-    OutString(15,0,USetStr(2353),false); //„ата
-    OutString(70,0,USetStr(2354),false); //Љлиент
-    OutString(270,0,USetStr(2445),false); //‘пособ оплаты
-    OutString(420,0,USetStr(2355),false); //‘умма
+    OutString(15,0,USetStr(2353),false); //Р”Р°С‚Р°
+    OutString(70,0,USetStr(2354),false); //РљР»РёРµРЅС‚
+    OutString(270,0,USetStr(2445),false); //РЎРїРѕСЃРѕР± РѕРїР»Р°С‚С‹
+    OutString(420,0,USetStr(2355),false); //РЎСѓРјРјР°
   EndFormat;
   
   IVCashr.TransDate = RepSpec.sStartDate;
@@ -185,7 +185,7 @@ begin
     StartFormat(15);
     EndFormat;
     StartFormat(15);
-      OutString(20,0,"ђасхождение по сумме в сч/ф: ",false);
+      OutString(20,0,"Р Р°СЃС…РѕР¶РґРµРЅРёРµ РїРѕ СЃСѓРјРјРµ РІ СЃС‡/С„: ",false);
       OutString(120,0,IVCashTotDismatch,false);
     EndFormat;
   end;

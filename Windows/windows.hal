@@ -1,18 +1,18 @@
-SetLangMode(LangRussian,"RUS",0); 
+SetLangMode(LangRussian,"RUS",2); 
 
 
 window ReprintingFiscalReceiptTClass:1		//Edit----------------------Dima  07.07.2015
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
   real h,h2,v,vs;
-  WindowBegin("Џерепечатать чек",ReprintingFiscalReceiptTClass,CGother,RcType);
+  WindowBegin("РџРµСЂРµРїРµС‡Р°С‚Р°С‚СЊ С‡РµРє",ReprintingFiscalReceiptTClass,CGother,RcType);
   SetWRect(64,80,600,300);
   v=20;vs = 20; h = 120; h2 = -150;
   UseView(RcVc);
-  statictext(40,v,"‚ведите номер счет-фактуры, длЯ которой нужно перепечатать чек",false);
-  EditField(h,v+=vs,150,"Ь с/фактуры",Normal,long1,false,0);
+  statictext(40,v,"Р’РІРµРґРёС‚Рµ РЅРѕРјРµСЂ СЃС‡РµС‚-С„Р°РєС‚СѓСЂС‹, РґР»СЏ РєРѕС‚РѕСЂРѕР№ РЅСѓР¶РЅРѕ РїРµСЂРµРїРµС‡Р°С‚Р°С‚СЊ С‡РµРє",false);
+  EditField(h,v+=vs,150,"в„– СЃ/С„Р°РєС‚СѓСЂС‹",Normal,long1,false,0);
   v=v+30;
-  ColourPushButton(h2,v,h2+100,v+30,"RePrintIVCashFiscalReceiptAndUpdatePrintFlag","Ќапечатать",8);
+  ColourPushButton(h2,v,h2+100,v+30,"RePrintIVCashFiscalReceiptAndUpdatePrintFlag","РќР°РїРµС‡Р°С‚Р°С‚СЊ",8);
   EndWindow;
 end;
 
@@ -21,13 +21,13 @@ window FiscalSetLocalTClass:1				//Edit----------------------Dima  27.04.2015
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
   real h,v,vs;
-  WindowBegin("‹окальные настройки фискального принтера",FiscalSetLocalTClass,CGSbl,-);
+  WindowBegin("Р›РѕРєР°Р»СЊРЅС‹Рµ РЅР°СЃС‚СЂРѕР№РєРё С„РёСЃРєР°Р»СЊРЅРѕРіРѕ РїСЂРёРЅС‚РµСЂР°",FiscalSetLocalTClass,CGSbl,-);
   SetBlid(FiscalSetLocalBlock);
   SetWRect(64,80,550,300);
   v=6;vs = 20; h = 100;
-  StaticText(50,15,"Џуть к папке длЯ хранениЯ фискальных чеков:",false);
-  EditField(h,v+=vs,400,"Џапка",Normal,StoragePath,false,0);
- // EditField(h,v+=vs,200,"Ќазвание файла",Normal,FileName,false,0);
+  StaticText(50,15,"РџСѓС‚СЊ Рє РїР°РїРєРµ РґР»СЏ С…СЂР°РЅРµРЅРёСЏ С„РёСЃРєР°Р»СЊРЅС‹С… С‡РµРєРѕРІ:",false);
+  EditField(h,v+=vs,400,"РџР°РїРєР°",Normal,StoragePath,false,0);
+ // EditField(h,v+=vs,200,"РќР°Р·РІР°РЅРёРµ С„Р°Р№Р»Р°",Normal,FileName,false,0);
 
   EndWindow;
 end;
@@ -37,7 +37,7 @@ window FiscalPrintingTClass:1																//Edit----------------------Dima  1
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
   real h,v,vs,h1,h2,h3,v1;
-  WindowBegin("Џечать на фискальном принтере",FiscalPrintingTClass,CGother,RcType);
+  WindowBegin("РџРµС‡Р°С‚СЊ РЅР° С„РёСЃРєР°Р»СЊРЅРѕРј РїСЂРёРЅС‚РµСЂРµ",FiscalPrintingTClass,CGother,RcType);
   SetWRect(64,80,570,800);
   UseView(RcVc);
 
@@ -45,44 +45,44 @@ begin
   v1=30;vs = 20; h1 = 50; h2 = 200 ; h3 = 350;
 
   Tile(0,100,false,"","sStartDate");
-	ColourPushButton(h1,v1,h1+100,v1+40,"MakeXReport","Џечатать • отчет",3);
-	ColourPushButton(h2,v1,h2+100,v1+40,"MakePeriodicReport","Ћтчет за период",5);
-	ColourPushButton(h3,v1,h3+100,v1+40,"MakePeriodicShortReport","Љороткий отчет за период",5);
+	ColourPushButton(h1,v1,h1+100,v1+40,"MakeXReport","РџРµС‡Р°С‚Р°С‚СЊ РҐ РѕС‚С‡РµС‚",3);
+	ColourPushButton(h2,v1,h2+100,v1+40,"MakePeriodicReport","РћС‚С‡РµС‚ Р·Р° РїРµСЂРёРѕРґ",5);
+	ColourPushButton(h3,v1,h3+100,v1+40,"MakePeriodicShortReport","РљРѕСЂРѕС‚РєРёР№ РѕС‚С‡РµС‚ Р·Р° РїРµСЂРёРѕРґ",5);
 	
 	v1=v1+60;
 	StaticText(5,v1+50,"______________________________________________________________________________",false);
-  EditField(h2+40,v1+=vs,70,"Џериод",Normal,sStartDate,false,0);
+  EditField(h2+40,v1+=vs,70,"РџРµСЂРёРѕРґ",Normal,sStartDate,false,0);
   EditField(h3,v1,70,":   ",Normal,sEndDate,false,0);
 
   v1=v1+60;
   StaticText(5,v1+50,"______________________________________________________________________________",false);
-	ColourPushButton(h1,v1,h1+100,v1+40,"MakeZReport","Џечатать Z отчет",1);
-	CheckBox(h2-30,v1,1,"Ђвтоматический вынос денег",flags[1]);
+	ColourPushButton(h1,v1,h1+100,v1+40,"MakeZReport","РџРµС‡Р°С‚Р°С‚СЊ Z РѕС‚С‡РµС‚",1);
+	CheckBox(h2-30,v1,1,"РђРІС‚РѕРјР°С‚РёС‡РµСЃРєРёР№ РІС‹РЅРѕСЃ РґРµРЅРµРі",flags[1]);
 
 	v1=v1+80;
 	StaticText(5,v1+50,"______________________________________________________________________________",false);
-	ColourPushButton(h1,v1,h1+100,v1+40,"MakeLastCheck","ЉопиЯ последнего чека",6);
-	ColourPushButton(h2,v1,h2+100,v1+40,"MakeResetOrder","Ђннулировать чек",7);
-	ColourPushButton(h3,v1,h3+100,v1+40,"MakeNullCheck","Ќулевой чек",8);
+	ColourPushButton(h1,v1,h1+100,v1+40,"MakeLastCheck","РљРѕРїРёСЏ РїРѕСЃР»РµРґРЅРµРіРѕ С‡РµРєР°",6);
+	ColourPushButton(h2,v1,h2+100,v1+40,"MakeResetOrder","РђРЅРЅСѓР»РёСЂРѕРІР°С‚СЊ С‡РµРє",7);
+	ColourPushButton(h3,v1,h3+100,v1+40,"MakeNullCheck","РќСѓР»РµРІРѕР№ С‡РµРє",8);
 
 	v1=v1+80;
-	ColourPushButton(h1,v1,h1+100,v1+40,"MakeCashIn","‚несение денег",2);
-	ColourPushButton(h2,v1,h2+100,v1+40,"MakeCashOut","€зъЯтие денег",1);
+	ColourPushButton(h1,v1,h1+100,v1+40,"MakeCashIn","Р’РЅРµСЃРµРЅРёРµ РґРµРЅРµРі",2);
+	ColourPushButton(h2,v1,h2+100,v1+40,"MakeCashOut","РР·СЉСЏС‚РёРµ РґРµРЅРµРі",1);
 	v1=v1+60;
 	StaticText(5,v1+30,"______________________________________________________________________________",false);
-  EditField(h1+100,v1,150,"‘умма в гривнах",Normal,vals1,false,0);
+  EditField(h1+100,v1,150,"РЎСѓРјРјР° РІ РіСЂРёРІРЅР°С…",Normal,vals1,false,0);
 
 	v1=v1+60;
-	StaticText(50,v1,"“становка времени и даты фискального принтера",false);
-	StaticText(50,v1+12,"Ќеиспользуемое поле следует оставить пустым",false);
+	StaticText(50,v1,"РЈСЃС‚Р°РЅРѕРІРєР° РІСЂРµРјРµРЅРё Рё РґР°С‚С‹ С„РёСЃРєР°Р»СЊРЅРѕРіРѕ РїСЂРёРЅС‚РµСЂР°",false);
+	StaticText(50,v1+12,"РќРµРёСЃРїРѕР»СЊР·СѓРµРјРѕРµ РїРѕР»Рµ СЃР»РµРґСѓРµС‚ РѕСЃС‚Р°РІРёС‚СЊ РїСѓСЃС‚С‹Рј",false);
 	v1=v1+30;
-  EditField(h1,v1,100,"„ата",Normal,f1,false,0);
-  EditField(h1,v1+20,100,"‚ремЯ",Normal,f2,false,0);
-	ColourPushButton(h2,v1,h2+100,v1+40,"MakeDateSetting","“становить",2);
+  EditField(h1,v1,100,"Р”Р°С‚Р°",Normal,f1,false,0);
+  EditField(h1,v1+20,100,"Р’СЂРµРјСЏ",Normal,f2,false,0);
+	ColourPushButton(h2,v1,h2+100,v1+40,"MakeDateSetting","РЈСЃС‚Р°РЅРѕРІРёС‚СЊ",2);
 
   /*StaticText(5,v1+50,"______________________________________________________________________________",false);
   v1=v1+80;
-	ColourPushButton(h1,v1,h1+100,v1+40,"OpenCashBox","Ћткрыть денежный Ящик",4);*/
+	ColourPushButton(h1,v1,h1+100,v1+40,"OpenCashBox","РћС‚РєСЂС‹С‚СЊ РґРµРЅРµР¶РЅС‹Р№ СЏС‰РёРє",4);*/
 
   EndWindow;
 end;
@@ -92,65 +92,65 @@ window INImportFromFMFormatIClass:1  //Edit***************************Sasha2,15:
 begin
 real h,v,vs;
 Integer i;
-  WindowBegin("€мпортировать товары",INImportFromFMFormatIClass,CGIcW,-);
+  WindowBegin("РРјРїРѕСЂС‚РёСЂРѕРІР°С‚СЊ С‚РѕРІР°СЂС‹",INImportFromFMFormatIClass,CGIcW,-);
   SetWRect(20,80,470,700);
   Sizeable(-1,-1,-1,0);
-  i=1; //номер колонки
+  i=1; //РЅРѕРјРµСЂ РєРѕР»РѕРЅРєРё
   h=10;  v=15;
-  StaticText(h,v,"”ормат импорта",false);
+  StaticText(h,v,"Р¤РѕСЂРјР°С‚ РёРјРїРѕСЂС‚Р°",false);
   h=20;  v=40;
-  StaticText(h,v,"‘писок столбцов:",false);
+  StaticText(h,v,"РЎРїРёСЃРѕРє СЃС‚РѕР»Р±С†РѕРІ:",false);
   v=v+30; vs=25;
-   StaticText(h,v,i &". Љод товара",false);
-   StaticText(h+220,v,"ЋбЯзательное поле",false);
+   StaticText(h,v,i &". РљРѕРґ С‚РѕРІР°СЂР°",false);
+   StaticText(h+220,v,"РћР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ",false);
    i=i+1;
-   StaticText(h,v+=vs,i &". Ќазвание товара",false);
-   StaticText(h+220,v,"ЋбЯзательное поле",false);
+   StaticText(h,v+=vs,i &". РќР°Р·РІР°РЅРёРµ С‚РѕРІР°СЂР°",false);
+   StaticText(h+220,v,"РћР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ",false);
    i=i+1;
-   StaticText(h,v+=vs,i &". ‘тоимость товара",false);
-   StaticText(h+220,v,"ЋбЯзательное поле",false);
+   StaticText(h,v+=vs,i &". РЎС‚РѕРёРјРѕСЃС‚СЊ С‚РѕРІР°СЂР°",false);
+   StaticText(h+220,v,"РћР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ",false);
    i=i+1;
-   StaticText(h,v+=vs,i &". –ена товара",false);
-   StaticText(h+220,v,"ЋбЯзательное поле",false);
+   StaticText(h,v+=vs,i &". Р¦РµРЅР° С‚РѕРІР°СЂР°",false);
+   StaticText(h+220,v,"РћР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ",false);
    i=i+1;
-   StaticText(h,v+=vs,i &". ‘кладируемый/нескладируемый",false);
-   StaticText(h+220,v,"ЋбЯзательное поле",false);
+   StaticText(h,v+=vs,i &". РЎРєР»Р°РґРёСЂСѓРµРјС‹Р№/РЅРµСЃРєР»Р°РґРёСЂСѓРµРјС‹Р№",false);
+   StaticText(h+220,v,"РћР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ",false);
    i=i+1;
-   StaticText(h,v+=vs,i &". …диница меры",false);
-   StaticText(h+220,v,"ЋбЯзательное поле",false);
+   StaticText(h,v+=vs,i &". Р•РґРёРЅРёС†Р° РјРµСЂС‹",false);
+   StaticText(h+220,v,"РћР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ",false);
    i=i+1;
-   StaticText(h,v+=vs,i &". ѓруппа товара",false);
-   StaticText(h+220,v,"ЋбЯзательное поле",false);
+   StaticText(h,v+=vs,i &". Р“СЂСѓРїРїР° С‚РѕРІР°СЂР°",false);
+   StaticText(h+220,v,"РћР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ",false);
    i=i+1;
-   StaticText(h,v+=vs,i &". трих-код 2",false);
-   StaticText(h+220,v,"ЋбЯзательное поле",false);
+   StaticText(h,v+=vs,i &". РЁС‚СЂРёС…-РєРѕРґ 2",false);
+   StaticText(h+220,v,"РћР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ",false);
    i=i+1;
-   StaticText(h,v+=vs,i &". трих-код 3",false);
-   StaticText(h+220,v,"ЋбЯзательное поле",false);
+   StaticText(h,v+=vs,i &". РЁС‚СЂРёС…-РєРѕРґ 3",false);
+   StaticText(h+220,v,"РћР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ",false);
    i=i+1;
-   StaticText(h,v+=vs,i &". трих-код 4",false);
-   StaticText(h+220,v,"ЋбЯзательное поле",false);
+   StaticText(h,v+=vs,i &". РЁС‚СЂРёС…-РєРѕРґ 4",false);
+   StaticText(h+220,v,"РћР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ",false);
    i=i+1;
-   StaticText(h,v+=vs,i &". трих-код 5",false);
-   StaticText(h+220,v,"ЋбЯзательное поле",false);
+   StaticText(h,v+=vs,i &". РЁС‚СЂРёС…-РєРѕРґ 5",false);
+   StaticText(h+220,v,"РћР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ",false);
    i=i+1;
-   StaticText(h,v+=vs,i &". трих-код 6",false);
-   StaticText(h+220,v,"ЋбЯзательное поле",false);
+   StaticText(h,v+=vs,i &". РЁС‚СЂРёС…-РєРѕРґ 6",false);
+   StaticText(h+220,v,"РћР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ",false);
    i=i+1;
-   StaticText(h,v+=vs,i &". трих-код 7",false);
-   StaticText(h+220,v,"ЋбЯзательное поле",false);
+   StaticText(h,v+=vs,i &". РЁС‚СЂРёС…-РєРѕРґ 7",false);
+   StaticText(h+220,v,"РћР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ",false);
    i=i+1;
-   StaticText(h,v+=vs,i &". трих-код 8",false);
-   StaticText(h+220,v,"ЋбЯзательное поле",false);
+   StaticText(h,v+=vs,i &". РЁС‚СЂРёС…-РєРѕРґ 8",false);
+   StaticText(h+220,v,"РћР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ",false);
    i=i+1;
-   StaticText(h,v+=vs,i &". трих-код 9",false);
-   StaticText(h+220,v,"ЋбЯзательное поле",false);
+   StaticText(h,v+=vs,i &". РЁС‚СЂРёС…-РєРѕРґ 9",false);
+   StaticText(h+220,v,"РћР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ",false);
    i=i+1;
-   StaticText(h,v+=vs,i &". трих-код 10",false);
-   StaticText(h+220,v,"ЋбЯзательное поле",false);
+   StaticText(h,v+=vs,i &". РЁС‚СЂРёС…-РєРѕРґ 10",false);
+   StaticText(h+220,v,"РћР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ",false);
    i=i+1;
   h=10;
-  StaticText(h,v+=45,"Џримечание:   ‚се столбцы разделены <Tab>",false);
+  StaticText(h,v+=45,"РџСЂРёРјРµС‡Р°РЅРёРµ:   Р’СЃРµ СЃС‚РѕР»Р±С†С‹ СЂР°Р·РґРµР»РµРЅС‹ <Tab>",false);
 
   EndWindow;
 end;
@@ -158,15 +158,15 @@ end;
 window IVCashSClass:1
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
-  WindowBegin("‘ч/ф кассового терминала",IVCashSClass,CGslist,-);
+  WindowBegin("РЎС‡/С„ РєР°СЃСЃРѕРІРѕРіРѕ С‚РµСЂРјРёРЅР°Р»Р°",IVCashSClass,CGslist,-);
   SetWRect(240,80,550,250);
   Sizeable(-1,-1,0,0);
   UseView(IVCashVc);
   SpawnClass(IVCashDClass);
   RecordList(4,17,-21,-39);
-  RlColKey(4,4,  "Љод",SerNr,false,SerNr);
-  RlColKey(51,51,"„ата",InvDate,false,InvDate);
-  SearchField("Џоиск");
+  RlColKey(4,4,  "РљРѕРґ",SerNr,false,SerNr);
+  RlColKey(51,51,"Р”Р°С‚Р°",InvDate,false,InvDate);
+  SearchField("РџРѕРёСЃРє");
   EndWindow;
 end;
 
@@ -174,11 +174,11 @@ window CustomRegisterRemoveVClass:1
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
   real h,v,vm,vs;
-  WindowBegin("“далить все записи",CustomRegisterRemoveVClass,CGMnt,RcType);
+  WindowBegin("РЈРґР°Р»РёС‚СЊ РІСЃРµ Р·Р°РїРёСЃРё",CustomRegisterRemoveVClass,CGMnt,RcType);
   SetWRect(20,80,500,220);
   v = 10; vs = 20; h = 120;
-  PeriodField(h,v,"Џериод");
-  CheckBox(h,v+=32,0,"‘ч/ф касс.терминала",flags[0]);
+  PeriodField(h,v,"РџРµСЂРёРѕРґ");
+  CheckBox(h,v+=32,0,"РЎС‡/С„ РєР°СЃСЃ.С‚РµСЂРјРёРЅР°Р»Р°",flags[0]);
   
   EndWindow;
 end;
@@ -187,7 +187,7 @@ window ProceedMakingFiscalCheckTClass:1
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer,iPad")  
 begin
   real h,h2,v;
-  WindowBegin("Џечать чека",ProceedMakingFiscalCheckTClass,CGother,RcType);  
+  WindowBegin("РџРµС‡Р°С‚СЊ С‡РµРєР°",ProceedMakingFiscalCheckTClass,CGother,RcType);  
   Modality(kModalityGlobal);
   UseView(RcVc);
   SetWRect(80,200,530,440);
@@ -196,10 +196,10 @@ begin
     PopoverWindow;
   end;
    
-  EditField(h+255,v,1,"Љоличество напечатанных чеков длЯ этой сч/ф:",ViewOnly,flags[0],false,0);
-  StaticText(h,v+=40,"ЌЂЏ…—Ђ’Ђ’њ —…Љ ‚‘… ђЂ‚ЌЋ?",false); 
-  ColourPushButton(h,v+=30,h+165,v+48,"YesProceedMakingFiscalCheckTClass","„а",2);  
-  ColourPushButton(h+=180,v,h+165,v+48,"NoProceedMakingFiscalCheckTClass","Ќет",1);  
+  EditField(h+255,v,1,"РљРѕР»РёС‡РµСЃС‚РІРѕ РЅР°РїРµС‡Р°С‚Р°РЅРЅС‹С… С‡РµРєРѕРІ РґР»СЏ СЌС‚РѕР№ СЃС‡/С„:",ViewOnly,flags[0],false,0);
+  StaticText(h,v+=40,"РќРђРџР•Р§РђРўРђРўР¬ Р§Р•Рљ Р’РЎР• Р РђР’РќРћ?",false); 
+  ColourPushButton(h,v+=30,h+165,v+48,"YesProceedMakingFiscalCheckTClass","Р”Р°",2);  
+  ColourPushButton(h+=180,v,h+165,v+48,"NoProceedMakingFiscalCheckTClass","РќРµС‚",1);  
   EndWindow;
 end;
 
@@ -207,14 +207,14 @@ window LocMachDrawerTCLass:1
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
   real h,v;
-  WindowBegin("‹окальнаЯ машина - Ящик",LocMachDrawerTCLass,CGHbl,HBlRecType);
+  WindowBegin("Р›РѕРєР°Р»СЊРЅР°СЏ РјР°С€РёРЅР° - СЏС‰РёРє",LocMachDrawerTCLass,CGHbl,HBlRecType);
   SetBlid(LocMachDrawerBlock);
   SetWRect(20,80,400,200);
   Sizeable(-1,-1,0,0);
   h = 8; v = 20;
   MatrixBegin(h,v,-31,-20,-,99);
-  MatCol(1,24,"‹ок.машина",0,MachineCode,false,LocalMachineSClass);
-  MatCol(1,204,"џщик",0,DrawerCode,false,DrawerSClass);
+  MatCol(1,24,"Р›РѕРє.РјР°С€РёРЅР°",0,MachineCode,false,LocalMachineSClass);
+  MatCol(1,204,"РЇС‰РёРє",0,DrawerCode,false,DrawerSClass);
   EndMatrix;
   EndWindow;
 end;
@@ -223,27 +223,27 @@ end;
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
   real h,v;
-  WindowBegin("‹окальнаЯ машина - Ящик",LocMachDrawerDClass,CGview,-);
+  WindowBegin("Р›РѕРєР°Р»СЊРЅР°СЏ РјР°С€РёРЅР° - СЏС‰РёРє",LocMachDrawerDClass,CGview,-);
   SetWRect(64,80,300,200);
   Sizeable(-1,-1,0,0);
   UseView(LocMachDrawerVc);
-  EditField(h=80,v=6,100,"‹ок.машина",Normal,MachineCode,false,LocalMachineSClass);
-  EditField(h,v+=20,100,"џщик",Normal,DrawerCode,false,DrawerSClass);
+  EditField(h=80,v=6,100,"Р›РѕРє.РјР°С€РёРЅР°",Normal,MachineCode,false,LocalMachineSClass);
+  EditField(h,v+=20,100,"РЇС‰РёРє",Normal,DrawerCode,false,DrawerSClass);
   EndWindow;
 end;
 
 window LocMachDrawerLClass:1
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
-  WindowBegin("‹окальнаЯ машина - Ящик",LocMachDrawerLClass,CGslist,-);
+  WindowBegin("Р›РѕРєР°Р»СЊРЅР°СЏ РјР°С€РёРЅР° - СЏС‰РёРє",LocMachDrawerLClass,CGslist,-);
   SetWRect(20,80,300,355);
   SpawnClass(LocMachDrawerDClass);
   Sizeable(-1,-1,0,0);
   UseView(LocMachDrawerVc);
   RecordList(4,17,-21,-39);
-  RlColKey(100,100,"‹ок.машина",MachineCode,false,MachineCode);
-  RlCol(-100,-100,"џщик",DrawerCode,false);
-  SearchField("Џоиск");
+  RlColKey(100,100,"Р›РѕРє.РјР°С€РёРЅР°",MachineCode,false,MachineCode);
+  RlCol(-100,-100,"РЇС‰РёРє",DrawerCode,false);
+  SearchField("РџРѕРёСЃРє");
   EndWindow;
 end;*/
 
@@ -251,10 +251,10 @@ window POSRegistersRemoveVClass:1
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
   real h,v,vm,vs;
-  WindowBegin("“далить все записи по POS",POSRegistersRemoveVClass,CGMnt,RcType);
+  WindowBegin("РЈРґР°Р»РёС‚СЊ РІСЃРµ Р·Р°РїРёСЃРё РїРѕ POS",POSRegistersRemoveVClass,CGMnt,RcType);
   SetWRect(20,80,500,220);
   v = 10; vs = 20; h = 40;
-  Statictext(h,v+=20,"Ѓудут удалены:",false);
+  Statictext(h,v+=20,"Р‘СѓРґСѓС‚ СѓРґР°Р»РµРЅС‹:",false);
   Statictext(h,v+=32,"- IVCashVc",false);
   Statictext(h,v+=20,"- POSEventVc",false);
   Statictext(h,v+=20,"- CashVc",false);
@@ -269,10 +269,10 @@ window RegistersRemoveOptionallyVClass:1
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
   real h,v,vm,vs;
-  WindowBegin("“далить регистры выборочно",RegistersRemoveOptionallyVClass,CGMnt,RcType);
+  WindowBegin("РЈРґР°Р»РёС‚СЊ СЂРµРіРёСЃС‚СЂС‹ РІС‹Р±РѕСЂРѕС‡РЅРѕ",RegistersRemoveOptionallyVClass,CGMnt,RcType);
   SetWRect(20,80,500,320);
   v = 10; vs = 20; h = 120;
-  CheckBox(h,v,0,"’овары",flags[0]);
+  CheckBox(h,v,0,"РўРѕРІР°СЂС‹",flags[0]);
   
   EndWindow;
 end;
@@ -282,26 +282,26 @@ window ImportStockRemains2IClass:1
 begin
 real h,v,vs;
 Integer i;
-  WindowBegin("€мпорт остатков",ImportStockRemains2IClass,CGIcW,-);	
+  WindowBegin("РРјРїРѕСЂС‚ РѕСЃС‚Р°С‚РєРѕРІ",ImportStockRemains2IClass,CGIcW,-);	
   SetWRect(20,80,470,300);
   Sizeable(-1,-1,-1,0);
   
-  i=1; //номер колонки
+  i=1; //РЅРѕРјРµСЂ РєРѕР»РѕРЅРєРё
   h=10;  v=15;
-  StaticText(h,v,"”ормат импорта",false);
+  StaticText(h,v,"Р¤РѕСЂРјР°С‚ РёРјРїРѕСЂС‚Р°",false);
   h=20;  v=40;
-  StaticText(h,v,"ЏерваЯ строка: ‘клад",false);
+  StaticText(h,v,"РџРµСЂРІР°СЏ СЃС‚СЂРѕРєР°: РЎРєР»Р°Рґ",false);
   v=v+30;
-   StaticText(h,v,"‘писок столбцов:",false);
+   StaticText(h,v,"РЎРїРёСЃРѕРє СЃС‚РѕР»Р±С†РѕРІ:",false);
    v=v+30; vs=25;
-   StaticText(h,v,i &". Љод товара",false);
-   StaticText(h+220,v,"ЋбЯзательное поле",false);
+   StaticText(h,v,i &". РљРѕРґ С‚РѕРІР°СЂР°",false);
+   StaticText(h+220,v,"РћР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ",false);
    i=i+1;
-   StaticText(h,v+=vs,i &". Љоличество товара",false);
-   StaticText(h+220,v,"ЋбЯзательное поле",false);
+   StaticText(h,v+=vs,i &". РљРѕР»РёС‡РµСЃС‚РІРѕ С‚РѕРІР°СЂР°",false);
+   StaticText(h+220,v,"РћР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ",false);
    i=i+1;
-   StaticText(h,v+=vs,i &". ‘тоимость товара за единицу",false);
-   StaticText(h+220,v,"ЋбЯзательное поле",false);
+   StaticText(h,v+=vs,i &". РЎС‚РѕРёРјРѕСЃС‚СЊ С‚РѕРІР°СЂР° Р·Р° РµРґРёРЅРёС†Сѓ",false);
+   StaticText(h+220,v,"РћР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ",false);
    i=i+1;
 
   EndWindow;
@@ -312,10 +312,10 @@ window SetUnitTextInItemIfNeededVClass:1
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
   real h,v,vm,vs;
-  WindowBegin("Џрописать единицу измерениЯ в товар",SetUnitTextInItemIfNeededVClass,CGMnt,RcType);
+  WindowBegin("РџСЂРѕРїРёСЃР°С‚СЊ РµРґРёРЅРёС†Сѓ РёР·РјРµСЂРµРЅРёСЏ РІ С‚РѕРІР°СЂ",SetUnitTextInItemIfNeededVClass,CGMnt,RcType);
   SetWRect(20,80,500,220);
   v = 10; vs = 20; h = 120;
-  EditField(h,v+=vs,150,"…диница измерениЯ",Normal,f1,false,UnitSClass);
+  EditField(h,v+=vs,150,"Р•РґРёРЅРёС†Р° РёР·РјРµСЂРµРЅРёСЏ",Normal,f1,false,UnitSClass);
   
   EndWindow;
 end;
@@ -324,13 +324,13 @@ window IVCashSummaryRClass:1
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
   real h,v,vm,vs;
-  WindowBegin("Ћпределите отчет по кассе по днЯм",IVCashSummaryRClass,CGRcW,RcType);
+  WindowBegin("РћРїСЂРµРґРµР»РёС‚Рµ РѕС‚С‡РµС‚ РїРѕ РєР°СЃСЃРµ РїРѕ РґРЅСЏРј",IVCashSummaryRClass,CGRcW,RcType);
   SetWRect(20,80,470,370);
   vs = 20;
   h=150;
-  PeriodField(h,v=6,"Џериод");
-  EditFieldTL(h,v+=vs ,150,"Љлиент",M4UStr,Normal,50,f2,false,CUSClass);
-  EditFieldTL(h,v+=vs,50,"‘пособ оплаты",M4UStr,Normal,5,TransStr,false,PMSClass);
+  PeriodField(h,v=6,"РџРµСЂРёРѕРґ");
+  EditFieldTL(h,v+=vs ,150,"РљР»РёРµРЅС‚",M4UStr,Normal,50,f2,false,CUSClass);
+  EditFieldTL(h,v+=vs,50,"РЎРїРѕСЃРѕР± РѕРїР»Р°С‚С‹",M4UStr,Normal,5,TransStr,false,PMSClass);
 
   EndWindow;
 end;
@@ -339,7 +339,7 @@ window ProceedItemsReturnTClass:1
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer,iPad")  
 begin
   real h,h2,v;
-  WindowBegin("Џодтверждение возврата",ProceedItemsReturnTClass,CGother,RcType);  
+  WindowBegin("РџРѕРґС‚РІРµСЂР¶РґРµРЅРёРµ РІРѕР·РІСЂР°С‚Р°",ProceedItemsReturnTClass,CGother,RcType);  
   Modality(kModalityGlobal);
   UseView(RcVc);
   SetWRect(80,200,530,440);
@@ -348,10 +348,10 @@ begin
     PopoverWindow;
   end;
    
-  StaticText(h,v+=40,"‚‚…„€’… ЏЂђЋ‹њ   1111   „‹џ ЏЋ„’‚…ђ†„…Ќ€џ",false); 
-  EditField(h+50,v+=40,100,"ЏЂђЋ‹њ",Normal,f1,false,0);
-  ColourPushButton(h,v+=40,h+165,v+48,"YesProceedItemsReturnTClass","Џродолжить",2);  
-  ColourPushButton(h+=180,v,h+165,v+48,"NoProceedItemsReturnTClass","Ћтмена",1);  
+  StaticText(h,v+=40,"Р’Р’Р•Р”РРўР• РџРђР РћР›Р¬   1111   Р”Р›РЇ РџРћР”РўР’Р•Р Р–Р”Р•РќРРЇ",false); 
+  EditField(h+50,v+=40,100,"РџРђР РћР›Р¬",Normal,f1,false,0);
+  ColourPushButton(h,v+=40,h+165,v+48,"YesProceedItemsReturnTClass","РџСЂРѕРґРѕР»Р¶РёС‚СЊ",2);  
+  ColourPushButton(h+=180,v,h+165,v+48,"NoProceedItemsReturnTClass","РћС‚РјРµРЅР°",1);  
   EndWindow;
 end;
 
@@ -359,17 +359,17 @@ window UpdateTextFieldsForQuickSearchVClass:1
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
   real h,v,vm,vs;
-  WindowBegin("Ћбновить текстовые полЯ длЯ быстрого поиска",UpdateTextFieldsForQuickSearchVClass,CGMnt,RcType);
+  WindowBegin("РћР±РЅРѕРІРёС‚СЊ С‚РµРєСЃС‚РѕРІС‹Рµ РїРѕР»СЏ РґР»СЏ Р±С‹СЃС‚СЂРѕРіРѕ РїРѕРёСЃРєР°",UpdateTextFieldsForQuickSearchVClass,CGMnt,RcType);
   SetWRect(20,80,500,220);
   v = 10; vs = 20; h = 40;
-  Statictext(h,v+=10,"Ћбновить полЯ (дата, сумма) длЯ:",false);
-  CheckBox(h,v+=vs,0,"Џоступление товара",flags[0]);
-  CheckBox(h,v+=vs,0,"‡аказ поставщику",flags[1]);
-  CheckBox(h,v+=vs,0,"‘ч/ф поставщика",flags[2]);
-  CheckBox(h,v+=vs,0,"ЏлатЮж поставщику",flags[3]);
-  CheckBox(h,v+=vs,0,"Џриход в кассу",flags[4]);
-  CheckBox(h,v+=vs,0,"ђасход из кассы",flags[5]);
-  CheckBox(h,v+=vs,0,"‘ч/ф касс.терминала",flags[6]);
+  Statictext(h,v+=10,"РћР±РЅРѕРІРёС‚СЊ РїРѕР»СЏ (РґР°С‚Р°, СЃСѓРјРјР°) РґР»СЏ:",false);
+  CheckBox(h,v+=vs,0,"РџРѕСЃС‚СѓРїР»РµРЅРёРµ С‚РѕРІР°СЂР°",flags[0]);
+  CheckBox(h,v+=vs,0,"Р—Р°РєР°Р· РїРѕСЃС‚Р°РІС‰РёРєСѓ",flags[1]);
+  CheckBox(h,v+=vs,0,"РЎС‡/С„ РїРѕСЃС‚Р°РІС‰РёРєР°",flags[2]);
+  CheckBox(h,v+=vs,0,"РџР»Р°С‚С‘Р¶ РїРѕСЃС‚Р°РІС‰РёРєСѓ",flags[3]);
+  CheckBox(h,v+=vs,0,"РџСЂРёС…РѕРґ РІ РєР°СЃСЃСѓ",flags[4]);
+  CheckBox(h,v+=vs,0,"Р Р°СЃС…РѕРґ РёР· РєР°СЃСЃС‹",flags[5]);
+  CheckBox(h,v+=vs,0,"РЎС‡/С„ РєР°СЃСЃ.С‚РµСЂРјРёРЅР°Р»Р°",flags[6]);
   
   EndWindow;
 end;
@@ -378,21 +378,21 @@ window MarkUpRClass:1
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
   real h,v,vm,vs;
-  WindowBegin("Ћпределите отчет по наценкам",MarkUpRClass,CGRcW,RcType);
+  WindowBegin("РћРїСЂРµРґРµР»РёС‚Рµ РѕС‚С‡РµС‚ РїРѕ РЅР°С†РµРЅРєР°Рј",MarkUpRClass,CGRcW,RcType);
   SetWRect(20,80,470,370);
   vs = 20;
   h=150;
-  //PeriodField(h,v=6,"Џериод");
-  EditFieldTL(h,v=6,150,"’овар",M4UStr,Normal,150,f1,false,INSClass);
-  EditFieldTL(h,v+=vs,50,"ѓруппа товара",M4UStr,Normal,50,f2,false,ITSClass);
+  //PeriodField(h,v=6,"РџРµСЂРёРѕРґ");
+  EditFieldTL(h,v=6,150,"РўРѕРІР°СЂ",M4UStr,Normal,150,f1,false,INSClass);
+  EditFieldTL(h,v+=vs,50,"Р“СЂСѓРїРїР° С‚РѕРІР°СЂР°",M4UStr,Normal,50,f2,false,ITSClass);
   
-  CheckBox(h,v+=vs,0,"Џоказать только с позитивным балансом",flags[0]);
+  CheckBox(h,v+=vs,0,"РџРѕРєР°Р·Р°С‚СЊ С‚РѕР»СЊРєРѕ СЃ РїРѕР·РёС‚РёРІРЅС‹Рј Р±Р°Р»Р°РЅСЃРѕРј",flags[0]);
   v = v + 2*vs;
-  ButtonFrame(h,v,123,2,"ђежим");
-  RadioButton(h,v,0,0,"‘водный",ArtMode);
-  RadioButton(h,v+=16,1,0,"Џодробно",ArtMode);
+  ButtonFrame(h,v,123,2,"Р РµР¶РёРј");
+  RadioButton(h,v,0,0,"РЎРІРѕРґРЅС‹Р№",ArtMode);
+  RadioButton(h,v+=16,1,0,"РџРѕРґСЂРѕР±РЅРѕ",ArtMode);
   
-  //EditField(h,v+=vs,50,100,"ѓруппа товара",Normal,f2,false,ITSClass);
+  //EditField(h,v+=vs,50,100,"Р“СЂСѓРїРїР° С‚РѕРІР°СЂР°",Normal,f2,false,ITSClass);
 
   EndWindow;
 end;
@@ -401,10 +401,10 @@ window RecalcMarkUpsInPUVClass:1
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
   real h,v,vm,vs;
-  WindowBegin("Џересчитать наценку в ЏоступлениЯх",RecalcMarkUpsInPUVClass,CGMnt,RcType);
+  WindowBegin("РџРµСЂРµСЃС‡РёС‚Р°С‚СЊ РЅР°С†РµРЅРєСѓ РІ РџРѕСЃС‚СѓРїР»РµРЅРёСЏС…",RecalcMarkUpsInPUVClass,CGMnt,RcType);
   SetWRect(20,80,500,220);
   v = 10; vs = 20; h = 150;
-  EditField(h,v+=vs,150,"Ќомер Џоступлений (,)",Normal,f1,false,0);
+  EditField(h,v+=vs,150,"РќРѕРјРµСЂ РџРѕСЃС‚СѓРїР»РµРЅРёР№ (,)",Normal,f1,false,0);
   
   EndWindow;
 end;
@@ -413,19 +413,19 @@ window DaySessionCashiersRCLass:1
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
   real h,h2,h3,h4,hm,l,v,v2,v3,vm,vs,xv1,xv2;
-  WindowBegin("Ћткрыть операционный день длЯ кассира",DaySessionCashiersRCLass,CGOther,RcType);
+  WindowBegin("РћС‚РєСЂС‹С‚СЊ РѕРїРµСЂР°С†РёРѕРЅРЅС‹Р№ РґРµРЅСЊ РґР»СЏ РєР°СЃСЃРёСЂР°",DaySessionCashiersRCLass,CGOther,RcType);
   Modality(kModalityGlobal);
   SetWRect(64,80,509,308);
   vs=20;h=100;v=5;h2=200;
 
-  //EditFieldTL(h,6 ,-20,"‹огин",M4Str,Normal,40,f1,false,UserSClass);
-  //EditFieldTL(h,v+=vs,-20,"Џароль",M4Star,Normal,40,f2,false,0);
-  EditFieldTL(h,vs ,-70,"ЏЂђЋ‹њ",M4Star,Normal,40,f2,false,0);
+  //EditFieldTL(h,6 ,-20,"Р›РѕРіРёРЅ",M4Str,Normal,40,f1,false,UserSClass);
+  //EditFieldTL(h,v+=vs,-20,"РџР°СЂРѕР»СЊ",M4Star,Normal,40,f2,false,0);
+  EditFieldTL(h,vs ,-70,"РџРђР РћР›Р¬",M4Star,Normal,40,f2,false,0);
   v = v + 40 + v2;
   
-  ColourPushButton(h,v+=2*vs,h2,v+3*vs,"CancelDaySessionAuthentication","Ћ’Њ…ЌЂ",1);
-  ColourPushButton(h+150,v,h2+150,v+3*vs,"ProceedDaySessionAuthentication","ЏЋ„’‚…ђ„€’њ",2);
-  //ColourPushButton(h+200,v,h2+200,v+3*vs,"DoLogoffKassir","ђазлогинитьсЯ",3);
+  ColourPushButton(h,v+=2*vs,h2,v+3*vs,"CancelDaySessionAuthentication","РћРўРњР•РќРђ",1);
+  ColourPushButton(h+150,v,h2+150,v+3*vs,"ProceedDaySessionAuthentication","РџРћР”РўР’Р•Р Р”РРўР¬",2);
+  //ColourPushButton(h+200,v,h2+200,v+3*vs,"DoLogoffKassir","Р Р°Р·Р»РѕРіРёРЅРёС‚СЊСЃСЏ",3);
 
   EndWindow;
 end;
@@ -434,16 +434,16 @@ window DaySessionlTClass:1 //Edit***************************Sasha2,16:08 09.03.2
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
   real h,v,vs;
-  WindowBegin("ђезквизиты операционного днЯ",DaySessionlTClass,CGSbl,-);
+  WindowBegin("Р РµР·РєРІРёР·РёС‚С‹ РѕРїРµСЂР°С†РёРѕРЅРЅРѕРіРѕ РґРЅСЏ",DaySessionlTClass,CGSbl,-);
   SetBlid(DaySessionBlock);
   SetWRect(64,80,550,300);
   v=6;vs = 20; h = 100;
-  EditField(h,v,350,"Љассиры",Normal,DaySessionCashiers,false,0);
-  EditFieldTL(h,v+=vs,100,"„ата",M4Date,Normal,10,TransDate,false,0);
-  EditFieldTL(h,v+=vs,100,"Ќачало оп.днЯ",M4Time,Normal,10,DaySessionStartTime,false,0);
-  EditFieldTL(h,v+=vs,100,"Љонец оп.днЯ",M4Time,Normal,10,DaySessionEndTime,false,0);
+  EditField(h,v,350,"РљР°СЃСЃРёСЂС‹",Normal,DaySessionCashiers,false,0);
+  EditFieldTL(h,v+=vs,100,"Р”Р°С‚Р°",M4Date,Normal,10,TransDate,false,0);
+  EditFieldTL(h,v+=vs,100,"РќР°С‡Р°Р»Рѕ РѕРї.РґРЅСЏ",M4Time,Normal,10,DaySessionStartTime,false,0);
+  EditFieldTL(h,v+=vs,100,"РљРѕРЅРµС† РѕРї.РґРЅСЏ",M4Time,Normal,10,DaySessionEndTime,false,0);
 
- // EditField(h,v+=vs,200,"Ќазвание файла",Normal,FileName,false,0);
+ // EditField(h,v+=vs,200,"РќР°Р·РІР°РЅРёРµ С„Р°Р№Р»Р°",Normal,FileName,false,0);
 
   EndWindow;
 end; //Edit***************************Sasha2,16:09 09.03.2017 }
@@ -452,10 +452,10 @@ window MakeSalaryTransactionVClass:1 //Edit***************************Sasha2,10:
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
   real h,v,vm,vs;
-  WindowBegin("Ќасчитать зарплату за дату",MakeSalaryTransactionVClass,CGMnt,RcType);
+  WindowBegin("РќР°СЃС‡РёС‚Р°С‚СЊ Р·Р°СЂРїР»Р°С‚Сѓ Р·Р° РґР°С‚Сѓ",MakeSalaryTransactionVClass,CGMnt,RcType);
   SetWRect(20,80,400,220);
   v = 10; vs = 20; h = 120;
-  EditField(h,v,100,"„ата",Normal,RegDate,false,PasteCurDate);
+  EditField(h,v,100,"Р”Р°С‚Р°",Normal,RegDate,false,PasteCurDate);
   
   EndWindow;
 end; //Edit***************************Sasha2,10:15 14.03.2017 }
@@ -466,7 +466,7 @@ window ARDClass:1
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
   real h,h1,h2,t,v,vs;
-  WindowBegin("Џрайс поинт лист",ARDClass,CGview,-);
+  WindowBegin("РџСЂР°Р№СЃ РїРѕРёРЅС‚ Р»РёСЃС‚",ARDClass,CGview,-);
   SetWRect(20,80,512,639);
   UseView(ARVc);
   vs = 20; h=70; h1=100; h2=220;
@@ -487,20 +487,20 @@ end;
 window ARLClass:1
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer") 
 begin
-  WindowBegin("Ћткрыть счет",ARLClass,CGmlist,-); 
+  WindowBegin("РћС‚РєСЂС‹С‚СЊ СЃС‡РµС‚",ARLClass,CGmlist,-); 
   SetWRect(64,80,760,298);
   Sizeable(150,150,0,0);
   SpawnClass(ARDClass);
   UseView(ARVc);
   RecordList(4,17,-21,-39);
-  RlColKey(4,4,"‘чет фактура",InvoiceNr,false,InvoiceNr); 
-  RlColKey(90,90,"‘рок",DueDate,false,DueDate);
-  RlColKey(165,165,"Ћфициальный н-р",OfficialSerNr,false,OfficialSerNr);
-  RlColKey(300,300,"Љлиент",CustCode,false,CustCode);
-  RlColKey(400,400,"Ќазвание",CustName,false,CustName);
-  RlColKey(-100,-100, "Ѓаланс",RVal,true,RVal);
-  RlCol(-30,-30,"‚ал.",ARCurncyCode,true);
-  SearchField("Џоиск");
+  RlColKey(4,4,"РЎС‡РµС‚ С„Р°РєС‚СѓСЂР°",InvoiceNr,false,InvoiceNr); 
+  RlColKey(90,90,"РЎСЂРѕРє",DueDate,false,DueDate);
+  RlColKey(165,165,"РћС„РёС†РёР°Р»СЊРЅС‹Р№ РЅ-СЂ",OfficialSerNr,false,OfficialSerNr);
+  RlColKey(300,300,"РљР»РёРµРЅС‚",CustCode,false,CustCode);
+  RlColKey(400,400,"РќР°Р·РІР°РЅРёРµ",CustName,false,CustName);
+  RlColKey(-100,-100, "Р‘Р°Р»Р°РЅСЃ",RVal,true,RVal);
+  RlCol(-30,-30,"Р’Р°Р».",ARCurncyCode,true);
+  SearchField("РџРѕРёСЃРє");
   EndWindow;
 end;
 
@@ -508,7 +508,7 @@ end;
 window AllowLocationSClass:1
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
-  WindowBegin("‘клады",AllowLocationSClass,CGother,HBlRecType);
+  WindowBegin("РЎРєР»Р°РґС‹",AllowLocationSClass,CGother,HBlRecType);
   SetWRect(240,80,470,298);
   StringList(9,9,206,209);
   EndWindow;
@@ -519,19 +519,19 @@ window PL2DClass:1
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
   real h,v,vm,vs;
-  WindowBegin("–ена",PL2DClass,CGview,-);
+  WindowBegin("Р¦РµРЅР°",PL2DClass,CGview,-);
   SetWRect(64,80,409,330);
   BrowseButtons(false);
   UseView(PLVc);
   v = 10; vs = 20; h = 120;
-  EditField(h,v, 100,"Љод товара",Normal,ArtCode,false,INSClass);
-  EditField(h,v+=vs,100,"Џрейскурант",Normal,PLCode,false,PLDefSClass);
-  EditField(h,v+=vs,-40,"Љомментарий",Normal,Comment,false,0);
-  EditField(h,v+=vs ,70,"–ена",Normal,ExVatPrice,true,0);
-//  EditField(h,v+=vs,70,"Љод Ќ„‘",Normal,VATCode,false,VATCodeSClass);
-    EditField(h,v+=vs,70,"Љлиент",Normal,CustCode,false,CUSClass);
-    CheckBox(80,v+=30,0,"€сп. эту цену, не исп. другую калькулЯцию цены",NoOtherPricing);
-    CheckBox(80,v+=16,0,"Ќе пересчитывать",DonotRecalculate);
+  EditField(h,v, 100,"РљРѕРґ С‚РѕРІР°СЂР°",Normal,ArtCode,false,INSClass);
+  EditField(h,v+=vs,100,"РџСЂРµР№СЃРєСѓСЂР°РЅС‚",Normal,PLCode,false,PLDefSClass);
+  EditField(h,v+=vs,-40,"РљРѕРјРјРµРЅС‚Р°СЂРёР№",Normal,Comment,false,0);
+  EditField(h,v+=vs ,70,"Р¦РµРЅР°",Normal,ExVatPrice,true,0);
+//  EditField(h,v+=vs,70,"РљРѕРґ РќР”РЎ",Normal,VATCode,false,VATCodeSClass);
+    EditField(h,v+=vs,70,"РљР»РёРµРЅС‚",Normal,CustCode,false,CUSClass);
+    CheckBox(80,v+=30,0,"РСЃРї. СЌС‚Сѓ С†РµРЅСѓ, РЅРµ РёСЃРї. РґСЂСѓРіСѓСЋ РєР°Р»СЊРєСѓР»СЏС†РёСЋ С†РµРЅС‹",NoOtherPricing);
+    CheckBox(80,v+=16,0,"РќРµ РїРµСЂРµСЃС‡РёС‚С‹РІР°С‚СЊ",DonotRecalculate);
   EndWindow;
 end;
 
@@ -539,12 +539,12 @@ window ReserveRecalcVClass:1 // Edit ****** Ihor Trubachov 22*07*2021
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
   real h,v,vs;
-  WindowBegin("Ћбновление",EmptyVClass,CGMnt,RcType);
+  WindowBegin("РћР±РЅРѕРІР»РµРЅРёРµ",EmptyVClass,CGMnt,RcType);
   SetWRect(20,80,400,300); // _ _ _ 240
   vs = 20;h = 130; v = 26;
-  EditField(h=90,v=10, -20, "’овар",Normal,f1,false,0);
-	EditField(h=90,v=25, -20, "ЉомпаниЯ",Normal,f2,false,0);
-  PeriodField(h,v + 15,"Џериод");
+  EditField(h=90,v=10, -20, "РўРѕРІР°СЂ",Normal,f1,false,0);
+	EditField(h=90,v=25, -20, "РљРѕРјРїР°РЅРёСЏ",Normal,f2,false,0);
+  PeriodField(h,v + 15,"РџРµСЂРёРѕРґ");
   EndWindow;
 end;
 
@@ -554,7 +554,7 @@ window ResInDisplRClass:1		// Edit ***************** Ihor Trubachov 19*08*2021
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
   real h,v,vm,vs;
-  WindowBegin("Ћтчет по резервам в премещениЯх",ResInDisplRClass,CGRcW,RcType);
+  WindowBegin("РћС‚С‡РµС‚ РїРѕ СЂРµР·РµСЂРІР°Рј РІ РїСЂРµРјРµС‰РµРЅРёСЏС…",ResInDisplRClass,CGRcW,RcType);
   SetWRect(20,80,470,370);
 	vs = 20;h = 130; v = 26;
 
@@ -568,10 +568,10 @@ window MyFinResRClass:1
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
   real h,v,vs;
-  WindowBegin("”инансовый отчет",MyFinResRClass,CGRcW,RcType);
+  WindowBegin("Р¤РёРЅР°РЅСЃРѕРІС‹Р№ РѕС‚С‡РµС‚",MyFinResRClass,CGRcW,RcType);
   SetWRect(20,80,400,300);
   vs = 20;h = 130; v = 26;
-  PeriodField(h,v + 15,"Џериод");
+  PeriodField(h,v + 15,"РџРµСЂРёРѕРґ");
   EndWindow;
 end;
 
@@ -580,7 +580,7 @@ window IVToShipRClass:1
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
   real h,v,vm,vs;
-  WindowBegin("Ћтгрузить",IVToShipRClass,CGRcW,RcType);
+  WindowBegin("РћС‚РіСЂСѓР·РёС‚СЊ",IVToShipRClass,CGRcW,RcType);
   SetWRect(20,80,470,370);
   vs = 20;
   h=150;
@@ -592,7 +592,7 @@ window TelegPriceRClass:1
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
   real h,v,vm,vs;
-  WindowBegin("’елеграм прайс",TelegPriceRClass,CGRcW,RcType);
+  WindowBegin("РўРµР»РµРіСЂР°Рј РїСЂР°Р№СЃ",TelegPriceRClass,CGRcW,RcType);
   SetWRect(20,80,470,370);
   vs = 20;
   h=150;

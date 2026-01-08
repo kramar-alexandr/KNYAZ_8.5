@@ -2,7 +2,7 @@ external procedure ExtractObj(string,var Integer,var string);
 external procedure ExtractObjWithSeparator(string,string,Boolean,var Integer,var string);
 remote updating procedure RecalcORMn(record RcVc);
 
-SetLangMode(LangRussian,"RUS",0);
+SetLangMode(LangRussian,"RUS",2);
 
 global  // Edit ********** Ihor Trubachov 22*07*2021
 function boolean CompanyIsJWLikeCompany(Integer curcomp)

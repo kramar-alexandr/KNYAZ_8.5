@@ -3,7 +3,7 @@ external function Boolean LoggedInTest();
 external procedure ExtractObj(string,var Integer,var string);
 external updating procedure WebUpdateBalanceForPoints;
 
-SetLangMode(LangRussian,"RUS",0);
+SetLangMode(LangRussian,"RUS",2);
 
 webpublic global updating procedure WebSTALSKOGO()
 begin
@@ -33,7 +33,7 @@ begin
   RepSpec.repname = "InvoiceRn";
   RunReport(RepSpec,0);
   SetDocumentFilename("");
-  WebOutString("<p><a href=\"http://37.57.199.13:1080/IVJSTALSKOGORaport.pdf\">ЂбсолютнаЯ ссылка</a></p>");
+  WebOutString("<p><a href=\"http://37.57.199.13:1080/IVJSTALSKOGORaport.pdf\">РђР±СЃРѕР»СЋС‚РЅР°СЏ СЃСЃС‹Р»РєР°</a></p>");
  return;
 end;
 
@@ -66,7 +66,7 @@ begin
   RepSpec.repname = "InvoiceRn";
   RunReport(RepSpec,0);
   SetDocumentFilename("");
-  WebOutString("<p><a href=\"http://37.57.199.13:1080/IVJPEROVARaport.pdf\">ЂбсолютнаЯ ссылка</a></p>");
+  WebOutString("<p><a href=\"http://37.57.199.13:1080/IVJPEROVARaport.pdf\">РђР±СЃРѕР»СЋС‚РЅР°СЏ СЃСЃС‹Р»РєР°</a></p>");
  return;
 end;
 

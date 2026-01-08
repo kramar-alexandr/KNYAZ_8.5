@@ -85,7 +85,7 @@ external function Boolean INVc_AllowSales(record INVc,var LongInt);
 remote updating procedure GetItemStatusInfoForOrder(var record ORVc); //Edit***************************Sasha2,11:52 13.10.2016
 remote function Boolean ORVc_PasteArtCode(var record ORVc,Integer,var string,var string,Boolean);
 
-SetLangMode(LangRussian,"RUS",0); //Edit***************************Sasha2,15:34 01.03.2017
+SetLangMode(LangRussian,"RUS",2); //Edit***************************Sasha2,15:34 01.03.2017
 
 procedure SetORAcceptanceFlag(var record ORVc ORr,record ORVc prevORr,LongInt stat)
 begin
@@ -2103,7 +2103,7 @@ begin
   ORr.LocalMachineCode = CurMachineName;
   ORr.OfficialSerNr = "";
   ORr.OfficialSerNrSerie = "";
-  AddItemsOfCertainGroupToOR(ORr,"Éè"); //Edit***************************Sasha2,15:35 01.03.2017
+  AddItemsOfCertainGroupToOR(ORr,"–ì–ü"); //Edit***************************Sasha2,15:35 01.03.2017
   ORr.Location = "SORTIROVOC";
   ORr.PriceList = "RRP3";
   ORVcRecordDefaults = res;  

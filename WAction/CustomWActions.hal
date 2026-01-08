@@ -10,7 +10,7 @@ remote procedure  StockMovVc_CheckInstockFildsMn(var record StockMovVc);
 remote procedure StockMovVc_PasteSentQuant(var record StockMovVc,Integer);
 
 
-SetLangMode(LangRussian,"RUS",0); 
+SetLangMode(LangRussian,"RUS",2); 
 
 global //Edit***************************Sasha2,13:36 07.12.2016 {
 function Boolean CCPayTouchScreenSelfDClassOnEnterKey(Integer wn,string fieldname,Integer fn,Integer rownr)
@@ -280,7 +280,7 @@ begin
     end;
     LogText(0,"ClearUpSalesmanForAllPosInvoices");
     closewindow(wn);
-    MessageBox(0,"ѓотово");
+    MessageBox(0,"Р“РѕС‚РѕРІРѕ");
   return;
 end; //Edit***************************Sasha2,14:39 03.10.2016 }
 
@@ -665,7 +665,7 @@ begin
 	b = true;
 	
 	if(blank(SMr.FrLocation) or blank(SMr.ToLocation))then begin
-		messagebox(0, "‡аполните склады");
+		messagebox(0, "Р—Р°РїРѕР»РЅРёС‚Рµ СЃРєР»Р°РґС‹");
 		b = false;
 	end;
 	
@@ -700,7 +700,7 @@ begin
 	b = true;
 	
 	if(blank(SMr.FrLocation) or blank(SMr.ToLocation))then begin
-		messagebox(0, "‡аполните склады");
+		messagebox(0, "Р—Р°РїРѕР»РЅРёС‚Рµ СЃРєР»Р°РґС‹");
 		b = false;
 	end;
 	
