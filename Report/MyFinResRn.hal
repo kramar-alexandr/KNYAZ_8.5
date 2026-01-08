@@ -208,7 +208,6 @@ begin
       outstring(1,0,total7,true);
     endformat;
     
-    
     UAH1 = total2;
     USD1 = total3;
     USDTOT1 = total1;
@@ -221,53 +220,6 @@ begin
     total6 = blankval;
     total7 = blankval;
     total8 = blankval;
-
-    black_divider(0,1);
-    startformat(15);
-    endformat;
-    startformat(15);
-      outstring(0,0,"Затраты не по точкам",false);
-    endformat;
-    
-    getvectortags(vSpend,akeysSpend);
-    startformat(15);
-      outstring(0,0,"Затрата",false);
-      outstring(150,0,"ГРН",true);
-      outstring(300,0,"USD",true);
-      outstring(1,0,"Итого(по курсу в USD)",true);
-    endformat;
-    total1 = blankval;
-    total2 = blankval;
-    total3 = blankval;
-    
-    for(i=0;i<akeysSpend.length;i=i+1)begin
-      CLCorspr.Code = akeysSpend[i];
-      readfirstmain(CLCorspr,1,true);
-      startformat(15);
-        outstring(0,0,CLCorspr.Comment,false);        
-        outval(150,0,vFinData["SPEND:" & CLCorspr.Code & ":UAH"],m4val,true);
-        outval(300,0,vFinData["SPEND:" & CLCorspr.Code & ":USD"],m4val,true);
-        outval(1,0,round(vFinData["SPEND:" & CLCorspr.Code & ":BSUM"],DEFAULTCURROUNDOFF),m4val,true);
-      endformat;
-      
-      total1 = total1 + vFinData["SPEND:" & CLCorspr.Code & ":UAH"];
-      total2 = total2 + vFinData["SPEND:" & CLCorspr.Code & ":USD"];
-      total3 = total3 + round(vFinData["SPEND:" & CLCorspr.Code & ":BSUM"],DEFAULTCURROUNDOFF);
-    end;
-    Gray_Divider(0,1);
-    startformat(15);
-      outstring(0,0,"Итого",false);
-      outval(150,0,total1,m4val,true);
-      outval(300,0,total2,m4val,true);
-      outval(1,0,total3,m4val,true);
-    endformat;
-    
-    UAH3 = total1;
-    USD3 = total2;
-    USDTOT3 = total3;
-    
-    gray_divider(0,1);
-    
     
     startformat(15);
     endformat;
@@ -339,6 +291,52 @@ begin
       USDTOT2 = total8;
       
     endformat;
+
+    black_divider(0,1);
+    startformat(15);
+    endformat;
+    startformat(15);
+      outstring(0,0,"Затраты не по точкам",false);
+    endformat;
+    
+    getvectortags(vSpend,akeysSpend);
+    startformat(15);
+      outstring(0,0,"Затрата",false);
+      outstring(150,0,"ГРН",true);
+      outstring(300,0,"USD",true);
+      outstring(1,0,"Итого(по курсу в USD)",true);
+    endformat;
+    total1 = blankval;
+    total2 = blankval;
+    total3 = blankval;
+    
+    for(i=0;i<akeysSpend.length;i=i+1)begin
+      CLCorspr.Code = akeysSpend[i];
+      readfirstmain(CLCorspr,1,true);
+      startformat(15);
+        outstring(0,0,CLCorspr.Comment,false);        
+        outval(150,0,vFinData["SPEND:" & CLCorspr.Code & ":UAH"],m4val,true);
+        outval(300,0,vFinData["SPEND:" & CLCorspr.Code & ":USD"],m4val,true);
+        outval(1,0,round(vFinData["SPEND:" & CLCorspr.Code & ":BSUM"],DEFAULTCURROUNDOFF),m4val,true);
+      endformat;
+      
+      total1 = total1 + vFinData["SPEND:" & CLCorspr.Code & ":UAH"];
+      total2 = total2 + vFinData["SPEND:" & CLCorspr.Code & ":USD"];
+      total3 = total3 + round(vFinData["SPEND:" & CLCorspr.Code & ":BSUM"],DEFAULTCURROUNDOFF);
+    end;
+    Gray_Divider(0,1);
+    startformat(15);
+      outstring(0,0,"Итого",false);
+      outval(150,0,total1,m4val,true);
+      outval(300,0,total2,m4val,true);
+      outval(1,0,total3,m4val,true);
+    endformat;
+    
+    UAH3 = total1;
+    USD3 = total2;
+    USDTOT3 = total3;
+    
+    gray_divider(0,1);
     
     black_divider(0,1);
       startformat(15);
