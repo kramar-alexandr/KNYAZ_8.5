@@ -1067,7 +1067,8 @@ val dif;
 								end;
 							end;
 						end;
-          
+            logtext(0,"USr " & USr.Code & " testf " & testf);
+
             if(testf) then begin
 							logtext(0,"WebGetUsersPoints " & USr.Code & " " & USr.Name);
               Depr.Code = USr.Department;
