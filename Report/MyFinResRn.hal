@@ -258,8 +258,20 @@ begin
     USDTOT3 = total3;
     
     gray_divider(0,1);
+    black_divider(0,1);
     
+    startformat(15);
+      outstring(0,0,"Итого прибыль по точкам и затратам",false);
+      outval(1,0,total7-total3,m4val,true);
+    endformat;
     
+    black_divider(0,1);
+    startformat(15);
+    endformat;
+    startformat(15);
+    endformat;
+    startformat(15);
+    endformat;
     
     total1 = blankval;
     total2 = blankval;
