@@ -1049,6 +1049,8 @@ val dif;
 			addfiletoarea("JSON/WebGetUsers_" & currentuser & ".json",resarea,false);
 			js = ParseJSONArea(resarea);
 			dif = AbsoluteVal(gethour(currenttime)-stringtoval(JSONGET(js,"hour"),M4Val));
+			logtext(0,"dif " & dif);
+
 			if(dif>0)then begin
 			  setareazerosize(resarea);
         AddTextToArea("{",resarea);
