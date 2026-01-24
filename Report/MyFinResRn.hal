@@ -631,3 +631,29 @@ begin
   endjob;
 return;
 end;
+
+
+global webpublic procedure GetSalesDataForPeriod()
+begin
+  record UserVc USr;
+  string 200 password,user;
+  longint hash;
+
+  logtext(0,"GetSalesDataForPeriod start");
+  password = WebGetArg("password");
+  user = WebGetArg("user");
+  SetCompany(9,false);
+  USr.Code = user;
+  logtext(0,"USr.Code " & USr.Code);
+  readfirstmain(USr,1,true);
+  if(nonblank(USr.Code))then begin
+    logtext(0,"User found");
+    hash = CalcPassword(password,user,0);
+    if(hash==USr.NewPassWord)then begin
+      logtext(0,"Password correct");
+    end else begin
+      logtext(0,"Password incorrect");
+    end;
+  end;
+  return;
+end;
