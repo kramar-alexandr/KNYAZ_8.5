@@ -154,6 +154,26 @@
             outline: none;
             width: 100%;
         }
+
+        #salesReportTable {
+            width: 100%;
+            table-layout: auto;
+            font-size: 1.5rem;
+        }
+
+        #salesReportTable th, #salesReportTable td {
+            padding: 4px 2px;
+            word-break: break-word;
+        }
+
+        @media (max-width: 768px) {
+            #salesReportTable {
+                font-size: 1.1rem;
+            }
+            #salesReportTable th, #salesReportTable td {
+                padding: 2px 1px;
+            }
+        }
         </style>
         <script type="text/javascript">
             let obj = {};
@@ -185,6 +205,13 @@
                 return c;
             } 
 
+            const formatNumber = (a) => {
+                let res = customRounder(a);
+                if (res === 0) return "0";
+                let parts = res.toString().split(".");
+                parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+                return parts.join(".");
+            }
             const getPointsOfSales = () => {
                 const xhrChoose = new XMLHttpRequest();
                 xhrChoose.open('GET', 'WebGetUsers.hal', false);
@@ -832,7 +859,7 @@
                     tfoot.innerHTML = '';
 
                     const daysOfWeek = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
-                    const months = ['Января', 'Февраля', 'Марта', 'Апреля', 'Мая', 'Июня', 'Июля', 'Августа', 'Сентября', 'Октября', 'Ноября', 'Декабря'];
+                    const months = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
                     console.log('data :>> ', data);
                     let totalSales = 0;
                     let totalCost = 0;
@@ -858,23 +885,23 @@
                         tr.innerHTML = `
                             <td style="white-space: nowrap;">${dayOfMonth} ${monthName}</td>
                             <td style="background-color: ${daycolor};">${dayOfWeek}</td>
-                            <td style="text-align: right;">${customRounder(item.totsales)}</td>
-                            <td style="text-align: right;">${customRounder(item.cost)}</td>
-                            <td style="text-align: right;">${customRounder(item.gp)}</td>
-                            <td style="text-align: right;">${customRounder(item.expenses)}</td>
-                            <td style="text-align: right;">${customRounder(item.gp - item.expenses)}</td>
+                            <td style="text-align: right;">${formatNumber(item.totsales)}</td>
+                            <td style="text-align: right;">${formatNumber(item.cost)}</td>
+                            <td style="text-align: right;">${formatNumber(item.gp)}</td>
+                            <td style="text-align: right;">${formatNumber(item.expenses)}</td>
+                            <td style="text-align: right;">${formatNumber(item.gp - item.expenses)}</td>
                         `;
                         tbody.appendChild(tr);
                     });
 
                     const footerTr = document.createElement('tr');
                     footerTr.innerHTML = `
-                        <td colspan="2" style="text-align: center;">ИТОГО:</td>
-                        <td style="text-align: right;">${customRounder(totalSales)}</td>
-                        <td style="text-align: right;">${customRounder(totalCost)}</td>
-                        <td style="text-align: right;">${customRounder(totalMargin)}</td>
-                        <td style="text-align: right;">${customRounder(totalExpenses)}</td>
-                        <td style="text-align: right;">${customRounder(totalProfit)}</td>
+                        <td colspan="2" style="text-align: center;">ИТОГ</td>
+                        <td style="text-align: right;">${formatNumber(totalSales)}</td>
+                        <td style="text-align: right;">${formatNumber(totalCost)}</td>
+                        <td style="text-align: right;">${formatNumber(totalMargin)}</td>
+                        <td style="text-align: right;">${formatNumber(totalExpenses)}</td>
+                        <td style="text-align: right;">${formatNumber(totalProfit)}</td>
                     `;
                     tfoot.appendChild(footerTr);
 
@@ -1816,29 +1843,29 @@
                 </div>
                 <h1 style=" width: 100%;text-align: center; margin-top: 20px;font-size: 5rem;">Отчет по продажам</h1>
                 
-                <div class="row" style="margin: 20px 0;">
-                    <div class="col">
-                        <input type="date" id="reportStartDate" class="form-control" style="height: 6rem; font-size: 2.5rem;">
+                <div class="row" style="margin: 20px 0; display: flex; flex-wrap: nowrap;">
+                    <div class="col" style="padding: 0 5px;">
+                        <input type="date" id="reportStartDate" class="form-control" style="height: 6rem; font-size: 2.2rem; padding: 0 5px;">
                     </div>
-                    <div class="col">
-                        <input type="date" id="reportEndDate" class="form-control" style="height: 6rem; font-size: 2.5rem;">
+                    <div class="col" style="padding: 0 5px;">
+                        <input type="date" id="reportEndDate" class="form-control" style="height: 6rem; font-size: 2.2rem; padding: 0 5px;">
                     </div>
                 </div>
                 <div style="margin-bottom: 20px;">
                     <button id="updateReportBtn" class="btn btn-primary btn-lg" style="height: 6rem; font-size: 2.5rem; width: 100%;">Обновить</button>
                 </div>
 
-                <div class="table-wrapper">
-                    <table class="table table-bordered" id='salesReportTable' style="font-size: 2rem">
+                <div class="table-wrapper" style="overflow-x: auto;">
+                    <table class="table table-bordered" id='salesReportTable'>
                         <thead>
                             <tr>
                                 <th style="font-weight: bold;">Дата</th>
                                 <th style="font-weight: bold;">День</th>
-                                <th style="font-weight: bold;">Продажи</th>
-                                <th style="font-weight: bold;">Себест.</th>
+                                <th style="font-weight: bold;">Прод.</th>
+                                <th style="font-weight: bold;">Себ.</th>
                                 <th style="font-weight: bold;">Маржа</th>
-                                <th style="font-weight: bold;">Расходы</th>
-                                <th style="font-weight: bold;">Прибыль</th>
+                                <th style="font-weight: bold;">Расх.</th>
+                                <th style="font-weight: bold;">Приб.</th>
                             </tr>
                         </thead>
                         <tbody id= 'salesReportTableBody'>

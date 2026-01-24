@@ -154,12 +154,33 @@
             outline: none;
             width: 100%;
         }
+
+        #salesReportTable {
+            width: 100%;
+            table-layout: auto;
+            font-size: 1.5rem;
+        }
+
+        #salesReportTable th, #salesReportTable td {
+            padding: 4px 2px;
+            word-break: break-word;
+        }
+
+        @media (max-width: 768px) {
+            #salesReportTable {
+                font-size: 1.1rem;
+            }
+            #salesReportTable th, #salesReportTable td {
+                padding: 2px 1px;
+            }
+        }
         </style>
         <script type="text/javascript">
             let obj = {};
             let result = {};
             let pointsOfSales;
             let currentLogin;
+            let currentLocation;
             let sumResult = {};
             let allItems;
 
@@ -173,6 +194,7 @@
 
             const customRounder = (a) => {
                 // console.log('a = ', a);
+                if(a === null || a === undefined || a === '') return 0;
                 let c = (parseFloat(a)).toFixed(2);
                 let arr = c.split('.');
                 if (arr.length === 2 && arr[1] === '00') c = parseInt(arr[0]);
@@ -183,6 +205,13 @@
                 return c;
             } 
 
+            const formatNumber = (a) => {
+                let res = customRounder(a);
+                if (res === 0) return "0";
+                let parts = res.toString().split(".");
+                parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+                return parts.join(".");
+            }
             const getPointsOfSales = () => {
                 const xhrChoose = new XMLHttpRequest();
                 xhrChoose.open('GET', 'WebGetUsers.hal', false);
@@ -275,7 +304,7 @@
 
             const pushExp = (result) => {
                 const xhr = new XMLHttpRequest();
-                xhr.open('POST', `WebSendCLOut.hal?foruser=${currentLogin}`, false);
+                xhr.open('POST', `WebSendCLOut.hal?foruser=${currentLocation}`, false);
                 xhr.send(JSON.stringify(result));
                 if (xhr.status == 200 && xhr.responseText !== '') {
                     const responseObj = JSON.parse(xhr.responseText);
@@ -305,7 +334,7 @@
                     // console.log('responseObj = ', responseObj);
                     if (responseObj && responseObj.result == "ok") {
                         document.getElementById('cashSumma').value = '';
-                        const balance = getCash(currentLogin);
+                        const balance = getCash(currentLocation);
                         console.log('balance :>> ', balance);
                         document.getElementById('cashBalance').value = balance && balance.balance ? balance.balance : '';
                         //
@@ -326,7 +355,7 @@
             // save
             const saveInventory = (res) => {
                 const xhr = new XMLHttpRequest();
-                xhr.open('POST', `WebSendInvent.hal?foruser=${currentLogin}`, false);
+                xhr.open('POST', `WebSendInvent.hal?foruser=${currentLocation}`, false);
                 xhr.send(JSON.stringify(res));
                 console.log('res = ', res);
                 if (xhr.status == 200 && xhr.responseText !== '') {
@@ -342,7 +371,7 @@
             const deleteInventory = () => {
                 if (!isLogIn()) parseHref();
                 const xhrChoose = new XMLHttpRequest();
-                xhrChoose.open('GET', `WebGetLastSale.hal?delete=true&foruser=${currentLogin}`, false);
+                xhrChoose.open('GET', `WebGetLastSale.hal?delete=true&foruser=${currentLocation}`, false);
                 xhrChoose.send(null);
                 if (xhrChoose.status == 200 && xhrChoose.responseText != "") {
                     return JSON.parse(xhrChoose.responseText);
@@ -360,7 +389,7 @@
             
             const openMenu = (login) => {
                 // console.log('login :>> ', login);
-                currentLogin = login;
+                currentLocation = login;
                 
                 clearTables();
                 buildPointsOfSales();
@@ -383,7 +412,7 @@
                 const cashBalance = document.getElementById('cashBalance');
                 const cashBalanceWithСosts = document.getElementById('cashBalanceWithСosts');
 
-                const balance = getCash(currentLogin);
+                const balance = getCash(currentLocation);
                 console.log('balance :>> ', balance);
                 
                 if (!balance || balance && !balance.balance) return;
@@ -438,7 +467,7 @@
             };
 
             const buildCreatedExpenses = () => {
-                let createdExp = getCreatedExpenses(currentLogin) || [];
+                let createdExp = getCreatedExpenses(currentLocation) || [];
                 console.log('createdExp = ', createdExp);
                 // createdExp.sort((a, b) => (a.Name > b.Name) ? 1 : ((b.Name > a.Name) ? -1 : 0));
                 const createdExpTBody = document.getElementById('createdExpTableBody');
@@ -462,7 +491,7 @@
             }
 
             const buildExpenses = () => {
-                let expenses = getExpenses(currentLogin).CorspCodes;
+                let expenses = getExpenses(currentLocation).CorspCodes;
                 expenses.sort((a, b) => (a.Name > b.Name) ? 1 : ((b.Name > a.Name) ? -1 : 0));
                 //console.log('expenses = ', expenses);
                 const expensesTableBody = document.getElementById('expensesTableBody');
@@ -491,7 +520,7 @@
                     // document.getElementById('menuBlock').style.display = 'none';
                     document.getElementById('expensesBlock').style.display = 'none';
                     document.getElementById('createdExpBlock').style.display = 'block';
-                    // console.log('currentLogin = ', currentLogin);
+                    // console.log('currentLocation = ', currentLocation);
                     buildCreatedExpenses();
                 });
                 expensesTableBody.prepend(createdExpTr);
@@ -499,7 +528,7 @@
             };
 
             const buildReport = () => {
-                let items = getInventStat(currentLogin).items;
+                let items = getInventStat(currentLocation).items;
                 items.sort((a, b) => (a.Name > b.Name) ? 1 : ((b.Name > a.Name) ? -1 : 0));
                 
                 const reportTableBody = document.getElementById('reportTableBody');
@@ -613,7 +642,7 @@
                 document.getElementById('totalInStockInventory').innerText = '';
                 document.getElementById('totalFactInventory').innerText = '';
                 document.getElementById('totalSoldInventory').innerText = '';
-                const lastSale = getInventStat(currentLogin);
+                const lastSale = getInventStat(currentLocation);
                 console.log('lastSale = ', lastSale);
                 if (!lastSale) return;
                 const items = lastSale.items;
@@ -738,7 +767,7 @@
                     countingTotal();
                     changeStatus(false);
                 }
-                const daySales = getLastSale(currentLogin);
+                const daySales = getLastSale(currentLocation);
                 if (!daySales || daySales && !daySales.invoice || daySales && daySales.invoice && !daySales.invoice.length) return;
                 console.log('daySales :>> ', daySales);
                 result.SerNr = daySales.invoice[0].SerNr;
@@ -764,7 +793,7 @@
             
             const buildDaySales = () => {
                 console.log('buildDaySales');
-                const daySales = getDaySales(currentLogin);
+                const daySales = getDaySales(currentLocation);
                 // console.log('getDaySales :>> ', daySales);
                 if (!daySales || daySales && !daySales.invoices) return;
                 const daySalesTableBody = document.getElementById('daySalesTableBody');
@@ -810,12 +839,86 @@
                 document.getElementById('daySalesQty').value = totalQty;
             };
 
+            const buildSalesReport = () => {
+                const startDate = document.getElementById('reportStartDate').value;
+                const endDate = document.getElementById('reportEndDate').value;
+                
+                if (!startDate || !endDate) return;
+
+                const xhr = new XMLHttpRequest();
+                const period = `${endDate}:${startDate.replace(/-/g, ':')}`;
+                const url = `WebGetSalesDataForPeriod.hal?user=${currentLogin}&location=${currentLocation}&period=${period}`;
+                xhr.open('GET', url, false);
+                xhr.send(null);
+
+                if (xhr.status == 200 && xhr.responseText != "") {
+                    const data = JSON.parse(xhr.responseText);
+                    const tbody = document.getElementById('salesReportTableBody');
+                    const tfoot = document.getElementById('salesReportTableFooter');
+                    tbody.innerHTML = '';
+                    tfoot.innerHTML = '';
+
+                    const daysOfWeek = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+                    const months = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
+                    console.log('data :>> ', data);
+                    let totalSales = 0;
+                    let totalCost = 0;
+                    let totalMargin = 0;
+                    let totalExpenses = 0;
+                    let totalProfit = 0;
+                    data.data.forEach(item => {
+                        totalSales += parseFloat(customRounder(item.totsales));
+                        totalCost += parseFloat(customRounder(item.cost));
+                        totalMargin += parseFloat(customRounder(item.gp));
+                        totalExpenses += parseFloat(customRounder(item.expenses));
+                        totalProfit += parseFloat(customRounder(item.gp - item.expenses));
+                        const dateParts = item.date.split('/');
+                        const dateObj = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]);
+                        
+                        const dayOfWeek = daysOfWeek[dateObj.getDay()];
+                        const dayOfMonth = dateParts[0];
+                        const monthName = months[dateObj.getMonth()];
+
+                        const tr = document.createElement('tr');
+                        let daycolor = '';
+                        if(dayOfWeek == 'Вс') daycolor = 'red';
+                        tr.innerHTML = `
+                            <td style="white-space: nowrap;">${dayOfMonth} ${monthName}</td>
+                            <td style="background-color: ${daycolor};">${dayOfWeek}</td>
+                            <td style="text-align: right;">${formatNumber(item.totsales)}</td>
+                            <td style="text-align: right;">${formatNumber(item.cost)}</td>
+                            <td style="text-align: right;">${formatNumber(item.gp)}</td>
+                            <td style="text-align: right;">${formatNumber(item.expenses)}</td>
+                            <td style="text-align: right;">${formatNumber(item.gp - item.expenses)}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+
+                    const footerTr = document.createElement('tr');
+                    footerTr.innerHTML = `
+                        <td colspan="2" style="text-align: center;">ИТОГ</td>
+                        <td style="text-align: right;">${formatNumber(totalSales)}</td>
+                        <td style="text-align: right;">${formatNumber(totalCost)}</td>
+                        <td style="text-align: right;">${formatNumber(totalMargin)}</td>
+                        <td style="text-align: right;">${formatNumber(totalExpenses)}</td>
+                        <td style="text-align: right;">${formatNumber(totalProfit)}</td>
+                    `;
+                    tfoot.appendChild(footerTr);
+
+                    return { totalSales, totalExpenses, totalProfit };
+                } else {
+                    alert('Не удалось получить данные для отчета!');
+                }
+            };
+
             const clearTables = () => {
                 document.getElementById('reportTableBody').innerHTML = '';
                 document.getElementById('expensesTableBody').innerHTML = '';
                 document.getElementById('tableContainer').innerHTML = '';
                 document.getElementById('menuTableBody').innerHTML = '';
                 document.getElementById('tableBodyInventory').innerHTML = '';
+                document.getElementById('salesReportTableBody').innerHTML = '';
+                document.getElementById('salesReportTableFooter').innerHTML = '';
             };
 
             $(document).ready(function() {
@@ -893,7 +996,7 @@
                         });
                     } else {
                         sumResult.Sum = cashSumma;
-                        putCashDocs(currentLogin);
+                        putCashDocs(currentLocation);
                     }
                 });
 
@@ -1069,7 +1172,7 @@
                 expensesBtn.addEventListener('click', () => {
                     document.getElementById('menuBlock').style.display = 'none';
                     document.getElementById('expensesBlock').style.display = 'block';
-                    console.log('currentLogin = ', currentLogin);
+                    console.log('currentLocation = ', currentLocation);
                     buildExpenses();
                 });
 
@@ -1081,6 +1184,54 @@
                     document.getElementById('daySalesBlock').style.display = 'block';
                     buildDaySales();
                 });
+
+                // add listener to reportBtn
+                const reportBtn = document.getElementById('reportBtn');
+                reportBtn.addEventListener('click', () => {
+                    document.getElementById('menuBlock').style.display = 'none';
+                    document.getElementById('salesReportBlock').style.display = 'block';
+                    
+                    // Set default dates if not set
+                    if (!document.getElementById('reportStartDate').value) {
+                        const now = new Date();
+                        const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+                        const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+                        
+                        // Local date formatting YYYY-MM-DD
+                        const formatDate = (date) => {
+                            const year = date.getFullYear();
+                            const month = String(date.getMonth() + 1).padStart(2, '0');
+                            const day = String(date.getDate()).padStart(2, '0');
+                            return `${year}-${month}-${day}`;
+                        };
+
+                        document.getElementById('reportStartDate').value = formatDate(firstDay);
+                        document.getElementById('reportEndDate').value = formatDate(lastDay);
+                    }
+
+                    buildSalesReport();
+                });
+
+                // add listener to updateReportBtn
+                document.getElementById('updateReportBtn').addEventListener('click', () => {
+                    buildSalesReport();
+                });
+
+                // add listener on toMenuBtnReport
+                document.getElementById('toMenuBtnReport').addEventListener('click', (e) => {
+                    document.getElementById('inkassatorBlock').style.display = 'block';
+                    document.getElementById('salesReportBlock').style.display = 'none';
+                    clearTables();
+                    buildPointsOfSales();
+                    result.SerNr = -1;
+                });
+
+                // add listener on backBtnReport
+                document.getElementById('backBtnReport').addEventListener('click', () => {
+                    document.getElementById('salesReportBlock').style.display = 'none';
+                    document.getElementById('menuBlock').style.display = 'block';
+                });
+
                 // add listener on submit button
                 submitBtn.onsubmit = (e) => {
                     e.preventDefault();
@@ -1098,6 +1249,7 @@
                     
                     xhr.send(aParams.join("&") + "&name=" + encodeURIComponent("Log In")+'&company=9');
                     if (xhr.responseText.indexOf('WebMainMenu') != -1) {
+                        currentLogin = document.forms[0].elements[0].value;
                         submitBtn.style.display = 'none';
                         document.getElementById('inkassatorBlock').style.display = 'block';
                         pointsOfSales = getPointsOfSales();
@@ -1572,6 +1724,9 @@
                     <div style="text-align: center; margin-top: 60px;">
                         <button class="btn btn-primary btn-lg" id ='expensesBtn' style="height: 8rem; font-size: 4rem; text-align: center; width: 100%;"> Расходы</button>
                     </div>
+                    <div style="text-align: center; margin-top: 60px;">
+                        <button class="btn btn-primary btn-lg" id ='reportBtn' style="height: 8rem; font-size: 4rem; text-align: center; width: 100%;"> Отчет</button>
+                    </div>
                 </div>
 
                  <!-- Расходы expenses -->
@@ -1677,6 +1832,49 @@
                         </table>
                     </div>
                 </div>
+
+            <!-- Отчет по продажам за период -->
+            <div id = "salesReportBlock"  style="display: none; margin-top: 10px" >
+                <div style="margin-right: 20px 0px">
+                    <button type="button" style="font-size: 2.5rem;width: 100%; text-align: center" id="toMenuBtnReport" class="btn btn-secondary">Главное меню </button>
+                </div>
+                <div style="margin:10px 0px 60px 0px">
+                        <button type="button" style="font-size: 2.5rem;width: 100%; text-align: center" id="backBtnReport" class="btn btn-secondary " role="button" aria-pressed="true"> Назад </button>
+                </div>
+                <h1 style=" width: 100%;text-align: center; margin-top: 20px;font-size: 5rem;">Отчет по продажам</h1>
+                
+                <div class="row" style="margin: 20px 0; display: flex; flex-wrap: nowrap;">
+                    <div class="col" style="padding: 0 5px;">
+                        <input type="date" id="reportStartDate" class="form-control" style="height: 6rem; font-size: 2.2rem; padding: 0 5px;">
+                    </div>
+                    <div class="col" style="padding: 0 5px;">
+                        <input type="date" id="reportEndDate" class="form-control" style="height: 6rem; font-size: 2.2rem; padding: 0 5px;">
+                    </div>
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <button id="updateReportBtn" class="btn btn-primary btn-lg" style="height: 6rem; font-size: 2.5rem; width: 100%;">Обновить</button>
+                </div>
+
+                <div class="table-wrapper" style="overflow-x: auto;">
+                    <table class="table table-bordered" id='salesReportTable'>
+                        <thead>
+                            <tr>
+                                <th style="font-weight: bold;">Дата</th>
+                                <th style="font-weight: bold;">День</th>
+                                <th style="font-weight: bold;">Прод.</th>
+                                <th style="font-weight: bold;">Себ.</th>
+                                <th style="font-weight: bold;">Маржа</th>
+                                <th style="font-weight: bold;">Расх.</th>
+                                <th style="font-weight: bold;">Приб.</th>
+                            </tr>
+                        </thead>
+                        <tbody id= 'salesReportTableBody'>
+                        </tbody>
+                        <tfoot id="salesReportTableFooter" style="font-weight: bold; background-color: #f8f9fa;">
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
 
             <!-- Подробная информация -->
             <div id = "invoiceBlock"  style="display: none; margin-top: 10px" >
