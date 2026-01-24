@@ -827,12 +827,24 @@
                 if (xhr.status == 200 && xhr.responseText != "") {
                     const data = JSON.parse(xhr.responseText);
                     const tbody = document.getElementById('salesReportTableBody');
+                    const tfoot = document.getElementById('salesReportTableFooter');
                     tbody.innerHTML = '';
+                    tfoot.innerHTML = '';
 
                     const daysOfWeek = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
                     const months = ['Января', 'Февраля', 'Марта', 'Апреля', 'Мая', 'Июня', 'Июля', 'Августа', 'Сентября', 'Октября', 'Ноября', 'Декабря'];
                     console.log('data :>> ', data);
+                    let totalSales = 0;
+                    let totalCost = 0;
+                    let totalMargin = 0;
+                    let totalExpenses = 0;
+                    let totalProfit = 0;
                     data.data.forEach(item => {
+                        totalSales += parseFloat(customRounder(item.totsales));
+                        totalCost += parseFloat(customRounder(item.cost));
+                        totalMargin += parseFloat(customRounder(item.gp));
+                        totalExpenses += parseFloat(customRounder(item.expenses));
+                        totalProfit += parseFloat(customRounder(item.gp - item.expenses));
                         const dateParts = item.date.split('/');
                         const dateObj = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]);
                         
@@ -854,6 +866,19 @@
                         `;
                         tbody.appendChild(tr);
                     });
+
+                    const footerTr = document.createElement('tr');
+                    footerTr.innerHTML = `
+                        <td colspan="2" style="text-align: center;">ИТОГО:</td>
+                        <td style="text-align: right;">${customRounder(totalSales)}</td>
+                        <td style="text-align: right;">${customRounder(totalCost)}</td>
+                        <td style="text-align: right;">${customRounder(totalMargin)}</td>
+                        <td style="text-align: right;">${customRounder(totalExpenses)}</td>
+                        <td style="text-align: right;">${customRounder(totalProfit)}</td>
+                    `;
+                    tfoot.appendChild(footerTr);
+
+                    return { totalSales, totalExpenses, totalProfit };
                 } else {
                     alert('Не удалось получить данные для отчета!');
                 }
@@ -866,6 +891,7 @@
                 document.getElementById('menuTableBody').innerHTML = '';
                 document.getElementById('tableBodyInventory').innerHTML = '';
                 document.getElementById('salesReportTableBody').innerHTML = '';
+                document.getElementById('salesReportTableFooter').innerHTML = '';
             };
 
             $(document).ready(function() {
@@ -1817,6 +1843,8 @@
                         </thead>
                         <tbody id= 'salesReportTableBody'>
                         </tbody>
+                        <tfoot id="salesReportTableFooter" style="font-weight: bold; background-color: #f8f9fa;">
+                        </tfoot>
                     </table>
                 </div>
             </div>
