@@ -174,6 +174,7 @@
 
             const customRounder = (a) => {
                 // console.log('a = ', a);
+                if(a === null || a === undefined || a === '') return 0;
                 let c = (parseFloat(a)).toFixed(2);
                 let arr = c.split('.');
                 if (arr.length === 2 && arr[1] === '00') c = parseInt(arr[0]);
@@ -830,8 +831,8 @@
 
                     const daysOfWeek = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
                     const months = ['Января', 'Февраля', 'Марта', 'Апреля', 'Мая', 'Июня', 'Июля', 'Августа', 'Сентября', 'Октября', 'Ноября', 'Декабря'];
-
-                    data.forEach(item => {
+                    console.log('data :>> ', data);
+                    data.data.forEach(item => {
                         const dateParts = item.date.split('/');
                         const dateObj = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]);
                         
@@ -840,9 +841,11 @@
                         const monthName = months[dateObj.getMonth()];
 
                         const tr = document.createElement('tr');
+                        let daycolor = '';
+                        if(dayOfWeek == 'Вс') daycolor = 'red';
                         tr.innerHTML = `
                             <td style="white-space: nowrap;">${dayOfMonth} ${monthName}</td>
-                            <td>${dayOfWeek}</td>
+                            <td style="background-color: ${daycolor};">${dayOfWeek}</td>
                             <td style="text-align: right;">${customRounder(item.totsales)}</td>
                             <td style="text-align: right;">${customRounder(item.cost)}</td>
                             <td style="text-align: right;">${customRounder(item.gp)}</td>

@@ -682,6 +682,9 @@ begin
   end;
   logtext(0,"sd " & sd);
   logtext(0,"ed " & ed);
+  if(ed>currentdate)then begin
+    ed = currentdate;
+  end;
   SetCompany(9,false);
   USr.Code = currentuser;
   logtext(0,"USr.Code " & USr.Code);
