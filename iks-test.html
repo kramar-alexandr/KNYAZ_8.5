@@ -850,6 +850,7 @@
                             <td style="text-align: right;">${customRounder(item.cost)}</td>
                             <td style="text-align: right;">${customRounder(item.gp)}</td>
                             <td style="text-align: right;">${customRounder(item.expenses)}</td>
+                            <td style="text-align: right;">${customRounder(item.gp - item.expenses)}</td>
                         `;
                         tbody.appendChild(tr);
                     });
@@ -1809,8 +1810,9 @@
                                 <th style="font-weight: bold;">День</th>
                                 <th style="font-weight: bold;">Продажи</th>
                                 <th style="font-weight: bold;">Себест.</th>
-                                <th style="font-weight: bold;">Прибыль</th>
+                                <th style="font-weight: bold;">Маржа</th>
                                 <th style="font-weight: bold;">Расходы</th>
+                                <th style="font-weight: bold;">Прибыль</th>
                             </tr>
                         </thead>
                         <tbody id= 'salesReportTableBody'>
