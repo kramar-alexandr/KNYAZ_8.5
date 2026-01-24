@@ -818,7 +818,8 @@
                 if (!startDate || !endDate) return;
 
                 const xhr = new XMLHttpRequest();
-                const url = `WebGetSalesDataForPeriod.hal?user=${currentLogin}&location=${currentLocation}&sd=${startDate}&ed=${endDate}`;
+                const period = `${endDate}:${startDate.replace(/-/g, ':')}`;
+                const url = `WebGetSalesDataForPeriod.hal?user=${currentLogin}&location=${currentLocation}&period=${period}`;
                 xhr.open('GET', url, false);
                 xhr.send(null);
 

@@ -663,17 +663,18 @@ begin
   end;
 
   period = WebGetArg("period");
-  // example of period 2026-01-31:2026-02-28
+  // example of period 2026-01-24:2025:12:24
   if(nonblank(period))then begin
-    sd.year = StringToInt(left(period,4));
-    sd.month = StringToInt(mid(period,5,2));
-    sd.day = StringToInt(right(period,2));
     ed.year = StringToInt(left(period,4));
     ed.month = StringToInt(mid(period,5,2));
-    ed.day = StringToInt(right(period,2));
+    ed.day = StringToInt(mid(period,8,2));
+    sd.year = StringToInt(mid(period,11,4));
+    sd.month = StringToInt(mid(period,16,2));
+    sd.day = StringToInt(right(period,2));
     if(sd>ed)then begin
+      day = sd;
       sd = ed;
-      ed = sd;
+      ed = day;
     end;
   end else begin
     sd = AddDay(CurrentDate,-31);
