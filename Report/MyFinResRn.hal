@@ -679,6 +679,8 @@ begin
     sd = AddDay(CurrentDate,-31);
     ed = CurrentDate;
   end;
+  logtext(0,"sd " & sd);
+  logtext(0,"ed " & ed);
   SetCompany(9,false);
   USr.Code = currentuser;
   logtext(0,"USr.Code " & USr.Code);
