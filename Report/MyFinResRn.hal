@@ -656,6 +656,11 @@ begin
   password = WebGetArg("password");
   user = WebGetArg("user");
   location = WebGetArg("location");
+
+  if(user!="INKAS9" and location!="DVRZ")then begin
+    goto lWebGetSalesDataForPeriod;
+  end;
+
   period = WebGetArg("period");
   // example of period 2026-01-31:2026-02-28
   if(nonblank(period))then begin
@@ -755,5 +760,7 @@ begin
   WebSetContentType("application/json; charset=UTF-8");
   weboutarea2(resarea);
   
+lWebGetSalesDataForPeriod:;
+
   return;
 end;
