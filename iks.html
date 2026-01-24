@@ -1,0 +1,1915 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp" rel="stylesheet">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+        
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+        
+        <style type="text/css">
+            body {
+                color: #404E67;
+                background: #F5F7FA;
+                font-family: 'Open Sans', sans-serif;
+            }
+            .table-wrapper {
+                width: 100%;
+                margin-top: 10px;
+                background: #fff;	
+                box-shadow: 0 1px 1px rgba(0,0,0,.05);
+                text-align: center;
+            }
+            table, th, td {
+            font-weight: normal;
+            border: 1px solid black; 
+            border-collapse: collapse;
+            font-size: 2rem;
+        } 
+        #expensesTable td, #expensesTable th {
+            padding: 1.75rem;
+        }
+
+        th, td { 
+            padding: 5px; 
+            text-align: left; 
+        }
+        input[type=tel]{
+                border: none;
+            }
+
+        .table-inventory {
+            width: 100%;
+            margin-top: 10px;
+            background: #fff;	
+            box-shadow: 0 1px 1px rgba(0,0,0,.05);
+            text-align: center;
+        }
+        .table-inventory .table-title {
+            padding-bottom: 10px;
+            margin: 0 0 10px;
+        }
+        .table-inventory .table-title h2 {
+            margin: 6px 0 0;
+            font-size: 22px;
+        }
+        .table-inventory .table-title .add-new i {
+            margin-right: 4px;
+        }
+        .table-inventory table.table {
+            table-layout: fixed;
+        }
+        .table-inventory table.table tr th, table.table tr td {
+            border-color: #e9e9e9;
+        }
+        .table-inventory table.table th i {
+            font-size: 13px;
+            margin: 0 5px;
+            cursor: pointer;
+        }
+        .table-inventory table.table th:last-child {
+            width: 100px;
+        }
+        .table-inventory table.table td {
+            padding: 10px 10px;
+            vertical-align:middle;
+        }
+        .table-inventory table.table td a {
+            cursor: pointer;
+            display: inline-block;
+            margin: 0 5px;
+            min-width: 24px;
+        }    
+        .table-inventory table.table td a.add {
+            color: #27C46B;
+        }
+        .table-inventory table.table td a.edit {
+            color: #FFC107;
+        }
+        .table-inventory table.table td a.delete {
+            color: #E34724;
+        }
+        .table-inventory table.table td i {
+            font-size: 39px;
+        }
+        .table-inventory table.table td a.add i {
+            font-size: 24px;
+            margin-right: -1px;
+            position: relative;
+            top: 3px;
+        }    
+        .table-inventory table.table .form-control {
+            height: 32px;
+            line-height: 32px;
+            box-shadow: none;
+            border-radius: 2px;
+        }
+        .table-inventory table.table .form-control.error {
+            border-color: #f50000;
+        }
+        .table-inventory table.table td .add {
+            display: none;
+        }
+        /* Для Chrome */
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            margin: 0;
+        }
+        /* Для Firefox */
+        input[type=number]{
+        -moz-appearance: textfield;
+        }
+
+        /* not necessary*/
+        * {
+        margin: 0;
+        padding: 0;
+        }
+
+        .quantity-block {
+            display: flex;
+            width: 100%;
+        }
+        .quantity-arrow-minus,
+        .quantity-arrow-plus {
+            cursor: pointer;
+            font-size: 45px;
+            padding: 3px 0px;
+            width: 75px;
+            box-sizing: border-box;
+            border-radius: 4px;
+            outline: none;
+        }
+        .quantity-num {
+            padding: 0px;
+            text-align: center;
+            font-size: 42px;
+            line-height: 43px;
+            border-radius: 4px;
+            outline: none;
+            width: 100%;
+        }
+        </style>
+        <script type="text/javascript">
+            let obj = {};
+            let result = {};
+            let pointsOfSales;
+            let currentLogin;
+            let sumResult = {};
+            let allItems;
+
+            const customMultiply = (a, b) => {
+                let c = (parseFloat(a) * parseFloat(b)).toFixed(2);
+                let arr = c.split('.');
+                if (arr.length === 2 && arr[1] === '00') c = parseInt(arr[0]) 
+                // console.log('c = ', c);
+                return c;
+            };
+
+            const customRounder = (a) => {
+                // console.log('a = ', a);
+                let c = (parseFloat(a)).toFixed(2);
+                let arr = c.split('.');
+                if (arr.length === 2 && arr[1] === '00') c = parseInt(arr[0]);
+                if (arr.length === 2 && arr[1] !== '00'&& arr[1].length === 2 && arr[1][1] === '0' ) {
+                    c = (parseFloat(a)).toFixed(1);
+                } 
+                // console.log('customRounder = ', c);
+                return c;
+            } 
+
+            const getPointsOfSales = () => {
+                const xhrChoose = new XMLHttpRequest();
+                xhrChoose.open('GET', 'WebGetUsers.hal', false);
+                xhrChoose.send(null);
+                if (xhrChoose.status == 200 && xhrChoose.responseText != "") {
+                    // console.log(JSON.parse(xhrChoose.responseText));
+                    return JSON.parse(xhrChoose.responseText);
+                } else alert('Не удалось получить данные из процедуры "WebGetUsers"!');
+            };
+
+            const getInventStat = (code) => {
+                const xhrChoose = new XMLHttpRequest();
+                xhrChoose.open('GET', `WebGetInventStat.hal?foruser=${code}`, false);
+                xhrChoose.send(null);
+                if (xhrChoose.status == 200 && xhrChoose.responseText != "") {
+                    return JSON.parse(xhrChoose.responseText);
+                } else alert('Не удалось получить данные из процедуры "WebGetInventStat"!');
+            };
+        
+            const getBalanceForPoint = (code) => {
+                if (!code) return;
+                const xhrChoose = new XMLHttpRequest();
+                xhrChoose.open('GET', `WebGetCashDocs.hal?foruser=${code}`, false);
+                xhrChoose.send(null);
+                if (xhrChoose.status == 200 && xhrChoose.responseText != "") {
+                    return JSON.parse(xhrChoose.responseText);
+                } else alert('Не удалось получить данные из процедуры "WebGetCashDocs"!');
+            };
+
+            const getCash = (code) => { //
+                const xhrChoose = new XMLHttpRequest();
+                xhrChoose.open('GET', `WebGetCashDocs.hal?foruser=${code}`, false);
+                xhrChoose.send(null);
+                if (xhrChoose.status == 200 && xhrChoose.responseText != "") {
+                    return JSON.parse(xhrChoose.responseText);
+                } else alert('Не удалось получить данные из процедуры "WebGetCashDocs"!');
+            };
+
+            const getDaySales = (code) => {
+                // console.log('forUSer = ', code);
+                const xhrChoose = new XMLHttpRequest();
+                xhrChoose.open('GET', `WebGetDaySales.hal?foruser=${code}`, false);
+                xhrChoose.send(null);
+                // console.log('get DAySales xhrChoose :>> ', xhrChoose);
+                if (xhrChoose.status == 200 && xhrChoose.responseText != "") {
+                    return JSON.parse(xhrChoose.responseText);
+                } else alert('Не удалось получить данные из процедуры "WebGetDaySales"!');
+            };
+
+            const getLastSale = (code) => {
+                const xhrChoose = new XMLHttpRequest();
+                xhrChoose.open('GET', `WebGetLastSale.hal?foruser=${code}`, false);
+                xhrChoose.send(null);
+                if (xhrChoose.status == 200 && xhrChoose.responseText != "") {
+                    return JSON.parse(xhrChoose.responseText);
+                } else alert('Не удалось получить данные из процедуры "WebGetLastSale"!');
+            };
+
+            const getBarCodes = () => {
+                const xhrChoose = new XMLHttpRequest();
+                xhrChoose.open('GET', 'WebGetBarCodes.hal', false);
+                xhrChoose.send(null);
+                if (xhrChoose.status == 200 && xhrChoose.responseText != "") {
+                    console.log('barCodes :>> ', JSON.parse(xhrChoose.responseText));
+                    return JSON.parse(xhrChoose.responseText);
+                } else alert('Не удалось получить данные из процедуры "WebGetBarCodes"!');
+            }
+
+            const getExpenses = (code) => {
+                console.log('code = ', code);
+                const xhrChoose = new XMLHttpRequest();
+                xhrChoose.open('GET', `WebGetCLCorsp.hal?foruser=${code}`, false);
+                xhrChoose.send(null);
+                if (xhrChoose.status == 200 /* && xhrChoose.responseText != ""*/) {
+                    return JSON.parse(xhrChoose.responseText);
+                } else alert('Не удалось получить данные из процедуры "getExpenses"!');
+            };
+            const getCreatedExpenses = (code) => {
+                // 95.217.181.155:1080/WebGetCreatedCLOutForCurUs.hal?foruser="1_YAMA2"
+
+                const xhrChoose = new XMLHttpRequest();
+                xhrChoose.open('GET', `WebGetCreatedCLOutForCurUs.hal?foruser=${code}`, false);
+                xhrChoose.send(null);
+                if (xhrChoose.status == 200 /* && xhrChoose.responseText != ""*/) {
+                    let res = JSON.parse(xhrChoose.responseText);
+                    console.log('res = ', res);
+                    return res;
+                } else alert('Не удалось получить данные из процедуры "WebGetLastSale"!');
+            };
+
+            const pushExp = (result) => {
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', `WebSendCLOut.hal?foruser=${currentLogin}`, false);
+                xhr.send(JSON.stringify(result));
+                if (xhr.status == 200 && xhr.responseText !== '') {
+                    const responseObj = JSON.parse(xhr.responseText);
+                    //console.log('responseObj = ', responseObj);
+                    if (responseObj && responseObj.result == "ok") {
+                        document.getElementById('expAllertSuccess').style.display = 'block';
+                        document.getElementById('expModalFooter').style.display = 'none';
+                        setTimeout(()=> {
+                            document.getElementById('expModalFooter').style.display = 'block';
+                            document.getElementById('expAllertSuccess').style.display = 'none';
+                            document.getElementById('expConfirmWindow').style.display = 'none';
+                        }, 1300);
+                    } else {
+                        document.getElementById('expAllertDanger').style.display = 'block';
+                        setTimeout(()=> {
+                            document.getElementById('expAllertDanger').style.display = 'none';
+                        }, 1300);
+                    }
+                } else alert('Не удалось cохранить данные!\n Процедура: WebSendCLOut');
+            };
+            const putCashDocs = (code) => {
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', `WebPutCashDocs.hal?foruser=${code}`, false);
+                xhr.send(JSON.stringify(sumResult));
+                if (xhr.status == 200 && xhr.responseText !== '') {
+                    const responseObj = JSON.parse(xhr.responseText);
+                    // console.log('responseObj = ', responseObj);
+                    if (responseObj && responseObj.result == "ok") {
+                        document.getElementById('cashSumma').value = '';
+                        const balance = getCash(currentLogin);
+                        console.log('balance :>> ', balance);
+                        document.getElementById('cashBalance').value = balance && balance.balance ? balance.balance : '';
+                        //
+                        const alertModalWindow = document.getElementById('cashModalWindow');
+                        const commentAlert = document.getElementById('cashComment');
+                        const close = document.getElementById('closeModalBtn');
+
+                        commentAlert.innerHTML = 'Сохранено!';
+                        alertModalWindow.style.display = 'block';
+
+                        close.addEventListener('click', () => {
+                            alertModalWindow.style.display = 'none';
+                            commentAlert.innerHTML = '';
+                        });
+                    }
+                } else alert('Не удалось cохранить данные!\n Процедура: WebPutCashDocs');
+            };
+            // save
+            const saveInventory = (res) => {
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', `WebSendInvent.hal?foruser=${currentLogin}`, false);
+                xhr.send(JSON.stringify(res));
+                console.log('res = ', res);
+                if (xhr.status == 200 && xhr.responseText !== '') {
+                    const responseObj = JSON.parse(xhr.responseText);
+                    if (responseObj.result != "ok" && responseObj.error) return alert(responseObj.error);
+                    result.SerNr = responseObj.SerNr;
+                    changeStatus(true);
+                } else if (xhr.error) {
+                    alert(xhr.error);
+                } else alert('Что-то пошло не так! Не удалось сохранить данные!'); 
+            };
+            // delete Inventory
+            const deleteInventory = () => {
+                if (!isLogIn()) parseHref();
+                const xhrChoose = new XMLHttpRequest();
+                xhrChoose.open('GET', `WebGetLastSale.hal?delete=true&foruser=${currentLogin}`, false);
+                xhrChoose.send(null);
+                if (xhrChoose.status == 200 && xhrChoose.responseText != "") {
+                    return JSON.parse(xhrChoose.responseText);
+                } else alert('Не удалось получить данные из процедуры "WebGetLastSale?delete=true"!');
+            };
+
+            const isLogIn = () => {
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', 'WebIsLogIn.hal?user=INKAS', false);
+                xhr.send(null);
+                //console.log('xhr = ', xhr);
+                if (xhr.status == 200 && xhr.responseText !== 'false' ) return true;
+                return false;
+            };
+            
+            const openMenu = (login) => {
+                // console.log('login :>> ', login);
+                currentLogin = login;
+                
+                clearTables();
+                buildPointsOfSales();
+
+                const point = pointsOfSales.users.filter(el => el.login == login);
+                const menuTableBody = document.getElementById('menuTableBody');
+                document.getElementById('inkassatorBlock').style.display = 'none';
+                document.getElementById('menuBlock').style.display = 'block';
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="overflow: hidden;">${point[0].name}</td>
+                    <td>${point[0].address}</td>
+                    <td>${point[0].phone}</td>
+                `;
+                menuTableBody.append(tr);
+            };
+
+            const buildCash = () => {
+                const cashBalance = document.getElementById('cashBalance');
+                const cashBalanceWithСosts = document.getElementById('cashBalanceWithСosts');
+
+                const balance = getCash(currentLogin);
+                console.log('balance :>> ', balance);
+                
+                if (!balance || balance && !balance.balance) return;
+                cashBalance.value = balance.balance;
+                const raznica = parseFloat(balance.balance) - parseFloat(balance.rashod || 0);
+                cashBalanceWithСosts.value = customRounder(raznica).toFixed(2);
+            };
+
+            const addEventToExpOK = (e) => {
+                let result = {};
+                // console.log('e = ', e);
+                const { expCode, expName } = document.getElementById('expConfirmWindow');
+                const expComment = document.getElementById('expComment').value;
+                const totalExp = document.getElementById('expTotalInput').value;
+                // console.log('expCode, expName  : ', expCode, expName);
+                //console.log('expComment, totalExp : ', expComment, totalExp);
+                result.Total = totalExp;
+	            result.CorspCode = expCode;
+                result.Comment = expComment;
+                if (totalExp) {
+                    // called save func
+                    pushExp(result);
+                    //console.log('result = ', result);
+                    /* document.getElementById('expAllertSuccess').style.display = 'block';
+                        document.getElementById('expModalFooter').style.display = 'none';
+                        setTimeout(()=> {
+                            document.getElementById('expModalFooter').style.display = 'block';
+                            document.getElementById('expAllertSuccess').style.display = 'none';
+                            document.getElementById('expConfirmWindow').style.display = 'none';
+                        }, 1300);*/
+                } else {  
+                    document.getElementById('expAllertWarning').style.display = 'block';
+                    setTimeout(()=> {
+                        document.getElementById('expAllertWarning').style.display = 'none';
+                    }, 1300);
+                }
+            };
+
+            const openExpConfirmWindow = (code, text) => {
+                console.log('text = ', text);
+                const expCW = document.getElementById('expConfirmWindow');
+                expCW.expCode = code;
+                expCW.expName = text;
+                const closeModalExp = document.getElementById('expClose');
+                const submitBtn = document.getElementById('expOK');
+
+                document.getElementById('expTitle').innerHTML = text;
+                document.getElementById('expComment').value = '';
+                document.getElementById('expTotalInput').value = '';
+                
+                expCW.style.display = 'block';
+            };
+
+            const buildCreatedExpenses = () => {
+                let createdExp = getCreatedExpenses(currentLogin) || [];
+                console.log('createdExp = ', createdExp);
+                // createdExp.sort((a, b) => (a.Name > b.Name) ? 1 : ((b.Name > a.Name) ? -1 : 0));
+                const createdExpTBody = document.getElementById('createdExpTableBody');
+                createdExpTBody.innerHTML = '';
+
+                document.getElementById('createdExpSearchInput').value = '';
+                let total = 0;
+                for (let exp of createdExp) {
+                    const tr = document.createElement('tr');
+                    // <td style="overflow: hidden;" >${exp.Code}</td>
+                    tr.innerHTML = `
+                        <td style="overflow: hidden;">${exp.SerNr}</td>
+                        <td style="overflow: hidden;">${exp.TransDate}</td>
+                        <td style="overflow: hidden;">${exp.Comment}</td>
+                        <td style="overflow: hidden;">${exp.Total}</td>
+                    `;
+                    createdExpTBody.append(tr);
+                    total += parseFloat(exp.Total);
+                }
+                document.getElementById('totalCreatedExp').innerText = total;
+            }
+
+            const buildExpenses = () => {
+                let expenses = getExpenses(currentLogin).CorspCodes;
+                expenses.sort((a, b) => (a.Name > b.Name) ? 1 : ((b.Name > a.Name) ? -1 : 0));
+                //console.log('expenses = ', expenses);
+                const expensesTableBody = document.getElementById('expensesTableBody');
+                expensesTableBody.innerHTML = '';
+                document.getElementById('expSearchInput').value = '';
+                let total = 0;
+                for (let exp of expenses) {
+                    const tr = document.createElement('tr');
+                    //<td style="overflow: hidden;" >${exp.Code}</td>
+                    tr.innerHTML = `
+                        <td style="overflow: hidden;color: #007bff;cursor:pointer" 
+                            onclick="openExpConfirmWindow('${exp.Code}', '${exp.Comment}')"
+                        >${exp.Comment}</td>
+                    `;
+                    expensesTableBody.append(tr);
+                }
+                // добавление созданных расходов
+
+                const createdExpTr = document.createElement('tr');
+                createdExpTr.innerHTML = `
+                    <td style="overflow: hidden; color: #dc3545; cursor:pointer; text-decoration: underline;"
+                    id='createdExpLink'> Список созданных расходов</td>
+                `;
+                
+                createdExpTr.addEventListener('click', () => {
+                    // document.getElementById('menuBlock').style.display = 'none';
+                    document.getElementById('expensesBlock').style.display = 'none';
+                    document.getElementById('createdExpBlock').style.display = 'block';
+                    // console.log('currentLogin = ', currentLogin);
+                    buildCreatedExpenses();
+                });
+                expensesTableBody.prepend(createdExpTr);
+
+            };
+
+            const buildReport = () => {
+                let items = getInventStat(currentLogin).items;
+                items.sort((a, b) => (a.Name > b.Name) ? 1 : ((b.Name > a.Name) ? -1 : 0));
+                
+                const reportTableBody = document.getElementById('reportTableBody');
+                reportTableBody.innerHTML = '';
+                document.getElementById('searchInput').value = '';
+                let total = 0;
+                for (let item of items) {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td style="overflow: hidden;" >${item.ArtCode || item.BarCode || item.AlternativeCode}</td>
+                        <td style="overflow: hidden;" >${item.Name}</td>
+                        <td style="overflow: hidden;" >${item.Instock}</td>
+                    `;
+                    reportTableBody.append(tr);
+                    // item.Instock = Math.round(item.Instock * 100) / 100 // parseFloat(item.Instock).toFixed(2);
+                    console.log('item.Instock = ', item.Instock);
+                    total += parseFloat(item.Instock);
+                }
+                document.getElementById('totalInStock').innerText = total.toFixed(2);
+            };
+
+            const buildPointsOfSales = () => {
+                if (!pointsOfSales || pointsOfSales && !pointsOfSales.users || pointsOfSales && pointsOfSales.users && !pointsOfSales.users.length) return;
+                const tableContainer = document.getElementById('tableContainer');
+                for (let ps of  pointsOfSales.users) {
+                    const resultBalanceForPoint = getBalanceForPoint(ps.login);
+                    const balance = resultBalanceForPoint && resultBalanceForPoint.balance ? resultBalanceForPoint.balance : '';
+                    const box = document.createElement('div');
+                    const html = `
+                    <table style="width:100%; margin-top:20px"> 
+                            <tr>
+                                <th style="width: 70%" colspan="2" >${ps.name}</th>
+                                <th style="text-align: center" >${balance}</th>
+                            </tr>
+
+                            <tr>
+                                <td colspan="2" >${ps.address}</td>
+                                <td rowspan="2" style="text-align: center; height: 100px">
+                                        <button onclick = "openMenu('${ps.login}')" type="button" style="width: 100%; height: 100%;" class="btn btn-info">Открыть</button>
+                                </td>
+                            </tr>
+
+                            <tr> <td colspan="2" onclick="window.open('tel:' + ${ps.phone})"> ${ps.phone} </td> </tr>
+                    </table> `;
+                    box.innerHTML = html;
+                    tableContainer.append(box);
+                }
+            };
+
+            const changeStatus = (status) => {
+                const shptStatus = document.getElementById('statusInventory');
+                if (!shptStatus) return;
+                if (status) {
+                    if (!shptStatus.classList.contains('badge-success')) {
+                        shptStatus.classList.remove('badge-danger');
+                        shptStatus.classList.add('badge-success');
+                        shptStatus.style.color = 'green';
+                        shptStatus.innerText = 'Cохранено';
+                    } else return;
+                } else {
+                    if (shptStatus.classList.contains('badge-success')) {
+                        shptStatus.classList.remove('badge-success');
+                        shptStatus.classList.add('badge-danger');
+                        shptStatus.style.color = '#ff0a0acc';
+                        shptStatus.innerText = 'Не сохранено';
+                    } else return;
+                }
+            };
+
+            const countingTotal = () => {
+                const totalInput            = document.getElementById('totalSumInventory');
+                const totalInStockInventory = document.getElementById('totalInStockInventory');
+                const totalFactInventory    = document.getElementById('totalFactInventory');
+                const totalSoldInventory    = document.getElementById('totalSoldInventory');
+
+                let totalValue = 0;
+                let qtyInStock = 0;
+                let qtyFact = 0;
+                let qtySold = 0;
+
+                if (!result.items || result.items && !result.items.length) return totalInput.value = 0;
+                
+                for (let item of result.items) {
+                    if (item.Sum) totalValue += parseFloat(item.Sum);
+                    if (item.Instock) qtyInStock += item.Instock;
+                    if (item.FactQuant) qtyFact += parseFloat(item.FactQuant);
+                    SoldQuant = item.Instock - item.FactQuant; 
+                    item.SoldQuant = parseFloat(item.Instock) - parseFloat(item.FactQuant);
+                    qtySold += parseFloat(item.SoldQuant);
+                    document.getElementById(`sold${item.ArtCode}`).innerText = customRounder(item.Instock - item.FactQuant);
+                }
+
+                totalInput.innerText = customRounder(totalValue);
+                totalInStockInventory.innerText = qtyInStock.toFixed(1);
+                totalFactInventory.innerText = customRounder(qtyFact);
+                totalSoldInventory.innerText = qtySold.toFixed(2);;
+            };
+
+            const onSaveClick = () => {
+                result.DoneFlag = document.getElementById('OKFlagInventory').checked;
+                if (!result.SerNr) result.SerNr = -1;
+                saveInventory(result);
+            };
+
+            const buildInventory = () => {
+                let qtyInv = 0;
+                result.items = [];
+                const tbody = document.getElementById('tableBodyInventory');
+                tbody.innerHTML = '';
+                document.getElementById('totalSumInventory').innerText = '';
+                document.getElementById('totalInStockInventory').innerText = '';
+                document.getElementById('totalFactInventory').innerText = '';
+                document.getElementById('totalSoldInventory').innerText = '';
+                const lastSale = getInventStat(currentLogin);
+                console.log('lastSale = ', lastSale);
+                if (!lastSale) return;
+                const items = lastSale.items;
+                items.sort((a, b) => (a.Name > b.Name) ? 1 : ((b.Name > a.Name) ? -1 : 0)); // sort by name 
+                allItems = lastSale;
+                //console.log('items :>> ', items);
+                if (!items || items && !items.length) return;
+                
+                for (let item of items) {
+                    const newItem = {};
+                    newItem.ArtCode = item.ArtCode || item.BarCode || item.AlternativeCode;
+                    newItem.AlternativeCode = item.AlternativeCode;
+                    newItem.BarCode = item.BarCode;
+                    newItem.Price = item.Price;
+                    newItem.Spec = item.Name || item.Spec;
+                    newItem.Sum = parseFloat(item.Instock) * item.Price;
+                    newItem.Instock = parseFloat(item.Instock);
+                    newItem.FactQuant = 0;
+                    newItem.SoldQuant = 0;
+                    console.log(' newItem.Instock = ',  newItem.Instock);
+                    console.log(' item.Instock = ', item.Instock);
+                    qtyInv += parseFloat(item.Quant);
+
+                    const div = document.createElement('div');
+                    div.id = `row${newItem.ArtCode}`;
+                    const tr = document.createElement('tr');
+                    // onclick = "changeTTN('${shipment.SerNr}')"
+                    tr.setAttribute('style', 'border-right: 2px solid lightslategrey; border-top: 2px solid lightslategrey; border-left: 2px solid lightslategrey;')
+                    tr.innerHTML = `
+                        <td style="background: whitesmoke; width: 40%;" colspan="3" >
+                            ${newItem.ArtCode}
+                        </td>
+                        <td colspan="2" style="background: whitesmoke; font-size: 3rem; font-weight: bold;" >${newItem.Spec}</td>
+                    `;
+                    const bottomTr = document.createElement('tr');
+                    bottomTr.setAttribute('style', 'border-right: 2px solid lightslategrey; border-bottom: 2px solid lightslategrey; border-left: 2px solid lightslategrey;')
+                    bottomTr.innerHTML = `
+                        <td style="font-size: 3rem;min-width:100px; text-align:center; padding-top:0px">
+                            <div style="font-size: 1rem;min-width:100px;text-align:center">Склад</div>
+                            <div>${customRounder(newItem.Instock)}</div>
+                        </td>
+                        <td >
+                            <div style="font-size: 1rem;min-width:100px;text-align:center">Факт</div>
+                            <div class="quantity-block">
+                                <button class="quantity-arrow-minus" id="minus${newItem.ArtCode}"> - </button>
+                                <input style="font-size: 4.5rem" class="quantity-num" type="number" id="qty${newItem.ArtCode}" value="${customRounder(newItem.FactQuant)}" />
+                                <button class="quantity-arrow-plus" id="plus${newItem.ArtCode}"> + </button>
+                            </div>  
+                        </td>
+                        <td style="font-size: 3rem; min-width:100px; text-align:center; padding-top:0px">
+                            <div style="font-size: 1rem; min-width:100px; text-align:center">Продано</div>
+                            <div style="font-size: 3rem; min-width:100px;" id="sold${newItem.ArtCode}">${customRounder(newItem.SoldQuant)}</div>
+                        </td>
+                        <td style="font-size: 3rem;">${customRounder(newItem.Price)}</td>
+                        <td id="total${newItem.ArtCode}" style="font-weight: bold;font-size: 3rem; min-width:200px;">${customMultiply(newItem.Price, item.Instock)}</td>
+                    `;
+
+                    div.append(tr);
+                    div.append(bottomTr);
+                    tbody.append(div);
+                    result.items.push(newItem);
+                    // changeStatus(false);
+                    const btnPlus = document.getElementById(`plus${newItem.ArtCode}`);
+                    const btnMinus = document.getElementById(`minus${newItem.ArtCode}`);
+                    const inputQuantity = document.getElementById(`qty${newItem.ArtCode}`);
+                    const tdTotal = document.getElementById(`total${newItem.ArtCode}`);
+                    console.log(1111);
+                    // console.log('newItem :>> ', newItem);
+                    btnMinus.addEventListener('click', quantityMinus);
+                    btnPlus.addEventListener('click', quantityPlus);
+
+                    inputQuantity.addEventListener('change', (e) => {
+                        if (!e.target.value || e.target.value < 0) e.target.value = 0;
+                        const inputVal = parseFloat(e.target.value).toFixed(1);
+                        console.log('inputVal = ', inputVal);
+                        tdTotal.innerText = customMultiply(newItem.Price, item.Instock - inputVal);
+                        // tdTotal.innerText = Math.round(newItem.Price * (parseFloat(item.Instock) - inputVal));
+
+                        newItem.FactQuant = inputVal;
+                        // newItem.Sum = Math.round(newItem.Price * (parseFloat(item.Instock) - inputVal));
+                        newItem.Sum = customMultiply(newItem.Price, item.Instock - inputVal);
+                        
+                        newItem.SoldQuant = customRounder(item.Instock - inputVal);
+                        countingTotal();
+                        // changeStatus(false);
+                        onSaveClick();
+                        inputQuantity.value = inputVal;
+                    });
+
+
+                    function quantityMinus() {
+                        inputQuantity.value -= 1;
+                        if (inputQuantity.value < 0) inputQuantity.value = 0;
+
+                        tdTotal.innerText = customMultiply(newItem.Price, item.Instock - inputQuantity.value);
+
+                        newItem.FactQuant = inputQuantity.value;
+                        newItem.Sum = customMultiply(newItem.Price, item.Instock - inputQuantity.value);
+                        
+                        newItem.SoldQuant = customRounder(item.Instock - inputQuantity.value);
+                        countingTotal();
+                        // changeStatus(false);
+                        onSaveClick();
+                    }
+
+                    function quantityPlus() {
+                        console.log('quantityPlus ');
+                        let val = parseFloat(inputQuantity.value).toFixed(1);
+                        val = parseFloat(val) + 1;
+                        console.log('val = ', val);
+                        tdTotal.innerText =customMultiply(newItem.Price, (parseFloat(item.Instock) - val));
+                        inputQuantity.value = val;
+                        newItem.FactQuant = val;
+                        newItem.Sum = customMultiply(newItem.Price, (parseFloat(item.Instock) - val));
+
+                        newItem.SoldQuant = customRounder(parseFloat(item.Instock) - parseFloat(val));
+
+                        countingTotal();
+                        // changeStatus(false);
+                        onSaveClick();
+                    }
+                    countingTotal();
+                    changeStatus(false);
+                }
+                const daySales = getLastSale(currentLogin);
+                if (!daySales || daySales && !daySales.invoice || daySales && daySales.invoice && !daySales.invoice.length) return;
+                console.log('daySales :>> ', daySales);
+                result.SerNr = daySales.invoice[0].SerNr;
+                for (let item of daySales.invoice[0].items) {
+                    const inputQuantity = document.getElementById(`qty${item.ArtCode}`);
+                    const tdTotal = document.getElementById(`total${item.ArtCode}`);
+                    for (let nItem of result.items) {
+                        // console.log('nItem :>> ', nItem);
+                        if (nItem.ArtCode == item.ArtCode) {
+                            tdTotal.innerText = customMultiply(item.Price, item.Quant);
+                            inputQuantity.value = customRounder(nItem.Instock - parseFloat(item.Quant));
+                            nItem.FactQuant = customRounder(nItem.Instock - parseFloat(item.Quant));
+                            nItem.SoldQuant = customRounder(item.Quant);
+                            console.log('item.Quant = ', item.Quant);
+                            console.log('nItem.SoldQuant = ', nItem.SoldQuant);
+                            nItem.Sum = customMultiply(item.Price, nItem.SoldQuant);
+                            nItem.Sum = Math.round(nItem.Sum * 100)/100;
+                        }
+                    }
+                }
+                countingTotal();
+            };
+            
+            const buildDaySales = () => {
+                console.log('buildDaySales');
+                const daySales = getDaySales(currentLogin);
+                // console.log('getDaySales :>> ', daySales);
+                if (!daySales || daySales && !daySales.invoices) return;
+                const daySalesTableBody = document.getElementById('daySalesTableBody');
+                // clear previouse data
+                document.getElementById('daySalesTotal').value = '';
+                document.getElementById('daySalesQty').value = '';
+                //
+                daySalesTableBody.innerHTML = '';
+                let totalSum = 0;  
+                let totalQty = 0;
+                let itemsArray = [];
+                const itemsObject = {};
+                //console.log('daySales :>> ', daySales);
+                if (!daySales.invoices[0]) return;
+                document.getElementById('date').innerText = daySales.invoices[0].TransDate;
+                for (let inv of daySales.invoices) {
+                    let qty = 0;
+                    if (inv.Sum4) totalSum += parseFloat(inv.Sum4);
+                    for (let item of inv.items) {
+                        if (item.Quant) qty += parseFloat(item.Quant, 10);
+                        if (item.ArtCode && item.Spec) {
+                            if (!itemsObject[`${item.Spec}`]) {
+                                itemsObject[`${item.Spec}`] = {};
+                                itemsObject[`${item.Spec}`].Quant = parseFloat(item.Quant);
+                                itemsObject[`${item.Spec}`].Price = parseFloat(item.Price);
+                            } else itemsObject[`${item.Spec}`].Quant += parseFloat(item.Quant);
+                        }
+                    }
+                    totalQty += qty;
+                }
+                
+                for (let code in itemsObject) {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td style="overflow: hidden;" >${code}</td>
+                        <td style="overflow: hidden;" >${itemsObject[code].Quant}</td>
+                        <td style="overflow: hidden;" >${itemsObject[code].Quant * itemsObject[code].Price}</td>
+                    `;
+                    daySalesTableBody.append(tr);
+                }
+                // console.log('itemsObject :>> ', itemsObject);
+                document.getElementById('daySalesTotal').value = totalSum;
+                document.getElementById('daySalesQty').value = totalQty;
+            };
+
+            const clearTables = () => {
+                document.getElementById('reportTableBody').innerHTML = '';
+                document.getElementById('expensesTableBody').innerHTML = '';
+                document.getElementById('tableContainer').innerHTML = '';
+                document.getElementById('menuTableBody').innerHTML = '';
+                document.getElementById('tableBodyInventory').innerHTML = '';
+            };
+
+            $(document).ready(function() {
+                //exp modal 
+                const expCW = document.getElementById('expConfirmWindow');
+                const closeModalExp = document.getElementById('expClose');
+                const submitExpBtn = document.getElementById('expOK');
+
+                submitExpBtn.addEventListener('click', (e) => {
+                    addEventToExpOK(e);
+                });
+
+                closeModalExp.addEventListener('click', () => {
+                    console.log('close');
+                    expCW.style.display = 'none';
+                });
+                //
+                const submitBtn = document.getElementById('loginForm');
+                
+                const backBtn = document.getElementById('backBtn');
+                const backBtn2 = document.getElementById('backBtn2');
+                const backBtn3 = document.getElementById('backBtn3');
+                const backBtn4 = document.getElementById('backBtn4');
+                const backBtn5 = document.getElementById('backBtn5');
+                const backBtn6 = document.getElementById('backBtn6');
+                const backBtn7 = document.getElementById('backBtn7');
+                const backBtnInventory = document.getElementById('backBtnInventory');
+
+                const toMenuBtn2 = document.getElementById('toMenuBtn2');
+                const toMenuBtn3 = document.getElementById('toMenuBtn3');
+                const toMenuBtn4 = document.getElementById('toMenuBtn4');
+                const toMenuBtn5 = document.getElementById('toMenuBtn5');
+                const toMenuBtn6 = document.getElementById('toMenuBtn6');
+                const toMenuBtn7 = document.getElementById('toMenuBtn7');
+                const toMenuBtnInventory = document.getElementById('toMenuBtnInventory');
+
+                const saveInventoryBtn = document.getElementById('saveInventory');
+
+                saveInventoryBtn.addEventListener('click', () => {
+                    onSaveClick();
+                    // TODO: SERnr
+                    result.SerNr = -1;
+                    document.getElementById('inventory').style.display = 'none';
+                    document.getElementById('menuBlock').style.display = 'block';
+                    document.getElementById('OKFlagInventory').checked = false;
+                });
+                
+                document.getElementById('OKFlagInventory').addEventListener('change', () => {
+                    changeStatus(false);
+                });
+
+                const _isLogIn = isLogIn();
+                // console.log('_isLogIn = ', _isLogIn);
+                if (_isLogIn) {
+                    submitBtn.style.display = 'none';
+                    document.getElementById('inkassatorBlock').style.display = 'block';
+                    pointsOfSales = getPointsOfSales();
+                    buildPointsOfSales();
+                }
+                // add listener to putCashBtn
+                const putCashBtn = document.getElementById('putCashBtn');
+                putCashBtn.addEventListener('click', (e) => {
+                    const cashSumma = document.getElementById('cashSumma').value;
+                    if (!cashSumma) {
+                        const alertModalWindow = document.getElementById('cashModalWindow');
+                        const commentAlert = document.getElementById('cashComment');
+                        const close = document.getElementById('closeModalBtn');
+
+                        commentAlert.innerHTML = 'Сумма не указана!';
+                        alertModalWindow.style.display = 'block';
+
+                        close.addEventListener('click', () => {
+                            alertModalWindow.style.display = 'none';
+                            commentAlert.innerHTML = '';
+                        });
+                    } else {
+                        sumResult.Sum = cashSumma;
+                        putCashDocs(currentLogin);
+                    }
+                });
+
+                $("#searchInput").on("keyup", function() {
+                    var value = $(this).val().toLowerCase();
+                    $("#reportTableBody tr").filter(function() {
+                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                    });
+                });
+
+                $("#searchInputInventory").on("keyup", function() {
+                    var value = $(this).val().toLowerCase();
+                    if (value && value.length < 2) return;
+                    $("#tableBodyInventory div").filter(function() {
+                        if (this.id && this.firstElementChild) {
+                            // console.log('$(this.firstElementChild.lastElementChild).text() = ', $(this.firstElementChild.lastElementChild).text());
+                            $(this).toggle($(this.firstElementChild.lastElementChild).text().toLowerCase().indexOf(value) > -1)
+                        }
+                    });
+                });
+
+                $("#expSearchInput").on("keyup", function() {
+                    var value = $(this).val().toLowerCase();
+                    $("#expensesTableBody tr").filter(function() {
+                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                    });
+                });
+
+                $("#createdExpSearchInput").on("keyup", function() {
+                    var value = $(this).val().toLowerCase();
+                    $("#createdExpTableBody tr").filter(function() {
+                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                    });
+                });
+
+                // add listener on toMenuBtn2
+                toMenuBtn2.addEventListener('click', (e) => {
+                    document.getElementById('inkassatorBlock').style.display = 'block';
+                    document.getElementById('stockBlock').style.display = 'none';
+                    clearTables();
+                    buildPointsOfSales();
+                    result.SerNr = -1;
+                });
+                // add listener on toMenuBtn3
+                toMenuBtn3.addEventListener('click', (e) => {
+                    document.getElementById('inkassatorBlock').style.display = 'block';
+                    document.getElementById('daySalesBlock').style.display = 'none';
+                    clearTables();
+                    buildPointsOfSales();
+                    result.SerNr = -1;
+                });
+                
+                // add listener on toMenuBtn4
+                toMenuBtn4.addEventListener('click', (e) => {
+                    document.getElementById('inkassatorBlock').style.display = 'block';
+                    document.getElementById('invoiceBlock').style.display = 'none';
+                    clearTables();
+                    buildPointsOfSales();
+                    result.SerNr = -1;
+                });
+
+                // add listener on toMenuBtn5
+                toMenuBtn5.addEventListener('click', (e) => {
+                    document.getElementById('inkassatorBlock').style.display = 'block';
+                    document.getElementById('cashBlock').style.display = 'none';
+                    clearTables();
+                    buildPointsOfSales();
+                    result.SerNr = -1;
+                });
+
+                // add listener on toMenuBtn6
+                toMenuBtn6.addEventListener('click', (e) => {
+                    document.getElementById('inkassatorBlock').style.display = 'block';
+                    document.getElementById('expensesBlock').style.display = 'none';
+                    clearTables();
+                    buildPointsOfSales();
+                    result.SerNr = -1;
+                });
+
+                toMenuBtn7.addEventListener('click', (e) => {
+                    console.log('clicked 7777777');
+                    document.getElementById('inkassatorBlock').style.display = 'block';
+                    document.getElementById('createdExpBlock').style.display = 'none';
+                    clearTables();
+                    buildPointsOfSales();
+                    result.SerNr = -1;
+                });
+
+                // add listener on toMenuBtnInventory
+                toMenuBtnInventory.addEventListener('click', (e) => {
+                    document.getElementById('inkassatorBlock').style.display = 'block';
+                    document.getElementById('inventory').style.display = 'none';
+                    clearTables();
+                    buildPointsOfSales();
+                    result.SerNr = -1;
+                });
+
+                // add listener on backBtn
+                backBtn.addEventListener('click', () => {
+                    document.getElementById('inkassatorBlock').style.display = 'block';
+                    document.getElementById('menuBlock').style.display = 'none';
+                    document.getElementById('menuTableBody').innerHTML = '';
+                    clearTables();
+                    buildPointsOfSales();
+                    result.SerNr = -1;
+                });
+                // add listener on backBtn2
+                backBtn2.addEventListener('click', () => {
+                    document.getElementById('stockBlock').style.display = 'none';
+                    document.getElementById('menuBlock').style.display = 'block';
+                });
+                // add listener on backBtn3
+                backBtn3.addEventListener('click', () => {
+                    document.getElementById('daySalesBlock').style.display = 'none';
+                    document.getElementById('menuBlock').style.display = 'block';
+                });
+                // add listener on backBtn4
+                backBtn4.addEventListener('click', () => {
+                    document.getElementById('invoiceBlock').style.display = 'none';
+                    document.getElementById('daySalesBlock').style.display = 'block';
+                });
+                // add listener on backBtn5
+                backBtn5.addEventListener('click', () => {
+                    document.getElementById('cashBlock').style.display = 'none';
+                    document.getElementById('menuBlock').style.display = 'block';
+                });
+                // add listener on backBtn6
+                backBtn6.addEventListener('click', () => {
+                    document.getElementById('expensesBlock').style.display = 'none';
+                    document.getElementById('menuBlock').style.display = 'block';
+                });
+                // add listener on backBtn7
+                backBtn7.addEventListener('click', () => {
+                    document.getElementById('createdExpBlock').style.display = 'none';
+                    document.getElementById('expensesBlock').style.display = 'block';
+                });
+
+                // add listener on backBtnInventory
+                backBtnInventory.addEventListener('click', () => {
+                    document.getElementById('inventory').style.display = 'none';
+                    document.getElementById('menuBlock').style.display = 'block';
+                    document.getElementById('OKFlagInventory').checked = false; 
+                });
+
+                // // add listener to report stock btn
+                const stockReportBtn = document.getElementById('reportStockBtn');
+                stockReportBtn.addEventListener('click', (e) => {
+                    document.getElementById('menuBlock').style.display = 'none';
+                    document.getElementById('stockBlock').style.display = 'block';
+                    buildReport();
+                    return;
+                });
+                // add listener to cashBtn
+                const cashBtn = document.getElementById('cashBtn');
+                cashBtn.addEventListener('click', () => {
+                    console.log('cashBtn :>>  click');
+                    document.getElementById('menuBlock').style.display = 'none';
+                    document.getElementById('cashBlock').style.display = 'block';
+                    buildCash();
+                });
+
+                // add listener to inventoryBtn
+                const inventoryBtn = document.getElementById('inventoryBtn');
+                inventoryBtn.addEventListener('click', () => {
+                    document.getElementById('menuBlock').style.display = 'none';
+                    document.getElementById('inventory').style.display = 'block';
+                    // tyt
+                    buildInventory();
+                });
+
+                // add listener to expensesBtn
+                const expensesBtn = document.getElementById('expensesBtn');
+                expensesBtn.addEventListener('click', () => {
+                    document.getElementById('menuBlock').style.display = 'none';
+                    document.getElementById('expensesBlock').style.display = 'block';
+                    console.log('currentLogin = ', currentLogin);
+                    buildExpenses();
+                });
+
+
+                // add listener reportDaySalesBtn
+                const reportDaySalesBtn = document.getElementById('reportDaySalesBtn');
+                reportDaySalesBtn.addEventListener('click', (e) => {
+                    document.getElementById('menuBlock').style.display = 'none';
+                    document.getElementById('daySalesBlock').style.display = 'block';
+                    buildDaySales();
+                });
+                // add listener on submit button
+                submitBtn.onsubmit = (e) => {
+                    e.preventDefault();
+                    const xhr = new XMLHttpRequest();
+                    xhr.open("POST", "dologin", false);
+                    xhr.setRequestHeader("Cache-Control", "max-age=0");
+                    
+                    var aParams = new Array();
+                    for (var i = 0; i < document.forms[0].elements.length; i++) {
+                        var sParam = encodeURIComponent(document.forms[0].elements[i].name);
+                        sParam += "=";
+                        sParam += encodeURIComponent(document.forms[0].elements[i].value);
+                        aParams.push(sParam);
+                    }
+                    
+                    xhr.send(aParams.join("&") + "&name=" + encodeURIComponent("Log In")+'&company=9');
+                    if (xhr.responseText.indexOf('WebMainMenu') != -1) {
+                        submitBtn.style.display = 'none';
+                        document.getElementById('inkassatorBlock').style.display = 'block';
+                        pointsOfSales = getPointsOfSales();
+                        buildPointsOfSales();
+                    } else {
+                        alert('Неверный логин или пароль!');
+                    }
+                    return false;
+                };
+                // 
+                const findByName = (stockItemName, newItemName) => {
+                    console.log('stockItemName :>> ', stockItemName);
+                    console.log('newItemName :>> ', newItemName);
+                    const str = stockItemName.toLowerCase();
+                    const podStr = newItemName.toLowerCase();
+                    if (str.indexOf(podStr) != -1) return true;
+                    return false;
+                };
+                // add listener on input 
+                const sNumberInput = document.getElementById('shipmentNumberInventory');
+                sNumberInput.addEventListener('keypress', (e) => {
+                    if (e.keyCode != '13' || !allItems || allItems && !allItems.items || !e.target.value) return;
+                    const targetValue = e.target.value.trim();
+                    sNumberInput.value = '';
+                    console.log('targetValue :>> ', targetValue);
+                    // let nItem = allItems.items.find(item => item.ArtCode == targetValue || item.BarCode === targetValue || item.AlternativeCode === targetValue);
+
+                    let nItem = allItems.items.find(item => {
+                        const hasName = findByName(item.Name, targetValue);
+                        // console.log('hasName = ', hasName);
+                        if (item.ArtCode == targetValue || item.BarCode === targetValue || item.AlternativeCode === targetValue || hasName) return item;
+                    });
+
+                    if (result && result.items && result.items.length) {
+                        for (let item of result.items) {
+                            // console.log('item :>> ', item);
+                            if (item.ArtCode == targetValue || item.AlternativeCode == targetValue || 
+                                (nItem && nItem.ArtCode === item.ArtCode) ||
+                                // (nItem && nItem.ArtCode === item.BarCode) ||
+                                (nItem && nItem.AlternativeCode === item.ArtCode)) {
+                                //
+                                const tbody = document.getElementById('tableBodyInventory');
+                                const oldRow = document.getElementById(`row${item.ArtCode}`);
+                                oldRow.remove();
+                                
+                                const div = document.createElement('div');
+                                div.id =`row${item.ArtCode}`;
+                                const tr = document.createElement('tr');
+                                // onclick = "changeTTN('${shipment.SerNr}')"
+                                tr.setAttribute('style', 'border-right: 2px solid lightslategrey; border-top: 2px solid lightslategrey; border-left: 2px solid lightslategrey;')
+                                tr.innerHTML = `
+                                    <td style="background: whitesmoke; width: 40%;" colspan="3" >
+                                        ${item.ArtCode}
+                                    </td>
+                                    <td colspan="2" style="background: whitesmoke; font-size: 3rem; font-weight: bold;" >${item.Spec}</td>
+                                `;
+                                const bottomTr = document.createElement('tr');
+                                bottomTr.setAttribute('style', 'border-right: 2px solid lightslategrey; border-bottom: 2px solid lightslategrey; border-left: 2px solid lightslategrey;')
+                                bottomTr.innerHTML = `
+                                    <td style="font-size: 3rem;min-width:100px; text-align:center; padding-top:0px">
+                                        <div style="font-size: 1rem;min-width:100px;text-align:center">Склад</div>
+                                        <div>${customRounder(item.Instock)}</div>
+                                    </td>
+                                    <td >
+                                        <div style="font-size: 1rem;min-width:100px;text-align:center">Факт</div>
+                                        <div class="quantity-block">
+                                            <button class="quantity-arrow-minus" id="minus${item.ArtCode}"> - </button>
+                                            <input style="font-size: 4.5rem" class="quantity-num" type="number" id="qty${item.ArtCode}" value="${customRounder(item.FactQuant)}" />
+                                            <button class="quantity-arrow-plus" id="plus${item.ArtCode}"> + </button>
+                                        </div>  
+                                    </td>
+                                    <td style="font-size: 3rem; min-width:100px; text-align:center; padding-top:0px">
+                                        <div style="font-size: 1rem; min-width:100px; text-align:center">Продано</div>
+                                        <div style="font-size: 3rem; min-width:100px;" id="sold${item.ArtCode}">${customRounder(item.SoldQuant)}</div>
+                                    </td>
+                                    <td style="font-size: 3rem;">${customRounder(item.Price)}</td>
+                                    <td id="total${item.ArtCode}" style="font-weight: bold;font-size: 3rem; min-width:200px;"></td>
+                                `;
+                                div.append(tr);
+                                div.append(bottomTr);
+                                tbody.prepend(div);
+                                console.log(1142);
+                                const btnPlus = document.getElementById(`plus${item.ArtCode}`);
+                                const btnMinus = document.getElementById(`minus${item.ArtCode}`);
+                                const inputQuantity = document.getElementById(`qty${item.ArtCode}`);
+                                const tdTotal = document.getElementById(`total${item.ArtCode}`);
+                                
+                                // console.log('newItem :>> ', newItem);
+                                btnMinus.addEventListener('click', quantityMinus);
+                                btnPlus.addEventListener('click', quantityPlus);
+
+                                inputQuantity.addEventListener('change', (e) => {
+                                    if (!e.target.value || e.target.value < 0) e.target.value = 0;
+                                    const inputVal = parseFloat(e.target.value).toFixed(1);
+                                    console.log('inputVal = ', inputVal);
+                                    tdTotal.innerText = customMultiply(item.Price, item.Instock - inputVal);
+
+                                    item.FactQuant = inputVal;
+                                    item.Sum = customMultiply(item.Price, item.Instock - inputVal);
+                                    
+                                    item.SoldQuant = customRounder(item.Instock - inputVal);
+                                    countingTotal();
+                                    // changeStatus(false);
+                                    onSaveClick();
+                                });
+
+                                function quantityMinus() {
+                                        inputQuantity.value -= 1;
+                                        if (inputQuantity.value < 0) inputQuantity.value = 0;
+
+                                        tdTotal.innerText = customMultiply(item.Price, item.Instock - inputQuantity.value);
+
+                                        item.FactQuant = inputQuantity.value;
+                                        item.Sum = customMultiply(item.Price, item.Instock - inputQuantity.value);
+                                        item.SoldQuant = customRounder(item.Instock - inputQuantity.value);
+                                        countingTotal();
+                                        onSaveClick();
+                                }
+
+                                function quantityPlus() {
+                                    let val = parseFloat(inputQuantity.value).toFixed(1);
+                                    val = parseFloat(val) + 1;
+                                    tdTotal.innerText = customMultiply(item.Price, item.Instock - val);
+                                    inputQuantity.value = val;
+                                    item.FactQuant = val;
+                                    item.Sum = customMultiply(item.Price, item.Instock - val);
+                                    item.SoldQuant = customRounder(item.Instock - val);
+
+                                    countingTotal();
+                                    onSaveClick();
+                                }
+                                
+
+                                // 
+                                const inputQty = document.getElementById(`qty${item.ArtCode || item.BarCode || item.AlternativeCode}`); // fact
+                                const ttl = document.getElementById(`total${item.ArtCode || item.BarCode || item.AlternativeCode}`); // продано
+                                item.FactQuant = customRounder(parseFloat(item.FactQuant) + 1);
+                                inputQty.value = item.FactQuant;
+                                ttl.innerText = customMultiply(item.Price, item.Instock - inputQty.value)
+                                
+                                item.Sum = customMultiply(item.Price, item.Instock - inputQty.value);
+                                item.SoldQuant = customRounder(item.Instock - inputQty.value);
+
+                                countingTotal();
+                                changeStatus(false);
+                                return onSaveClick();
+                            }
+                        }
+                    }
+
+                    // let item = allItems.items.find(item => item.ArtCode == targetValue);
+
+                    let item = allItems.items.find(item => {
+                        const hasName = findByName(item.Name, targetValue);
+                        if (item.ArtCode == targetValue || hasName) return item;
+                    });
+
+                    const barCodes = getBarCodes();
+                    
+                    if (!item) item = allItems.items.find(item => item.BarCode == targetValue);
+                    if (!item) item = allItems.items.find(item => item.AlternativeCode == targetValue);
+                    if (!item) {
+                        const barCodes = getBarCodes();
+                        if (barCodes && barCodes.codes) {
+                            let code = barCodes.codes.find(el => el.Barcode == targetValue);
+                            if (code) {
+                                item = allItems.items.find(item => item.ArtCode == code.Itemcode);
+                                if (!item) item = allItems.items.find(item => item.BarCode == code.Itemcode);
+                                if (!item) item = allItems.items.find(item => item.AlternativeCode == code.Itemcode);
+                                if (item && result && result.items && result.items.length) {
+                                    for (let i of result.items) {
+                                        if (i.ArtCode === item.ArtCode) {
+                                            
+                                            const tbody = document.getElementById('tableBodyInventory');
+                                            const oldRow = document.getElementById(`row${i.ArtCode}`);
+                                            oldRow.remove();
+                                            
+                                            const div = document.createElement('div');
+                                            div.id =`row${i.ArtCode}`;
+                                            const tr = document.createElement('tr');
+                                            // onclick = "changeTTN('${shipment.SerNr}')"
+                                            tr.setAttribute('style', 'border-right: 2px solid lightslategrey; border-top: 2px solid lightslategrey; border-left: 2px solid lightslategrey;')
+                                            tr.innerHTML = `
+                                                <td style="background: whitesmoke; width: 40%;" colspan="3" >
+                                                    ${i.ArtCode}
+                                                </td>
+                                                <td colspan="2" style="background: whitesmoke; font-size: 3rem; font-weight: bold;" >${i.Spec}</td>
+                                            `;
+                                            const bottomTr = document.createElement('tr');
+                                            bottomTr.setAttribute('style', 'border-right: 2px solid lightslategrey; border-bottom: 2px solid lightslategrey; border-left: 2px solid lightslategrey;')
+                                            bottomTr.innerHTML = `
+                                                <td style="font-size: 3rem;min-width:100px; text-align:center; padding-top:0px">
+                                                    <div style="font-size: 1rem;min-width:100px;text-align:center">Склад</div>
+                                                    <div>${customRounder(i.Instock)}</div>
+                                                </td>
+                                                <td >
+                                                    <div style="font-size: 1rem;min-width:100px;text-align:center">Факт</div>
+                                                    <div class="quantity-block">
+                                                        <button class="quantity-arrow-minus" id="minus${i.ArtCode}"> - </button>
+                                                        <input style="font-size: 4.5rem" class="quantity-num" type="number" id="qty${i.ArtCode}" value="${customRounder(i.FactQuant)}" />
+                                                        <button class="quantity-arrow-plus" id="plus${i.ArtCode}"> + </button>
+                                                    </div>  
+                                                </td>
+                                                <td style="font-size: 3rem; min-width:100px; text-align:center; padding-top:0px">
+                                                    <div style="font-size: 1rem; min-width:100px; text-align:center">Продано</div>
+                                                    <div style="font-size: 3rem; min-width:100px;" id="sold${i.ArtCode}">${customRounder(i.SoldQuant)}</div>
+                                                </td>
+                                                <td style="font-size: 3rem;">${i.Price}</td>
+                                                <td id="total${i.ArtCode}" style="font-weight: bold;font-size: 3rem; min-width:200px;"></td>
+                                            `;
+                                            div.append(tr);
+                                            div.append(bottomTr);
+                                            tbody.prepend(div);
+                                            console.log(7777777777777);
+                                            const btnPlus = document.getElementById(`plus${i.ArtCode}`);
+                                            const btnMinus = document.getElementById(`minus${i.ArtCode}`);
+                                            const inputQuantity = document.getElementById(`qty${i.ArtCode}`);
+                                            const tdTotal = document.getElementById(`total${i.ArtCode}`);
+                                            
+                                            // console.log('newItem :>> ', newItem);
+                                            btnMinus.addEventListener('click', quantityMinus);
+                                            btnPlus.addEventListener('click', quantityPlus);
+
+                                            inputQuantity.addEventListener('change', (e) => {
+                                                if (!e.target.value || e.target.value < 0) e.target.value = 0;
+                                                const inputVal = e.target.value;
+                                                console.log('inputVal = ', inputVal);
+
+                                                tdTotal.innerText = parseFloat(i.Price * (parseFloat(i.Instock) - inputVal));
+
+                                                i.FactQuant = inputVal;
+                                                i.Sum = parseFloat(i.Price * (parseFloat(i.Instock) - inputVal));
+                                                
+                                                i.SoldQuant = parseFloat(i.Instock) - inputVal;
+                                                countingTotal();
+                                                // changeStatus(false);
+                                                onSaveClick();
+                                            });
+
+                                            function quantityMinus() {
+                                                inputQuantity.value -= 1;
+                                                if (inputQuantity.value < 0) inputQuantity.value = 0;
+
+                                                tdTotal.innerText = parseFloat(i.Price * (parseFloat(i.Instock) - inputQuantity.value));
+
+                                                i.FactQuant = inputQuantity.value;
+                                                i.Sum = parseFloat(i.Price * (parseFloat(i.Instock) - inputQuantity.value));
+                                                i.SoldQuant = parseFloat(i.Instock) - inputQuantity.value;
+
+                                                countingTotal();
+                                                onSaveClick();
+                                            }
+
+                                            function quantityPlus() {
+                                                let val = parseInt(inputQuantity.value, 10);
+                                                val += 1;
+                                                tdTotal.innerText =parseFloat(i.Price * (parseFloat(i.Instock) - val));
+                                                inputQuantity.value = val;
+                                                i.FactQuant = val;
+                                                i.Sum = parseFloat(i.Price * (parseFloat(i.Instock) - val));
+                                                i.SoldQuant = parseFloat(i.Instock) - val;
+
+                                                countingTotal();
+                                                onSaveClick();
+                                            }
+                                            
+
+                                            // 
+                                            const inputQty = document.getElementById(`qty${i.ArtCode || i.BarCode || i.AlternativeCode}`); // fact
+                                            const ttl = document.getElementById(`total${i.ArtCode || i.BarCode || i.AlternativeCode}`); // продано
+                                            i.FactQuant = parseFloat(i.FactQuant) + 1;
+                                            inputQty.value = i.FactQuant;
+                                            ttl.innerText = parseFloat(i.Price * (parseFloat(i.Instock) - inputQty.value));
+                                            
+                                            i.Sum = parseFloat(i.Price * (parseFloat(i.Instock) - inputQty.value));
+                                            i.SoldQuant = parseFloat(i.Instock) - inputQty.value;
+
+                                            countingTotal();
+                                            return onSaveClick();
+                                        }
+                                    }
+                                }
+                                if (!item) return alert('Товар не найден!'); 
+                            } 
+                        }
+                    }
+                    return alert('Товар не найден!')
+                });
+
+                document.getElementById('clearInventoryBtn').addEventListener('click', (e) => {
+
+                    const confirmWindow = document.getElementById('confirmWindow');
+                    confirmWindow.style.display = 'block';
+                    const closeWindowButton = document.getElementById('closeWindowButton');
+                    const deleteButton = document.getElementById('deleteButton');
+
+                    closeWindowButton.addEventListener('click', () => {
+                        confirmWindow.style.display = 'none';
+                    });
+                    deleteButton.addEventListener('click', () => {
+                        // тут чистить таблицу
+                        clearTables();
+                        buildPointsOfSales();
+                        buildInventory();
+                        //
+                        const res = deleteInventory();
+                        if (res && res.Result) {
+                            const alertModalWindow = document.getElementById('cashModalWindow');
+                            const commentAlert = document.getElementById('cashComment');
+                            const close = document.getElementById('closeModalBtn');
+
+                            commentAlert.innerHTML = 'Очищено!';
+                            alertModalWindow.style.display = 'block';
+
+                            close.addEventListener('click', () => {
+                                alertModalWindow.style.display = 'none';
+                                commentAlert.innerHTML = '';
+                            });
+                        }
+                        changeStatus(false); 
+                        document.getElementById('OKFlagInventory').checked = false;
+                        confirmWindow.style.display = 'none';
+                    });
+                });
+            });
+        </script>
+    </head>
+    <body style="background: whitesmoke"> 
+        <div class="container-fluid">
+            <!-- change TTN window -->
+            <div class="modal" id= "changeTTNWindow" tabindex="-1" role="dialog">
+                <div class="modal-dialog" style="max-width: 700px;" role="document">
+                  <div class="modal-content">
+                    <div class="modal-body" style="text-align: center">
+                        <input id = "TTN" class="form-control" style="height: 7rem; font-size: 3rem"  placeholder="Введите TTН">
+                    </div>
+                    <div class="modal-footer" style="text-align: center; display: flex; justify-content: center; align-items: center;">
+                      <button type="button" id = "saveTTNButton" style="font-size: 2.5rem; margin-right: 20px;" class="btn btn-primary">Сохранить</button>
+                      <button type="button" id = "cancelTTNButton" style="font-size: 2.5rem;" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                    </div>
+                  </div>
+                </div>
+            </div>
+
+            <!-- comment window -->
+            <div class="modal" id= "alertModalWindow" tabindex="-1" style="font-size: 3.5rem;" role="dialog">
+                <div class="modal-dialog" style="max-width: 700px;" role="document">
+                  <div class="modal-content">
+                    <div class="modal-body" style="text-align: center;">
+                      <p id = "commentAlert"> </p>
+                    </div>
+                    <div class="modal-footer" style="text-align: center; display: flex; justify-content: center; align-items: center;">
+                      <button type="button" id = "addBtn" style="font-size: 2.5rem; margin-right: 20px; width: 160px;" class="btn btn-danger">Да</button>
+                      <button type="button" id = "cancelBtn" style="font-size: 2.5rem;" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                    </div>
+                  </div>
+                </div>
+            </div>
+            <!-- cash modal -->
+            <div class="modal" id= "cashModalWindow" tabindex="-1" style="font-size: 3.5rem;" role="dialog">
+                <div class="modal-dialog" style="max-width: 700px;" role="document">
+                  <div class="modal-content">
+                    <div class="modal-body" style="text-align: center;">
+                      <p id = "cashComment"> </p>
+                    </div>
+                    <div class="modal-footer" style="text-align: center; display: flex; justify-content: center; align-items: center;">
+                      <button type="button" id = "closeModalBtn" style="font-size: 2.5rem; margin-right: 20px; width: 200px;" class="btn btn-danger">Закрыть</button>
+                    </div>
+                  </div>
+                </div>
+            </div>
+
+            <!-- confirm window -->
+            <div class="modal" id= "confirmWindow" tabindex="-1" style="font-size: 3.5rem;" role="dialog">
+                <div class="modal-dialog" style="max-width: 700px;" role="document">
+                  <div class="modal-content">
+                    <div class="modal-body" style="text-align: center;">
+                      <p>Вы действительно хотите очистить инвентаризацию?</p>
+                    </div>
+                    <div class="modal-footer" style="text-align: center; display: flex; justify-content: center; align-items: center;">
+                      <button type="button" id = "deleteButton" style="font-size: 2.5rem; margin-right: 20px;" class="btn btn-danger">Удалить</button>
+                      <button type="button" id = "closeWindowButton" style="font-size: 2.5rem;" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                    </div>
+                  </div>
+                </div>
+            </div>
+
+            <!-- expenses confirm window -->
+            <div class="modal" id= "expConfirmWindow" tabindex="-1" style="font-size: 3.5rem;" role="dialog">
+                <div class="modal-dialog" style="max-width: 700px;" role="document">
+                  <div class="modal-content" >
+                    <div class="modal-header" style="text-align: center; display: block;">
+                        <h1 class="modal-title" id="expTitle" >Modal title</h1>
+                      </div>
+                    <div class="modal-body" style="text-align: center;">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <label class="input-group-text" style="width: 160px;height: 6rem; font-size: 2.5rem; background-size: 40px 50px;">Сумма</label>
+                            </div>
+                            <input type="number" class="form-control" id="expTotalInput" aria-label="Default"  style="height: 6rem; box-shadow: none; font-size: 2.5rem; background-size: 40px 50px; border: 1px solid #ced4da;" aria-describedby="inputGroup-sizing-default">
+                        </div>
+                        <div class="form-group">
+                            <textarea class="form-control" id="expComment" rows="3" style= "font-size: 2rem;" placeholder="Оставьте комментарий..."></textarea>
+                        </div>
+                        <div class="alert alert-success" style="display: none;" id="expAllertSuccess" role="alert">
+                            Подтверждено!
+                        </div>
+                        <div class="alert alert-danger" id="expAllertDanger" style="display: none;" role="alert">
+                            Что-то пошло не так. Повторите попытку!
+                        </div>
+                        
+                        <div class="alert alert-warning" id="expAllertWarning" style="display: none;" role="alert">
+                            Введите сумму!
+                        </div>
+                    </div>
+                    <div class="modal-footer" id="expModalFooter" style="text-align: center; display: flex; justify-content: center; align-items: center;">
+                      <button type="button" id = "expOK" style="font-size: 2.5rem; margin-right: 20px;" class="btn btn-danger">Подтвердить</button>
+                      <button type="button" onclick="" id = "expClose" style="font-size: 2.5rem;" class="btn btn-secondary" data-dismiss="modal">Отменить</button>
+                    </div>
+                  </div>
+                </div>
+            </div>
+
+
+            <!-- Вход в систему -->
+            <form name="loginForm" style="margin-top: 50px" id="loginForm" method='post' style="display: block">
+                <div class="form-group" style="text-align: center" >
+                    <label for="exampleInputEmail1" style="font-size: 6rem;" >Логин</label>
+                    <input name='login' class="form-control" style="height: 8rem; font-size: 5rem" aria-describedby="emailHelp" placeholder="Введите логин">
+                </div>
+                <br>
+                <div class="form-group" style="text-align: center">
+                    <label for="exampleInputPassword1" style="font-size: 5rem">Пароль</label>
+                    <input name='passwd' type="password" class="form-control" style="height: 8rem; font-size: 5rem"  placeholder="Введите пароль">
+                </div>
+                <br>
+                <br>
+                <br>
+                <div style="text-align: center">
+                    <button type="submit" class="btn btn-primary" style="height: 8rem; width: 20rem; font-size: 4rem; text-align: center">Войти</button>
+                </div>
+            </form>
+            <!-- Menu -->
+            <div id="menuBlock" style="display: none; text-align: center; margin-bottom: 50px" >
+                    <div style="margin:10px 0px 60px 0px">
+                            <button type="button" style="font-size: 2.5rem;width: 100%; text-align: center" id="backBtn" class="btn btn-secondary " role="button" aria-pressed="true"> Назад </button>
+                    </div>
+                    <table class="table table-bordered" style="font-size: 2rem">
+                            <thead style="display: none">
+                                <tr>
+                                    <th style="overflow: hidden;" >Имя</th>
+                                    <th style="overflow: hidden;">Адрес</th>
+                                    <th style="overflow: hidden; width: 100px;" >Телефон</th>
+                                </tr>
+                            </thead>
+                            <tbody id='menuTableBody'>
+                            </tbody>
+                    </table>
+
+                    <div style="text-align: center; margin-top: 60px;">
+                        <button class="btn btn-info btn-lg" id ='reportStockBtn' style="height: 8rem; font-size: 4rem; text-align: center; width: 100%;">Отчет по складу</button>
+                    </div>
+                    <div style="text-align: center; margin-top: 60px;">
+                        <button class="btn btn-info btn-lg" id ='reportDaySalesBtn' style="height: 8rem; font-size: 4rem; text-align: center; width: 100%;"> Отчет по продажам</button>
+                    </div>
+                    <div style="text-align: center; margin-top: 60px;">
+                        <button class="btn btn-primary btn-lg" id ='cashBtn' style="height: 8rem; font-size: 4rem; text-align: center; width: 100%;"> Инкассация</button>
+                    </div>
+                    <div style="text-align: center; margin-top: 60px;">
+                        <button class="btn btn-primary btn-lg" id ='inventoryBtn' style="height: 8rem; font-size: 4rem; text-align: center; width: 100%;"> Инвентаризация </button>
+                    </div>
+                    <div style="text-align: center; margin-top: 60px;">
+                        <button class="btn btn-primary btn-lg" id ='expensesBtn' style="height: 8rem; font-size: 4rem; text-align: center; width: 100%;"> Расходы</button>
+                    </div>
+                </div>
+
+                 <!-- Расходы expenses -->
+            <div id = "expensesBlock"  style="display: none; margin-top: 10px" >
+                <div style="margin-right: 20px 0px">
+                    <button type="button" style="font-size: 2.5rem;width: 100%; text-align: center" id="toMenuBtn6" class="btn btn-secondary">Главное меню </button>
+                </div>
+                <div style="margin:10px 0px 60px 0px">
+                        <button type="button" style="font-size: 2.5rem;width: 100%; text-align: center" id="backBtn6" class="btn btn-secondary " role="button" aria-pressed="true"> Назад </button>
+                </div>
+                
+                <h1 style=" width: 100%;text-align: center; margin-top: 20px;font-size: 5rem;">Расходы</h1>
+                <input class="form-control" id="expSearchInput" style="height: 5rem; font-size: 3rem" type="text" placeholder="Поиск..">
+                
+                <div class="table-wrapper">
+                    <table class="table table-bordered" id='expensesTable' style="font-size: 2rem">
+                        <thead>
+                            <tr>
+                                <!-- <th style="white-space: nowrap; overflow: hidden; width: 20rem; font-weight: bold;" >Код расхода</th> -->
+                                <th style="overflow: hidden; font-weight: bold;">Наименование</th>
+                            </tr>
+                        </thead>
+                        <tbody id= 'expensesTableBody'>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+            <!-- Отчет по складу -->
+            <div id = "stockBlock"  style="display: none; margin-top: 10px" >
+                <div style="margin-right: 20px 0px">
+                    <button type="button" style="font-size: 2.5rem;width: 100%; text-align: center" id="toMenuBtn2" class="btn btn-secondary">Главное меню </button>
+                </div>
+                <div style="margin:10px 0px 60px 0px">
+                        <button type="button" style="font-size: 2.5rem;width: 100%; text-align: center" id="backBtn2" class="btn btn-secondary " role="button" aria-pressed="true"> Назад </button>
+                </div>
+                <h1 style=" width: 100%;text-align: center; margin-top: 20px;font-size: 5rem;">Отчет по складу</h1>
+                <input class="form-control" id="searchInput" style="height: 5rem; font-size: 3rem" type="text" placeholder="Поиск..">
+                <div class="table-wrapper">
+                    <table class="table table-bordered" id='reportTable' style="font-size: 2rem">
+                        <thead>
+                            <tr>
+                                <th style="white-space: nowrap; overflow: hidden; width: 20rem; font-weight: bold;" >Код товара</th>
+                                <th style="overflow: hidden; font-weight: bold;">Наименование</th>
+                                <th style="width: 135px; overflow: hidden; font-weight: bold;" >Кол-во</th>
+                            </tr>
+                        </thead>
+                        <tbody id= 'reportTableBody'>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="2" style="font-weight: bold;"> Всего на складе:</th>
+                                <td id="totalInStock" style="font-weight: bold;"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+            <!-- Продажи за сегодня -->
+            <div id = "daySalesBlock"  style="display: none; margin-top: 10px" >
+                    <div style="margin-right: 20px 0px">
+                        <button type="button" style="font-size: 2.5rem;width: 100%; text-align: center" id="toMenuBtn3" class="btn btn-secondary active">Главное меню </button>
+                    </div>
+                    <div style="margin:10px 0px 60px 0px">
+                            <button type="button" style="font-size: 2.5rem;width: 100%; text-align: center" id="backBtn3" class="btn btn-secondary " role="button" aria-pressed="true"> Назад </button>
+                    </div>
+                    <h1 style=" width: 100%;text-align: center; margin: 20px 0px;font-size: 5rem;">Продажи за сегодня <div style="font-size: 4rem;" id="date"> </div> </h1>
+                    <!--
+                        <input class="form-control" id="searchInputDaySales" style="height: 5rem; font-size: 3rem" type="text" placeholder="Поиск..">
+                    -->
+                    <div class="input-group" style="margin-bottom: 20px;" >
+                        <div class="input-group-prepend">
+                          <span class="input-group-text" style="width: 230px;height: 6rem; font-size: 2.5rem; background-size: 40px 50px;">Итого</span>
+                        </div>
+                        <input readonly  type="text" id="daySalesTotal" class="form-control" style="font-weight: bold; text-align: center; height: 6rem; box-shadow: none; font-size: 2.5rem; background-size: 40px 50px; border: 1px solid #ced4da;">
+                        <span class="input-group-text" style="border-radius:unset; width: 230px;height: 6rem; font-size: 2.5rem; background-size: 40px 50px;">Количество</span>
+                        <input readonly type="text" id="daySalesQty" class="form-control" style="font-weight: bold; text-align: center; height: 6rem; box-shadow: none; font-size: 2.5rem; background-size: 40px 50px; border: 1px solid #ced4da;">
+                    </div>
+    
+                    <div class="table-wrapper">
+                        <table class="table table-bordered" id='daySalesTable' style="font-size: 2rem">
+                            <thead>
+                                <tr> <!-- 
+                                    <th style="white-space: nowrap; overflow: hidden; width: 10rem;font-weight: bold;" >Номер</th>
+                                    <th style="overflow: hidden; width: 14rem;font-weight: bold;">Дата </th>
+                                    <th style="width: 12rem; overflow: hidden;font-weight: bold;" ></th>  &nbsp; Время -->
+                                    <th style="overflow: hidden;font-weight: bold;">Наименованиe</th>
+                                    <th style="overflow: hidden;font-weight: bold;">Кол-во</th>
+                                    <th style="overflow: hidden; width: auto;font-weight: bold;">Сумма</th>
+                                </tr>
+                            </thead>
+                            <tbody id= 'daySalesTableBody'>
+                            </tbody>
+                            <!-- <tfoot>
+                                <tr>
+                                  <th style="font-weight: bold;" colspan="2"> Итого:</th>
+                                  <td  id="totalDaySalesSum" ></td>
+                                  <th style="font-weight: bold;" colspan="1"> Кол-во:</th>
+                                  <td  id="totalDaySalesQty" ></td>
+                                </tr>
+                            </tfoot> -->
+                        </table>
+                    </div>
+                </div>
+
+            <!-- Подробная информация -->
+            <div id = "invoiceBlock"  style="display: none; margin-top: 10px" >
+                    <div style="margin:10px 0px 20px 0px">
+                        <button type="button" style="font-size: 2.5rem;width: 100%; text-align: center" id="toMenuBtn4" class="btn btn-secondary active">Главное меню </button>
+                    </div>
+    
+                    <div style="margin:10px 0px 20px 0px">
+                        <button type="button" style="font-size: 2.5rem;width: 100%; text-align: center" id="backBtn4" class="btn btn-secondary" role="button" aria-pressed="true"> Назад </button>
+                    </div>
+                    
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text"  style="width: 230px;height: 6rem; font-size: 2.5rem; background-size: 40px 50px;">Номер</label>
+                        </div>
+                        <input readonly type="text" class="form-control" id="invoiceSerNr" aria-label="Default"  style="height: 6rem; box-shadow: none; font-size: 2.5rem; background-size: 40px 50px; border: 1px solid #ced4da;" aria-describedby="inputGroup-sizing-default">
+                    </div>
+    
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text"  style="width: 230px;height: 6rem; font-size: 2.5rem; background-size: 40px 50px;">Дата</label>
+                        </div>
+                        <input readonly type="text" class="form-control" id="invoiceDate" aria-label="Default"  style="height: 6rem; box-shadow: none; font-size: 2.5rem; background-size: 40px 50px; border: 1px solid #ced4da;" aria-describedby="inputGroup-sizing-default">
+                    </div>
+    
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text" style="width: 230px;height: 6rem; font-size: 2.5rem; background-size: 40px 50px;">Итого</span>
+                        </div>
+                        <input readonly type="text" id="invoiceTotal" class="form-control" style="font-weight: bold; text-align: center; height: 6rem; box-shadow: none; font-size: 2.5rem; background-size: 40px 50px; border: 1px solid #ced4da;">
+                        <span class="input-group-text" style="border-radius:unset; width: 230px;height: 6rem; font-size: 2.5rem; background-size: 40px 50px;">Количество</span>
+                        <input readonly type="text" id="invoiceQty" class="form-control" style="font-weight: bold;text-align: center; height: 6rem; box-shadow: none; font-size: 2.5rem; background-size: 40px 50px; border: 1px solid #ced4da;">
+                    </div>
+    
+                    <div class="table-wrapper">
+                        <table class="table table-bordered" style="font-size: 2rem">
+                            <thead>
+                                <tr>
+                                    <th style="white-space: nowrap; overflow: hidden; width: 15rem;" >Код товара</th>
+                                    <th>Наименование</th>
+                                    <th style="width: 130px; overflow: hidden;" >Кол-во</th>
+                                    <th style="width: 130px; overflow: hidden;" >Цена</th>
+                                    <th style="width: 120px; overflow: hidden;" >Сумма</th>
+                                </tr>
+                            </thead>
+                            <tbody id='invoiceTableBody'>
+                            </tbody>
+                        </table>
+                    </div>
+            </div>
+            <!-- Инкассация -->
+            <div id = "cashBlock"  style="display: none; margin-top: 10px" >
+                    <div style="margin:20px 0px">
+                        <button type="button" style="font-size: 2.5rem;width: 100%; text-align: center;" id="toMenuBtn5" class="btn btn-secondary">Главное меню </button>
+                    </div>
+                    <div style="margin:10px 0px 20px 0px">
+                            <button type="button" style="font-size: 2.5rem;width: 100%; text-align: center;margin-bottom: 70px;" id="backBtn5" class="btn btn-secondary" role="button" aria-pressed="true"> Назад </button>
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text"  style="height: 6rem; font-size: 2.5rem; background-size: 40px 50px;">К инкассации</label>
+                        </div>
+                        <input readonly type="text" class="form-control" id="cashBalance" aria-label="Default"  style="height: 6rem; box-shadow: none; font-size: 2.5rem; background-size: 40px 50px; border: 1px solid #ced4da;" aria-describedby="inputGroup-sizing-default">
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text"  style="height: 6rem; font-size: 2.5rem; background-size: 40px 50px;">С учётом расходов</label>
+                        </div>
+                        <input readonly type="text" class="form-control" id="cashBalanceWithСosts" aria-label="Default"  style="height: 6rem; box-shadow: none; font-size: 2.5rem; background-size: 40px 50px; border: 1px solid #ced4da;" aria-describedby="inputGroup-sizing-default">
+                    </div>
+                    
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text"  style="height: 6rem; font-size: 2.5rem; background-size: 40px 50px;">Сумма</label>
+                        </div>
+                        <input type="number" class="form-control" id="cashSumma" aria-label="Default"  style="height: 6rem; font-size: 2.5rem; background-size: 40px 50px;" aria-describedby="inputGroup-sizing-default">
+                    </div>
+    
+                    <div style="margin-top: 100px;">
+                        <button type="button" style="font-size: 2.5rem;width: 100%; text-align: center" id="putCashBtn" class="btn btn-primary">Выдать</button>
+                    </div>
+    
+                </div>
+            <!-- Inkassator -->
+            <div id = "inkassatorBlock"  style="display: none; margin-top: 10px" >
+                <div id='tableContainer' class="table-wrapper">
+                      <!--   <table style="width:100%"> 
+                            <tr>
+                                <th style="width: 80%; height: 70px;" colspan="2" >Name</th>
+                                <th style="text-align: center" >balance</th>
+                            </tr>
+
+                            <tr>
+                                <td colspan="2" style="height: 70px;" >Adr</td>
+                                <td rowspan="2" style="text-align: center">
+                                        <button type="button" class="btn btn-info">Открыть</button>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td colspan="2"  style="height: 70px;"  > 123123123213   </td>
+                            </tr>
+                        </table> -->
+                </div>
+            </div>
+            <!-- -->
+            <!-- Инвентаризация -->
+            <div id = "inventory"  style="display: none; margin-top: 10px" >
+                <div style="margin:20px 0px">
+                    <button type="button" style="font-size: 2.5rem;width: 100%; text-align: center;" id="toMenuBtnInventory" class="btn btn-secondary">Главное меню </button>
+                </div>
+                <div style="margin:10px 0px 20px 0px">
+                        <button type="button" style="font-size: 2.5rem;width: 100%; text-align: center;margin-bottom: 70px;" id="backBtnInventory" class="btn btn-secondary" role="button" aria-pressed="true"> Назад </button>
+                </div>
+                <!-- 
+                <div style="margin:10px 0px 20px 0px;display: flex;">
+                    <button type="button" style="/* width: 230px; */font-size: 4.5rem;width: 50%;text-align: center;" id="saveInventory" class="btn btn-primary">Сохранить</button>
+                    <div style="display: flex; align-items: flex-start; justify-content: flex-start;">
+                        <span class="badge badge-pill badge-success" id="statusInventory" style="font-size: 4.5rem; padding-bottom: 24px;color: #ff0a0acc; background: transparent;">Сохранено</span>
+                    </div>
+                </div>
+            -->
+
+                <div style="margin:10px 0px 20px 0px;display: flex;">
+                    <button type="button" style="/* width: 230px; */font-size: 4.5rem;width: 100%;text-align: center;" id="saveInventory" class="btn btn-primary">Сохранить</button>
+                </div>
+                <div style="margin:10px 0px 20px 0px;display: flex;">
+                    <div style="/* display: flex; *//* align-items: flex-start; *//* justify-content: flex-start; */width: 100%;text-align: center;">
+                        <span class="badge badge-pill badge-danger" id="statusInventory" style="font-size: 4.5rem;padding-bottom: 24px;color: #ff0a0acc;background: transparent;width: 100%;">Не сохранено</span>
+                    </div>
+                </div>
+                <div style="display: none" class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text"  style="height: 6rem; font-size: 4.5rem; background-size: 40px 50px;width: 230px;">Касса</label>
+                    </div>
+                    <input readonly type="text" class="form-control" id="balanceInventory" aria-label="Default"  style="height: 6rem; text-align: right; box-shadow: none; font-size: 4.5rem; font-weight: bold; background-size: 40px 50px; border: 1px solid #ced4da;" aria-describedby="inputGroup-sizing-default">
+                </div>
+
+                <div class="d-flex" style="margin-bottom: 10px;margin-top: 20px;justify-content: flex-end;">
+                    
+                    <div style="display: flex;align-items: flex-start;justify-content: flex-start;width: 100%;">
+                        <div class="ml-6" style="display: -webkit-box;/* margin-left: 50px; */">
+                            <div style="font-size: 4.5rem;padding-right: 1rem;" for="defaultCheck2">
+                                Подтвердить
+                            </div>
+                            <input type="checkbox" style="height: 6.5rem;width: 6.5rem;" value="" id="OKFlagInventory">
+                        </div>
+                    </div> 
+                    
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="table table-bordered" style="font-size: 2rem">
+                        <thead>
+                            <tr>
+                                <th style="white-space: nowrap; overflow: hidden; font-size: 3rem;"> Итого(грн) </th>
+                                <th style="overflow: hidden; font-size: 3rem;" >Склад</th>
+                                <th style="overflow: hidden; font-size: 3rem;" >Факт</th>
+                                <th style="overflow: hidden; font-size: 3rem;" >Продано</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                <tr>
+                                    <td id="totalSumInventory" style="font-size: 3rem; color:#f50000"></td>
+                                    <td id="totalInStockInventory" style="font-size: 3rem;"></td>
+                                    <td id="totalFactInventory" style="font-size: 3rem;"></td>
+                                    <td id="totalSoldInventory" style="font-size: 3rem; color:#f50000"></td>
+                                </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!--
+                <div class="input-group" style="margin-bottom: 20px;" >
+                    <div class="input-group-prepend">
+                      <span class="input-group-text" style="width: 230px;height: 6rem; font-size: 4.5rem; background-size: 40px 50px;">Итого</span>
+                    </div>
+                    <input readonly type="text" id="totalInventory" class="form-control" style="font-weight: bold;  text-align: center; height: 6rem; box-shadow: none; font-size: 4.5rem; background-size: 40px 50px; border: 1px solid #ced4da;">
+                    <span class="input-group-text" style="border-radius:unset; width: 230px;height: 6rem; font-size: 4.5rem; background-size: 40px 50px;">Кол-во</span>
+                    <input readonly type="text" id="newQtyInventory" class="form-control" style="font-weight: bold; text-align: center; height: 6rem; box-shadow: none; font-size: 4.5rem; background-size: 40px 50px; border: 1px solid #ced4da;">
+                </div>
+                -->
+                
+                <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text"  style="width: 230px;height: 6rem; font-size: 4.5rem; background-size: 40px 50px;">Товар</label>
+                        </div>
+                        <input type="text" class="form-control" id="shipmentNumberInventory" aria-label="Default"  style="height: 6rem; font-size: 2.5rem; background-size: 40px 50px;" aria-describedby="inputGroup-sizing-default">
+                    </div>
+                <div class="table-inventory">
+                    <input class="form-control" id="searchInputInventory" style="height: 5rem; font-size: 3rem" type="text" placeholder="Поиск..">
+                    <table class="table table-bordered" style="font-size: 2rem" id='tableBodyInventory'>
+                      
+                    </table>
+                </div>
+                <div>
+                    <button type="button" style="font-size: 4.5rem;width: 100%;text-align: center; margin-bottom: 40px; margin-top: 20px" id="clearInventoryBtn" class="btn btn-danger">Очистить</button>
+                </div>
+            </div>
+
+            <!--Список созданных расходов  -->
+            <div id = "createdExpBlock"  style="display: none; margin-top: 10px" >
+                <div style="margin-right: 20px 0px">
+                    <button type="button" style="font-size: 2.5rem;width: 100%; text-align: center" id="toMenuBtn7" class="btn btn-secondary">Главное меню </button>
+                </div>
+                <div style="margin:10px 0px 60px 0px">
+                        <button type="button" style="font-size: 2.5rem;width: 100%; text-align: center" id="backBtn7" class="btn btn-secondary " role="button" aria-pressed="true"> Назад </button>
+                </div>
+                <h1 style=" width: 100%;text-align: center; margin-top: 20px;font-size: 5rem;">Список созданных расходов</h1>
+                <input class="form-control" id="createdExpSearchInput" style="height: 5rem; font-size: 3rem" type="text" placeholder="Поиск...">
+                <div class="table-wrapper">
+                    <table class="table table-bordered" id='createdExpTable' style="font-size: 2rem">
+                        <thead>
+                            <tr>
+                                <th style="white-space: nowrap; overflow: hidden; width: 10rem; font-weight: bold;" >Номер</th>
+                                <th style="overflow: hidden; width: 11rem; font-weight: bold;">Дата</th>
+                                <th style="overflow: hidden; font-weight: bold;">Комментарий</th>
+                                <th style="width: 135px; overflow: hidden; font-weight: bold;" >Сумма</th>
+                            </tr>
+                        </thead>
+                        <tbody id= 'createdExpTableBody'>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="3" style="font-weight: bold;"> Итого:</th>
+                                <td id="totalCreatedExp" style="font-weight: bold;color: #dc3545"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+    </body>
+</html>

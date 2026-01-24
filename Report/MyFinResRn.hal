@@ -657,6 +657,7 @@ begin
   user = WebGetArg("user");
   location = WebGetArg("location");
 
+  logtext(0,"location " & location);
   if(user!="INKAS9" and location!="DVRZ")then begin
     goto lWebGetSalesDataForPeriod;
   end;
@@ -679,17 +680,12 @@ begin
     ed = CurrentDate;
   end;
   SetCompany(9,false);
-  USr.Code = user;
+  USr.Code = currentuser;
   logtext(0,"USr.Code " & USr.Code);
   readfirstmain(USr,1,true);
   if(nonblank(USr.Code))then begin
     logtext(0,"User found");
-    hash = CalcPassword(password,user,0);
-    if(hash==USr.NewPassWord)then begin
-      logtext(0,"Password correct");
-    end else begin
-      logtext(0,"Password incorrect");
-
+    if(WebLoginStatus==3)then begin
       IVr.InvDate = sd;
       TrHs = true;
       while(LoopKey("InvDate",IVr,1,TrHs))begin
