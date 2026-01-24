@@ -1,5 +1,8 @@
 external function roundmode SetRoundModeD(Integer);
 external procedure GetFullCurncyRate (var string,Date,var val,var val,var val,var val,var val);
+external procedure addParamToJSONArea(string, string, var area);
+external procedure delLastComaInArea(var area);
+external function string 255 NormalizeStrToJson(string);
 
 SetLangMode(LangRussian,"RUS",2);
 
@@ -636,12 +639,40 @@ end;
 global webpublic procedure WebGetSalesDataForPeriod()
 begin
   record UserVc USr;
-  string 200 password,user;
+  string 200 password,user,location,period;
   longint hash;
+  record CLOutVc CLOutr;
+  record IVVc IVr;
+  row IVVc IVrw;
+  boolean TrHs,testf;
+  date sd,ed,day;
+  integer i,rwcnt,cred;
+  val rate;
+  vector val totsales,cost,gp,expenses;
+  area resarea;
+
 
   logtext(0,"GetSalesDataForPeriod start");
   password = WebGetArg("password");
   user = WebGetArg("user");
+  location = WebGetArg("location");
+  period = WebGetArg("period");
+  // example of period 2026-01-31:2026-02-28
+  if(nonblank(period))then begin
+    sd.year = StringToInt(left(period,4));
+    sd.month = StringToInt(mid(period,5,2));
+    sd.day = StringToInt(right(period,2));
+    ed.year = StringToInt(left(period,4));
+    ed.month = StringToInt(mid(period,5,2));
+    ed.day = StringToInt(right(period,2));
+    if(sd>ed)then begin
+      sd = ed;
+      ed = sd;
+    end;
+  end else begin
+    sd = AddDay(CurrentDate,-31);
+    ed = CurrentDate;
+  end;
   SetCompany(9,false);
   USr.Code = user;
   logtext(0,"USr.Code " & USr.Code);
@@ -653,7 +684,74 @@ begin
       logtext(0,"Password correct");
     end else begin
       logtext(0,"Password incorrect");
+
+      IVr.InvDate = sd;
+      TrHs = true;
+      while(LoopKey("InvDate",IVr,1,TrHs))begin
+        testf = true;
+        if(IVr.InvDate>ed)then begin TrHs = false; testf = false; end;
+        if(IVr.OKFlag==0)then begin testf = false; end;
+        if(IVr.Invalid!=0)then begin testf = false; end;
+        if(IVr.Location!=location)then begin testf = false; end;
+        
+        if(testf)then begin
+          rate = 1;
+          if(IVr.ToRateB1!=0)then begin
+            rate = IVr.FrRate / IVr.ToRateB1;
+          end;
+          
+          rwcnt = matrowcnt(IVr);
+          for(i=0;i<rwcnt;i=i+1)begin
+            matrowget(IVr,i,IVrw);
+            cred = 1;
+            if(IVrw.Quant<0)then begin
+              cred = -1;
+            end;
+            if(IVrw.stp==1 and nonblank(IVrw.ArtCode) and IVrw.Quant!=0)then begin   
+              totsales[IVr.InvDate] = totsales[IVr.InvDate] + IVrw.Sum;
+              cost[IVr.InvDate] = cost[IVr.InvDate] + IVrw.FIFORowVal*cred*rate;
+              gp[IVr.InvDate] = gp[IVr.InvDate] + (IVrw.Sum - IVrw.FIFORowVal*cred*rate);
+            end;
+          end;
+        end;
+      end;
+      
+      CLOutr.TransDate = sd;
+      TrHs = true;
+      while (LoopKey("TransDate",CLOutr,1,TrHs)) begin
+      testf = true;
+      if (CLOutr.TransDate>ed) then begin TrHs = false;  testf = false; end;
+        if(testf)then begin
+          rate = 1;
+          if(CLOutr.ToRateB1!=0)then begin
+            rate = CLOutr.FrRate / CLOutr.ToRateB1;
+          end;
+          expenses[CLOutr.TransDate] = expenses[CLOutr.TransDate] + CLOutr.Total;
+        end;
+      end;
+
+      AddTextToArea("{\"data\":[",resarea);
+      day = sd;
+      while(day<=ed) begin
+        AddTextToArea("{",resarea);
+        addparamtojsonarea("date",NormalizeStrToJson(day),resarea);
+        addparamtojsonarea("totsales",NormalizeStrToJson(totsales[day]),resarea);
+        addparamtojsonarea("cost",NormalizeStrToJson(cost[day]),resarea);
+        addparamtojsonarea("gp",NormalizeStrToJson(gp[day]),resarea);
+        addparamtojsonarea("expenses",NormalizeStrToJson(expenses[day]),resarea);
+        delLastComaInArea(resarea);
+        AddTextToArea("},",resarea);
+        day = AddDay(day,1);
+      end;
+      delLastComaInArea(resarea);
+      addtexttoarea("]}",resarea);
+
+
     end;
   end;
+
+  WebSetContentType("application/json; charset=UTF-8");
+  weboutarea2(resarea);
+  
   return;
 end;
