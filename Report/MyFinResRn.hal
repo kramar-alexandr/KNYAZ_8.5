@@ -719,8 +719,10 @@ begin
       CLOutr.TransDate = sd;
       TrHs = true;
       while (LoopKey("TransDate",CLOutr,1,TrHs)) begin
-      testf = true;
-      if (CLOutr.TransDate>ed) then begin TrHs = false;  testf = false; end;
+        testf = true;
+        if(CLOutr.TransDate>ed) then begin TrHs = false;  testf = false; end;
+        if(CLOutr.Person!=Location)then begin testf = false; end;
+
         if(testf)then begin
           rate = 1;
           if(CLOutr.ToRateB1!=0)then begin
