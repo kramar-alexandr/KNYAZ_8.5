@@ -633,7 +633,7 @@ return;
 end;
 
 
-global webpublic procedure GetSalesDataForPeriod()
+global webpublic procedure WebGetSalesDataForPeriod()
 begin
   record UserVc USr;
   string 200 password,user;
