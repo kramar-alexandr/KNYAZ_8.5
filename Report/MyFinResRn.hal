@@ -755,7 +755,7 @@ begin
 
     end;
   end;
-
+  writeareatofile(resarea,"hansa.log",1);
   WebSetContentType("application/json; charset=UTF-8");
   weboutarea2(resarea);
   
