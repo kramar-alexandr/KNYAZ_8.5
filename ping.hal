@@ -1,0 +1,17 @@
+global 
+webpublic procedure WebPingServer()
+begin
+WebOutStringFormatNL("ok");
+end;
+
+global 
+webpublic procedure WebRestartService()
+begin
+  string 255 shel;
+
+  LogText(0,"WebRestartService " & webgetarg("user"));
+  shel = "systemctl restart hansa.service";
+  RunShellScript(shel);
+  
+  return;
+end;
