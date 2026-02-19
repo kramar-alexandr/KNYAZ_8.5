@@ -4364,7 +4364,7 @@ begin
   RlColKey(84,84,"OK",OKFlag,false,OKFlag);
   RlColKey(114,114,"Дата",TransDate,false,TransDate);
   RlColKey(194,194,"Основание",Comment,false,Comment);
-  RlCol(-200,-200,"Точка",Person,true);
+  RlColKey(-200,-200,"Точка",Person,true,Person);
   RlCol(-100,-100,"Сумма",Total,true);
   if (HasMultiCurrency or HasBase2) then begin
   RlCol(-30,-30,"Вал.",CurncyCode,true);
