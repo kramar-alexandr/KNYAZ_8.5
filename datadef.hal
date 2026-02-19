@@ -187,11 +187,19 @@ EndRecordAdd;
 RecordAddBegin(CLInVc,"CLInVc_Custom");
   RecordField(TransDateText,M4Str,20,0); //Edit***************************Sasha2,16:29 14.12.2016
   RecordField(TotalText,M4Str,20,0); //Edit***************************Sasha2,16:29 14.12.2016
+
+  KeyBegin(Person);
+  KeySegment(Person);
+  KeySegment(SerNr);  
 EndRecordAdd;
 
 RecordAddBegin(CLOutVc,"CLOutVc_Custom");
   RecordField(TransDateText,M4Str,20,0); //Edit***************************Sasha2,16:29 14.12.2016
   RecordField(TotalText,M4Str,20,0); //Edit***************************Sasha2,16:29 14.12.2016
+  
+  KeyBegin(Person);
+  KeySegment(Person);
+  KeySegment(SerNr);  
 EndRecordAdd;
 
 RecordAddBegin(IVVc,"IVVc_Custom");
