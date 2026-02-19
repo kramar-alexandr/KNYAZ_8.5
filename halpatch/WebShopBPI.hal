@@ -1593,3 +1593,22 @@ begin
   //WebMain;
   return;
 end;
+
+webpublic global
+updating procedure WebUpdatePerson()
+begin
+  record CLOutVc CLOutr;
+  
+  setcompany(9,false);
+  while(loopmain(CLOutr,1,true))begin
+    if(blank(CLOutr.Person))then begin// Edit ************************** BPI Ukraine - KramarAlexandr - Thursday, 19 February 2026 at 11:10:08
+      CLOutr.Person = CLOutr.Objects;
+      recordstore(CLOutr,true);
+    end;
+  end;
+  
+  return;
+end;
+
+
+

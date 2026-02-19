@@ -1105,6 +1105,10 @@ L12:;
         end;
       end;
     end;
+    
+    if(blank(CLOutp.Person))then begin// Edit ************************** BPI Ukraine - KramarAlexandr - Thursday, 19 February 2026 at 11:10:08
+      CLOutp.Person = CLOutp.Objects;
+    end;
     if (CLOutrw.Type==kCashOutRowTypePersonnelPayment) then begin    
       if (blank(CLOutp.Person)) then begin
         RecordCheckError(1058,"",-1,"Person");      
