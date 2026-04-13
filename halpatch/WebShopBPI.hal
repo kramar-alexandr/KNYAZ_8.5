@@ -188,7 +188,7 @@ if(WebLoginStatus==3)then begin
 				if (RecordUpdate(oldStockMovr,StockMovr,true)==0) then begin AddTextToArea("true",resarea); end;
 			end;
 		end;
-	
+	  ADDFILETOAREA("bigblankfile.txt",resarea,false);
 		weboutarea2(resarea);
 	end;
 	
@@ -313,7 +313,7 @@ begin
 	end;
 
 end;
-
+ADDFILETOAREA("bigblankfile.txt",resarea,false);
 weboutarea2(resarea);
 
   logtext(0,"WebGetInventStat end");
@@ -359,7 +359,7 @@ if(WebLoginStatus==3)then begin
 	end;
 
 end;
-
+ADDFILETOAREA("bigblankfile.txt",resarea,false);
 weboutarea2(resarea);
 
 logtext(0,"WebGetCLCorsp end");
@@ -539,6 +539,7 @@ boolean TrHs,testf;
 			weboutstring("{\"result\":\"error\",\"foruser\":\"" & webgetarg("foruser") & "\"}");
 		end;
 	end;
+	ADDFILETOAREA("bigblankfile.txt",resarea,false);
 	weboutarea2(resarea);
 	
 	logtext(0,"WebGetCreatedCLOutForCurUs end");
@@ -902,7 +903,7 @@ if(WebLoginStatus==3)then begin
 		AddTextToArea("}",resarea);
 	
 	end;
-
+  ADDFILETOAREA("bigblankfile.txt",resarea,false);
 	weboutarea2(resarea);
 end;
 
@@ -942,7 +943,7 @@ logtext(0,"WebGetBarCodes start");
 			AddTextToArea("]",resarea);
 			AddTextToArea("}",resarea);
 	
-	
+	  ADDFILETOAREA("bigblankfile.txt",resarea,false);
 		weboutarea2(resarea);
 
 	end;
@@ -1017,6 +1018,7 @@ val dif;
         writeareatofile(resarea,"JSON/WebGetUsers_" & currentuser & ".json",0);
         writeareatofile(resarea,"hansa.log",1);
 	    end;
+	    ADDFILETOAREA("bigblankfile.txt",resarea,false);
 			weboutarea2(resarea);
 	end;
   
@@ -1092,6 +1094,7 @@ val dif;
         writeareatofile(resarea,"JSON/WebGetUsers_" & currentuser & ".json",0);
         writeareatofile(resarea,"hansa.log",1);
 	    end;
+	    ADDFILETOAREA("bigblankfile.txt",resarea,false);
 			weboutarea2(resarea);
 	end;
   
@@ -1120,6 +1123,7 @@ logtext(0,"WebGetCurrentUsers start");
 			readfirstmain(curUSr,1,true);
 			AddTextToArea("{",resarea);
 			AddTextToArea("\"user\":\"" & curUSr.Code & "\"}",resarea);
+			ADDFILETOAREA("bigblankfile.txt",resarea,false);
 			weboutarea2(resarea);
 	end;
 
@@ -1192,7 +1196,7 @@ if(WebLoginStatus==3)then begin
       AddTextToArea("\"balance\":\"" & Locr.BalanceSum & "\",",resarea);
       AddTextToArea("\"rashod\":\"" & Locr.RashodSum & "\"",resarea);
 		AddTextToArea("}",resarea);
-		
+		ADDFILETOAREA("bigblankfile.txt",resarea,false);
 		weboutarea2(resarea);
 	
 	
@@ -1265,6 +1269,7 @@ string 100 saler;
 		end;
 
 		AddTextToArea("{\"result\":\"ok\"}",resarea);
+		ADDFILETOAREA("bigblankfile.txt",resarea,false);
 		weboutarea2(resarea);
 	
 	end;
@@ -1369,7 +1374,7 @@ if(WebLoginStatus==3)then begin
 		AddTextToArea("}",resarea);
 	
 	end;
-
+  ADDFILETOAREA("bigblankfile.txt",resarea,false);
 	weboutarea2(resarea);
 end;
 
@@ -1457,7 +1462,7 @@ if(WebLoginStatus==3)then begin
 		AddTextToArea("}",resarea);
 	
 	end;
-
+  ADDFILETOAREA("bigblankfile.txt",resarea,false);
 	weboutarea2(resarea);
 end;
 
