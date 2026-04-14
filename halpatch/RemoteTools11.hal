@@ -1179,7 +1179,9 @@ begin
     end;
     IVGetRate(IVp);
 
-    IVOpenPrepExists(IVp.CustCode,true,IVp);
+    if(IVp.CustCode!="NONAME")then begin
+      IVOpenPrepExists(IVp.CustCode,true,IVp);
+    end;
     if (DateWarned(IVp.TransDate,"IVVc")) then begin
       transdatewarn = USetStr(1045);
     end;
