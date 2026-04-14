@@ -16,6 +16,7 @@ begin
     RecordField(TelLocation,M4UStr,255,0);
     RecordField(TelChatId,M4Str,255,0);
     RecordField(TelIsBoss,M4Int,0,0);
+    RecordField(PassForTel,M4Str,50,0);
   endrecordadd;
   
   RecordAddBegin(UserDefRepVc,"Cust_UserDefRepVc");

@@ -4213,6 +4213,7 @@ end;
   Tile(tilenr,210,false,tilenr,TelLocation);  tilenr = tilenr + 1;// Edit ************************** BPI Ukraine - KramarAlexandr - 03, 31 05 2023 y. at 9:35:16 PM
   EditField(h,v=6,-20,"Склады Telegram",Normal,TelLocation,false,LocationSClass); 
   EditField(h,v+=vs,100,"ChatId Telegram",Normal,TelChatId,false,0); 
+  EditField(h,v+=vs,100,"Пароль",Normal,PassForTel,false,0); 
   v=v+40;
   ButtonFrame(h,v,200,2,"Роль");
   RadioButton(h,v,0,0,"Обычный",TelIsBoss);
