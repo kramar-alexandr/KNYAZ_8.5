@@ -1047,11 +1047,13 @@ val dif;
   SetCompany(9,false);
   AddTextToArea("\"users\":[",resarea);
   while(loopmain(USr,1,true))begin
-    if(USr.Closed==0 and nonblank(USr.Phone1))then begin
+    if(USr.Closed==0 and nonblank(USr.Phone1) and nonblank(USr.PassForTel))then begin
       AddTextToArea("{",resarea);
         addParamToJSONArea("login",NormalizeStrToJson(USr.Code),resarea);
         addParamToJSONArea("name",NormalizeStrToJson(USr.Name),resarea);
         addParamToJSONArea("phone",NormalizeStrToJson(USr.Phone1),resarea);
+        addParamToJSONArea("passwd",NormalizeStrToJson(USr.PassForTel),resarea);
+        
         delLastComaInArea(resarea);
       AddTextToArea("},",resarea);
     end;
