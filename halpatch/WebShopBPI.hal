@@ -1045,8 +1045,8 @@ val dif;
   
   AddTextToArea("{",resarea);
   SetCompany(9,false);
+  AddTextToArea("\"users\":[",resarea);
   while(loopmain(USr,1,true))begin
-    AddTextToArea("\"users\":[",resarea);
     if(USr.Closed==0 and nonblank(USr.Phone1))then begin
       AddTextToArea("{",resarea);
         addParamToJSONArea("login",NormalizeStrToJson(USr.Code),resarea);
@@ -1055,7 +1055,6 @@ val dif;
         delLastComaInArea(resarea);
       AddTextToArea("},",resarea);
     end;
-    
   end;
   delLastComaInArea(resarea);
   AddTextToArea("]}",resarea);
