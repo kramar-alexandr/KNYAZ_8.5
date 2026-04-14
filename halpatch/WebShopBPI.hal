@@ -1027,6 +1027,48 @@ return;
 end;
 
 
+
+global webpublic procedure WebGetTelegUsers()
+begin
+string 50 location;
+area resarea;
+record UserVc USr,curUSr;
+record DepVc Depr;
+boolean testf;
+json js;
+val dif;
+
+  logtext(0,"WebGetTelegUsers start");
+
+
+  WebSetContentType("application/json; charset=UTF-8");	
+  
+  AddTextToArea("{",resarea);
+  SetCompany(9,false);
+  while(loopmain(USr,1,true))begin
+    AddTextToArea("\"users\":[",resarea);
+    if(USr.Closed==0 and nonblank(USr.Phone1))then begin
+      AddTextToArea("{",resarea);
+        addParamToJSONArea("login",NormalizeStrToJson(USr.Code),resarea);
+        addParamToJSONArea("name",NormalizeStrToJson(USr.Name),resarea);
+        addParamToJSONArea("phone",NormalizeStrToJson(USr.Phone1),resarea);
+        delLastComaInArea(resarea);
+      AddTextToArea("},",resarea);
+    end;
+    
+  end;
+  delLastComaInArea(resarea);
+  AddTextToArea("]}",resarea);
+    
+    
+  ADDFILETOAREA("bigblankfile.txt",resarea,false);
+  weboutarea2(resarea);
+  
+  logtext(0,"WebGetTelegUsers end");
+return;
+end;
+
+
 global webpublic procedure WebGetUsersPoints()
 begin
 string 50 location;
