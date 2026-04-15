@@ -1671,7 +1671,8 @@ begin
   webgetpostdata(postdata);
   js = ParseJSONArea(postdata);
   
-  SetWebHeaders("Content-Length: ");
+  SetWebHeaders("Transfer-Encoding: ");
+  //AddWebHeader("Transfer-Encoding","");
   WebSetContentType("application/json; charset=UTF-8");	
   if(JSONGet(js,"email")=="c2335830@gmail.com")then begin
     weboutstring("{\"result\":true}");
