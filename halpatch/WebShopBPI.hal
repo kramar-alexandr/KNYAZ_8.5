@@ -1673,9 +1673,11 @@ begin
   
   WebSetContentType("application/json; charset=UTF-8");	
   if(JSONGet(js,"email")=="c2335830@gmail.com")then begin
-    weboutstring("{\"result\":true}");
+    weboutstring("{\"result\":\"ok\"}");
+    logtext(0,"");
+
   end else begin
-    weboutstring("{\"result\":false}");
+    weboutstring("{\"result\":\"denied\"}");
   end;
   
 return;
