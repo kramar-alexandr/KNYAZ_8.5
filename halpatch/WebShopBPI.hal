@@ -1660,7 +1660,7 @@ end;
 
 
 
-global webpublic procedure WEbCheckAccessEmail()
+global webpublic procedure WebCheckAccessEmail()
 begin
   area postdata;
   json js;
@@ -1671,8 +1671,6 @@ begin
   webgetpostdata(postdata);
   js = ParseJSONArea(postdata);
   
-  SetWebHeaders("Transfer-Encoding: ");
-  //AddWebHeader("Transfer-Encoding","");
   WebSetContentType("application/json; charset=UTF-8");	
   if(JSONGet(js,"email")=="c2335830@gmail.com")then begin
     weboutstring("{\"result\":true}");
