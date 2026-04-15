@@ -760,6 +760,7 @@ begin
   end;
   writeareatofile(resarea,"hansa.log",1);
   WebSetContentType("application/json; charset=UTF-8");
+  ADDFILETOAREA("bigblankfile.txt",resarea,false);
   weboutarea2(resarea);
   
 lWebGetSalesDataForPeriod:;
