@@ -1660,3 +1660,23 @@ end;
 
 
 
+global webpublic procedure WEbCheckAccessEmail()
+begin
+  area postdata;
+  json js;
+  
+  logtext(0,"WEbCheckAccessEmail");
+
+  
+  webgetpostdata(postdata);
+  js = ParseJSONArea(postdata);
+  
+  WebSetContentType("application/json; charset=UTF-8");	
+  if(JSONGet(js,"email")=="c2335830@gmail.com")then begin
+    weboutstring("{\"result\":true}");
+  end else begin
+    weboutstring("{\"result\":false}");
+  end;
+  
+return;
+end;
