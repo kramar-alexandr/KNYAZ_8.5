@@ -2120,7 +2120,7 @@ begin
           end;
         end;
       case "VIVc":
-        GetWindowRecord(mwn,VIr);
+        /*GetWindowRecord(mwn,VIr);
         if (VIr.OKFlag==0) then begin
           if (err==0) then begin
             err = VIVc_CalcRetentionLine(VIr,retentionv,retentionacc,retentionvatcode);
@@ -2137,7 +2137,7 @@ begin
             MatRowPut(VIr,rwcnt,VIrw);
             PutWindowRecord(mwn,VIr);
           end;
-        end;
+        end;*/
     end;
   end;
 LAddPRRetentionDClassOnOKWindow:;
