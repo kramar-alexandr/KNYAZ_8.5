@@ -619,6 +619,8 @@ begin
 				end;
 				matrowget(IVr,k,IVrw);
 				IVrw.Spec = JSONGet(jsonobj,"items/[" & i & "]/Spec");
+				logtext(0,"SoldQuant " & JSONGet(jsonobj,"items/[" & i & "]/SoldQuant"));
+
 				IVrw.Quant = Round(evaltoval(JSONGet(jsonobj,"items/[" & i & "]/SoldQuant")),SetRoundModeD(1));
 				IVrw.Price = evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Price"));
 				matrowput(IVr,k,IVrw);
