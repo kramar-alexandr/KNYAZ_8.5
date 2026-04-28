@@ -2046,6 +2046,7 @@ if (true) then begin
     if (UseTaxTemplatesforTaxCalc==false) then begin
       if (UserCanAction("ViewCostPrice",true)) then begin
         EditField(190,-41,70,"GP %",Normal,GPProc,true,0); 
+        EditField(310,-41,70,"Бонус",Normal,TotBonus,true,0); 
         EditField(190,-21,70,"Прибыль",ViewOnly,TotGP,true,0);
       end;
       if (HasLocalization("GBR,LTU,POL,LVA")) then begin

@@ -209,6 +209,8 @@ RecordAddBegin(IVVc,"IVVc_Custom");
   RecordField(DaySessionEndTime,M4Time,0,0); //Edit***************************Sasha2,11:11 07.03.2017
   RecordField(AcceptedFlag,M4Mark,0,0);
   RecordField(ShipedFlag,M4Mark,0,0);
+  RecordField(TotBonus,M4Val,0,0);
+  
   
   KeyBegin(AcceptedFlag);
   KeySegment(AcceptedFlag);

@@ -618,6 +618,7 @@ begin
 			IVr.SalesGroup = USr.SalesGroup;
 			IVr.Sum4 = stringtoval(JSONGet(jsonobj,"Sum4"),m4val);
 			rwcnt = JSONCountChildren(jsonobj,"items");
+			IVr.TotBonus = blankval;
 			for(i=0;i<rwcnt;i=i+1)begin
 				clearrow(IVr,IVrw,kInvoiceRowTypeNormal);
 				IVrw.ArtCode = JSONGet(jsonobj,"items/[" & i & "]/ArtCode");
@@ -639,11 +640,12 @@ begin
 				end;
 				matrowget(IVr,k,IVrw);
 				IVrw.Sum = evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Sum"));
-				if(location!="UNOST1")then begin
+				if(IVr.Location!="UNOST1")then begin
           PLr.PLCode = "BONUS";
           PLr.ArtCode = IVrw.ArtCode;
           if(readfirstmain(PLr,2,true))then begin
             IVrw.BasePriceB2 = PLr.ExVatPrice * IVrw.Quant;
+            IVr.TotBonus = IVr.TotBonus + IVrw.BasePriceB2;
           end;
         end;
 				matrowput(IVr,k,IVrw);
