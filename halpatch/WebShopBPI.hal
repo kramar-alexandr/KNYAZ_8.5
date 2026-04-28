@@ -212,7 +212,7 @@ begin
 	boolean TrHs, testf;
 	integer i;
 	record PLVc PLr;
-	val price, Inst;
+	val price, Inst, bonusprice;
 	boolean saldf;
 
   logtext(0,"WebGetInventStat start");
@@ -287,6 +287,14 @@ begin
 								price = PLr.ExVatPrice;
 							end;
 						end;
+						bonusprice = blankval;
+						if(location!="UNOST1")then begin
+              PLr.PLCode = "BONUS";
+              PLr.ArtCode = INr.Code;
+              if(readfirstmain(PLr,2,true))then begin
+                bonusprice = PLr.ExVatPrice;
+              end;
+						end;
 						
 						AddTextToArea("{",resarea);
 						addParamToJSONArea("ArtCode",NormalizeStrToJson(INr.Code),resarea);
@@ -297,6 +305,7 @@ begin
               addParamToJSONArea("Instock",NormalizeStrToJson(ISr.Instock),resarea);
 						end;
 						addParamToJSONArea("Price",NormalizeStrToJson(price),resarea);
+						addParamToJSONArea("BonusPrice",NormalizeStrToJson(bonusprice),resarea);
 						addParamToJSONArea("InMove",NormalizeStrToJson(moveQuant[INr.Code]),resarea);
 						delLastComaInArea(resarea);
 						AddTextToArea("},",resarea);
