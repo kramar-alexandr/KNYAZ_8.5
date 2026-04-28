@@ -574,6 +574,7 @@ begin
 	longint res;
 	val sum,fsum;
 	record LocationVc Locr;
+	record PLVc PLr;
 	
 	logtext(0,"WebSendInvent start");
 	
@@ -638,6 +639,13 @@ begin
 				end;
 				matrowget(IVr,k,IVrw);
 				IVrw.Sum = evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Sum"));
+				if(location!="UNOST1")then begin
+          PLr.PLCode = "BONUS";
+          PLr.ArtCode = IVrw.ArtCode;
+          if(readfirstmain(PLr,2,true))then begin
+            IVrw.BasePriceB2 = PLr.ExVatPrice * IVrw.Quant;
+          end;
+        end;
 				matrowput(IVr,k,IVrw);
 				if(OKFlag=="true")then begin
           IVVc_PasteSum(IVr,k,chsum,1);

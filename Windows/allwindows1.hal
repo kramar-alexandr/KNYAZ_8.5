@@ -2335,7 +2335,7 @@ if (true) then begin
   if (UserCanAction("ViewCostPrice",true)) then begin
     MatCol(t,-380,"Цена",0,Price,true,0);
     MatCol(t,-315,"%",0,vRebate,true,0);
-    MatCol(t,-280,"Ст.в осн.2",0,BasePriceB2,true,0);
+    MatCol(t,-280,"Бонус",0,BasePriceB2,true,0);
     MatCol(t,-210,"Стоим-ть",0,BasePrice,true,0);
     MatCol(t,-140,"Прибыль",0,rowGP,true,0);
     MatCol(t,-70,"FIFO",0,FIFO,true,0);
@@ -2348,7 +2348,7 @@ if (true) then begin
   if (UserCanAction("ViewCostPrice",true)) then begin
     MatCol(t,-380,"Цена",0,Price,true,0);
     MatCol(t,-315,"%",0,vRebate,true,0);
-    MatCol(t,-280,"Ст.в осн.",0,BasePriceB2,true,0);
+    MatCol(t,-280,"Бонус",0,BasePriceB2,true,0);
     MatCol(t,-210,"Стоим-ть",0,BasePrice,true,0);
     MatCol(t,-140,"Прибыль",0,rowGP,true,0);
     MatCol(t,-70,"FIFO",0,FIFO,true,0);
