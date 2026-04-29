@@ -886,6 +886,7 @@ if(WebLoginStatus==3)then begin
 				AddTextToArea("{",resarea);
 					addParamToJSONArea("SerNr",NormalizeStrToJson(IVr.SerNr),resarea);
 					addParamToJSONArea("Sum4",NormalizeStrToJson(IVr.Sum4),resarea);
+					addParamToJSONArea("TotBonus",NormalizeStrToJson(IVr.TotBonus),resarea);
 					addParamToJSONArea("OKFlag",NormalizeStrToJson(IVr.OKFlag),resarea);
 					addParamToJSONArea("salesman",NormalizeStrToJson(IVr.SalesMan),resarea);
 					addParamToJSONArea("TransDate",NormalizeStrToJson(IVr.TransDate),resarea);
@@ -907,6 +908,7 @@ if(WebLoginStatus==3)then begin
 								addParamToJSONArea("Price",NormalizeStrToJson(IVrw.Price),resarea);
 								addParamToJSONArea("vRebate",NormalizeStrToJson(IVrw.vRebate),resarea);
 								addParamToJSONArea("Sum",NormalizeStrToJson(IVrw.Sum),resarea);
+								addParamToJSONArea("BonusSum",NormalizeStrToJson(IVrw.BasePriceB2 *IVrw.Quant),resarea);
 								delLastComaInArea(resarea);
 								AddTextToArea("},",resarea);
 							end;
