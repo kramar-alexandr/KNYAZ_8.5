@@ -148,7 +148,7 @@ begin
       CLOutr.TransDate = IVr.InvDate;
       CLOutr.CorspCode = "ZARPLATA";
       CLOutVc_PasteCorspCode(CLOutr,-1);
-      CLOutr.Comment = "Заработная плата";
+      CLOutr.Comment = "Заработная плата - Бонус";
       CLOutr.Objects = IVr.Objects;
       CLOutr.OKFlag = 1;
       
