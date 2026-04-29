@@ -2,6 +2,10 @@ external inner function Boolean POVc_PasteVECode(var record POVc,Boolean);
 external inner function Boolean POVc_PasteArtCode(var record POVc,Integer,Boolean);
 external inner procedure POVc_PasteQuant(var record POVc,Integer);
 external inner function LongInt POVc_PasteLocation2(var record POVc);
+external inner procedure CLOutVc_PasteCorspCode(var record CLOutVc,Integer);
+external inner procedure CLOutVc_PasteCurncyCode(var record CLOutVc);
+
+SetLangMode(LangRussian,"RUS",0);
 
 global updating procedure CreatePOInOtherCom(record IVVc IVr)
 begin
@@ -95,6 +99,7 @@ begin
   LongInt res;
   record LocationVc Locr;
   integer curcomp;
+  record CLOutVc CLOutr;
 
 	res = inner.IVVcRecordUpdateAfter(IVr,IV2r,long3,long4);
   curcomp = currentcompany;
@@ -127,6 +132,31 @@ begin
       recordstore(Locr,true);
     end;
   //end;
+  
+  if(IVr.OKFlag==1 and IV2r.OKFlag!=0)then begin
+    if(IVr.TotBonus>0)then begin
+    recordnew(CLOutr);
+    
+      CLOutr.SerNr = NextSerNr("CLOutVc",CLOutr.TransDate,-1,false,"");
+      CLOutr.PayMode = "O";
+      CLOutr.ARonTR = 1;
+      CLOutr.CurncyCode = "UAH";
+      CLOutr.Person = IVr.SalesMan;
+      CLOutVc_PasteCurncyCode(CLOutr);
+      CLOutr.Total = IVr.TotBonus;
+      CLOutr.NetVal = IVr.TotBonus;
+      CLOutr.TransDate = IVr.InvDate;
+      CLOutr.CorspCode = "ZARPLATA";
+      CLOutVc_PasteCorspCode(CLOutr,-1);
+      CLOutr.Comment = "Заработная плата";
+      CLOutr.Objects = IVr.Objects;
+      
+      if (Recordinsert(CLOutr,true))then begin
+        createrecordlink(CLOutr,currentcompany,IVr,currentcompany);
+        createrecordlink(IVr,currentcompany,CLOutr,currentcompany);
+      end;
+		end;
+  end;
   
   
   IVVcRecordUpdateAfter = res; 
