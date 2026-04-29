@@ -150,6 +150,7 @@ begin
       CLOutVc_PasteCorspCode(CLOutr,-1);
       CLOutr.Comment = "Заработная плата";
       CLOutr.Objects = IVr.Objects;
+      CLOutr.OKFlag = 1;
       
       if (Recordinsert(CLOutr,true))then begin
         createrecordlink(CLOutr,currentcompany,IVr,currentcompany);
