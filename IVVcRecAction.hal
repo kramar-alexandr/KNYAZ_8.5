@@ -133,7 +133,7 @@ begin
     end;
   //end;
   
-  if(IVr.OKFlag==1 and IV2r.OKFlag!=0)then begin
+  if(IVr.OKFlag==1 and IV2r.OKFlag==0)then begin
     if(IVr.TotBonus>0)then begin
     recordnew(CLOutr);
     
