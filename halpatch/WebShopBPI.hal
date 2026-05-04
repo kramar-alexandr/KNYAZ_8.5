@@ -630,8 +630,6 @@ begin
 				end;
 				matrowget(IVr,k,IVrw);
 				IVrw.Spec = JSONGet(jsonobj,"items/[" & i & "]/Spec");
-				logtext(0,"SoldQuant " & JSONGet(jsonobj,"items/[" & i & "]/SoldQuant"));
-
 				IVrw.Quant = Round(evaltoval(JSONGet(jsonobj,"items/[" & i & "]/SoldQuant")),SetRoundModeD(1));
 				IVrw.Price = evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Price"));
 				matrowput(IVr,k,IVrw);
@@ -660,10 +658,7 @@ begin
 		end;
 		if(OKFlag!="true")then begin
       IVr.Sum4 = sum;
-	  end;
-		logtext(0,"IVr.SerNr " & IVr.SerNr);
-		logtext(0,"WebRemoteIPAddress " & WebRemoteIPAddress);
-	
+	  end;	
 		
 		if(IVr.SerNr>-1)then begin
 			OKFlag = JSONGet(jsonobj,"DoneFlag");
@@ -673,7 +668,6 @@ begin
 			
 			if(OKFlag=="true")then begin
         recordinsert(IVr,true);//First Save
-      
         recordcopy(oldIVr,IVr);// Second Update with Ok
           IVr.OKFlag = 1;
         recordupdate(oldIVr,IVr,true);
@@ -683,9 +677,6 @@ begin
 			  if(updatemode)then begin
           if(readfirstmain(Locr,1,true))then begin
             Locr.BalanceSum = Locr.BalanceSum - fsum + IVr.Sum4;
-            logtext(0,"IV2r.Sum4 " & fsum);
-            logtext(0,"IVr.Sum4 " & IVr.Sum4);
-            logtext(0,"Change balance from IVVcRecordUpdateAfter 03 " & IVr.SerNr & " " & -fsum + IVr.Sum4);
             recordstore(Locr,true);
           end;
         end;
