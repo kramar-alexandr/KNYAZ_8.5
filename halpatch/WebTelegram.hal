@@ -118,7 +118,7 @@ boolean testf;
 area postdata;
 json jsonobj;
 
-  logtext(0,"WebGetUsersTelegram start");
+  logtext(0,"WebPostUsersTelegram start");
   WebSetContentType("application/json; charset=UTF-8");	
 
   SetCompany(9,false);
@@ -146,7 +146,7 @@ json jsonobj;
   
 
   
-  logtext(0,"WebGetUsersTelegram end");
+  logtext(0,"WebPostUsersTelegram end");
 return;
 end;
 
