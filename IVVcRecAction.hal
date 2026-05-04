@@ -5,7 +5,7 @@ external inner function LongInt POVc_PasteLocation2(var record POVc);
 external inner procedure CLOutVc_PasteCorspCode(var record CLOutVc,Integer);
 external inner procedure CLOutVc_PasteCurncyCode(var record CLOutVc);
 
-SetLangMode(LangRussian,"RUS",0);
+SetLangMode(LangRussian,"RUS",2);
 
 global updating procedure CreatePOInOtherCom(record IVVc IVr)
 begin
