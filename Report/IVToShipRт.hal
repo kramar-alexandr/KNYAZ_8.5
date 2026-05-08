@@ -31,6 +31,7 @@ begin
       CUr.Code = IVr.CustCode;
       readfirstmain(CUr,1,true);
       //if(CUr.CustCat!="TELEG")then begin testf = false; end;
+      if(CUr.Code=="NONAME")then testf = false; begin end;
       
       if(testf)then begin
         startformat(15);
