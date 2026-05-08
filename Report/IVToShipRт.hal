@@ -22,14 +22,15 @@ begin
     endformat;
   
     IVr.InvDate = currentdate;
+    IVr.SerNr = 9999999999;
     TrHs = true;
-    while(loopbackkey("InvDate",IVr,1,TrHs))begin
+    while(loopbackkey("InvDate",IVr,2,TrHs))begin
       testf = true;
       if(IVr.InvDate<addday(currentdate,-5))then begin TrHs = false; testf = false; end;
       if(IVr.OKFlag==0)then begin testf = false; end;
       CUr.Code = IVr.CustCode;
       readfirstmain(CUr,1,true);
-      if(CUr.CustCat!="TELEG")then begin testf = false; end;
+      //if(CUr.CustCat!="TELEG")then begin testf = false; end;
       
       if(testf)then begin
         startformat(15);
