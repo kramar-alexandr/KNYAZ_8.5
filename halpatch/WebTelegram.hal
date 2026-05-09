@@ -640,11 +640,21 @@ begin
   
   Locr.Code = "";
   while(loopmain(Locr,1,true))begin
-    if(Locr.BalanceSum!=vBalance[Locr.Code] or Locr.RashodSum!=vRashod[Locr.Code])then begin
-      weboutstring("+ " & Locr.Code & " ___ " & Locr.BalanceSum & " !=" & vBalance[Locr.Code] & "<BR>");
-      Locr.BalanceSum = vBalance[Locr.Code];
-      Locr.RashodSum = vRashod[Locr.Code];
-      recordstore(Locr,true);
+    if(blank(point))then begin
+      if(Locr.BalanceSum!=vBalance[Locr.Code] or Locr.RashodSum!=vRashod[Locr.Code])then begin
+        Locr.BalanceSum = vBalance[Locr.Code];
+        Locr.RashodSum = vRashod[Locr.Code];
+        recordstore(Locr,true);
+      end;
+    end else begin
+      if(point==Locr.Code)then begin
+        if(Locr.BalanceSum!=vBalance[Locr.Code] or Locr.RashodSum!=vRashod[Locr.Code])then begin
+          weboutstring("BALANCE === " & vBalance[Locr.Code] &  "<BR>");
+          Locr.BalanceSum = vBalance[Locr.Code];
+          Locr.RashodSum = vRashod[Locr.Code];
+          recordstore(Locr,true);
+        end;
+      end;
     end;
   end;
   
