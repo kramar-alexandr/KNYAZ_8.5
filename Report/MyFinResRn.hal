@@ -97,6 +97,11 @@ begin
     while (LoopKey("TransDate",CLOutr,1,TrHs)) begin
     testf = true;
     if (CLOutr.TransDate>RepSpec.sEndDate) then begin TrHs = false;  testf = false; end;
+      if(CLOutr.Comment=="Выравнивание кассы.")then begin
+        testf = false;
+      end;
+    
+    
       if(testf)then begin
         rate = 1;
         if(CLOutr.ToRateB1!=0)then begin
