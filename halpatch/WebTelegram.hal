@@ -584,34 +584,62 @@ begin
   record Uservc USr;
   vector val vBalance,vRashod;
   record LocationVc Locr;
+  string 20 point;
   
   
   logtext(0,"WebUpdateBalanceForPoints start");
   SetCompany(9,false);
   
+  point = webgetarg("point");
+  
   IVr.SerNr = -1;
   while(loopmain(IVr,1,true))begin
-    vBalance[IVr.Location] = vBalance[IVr.Location] + IVr.Sum4;
+    if(blank(point))then begin
+      vBalance[IVr.Location] = vBalance[IVr.Location] + IVr.Sum4;
+    end else begin
+      if(point==IVr.Location)then begin
+        vBalance[IVr.Location] = vBalance[IVr.Location] + IVr.Sum4;
+        weboutstring("IVVc+" & IVr.Sum4 & " ===  " & vBalance[IVr.Location] & "<BR>");
+      end;
+    end;
   end;
   
   CLInr.SerNr = -1;
   while(loopmain(CLInr,1,true))begin
     if(CLInr.OKFlag>0) then begin
+      if(blank(point))then begin
       vBalance[CLInr.Person] = vBalance[CLInr.Person] + CLInr.Total;
+      end else begin
+        if(point==CLInr.Person)then begin
+           vBalance[CLInr.Person] = vBalance[CLInr.Person] + CLInr.Total;
+           weboutstring("ClIn___+" & CLInr.Total & " ===  " & vBalance[CLInr.Person] & "<BR>");
+        end;
+      end;
     end;
   end;
   CLOutr.SerNr = -1;
   while(loopmain(CLOutr,1,true))begin
-    if(CLOutr.OKFlag>0) then begin
-      vBalance[CLOutr.Person] = vBalance[CLOutr.Person] - CLOutr.Total;
+    if(blank(point))then begin
+      if(CLOutr.OKFlag>0) then begin
+        vBalance[CLOutr.Person] = vBalance[CLOutr.Person] - CLOutr.Total;
+      end else begin
+        vRashod[CLOutr.Person] = vRashod[CLOutr.Person] + CLOutr.Total;
+      end;
     end else begin
-      vRashod[CLOutr.Person] = vRashod[CLOutr.Person] + CLOutr.Total;
+      if(point==CLOutr.Person)then begin
+        if(CLOutr.OKFlag>0) then begin
+          vBalance[CLOutr.Person] = vBalance[CLOutr.Person] - CLOutr.Total;
+          weboutstring("ClOut___-" & CLOutr.Total & " ===  " & vBalance[CLOutr.Person] & "<BR>");
+        end else begin
+          vRashod[CLOutr.Person] = vRashod[CLOutr.Person] + CLOutr.Total;
+          weboutstring("ClOut___+" & CLOutr.Total & " ===  " & vBalance[CLOutr.Person] & "<BR>");
+        end;
+      end;
     end;
   end;
   
   Locr.Code = "";
   while(loopmain(Locr,1,true))begin
-    logtext(0,Locr.Code & " vBalance " & vBalance[Locr.Code] & " vRashod " & vRashod[Locr.Code]);
     if(Locr.BalanceSum!=vBalance[Locr.Code] or Locr.RashodSum!=vRashod[Locr.Code])then begin
       weboutstring("+ " & Locr.Code & " ___ " & Locr.BalanceSum & " !=" & vBalance[Locr.Code] & "<BR>");
       Locr.BalanceSum = vBalance[Locr.Code];
