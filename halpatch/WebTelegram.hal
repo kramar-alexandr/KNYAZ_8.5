@@ -706,3 +706,21 @@ begin
 return;
 end;
 
+global webpublic updating procedure WebelegramDeleteExp()
+begin
+  string 100 point,sum,comment;
+  
+  setcompany(9,false);
+  
+  point = webgetarg("point");
+  sum = webgetarg("sum");
+  comment = webgetarg("comment");
+  
+  logtext(0,"point: " & point);
+  logtext(0,"sum: " & sum);
+  logtext(0,"comment: " & comment);
+
+  
+  
+return;
+end;
