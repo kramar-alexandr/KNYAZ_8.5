@@ -1206,7 +1206,16 @@ record LocationVc Locr;
 logtext(0,"WebGetCashDocs start " & WebGetArg("foruser"));
 
 if(WebLoginStatus==3)then begin
-
+  
+  if(currentuser=="UNOST1")then begin
+    AddTextToArea("{",resarea);
+      AddTextToArea("\"balance\":\"" & "0" & "\",",resarea);
+      AddTextToArea("\"rashod\":\"" & "0" & "\"",resarea);
+		AddTextToArea("}",resarea);
+		ADDFILETOAREA("bigblankfile.txt",resarea,false);
+		weboutarea2(resarea);
+		goto lWebGetCashDocs;
+  end;
 	WebSetContentType("application/json; charset=UTF-8");	
 
 	SetCompany(9,false);
@@ -1260,6 +1269,8 @@ if(WebLoginStatus==3)then begin
 	end;
 	logtext(0,"WebGetCashDocs end");
 	
+	
+	lWebGetCashDocs:;
 return;
 end;
 
