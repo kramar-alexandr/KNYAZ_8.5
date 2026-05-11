@@ -861,6 +861,9 @@ if(WebLoginStatus==3)then begin
 		TrHs = true;
 		IVr.Location = location;
 		IVr.InvDate = currentdate;
+		if(currentuser=="UNOST1")then begin
+		  TrHs = false;
+		end;
 		while(loopkey("Location",IVr,2,TrHs))begin
 			testf = true;
 			if(IVr.Location!=location)then begin TrHs = false; testf = false; end;
