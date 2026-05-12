@@ -288,7 +288,7 @@ begin
 							end;
 						end;
 						bonusprice = blankval;
-						if(location!="UNOST1")then begin
+						if(location!="UNOST1" and location!="DVRZ")then begin
               PLr.PLCode = "BONUS";
               PLr.ArtCode = INr.Code;
               if(readfirstmain(PLr,2,true))then begin
@@ -638,7 +638,7 @@ begin
 				end;
 				matrowget(IVr,k,IVrw);
 				IVrw.Sum = evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Sum"));
-				if(IVr.Location!="UNOST1")then begin
+				if(IVr.Location!="UNOST1" and IVr.Location!="DVRZ")then begin
           PLr.PLCode = "BONUS";
           PLr.ArtCode = IVrw.ArtCode;
           if(readfirstmain(PLr,2,true))then begin
