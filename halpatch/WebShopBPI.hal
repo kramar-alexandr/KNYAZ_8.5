@@ -1070,9 +1070,18 @@ val dif;
         addParamToJSONArea("name",NormalizeStrToJson(USr.Name),resarea);
         addParamToJSONArea("phone",NormalizeStrToJson(USr.Phone1),resarea);
         addParamToJSONArea("passwd",NormalizeStrToJson(USr.PassForTel),resarea);
-        
         delLastComaInArea(resarea);
       AddTextToArea("},",resarea);
+      
+      if(nonblank(USr.Phone2))then begin
+        AddTextToArea("{",resarea);
+          addParamToJSONArea("login",NormalizeStrToJson(USr.Code),resarea);
+          addParamToJSONArea("name",NormalizeStrToJson(USr.Name),resarea);
+          addParamToJSONArea("phone",NormalizeStrToJson(USr.Phone2),resarea);
+          addParamToJSONArea("passwd",NormalizeStrToJson(USr.PassForTel),resarea);
+          delLastComaInArea(resarea);
+        AddTextToArea("},",resarea);
+      end;
     end;
   end;
   delLastComaInArea(resarea);
