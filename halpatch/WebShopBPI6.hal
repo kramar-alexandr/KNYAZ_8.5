@@ -565,6 +565,7 @@ record DepVc Depr;
 						addParamToJSONArea("address",NormalizeStrToJson(Depr.Addr0),resarea);
 						addParamToJSONArea("location",NormalizeStrToJson(USr.Location),resarea);
 						addParamToJSONArea("phone",NormalizeStrToJson(USr.Phone1),resarea);
+						addParamToJSONArea("phone2",NormalizeStrToJson(USr.Phone2),resarea);
 						delLastComaInArea(resarea);
 						AddTextToArea("},",resarea);
 					end;
