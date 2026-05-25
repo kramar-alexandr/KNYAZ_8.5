@@ -2,6 +2,7 @@ external procedure CLOutVc_PasteCurncyCode(var record CLOutVc);
 external procedure CLOutVc_PasteCorspCode(var record CLOutVc,Integer);
 external procedure CLOutVc_PasteCurncyCode(var record CLOutVc);
 external procedure CLInVc_PasteCurncyCode(var record CLInVc);
+external function string 60 AddObjectToObjectList(string,string);
 
 SetLangMode(LangRussian,"RUS",2);
 
@@ -130,7 +131,9 @@ json jsonobj;
   USr.Code = JSONGet(jsonobj,"code");
   if(readfirstmain(USr,1,true))then begin
     if(nonblank(JSONGet(jsonobj,"chatid")))then begin
-      USr.TelChatId = JSONGet(jsonobj,"chatid");
+      if(!setinset(JSONGet(jsonobj,"chatid"),USr.TelChatId))then begin
+        USr.TelChatId = AddObjectToObjectList(USr.TelChatId,JSONGet(jsonobj,"chatid"));
+      end;
       testf = true;
     end;
     if(nonblank(JSONGet(jsonobj,"phone")))then begin
