@@ -372,7 +372,6 @@ ADDFILETOAREA("bigblankfile.txt",resarea,false);
 weboutarea2(resarea);
 
 logtext(0,"WebGetCLCorsp end");
-writeareatofile(resarea,"hansa.log",1);
 return;
 end;
 
@@ -524,6 +523,8 @@ boolean TrHs,testf;
 		logtext(0,"WebRemoteIPAddress " & WebRemoteIPAddress);
 		USr.Code = webgetarg("foruser");
 		if (readfirstmain(USr,1,true)) then begin
+		  logtext(0,"USr.PersObjx " & USr.PersObjx);
+
 			AddTextToArea("[",resarea);
 			CLOutr.OKFlag = 0;
 			TrHs = true;
