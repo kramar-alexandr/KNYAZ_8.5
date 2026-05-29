@@ -372,7 +372,7 @@ ADDFILETOAREA("bigblankfile.txt",resarea,false);
 weboutarea2(resarea);
 
 logtext(0,"WebGetCLCorsp end");
-
+writeareatofile(resarea,"hansa.log",1);
 return;
 end;
 
