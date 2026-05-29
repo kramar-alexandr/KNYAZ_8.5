@@ -533,6 +533,10 @@ boolean TrHs,testf;
 				testf = true;
 				if (CLOutr.OKFlag!=0) then begin TrHs = false; testf = false; end;
 				if (!SetInSet(USr.PersObjx,CLOutr.Objects)) then begin testf = false; end;
+				
+				logtext(0,USr.PersObjx & " == " & CLOutr.Objects & " testf " & testf);
+
+				
 				if (testf) then begin
 					AddTextToArea("{",resarea);
 					addParamToJSONArea("SerNr",NormalizeStrToJson(CLOutr.SerNr),resarea);
