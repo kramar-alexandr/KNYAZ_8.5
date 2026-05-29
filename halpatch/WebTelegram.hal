@@ -47,7 +47,15 @@ begin
       if(mid(Str,i,1)==chr(34))then begin
         NormStr = NormStr & chr(92) & mid(Str,i,1);
       end else begin
-        NormStr = NormStr & mid(Str,i,1);
+        if(mid(Str,i,1)==chr(10))then begin
+          NormStr = NormStr & "";
+        end else begin
+          if(mid(Str,i,1)==chr(13))then begin
+            NormStr = NormStr & "";
+          end else begin
+            NormStr = NormStr & mid(Str,i,1);
+          end;
+        end;
       end;
 		end;
 	end;

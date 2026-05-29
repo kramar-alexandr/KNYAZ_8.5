@@ -16,6 +16,7 @@ remote procedure CLOutVc_PasteCorspCode(var record CLOutVc,Integer);
 external function roundmode SetRoundModeD(Integer);
 external function Boolean StockTakeVc_PasteArtCode(var record StockTakeVc,Integer,Integer,var string);
 external procedure ShowRedirectHtml(string,boolean);
+external function string 255 NormalizeStrToJson(string);
 
 
 global
@@ -44,33 +45,6 @@ begin
 
 return;
 end;
-
-global function string 255 NormalizeStrToJson (string Str)
-begin
-	integer strln,i;
-	string 255 NormStr;
-	
-
-	NormStr = "";
-	strln = len(Str);
-	for (i=0;i<strln;i=i+1)begin
-	  if(mid(Str,i,1)==chr(92))then begin
-	    NormStr = NormStr & "";
-	  end else begin
-      if(mid(Str,i,1)==chr(34))then begin
-        NormStr = NormStr & chr(92) & mid(Str,i,1);
-      end else begin
-        NormStr = NormStr & mid(Str,i,1);
-      end;
-		end;
-	end;
-	
-	
-	NormalizeStrToJson = NormStr;
-	
-	return;
-end;
-
 
 global webpublic procedure WebIsLogIn()
 begin
