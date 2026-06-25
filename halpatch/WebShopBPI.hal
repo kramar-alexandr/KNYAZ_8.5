@@ -180,6 +180,7 @@ begin
 	record ItemHistVc IHr;
 	area resarea;
 	record UserVc User;
+	record UserVc BonusUSr;
 	record StockMovVc StockMovr;
 	row StockMovVc StockMovrw;
 	vector integer moveQuant;
@@ -208,6 +209,8 @@ begin
 			location = User.Location;
 		end;
 	end;
+	BonusUSr.Code = location;
+	readfirstmain(BonusUSr,1,true);
 	logtext(0,"WebGetInventStat " & location);
 	if(nonblank(location))then begin
 		
@@ -264,8 +267,8 @@ begin
 						bonusprice = blankval;
 						if(location!="UNOST1"/* and location!="DVRZ"*/)then begin
               PLr.PLCode = "BONUS";
-              if(nonblank(User.BunusPLCode))then begin
-                PLr.PLCode = User.BunusPLCode;
+              if(nonblank(BonusUSr.BunusPLCode))then begin
+                PLr.PLCode = BonusUSr.BunusPLCode;
               end;
               PLr.ArtCode = INr.Code;
               if(readfirstmain(PLr,2,true))then begin
@@ -543,6 +546,7 @@ begin
 	area postdata;
 	json jsonobj;
 	record UserVc USr;
+	record UserVc BonusUSr;
 	record LocalMachineBlock LMb;
 	string 100 warning,errstr,prepstr,invdatewarn,transdatewarn,tstr;
 	string 100 OKFlag;
@@ -593,6 +597,8 @@ begin
 			
 			IVr.SalesMan = USr.Code;
 			IVr.Location = USr.Location;
+			BonusUSr.Code = IVr.Location;
+			readfirstmain(BonusUSr,1,true);
 			IVr.SalesGroup = USr.SalesGroup;
 			IVr.Sum4 = stringtoval(JSONGet(jsonobj,"Sum4"),m4val);
 			rwcnt = JSONCountChildren(jsonobj,"items");
@@ -618,8 +624,8 @@ begin
 				IVrw.Sum = evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Sum"));
 				if(IVr.Location!="UNOST1"/* and IVr.Location!="DVRZ"*/)then begin
           PLr.PLCode = "BONUS";
-          if(nonblank(USr.BunusPLCode))then begin
-            PLr.PLCode = USr.BunusPLCode;
+          if(nonblank(BonusUSr.BunusPLCode))then begin
+            PLr.PLCode = BonusUSr.BunusPLCode;
           end;
           PLr.ArtCode = IVrw.ArtCode;
           if(readfirstmain(PLr,2,true))then begin
