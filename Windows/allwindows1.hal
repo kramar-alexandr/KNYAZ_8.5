@@ -5242,3 +5242,80 @@ CheckBox(h4=-200,v=vm,0,"Готово к сборке",Check1);
   CheckBox(h4,v+vs,0,"Доставлено",Finished);
 
 */
+
+
+window UserLClass:3
+  wtag("language","UKR,RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  WindowBegin("Сотрудники",UserLClass,CGmlist,UserView);
+  SetWRect(64,80,764,298);
+  SpawnClass(USDClass);
+  Sizeable(-1,-1,0,0);
+  UseView(UserVc);
+  RecordList(4,17,-21,-39);
+  RlColKey(4,4,"Код",Code,false,Code);
+  RlColKey(81,81,"ФИО",Name,false,Name);
+  RlCol(-240,-240,"Бонус",BunusPLCode,false);
+  RlCol(-160,-160,"Цены",MinPLCode,false);
+  RlCol(-80,-80,"Закрыто",Closed,false); 
+  SearchField("Поиск");
+//  SpecialMenu("Open Mailbox",' ',0,"OpenMailboxUserLsm");
+  if (IsStandardProduct or IsSberbankProduct) then begin
+    if (GuiType==kGuiMetro) then begin
+      RowMenuBegin("");
+      RowMenuItem(0,"Изменит пароль",' ',' ',4300,"ChangePasswdUserLsm");  
+      RowMenuItem(1,"Активировать персональную рабочую панель",' ',' ',4300,"ActivatePersDesktopLsm");  
+      EndRowMenu;
+      if (HasPersons and UserRegisterAccessTest("UserVc",kAccessInsert)) then begin 
+      SpecMenuGroup("",kSpecMenuGroupTypeButtonsInBottomBarRight,0);  
+      SpecialMenuWithIcon("Создать пользователя",' ',4313,1,"CreateNewUser");  
+      end;
+    end else begin
+      SpecialMenu("Сменить пароль",' ',1,"ChangePasswdUserLsm");
+//      SpecialMenu("Activate Personal Desktop",' ',2,"ActivatePersDesktopLsm");
+      SpecMenuGroup("",kSpecMenuGroupTypeExtendedPlusMenu,0);         
+//      if (HasPersons and UserRegisterAccessTest("UserVc",kAccessInsert)) then begin
+//        SpecialMenu("User",' ',4,"CreateNewUser");
+//      end;
+      SpecialMenu("Письмо подтверждения",'e',5,"ValidateUserEmailAddressLsm");
+    end;
+  end else begin
+    if (BuildProductCode=="SmartApps") then begin
+      SpecialMenu("Сменить пароль",' ',1,"ChangePasswdUserLsm");
+      SpecialMenu("План",' ',2,"ToDoUserLsm");
+    end else begin
+      if (GuiType==kGuiMetro) then begin
+        RowMenuBegin("");
+        RowMenuItem(0,"Изменить пароль",' ',' ',4300,"ChangePasswdUserLsm");  
+        RowMenuItem(1,"Зоздать почтовый ящик",' ',' ',4300,"CreateMailboxUserLsm");  
+        if (HasCalendar) then begin
+          RowMenuItem(2,"Открыть клендарь",' ',' ',4300,"OpenCalendarUserLsm");  
+        end;
+        RowMenuItem(3,"Список задач",' ',' ',4300,"ToDoUserLsm");  
+        EndRowMenu;
+        SpecMenuGroup("",kSpecMenuGroupTypeButtonsInBottomBarRight,0);  
+        if (UserRegisterAccessTest("UserVc",kAccessInsert)) then begin 
+        SpecialMenuWithIcon("Создать пользователя",' ',4313,1,"CreateNewUser");  
+        end;
+      end else begin
+        SpecialMenu("Изменить пароль",' ',1,"ChangePasswdUserLsm");
+        SpecialMenu("Change Discount Password",' ',1,"ChangeDiscPasswdUserLsm");
+        SpecialMenu("Проверка эл. адреса",' ',6,"CheckUserEmailAddressLsm");
+        SpecialMenu("План",' ',2,"ToDoUserLsm");
+        if (HasCalendar) then begin
+          SpecialMenu("Открыть календарь",' ',2,"OpenCalendarUserLsm");
+        end;
+        if (IsCloudControllerClient) then begin // Cloud Controller Specific
+          SpecialMenu("Установите SSH публичный ключ",' ',3,"ASPAssignSSHKeyLsm");  
+        end;
+        SpecMenuGroup("",kSpecMenuGroupTypeExtendedPlusMenu,0);         
+        SpecialMenu("Создать почтовый ящик",' ',3,"CreateMailboxUserLsm");
+        if (UserRegisterAccessTest("UserVc",kAccessInsert)) then begin 
+        SpecialMenu("Создать нового сотрудника",' ',4,"CreateNewUser");
+        end;
+        SpecialMenu("Письмо валидации",'e',5,"ValidateUserEmailAddressLsm");
+      end;
+    end;
+  end;
+  EndWindow;
+end;
