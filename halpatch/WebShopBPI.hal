@@ -264,6 +264,9 @@ begin
 						bonusprice = blankval;
 						if(location!="UNOST1"/* and location!="DVRZ"*/)then begin
               PLr.PLCode = "BONUS";
+              if(nonblank(User.BunusPLCode))then begin
+                PLr.PLCode = User.BunusPLCode;
+              end;
               PLr.ArtCode = INr.Code;
               if(readfirstmain(PLr,2,true))then begin
                 bonusprice = PLr.ExVatPrice;
@@ -615,6 +618,9 @@ begin
 				IVrw.Sum = evaltoval(JSONGet(jsonobj,"items/[" & i & "]/Sum"));
 				if(IVr.Location!="UNOST1"/* and IVr.Location!="DVRZ"*/)then begin
           PLr.PLCode = "BONUS";
+          if(nonblank(USr.BunusPLCode))then begin
+            PLr.PLCode = USr.BunusPLCode;
+          end;
           PLr.ArtCode = IVrw.ArtCode;
           if(readfirstmain(PLr,2,true))then begin
             IVrw.BasePriceB2 = PLr.ExVatPrice * IVrw.Quant;
