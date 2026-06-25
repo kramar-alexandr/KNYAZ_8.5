@@ -4031,24 +4031,24 @@ begin
   vs = 20; h=150; h2 = 290; h3 = 350;
   EditField(h,v=6, 55,"Код",St_i,Code,false,0);
   EditField(h,v+=vs,300,"ФИО",Normal,Name,false,0);
-  EditField(h,v+=vs,300,"Логин (эл. почта)",Normal,LoginEmailAddr,false,0);
-  EditField(h,v+=vs,300,"Произношение",Normal,Pronunciation,false,VoiceSynonymSClass);  
+  //EditField(h,v+=vs,300,"Логин (эл. почта)",Normal,LoginEmailAddr,false,0);
+  //EditField(h,v+=vs,300,"Произношение",Normal,Pronunciation,false,VoiceSynonymSClass);  
   if (DisplayAdditionalFields) then begin
     EditField(h,v+=vs,100,"Expires",ViewOnly,ExpiryDate,true,0);
   end;
   tilenr = 1;
   TileButton(tilenr,"Доступ");  tilenr = tilenr + 1; // Not Found  
-  TileButton(tilenr,"Сер. номера");  tilenr = tilenr + 1; // Not Found  
+  //TileButton(tilenr,"Сер. номера");  tilenr = tilenr + 1; // Not Found  
   TileButton(tilenr,"Продажи");  tilenr = tilenr + 1; // Not Found  
-  TileButton(tilenr,"Счета");  tilenr = tilenr + 1; // Not Found  
+  //TileButton(tilenr,"Счета");  tilenr = tilenr + 1; // Not Found  
   if (StandardHansa==false) then begin
-    TileButton(tilenr,"Калькуляция проектов");  tilenr = tilenr + 1; // Not Found  
-    TileButton(tilenr,"Веб");  tilenr = tilenr + 1; // Not Found  
-    TileButton(tilenr,"Ввод времени");  tilenr = tilenr + 1; // Not Found  
+    //TileButton(tilenr,"Калькуляция проектов");  tilenr = tilenr + 1; // Not Found  
+    //TileButton(tilenr,"Веб");  tilenr = tilenr + 1; // Not Found  
+    //TileButton(tilenr,"Ввод времени");  tilenr = tilenr + 1; // Not Found  
   end;
   TileButton(tilenr,"Дата и числа");  tilenr = tilenr + 1; // Not Found  
   if (HasSIPServerConnection) then begin
-  TileButton(tilenr,"Asterisk");  tilenr = tilenr + 1; 
+  //TileButton(tilenr,"Asterisk");  tilenr = tilenr + 1; 
   end;
   TileButton(tilenr,"Telegram");  tilenr = tilenr + 1; 
   CheckBox(h2,6,0,"Закрыт",Closed);
@@ -4064,7 +4064,7 @@ begin
 
   EditField(h,v+=vs,100,"Нач. уровень доступа",Normal,StartLevel,false,SetSClass);
   if (HasSalesGroup) then begin
-    EditField(h,v+=vs,100,"Простая функция",Normal,OneFunction,false,OneFunctionSClass);
+    //EditField(h,v+=vs,100,"Простая функция",Normal,OneFunction,false,OneFunctionSClass);
     EditField(h,v+=vs,100,"Группа продаж",Normal,SalesGroup,false,SalesGroupSClass);
   end else begin
     if (BuildProductCode=="PAYYAPERP") then begin
@@ -4073,11 +4073,11 @@ begin
   end;
   EditFieldTL(h,v+=vs,100,"Language",M4StrSet,Normal,344,LangCode,false,StrSetSClass);
   if (StandardHansa==false) then begin
-    EditField(h,v+=vs,100,"Ограничение клиента",Normal,CanUseOS,false,SetSClass);
+    //EditField(h,v+=vs,100,"Ограничение клиента",Normal,CanUseOS,false,SetSClass);
   end;
-  EditField(h,v+=vs,100,"Кода контакта",Normal,CustCode,false,ContactCUSClass);
+  //EditField(h,v+=vs,100,"Кода контакта",Normal,CustCode,false,ContactCUSClass);
   if (IsCloudControllerClient) then begin // Cloud Controller Specific
-    EditField(h,v+=vs,100,"SSH Имя пользователя",Normal,SSHUsername,false,0);  
+    //EditField(h,v+=vs,100,"SSH Имя пользователя",Normal,SSHUsername,false,0);  
   end;
 //  EditField(h,v+=vs,100,"Discount Password",Normal,OldPassWord,false,0);
   if (StandardHansa==false) then begin
@@ -4105,7 +4105,7 @@ end;
   end;
 //  CheckBox(h2,v+=25,0,"Allow FTP Access",FTPLogin);
 //  CheckBox(h2,v+=vs,0,"Only Voice Login",OnlyVoiceLogin); // No code for this
-  Tile(tilenr,150,false,tilenr,LastOrdNr);  tilenr = tilenr + 1;
+  /*Tile(tilenr,150,false,tilenr,LastOrdNr);  tilenr = tilenr + 1;
   EditField(h,vm=(v=6),65,"№ счетов кл.",Normal,LastOrdNr,false,0);
   EditField(h,v+=vs,65,"№ отгрузки",Normal,LastShipNr,false,0);
   EditField(h,v+=vs,65,"№ сч/ф кл.",Normal,LastInvNr,false,0);
@@ -4122,14 +4122,15 @@ end;
   EditField(h3,v+=vs,65,"№ платежей пост.",Normal,LastOPNr,false,0);
   EditField(h3,v+=vs,65,"№ заказа пост.",Normal,LastPONr,false,0);
   EditField(h3,v+=vs,65,"№ расход. орд.",Normal,LastCLOutNr,false,0);
-  EditField(h3,v+=vs,120,"Лич. код",Normal,IDCode,false,0);
+  EditField(h3,v+=vs,120,"Лич. код",Normal,IDCode,false,0);*/
   Tile(tilenr,170,false,tilenr,Bonus);  tilenr = tilenr + 1;
-  EditField(h,vm=(v=6),65,"Премия",Normal,Bonus,true,0);
-  EditField(h3,v,120,"Ссылка",Normal,CurOurContact,false,0);
-    EditField(h3+260,v,-20,"Миним. прейскурант",Normal,MinPLCode,false,PLDefSClass);
+  //EditField(h,vm=(v=6),65,"Премия",Normal,Bonus,true,0);
+  EditField(h,vm=(v=6),90,"Бонус",Normal,BunusPLCode,false,PLDefSClass);
+  //EditField(h3,v,120,"Ссылка",Normal,CurOurContact,false,0);
+    EditField(h3+260,v,90,"Цена продаж",Normal,MinPLCode,false,PLDefSClass);
   EditField(h,v+=vs,65,"Склад",Normal,Location,false,LocationSClass);
-  EditField(h3,v,120,"Отдел",Normal,Department,false,DepSClass);
-  EditField(h3+260,v,-20,"POS ID",Normal,POSOperatorID,false,0);  
+  //EditField(h3,v,120,"Отдел",Normal,Department,false,DepSClass);
+  //EditField(h3+260,v,-20,"POS ID",Normal,POSOperatorID,false,0);  
     EditField(h,v+=vs,65,"Склад обслуживания",Normal,ServLocation,false,LocationSClass);
     EditField(h3,v,120,"Телефон 1",Normal,Phone1,false,0);
     EditField(h,v+=vs,65,"Склад резерв. заказа",Normal,ReservLocation,false,LocationSClass);
@@ -4138,10 +4139,10 @@ end;
     EditField(h,v+=vs,-20,"Доступ резерв. заказа",Normal,ReservLocAccess,false,ReservLocAccessSClass);
   end;
   EditField(h,v+=vs,-20,"Электронная почта",Normal,emailAddr,false,0);
-  EditField(h,v+=vs,-20,"Спецификация",Normal,Spec,false,0);
+  //EditField(h,v+=vs,-20,"Спецификация",Normal,Spec,false,0);
   EditField(h,v+=vs,-20,"Комментарий",Normal,Comment,false,0);
 //  EditField(h,v+=vs,65,"Expense A/C",Normal,CostAcc,false,AccSClass);
-  Tile(tilenr,50,false,tilenr,PersAcc);  tilenr = tilenr + 1;
+  /*Tile(tilenr,50,false,tilenr,PersAcc);  tilenr = tilenr + 1;
   EditField(h,vm=(v=6),65,"Счет",Normal,PersAcc,false,AccSClass);
   EditField(h3,v,120,"Объект",Normal,PersObjx,false,ObjSClass);
   EditField(h,v+=vs,65,"Код сорт.",Normal,SortCode,false,0);  
@@ -4171,9 +4172,10 @@ end;
     EditField(h,vm=v,80,"Руководитель",Normal,Supervisor,false,UserSClass);
     EditField(h,v+=20,80,"Дата создания",ViewOnly,DateCreated,false,0);
     CheckBox(h2,v=vm,0,"Требовать ввода времени",ForceTimeEntry);
-  end;
+  end;*/
   Tile(tilenr,210,false,tilenr,LeadingZDay);  tilenr = tilenr + 1;
-  h = 70; h1 = h + 210; h2 = h + 330;
+  v = 6;
+  h = 170; h1 = h + 210; h2 = h + 330;
 
   if (GuiType==kGuiCocoa) then begin
     CheckBox(h,v,0,"Использовать настройки пользователя",UserEditCtlf);
@@ -4199,7 +4201,7 @@ end;
   EditField(h2,v+=20,20,"Разделитель целых",Normal,DecimalPt,false,0);
   EditField(h2,v+=20,20,"Разделитель тысяч",Normal,ThousandSep,false,0);
   if (HasSIPServerConnection) then begin
-  Tile(tilenr,210,false,tilenr,AstPBXConnection);  tilenr = tilenr + 1;
+  /*Tile(tilenr,210,false,tilenr,AstPBXConnection);  tilenr = tilenr + 1;
   h=150;
     CheckBox(h-22,v=6,0,"Откл. от резервной очереди",ExcludeQueueFallbackf); 
     if (HasSoftphone) then begin
@@ -4208,7 +4210,7 @@ end;
     EditField(h,v+=vs,100,"Соединение PBX",Normal,AstPBXConnection,false,PBXConnectionSClass); 
   EditField(h,v+=vs,100,"Имя пользователя",Normal,AstUserName,false,0); 
   EditField(h,v+=vs,100,"Пароль",Normal,AstPassword,false,0); 
-  //EditField(h,v+=vs,100,"ID звонящего",Normal,AstCallerIdNumber,false,0); 
+  //EditField(h,v+=vs,100,"ID звонящего",Normal,AstCallerIdNumber,false,0); */
   end;
   
   Tile(tilenr,210,false,tilenr,TelLocation);  tilenr = tilenr + 1;// Edit ************************** BPI Ukraine - KramarAlexandr - 03, 31 05 2023 y. at 9:35:16 PM
