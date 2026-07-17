@@ -144,13 +144,39 @@ async function testAuthorized() {
   const sample = json.items[0];
   console.log("\n  Sample item:");
   console.log("  " + JSON.stringify(sample, null, 2).split("\n").join("\n  "));
+
+  return json.items;
+}
+
+async function testSingleArtcode(items) {
+  if (!items || items.length === 0) {
+    console.log("\n[3] Single artcode lookup — skipped (no items from full catalog)");
+    return;
+  }
+  const target = items[0];
+  console.log(`\n[3] Single artcode lookup -> ${ENDPOINT}?token=${TOKEN}&artcode=${target.Code}`);
+  const { json } = await fetchJson(`${ENDPOINT}?token=${TOKEN}&artcode=${encodeURIComponent(target.Code)}`);
+
+  ok("response has items array", Array.isArray(json.items), JSON.stringify(json).slice(0, 300));
+  if (!Array.isArray(json.items)) return;
+
+  ok("exactly one item returned", json.items.length === 1, `got ${json.items.length}`);
+  if (json.items.length === 1) {
+    ok(`returned item Code matches "${target.Code}"`, json.items[0].Code === target.Code, json.items[0].Code);
+    ok("returned item Name matches full-catalog Name", json.items[0].Name === target.Name);
+  }
+
+  console.log(`\n[4] Single artcode lookup with unknown code -> ${ENDPOINT}?token=${TOKEN}&artcode=NOSUCHCODE_ZZZ`);
+  const { json: json2 } = await fetchJson(`${ENDPOINT}?token=${TOKEN}&artcode=NOSUCHCODE_ZZZ`);
+  ok("unknown artcode returns empty items array", Array.isArray(json2.items) && json2.items.length === 0, JSON.stringify(json2));
 }
 
 (async () => {
   console.log(`Testing WebGetProductsCatalog at ${ENDPOINT}`);
   try {
     await testUnauthorized();
-    await testAuthorized();
+    const items = await testAuthorized();
+    await testSingleArtcode(items);
   } catch (e) {
     failures++;
     console.error(`\n\x1b[31mERROR:\x1b[0m ${e.message}`);

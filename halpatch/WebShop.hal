@@ -2,6 +2,7 @@ external function string 255 removenextnode(var string);
 external procedure addParamToJSONArea(string,string,var area);
 external procedure delLastComaInArea(var area);
 external function string 255 NormalizeStrToJson(string);
+external function roundmode SetRoundModeD(Integer);
 
 
 procedure ShowStandardWebShopItemList()
@@ -147,23 +148,102 @@ end;
 // Custom: Company 9 product catalog export API (token-authenticated)
 // Code, Name, all Item Texts (Math array), stock per location
 // (skips locations/items with no stock), Price from price list RRP3.
+// Optional web arg "artcode" restricts the export to a single item.
 // ==============================================================
 
-global webpublic procedure WebGetProductsCatalog()
+// Writes one item's JSON object (incl. trailing comma) into resarea,
+// but only if it has available (instock minus reserved) stock somewhere.
+procedure WriteProductCatalogItem(record INVc INr, var area resarea)
 begin
-  string 60 authtoken;
-  record INVc INr;
   record ItemStatusVc ISr;
   record PLVc PLr;
   row INVc INrw;
-  area resarea;
   boolean TrHs,hasstock;
   integer i,rwcnt;
-  val price;
+  val price,avail;
+
+  // does the item have available (instock minus reserved) stock in at least one location?
+  hasstock = false;
+  ISr.Code = INr.Code;
+  TrHs = true;
+  while(LoopKey("Code",ISr,1,TrHs))begin
+    if(ISr.Code!=INr.Code)then begin TrHs = false; end;
+    if(TrHs)then begin
+      avail = Round(ISr.Instock-ISr.RsrvQty,SetRoundModeD(1));
+      if(avail<0)then begin avail = 0; end;
+      if(avail!=0)then begin
+        hasstock = true;
+      end;
+    end;
+  end;
+  ResetLoop(ISr);
+
+  if(hasstock)then begin
+
+    price = blankval;
+    PLr.PLCode = "RRP3";
+    PLr.ArtCode = INr.Code;
+    if(readfirstmain(PLr,2,true))then begin
+      price = PLr.ExVatPrice;
+    end;
+
+    AddTextToArea("{",resarea);
+    addParamToJSONArea("Code",NormalizeStrToJson(INr.Code),resarea);
+    addParamToJSONArea("Name",NormalizeStrToJson(INr.Name),resarea);
+    addParamToJSONArea("Price",NormalizeStrToJson(price),resarea);
+
+    AddTextToArea("\"Descriptions\":[",resarea);
+    rwcnt = MatRowCnt(INr);
+    for(i=0;i<rwcnt;i=i+1)begin
+      MatRowGet(INr,i,INrw);
+      if(nonblank(INrw.Text))then begin
+        AddTextToArea("{",resarea);
+        addParamToJSONArea("LangCode",NormalizeStrToJson(INrw.LangCode),resarea);
+        addParamToJSONArea("Text",NormalizeStrToJson(INrw.Text),resarea);
+        delLastComaInArea(resarea);
+        AddTextToArea("},",resarea);
+      end;
+    end;
+    delLastComaInArea(resarea);
+    AddTextToArea("],",resarea);
+
+    AddTextToArea("\"Stock\":[",resarea);
+    ISr.Code = INr.Code;
+    TrHs = true;
+    while(LoopKey("Code",ISr,1,TrHs))begin
+      if(ISr.Code!=INr.Code)then begin TrHs = false; end;
+      if(TrHs)then begin
+        avail = Round(ISr.Instock-ISr.RsrvQty,SetRoundModeD(1));
+        if(avail<0)then begin avail = 0; end;
+        if(avail!=0)then begin
+          AddTextToArea("{",resarea);
+          addParamToJSONArea("Location",NormalizeStrToJson(ISr.Location),resarea);
+          addParamToJSONArea("Qty",NormalizeStrToJson(avail),resarea);
+          delLastComaInArea(resarea);
+          AddTextToArea("},",resarea);
+        end;
+      end;
+    end;
+    ResetLoop(ISr);
+    delLastComaInArea(resarea);
+    AddTextToArea("]",resarea);
+
+    AddTextToArea("},",resarea);
+  end;
+
+  return;
+end;
+
+global webpublic procedure WebGetProductsCatalog()
+begin
+  string 60 authtoken,artcode;
+  record INVc INr;
+  area resarea;
 
   logtext(0,"WebGetProductsCatalog start");
 
   authtoken = WebGetArg("token");
+  artcode = WebGetArg("artcode");
   WebSetContentType("application/json; charset=UTF-8");
 
   if(authtoken=="kn9-cat-7f3a91c2e6")then begin
@@ -173,68 +253,15 @@ begin
     AddTextToArea("{",resarea);
     AddTextToArea("\"items\":[",resarea);
 
-    while(loopmain(INr,1,true))begin
-      if(INr.Terminated==0)then begin
-
-        // does the item have stock in at least one location?
-        hasstock = false;
-        ISr.Code = INr.Code;
-        TrHs = true;
-        while(LoopKey("Code",ISr,1,TrHs))begin
-          if(ISr.Code!=INr.Code)then begin TrHs = false; end;
-          if(TrHs and ISr.Instock!=0)then begin
-            hasstock = true;
-          end;
-        end;
-        ResetLoop(ISr);
-
-        if(hasstock)then begin
-
-          price = blankval;
-          PLr.PLCode = "RRP3";
-          PLr.ArtCode = INr.Code;
-          if(readfirstmain(PLr,2,true))then begin
-            price = PLr.ExVatPrice;
-          end;
-
-          AddTextToArea("{",resarea);
-          addParamToJSONArea("Code",NormalizeStrToJson(INr.Code),resarea);
-          addParamToJSONArea("Name",NormalizeStrToJson(INr.Name),resarea);
-          addParamToJSONArea("Price",NormalizeStrToJson(price),resarea);
-
-          AddTextToArea("\"Descriptions\":[",resarea);
-          rwcnt = MatRowCnt(INr);
-          for(i=0;i<rwcnt;i=i+1)begin
-            MatRowGet(INr,i,INrw);
-            if(nonblank(INrw.Text))then begin
-              AddTextToArea("{",resarea);
-              addParamToJSONArea("LangCode",NormalizeStrToJson(INrw.LangCode),resarea);
-              addParamToJSONArea("Text",NormalizeStrToJson(INrw.Text),resarea);
-              delLastComaInArea(resarea);
-              AddTextToArea("},",resarea);
-            end;
-          end;
-          delLastComaInArea(resarea);
-          AddTextToArea("],",resarea);
-
-          AddTextToArea("\"Stock\":[",resarea);
-          ISr.Code = INr.Code;
-          TrHs = true;
-          while(LoopKey("Code",ISr,1,TrHs))begin
-            if(ISr.Code!=INr.Code)then begin TrHs = false; end;
-            if(TrHs and ISr.Instock!=0)then begin
-              AddTextToArea("{",resarea);
-              addParamToJSONArea("Location",NormalizeStrToJson(ISr.Location),resarea);
-              addParamToJSONArea("Qty",NormalizeStrToJson(ISr.Instock),resarea);
-              delLastComaInArea(resarea);
-              AddTextToArea("},",resarea);
-            end;
-          end;
-          ResetLoop(ISr);
-          delLastComaInArea(resarea);
-          AddTextToArea("]",resarea);
-
-          AddTextToArea("},",resarea);
+    if(nonblank(artcode))then begin
+      INr.Code = artcode;
+      if(readfirstmain(INr,1,true) and INr.Terminated==0)then begin
+        WriteProductCatalogItem(INr,resarea);
+      end;
+    end else begin
+      while(loopmain(INr,1,true))begin
+        if(INr.Terminated==0)then begin
+          WriteProductCatalogItem(INr,resarea);
         end;
       end;
     end;
