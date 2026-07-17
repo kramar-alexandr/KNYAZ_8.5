@@ -1,0 +1,257 @@
+external function string 255 removenextnode(var string);
+external procedure addParamToJSONArea(string,string,var area);
+external procedure delLastComaInArea(var area);
+external function string 255 NormalizeStrToJson(string);
+
+
+procedure ShowStandardWebShopItemList()
+begin
+  record INVc INr;
+
+  while (LoopMain(INr,1,true)) begin
+    if (INr.Terminated==0) then begin
+      WebOutBegin;
+      <?var(INr.Name)?><br>
+      EndWebOut;
+    end;
+  end;
+
+end;
+
+procedure StandardWebShopShoppingCart()
+begin
+  WebOutBegin;
+  <div class="main-cont">
+  SHOPPING CART
+  </div>
+  EndWebOut;
+end;
+
+procedure StandardWebShopContactUs()
+begin
+  WebOutBegin;
+  <div class="main-cont">
+  CONTACT US
+  </div>
+  EndWebOut;
+end;
+
+procedure StandardWebShopCatalogue()
+begin
+  WebOutBegin;
+  <div class="main-cont">
+  EndWebOut;
+
+  ShowStandardWebShopItemList;
+
+  WebOutBegin;
+  </div>
+  EndWebOut;
+end;
+
+procedure StandardWebShopIndexPage()
+begin
+
+  WebOutBegin;
+  <div class="main-cont">
+  INDEX
+  </div>
+  EndWebOut;
+
+end;
+
+procedure StandardWebShopNavbar()
+begin
+
+  WebOutBegin;
+  <div class="navbar">
+      <div class="nav text">HansaWorld</div>
+      <div class="nav button"><a href="/">Main</a></div>
+      <div class="nav button"><a href="catalogue">Catalogue</a></div>
+      <div class="nav button"><a href="contact">Contact Us</a></div>
+      <div class="nav button float-right"><a href="cart"><i class="fas fa-shopping-cart"></i></a></div>
+      <div class="nav button float-right"><a href="login">Login</a></div>
+      <div class="nav button float-right"><a href="register">Register</a></div>
+  </div>
+  EndWebOut;
+
+end;
+
+procedure StandardWebShopFooter()
+begin
+
+  WebOutBegin;
+  <div class="brand-cont">
+    <div>Powered by HansaWorld © 2020</div>
+  </div>
+  EndWebOut;
+
+end;
+
+procedure StandardWebShopHead()
+begin
+
+  //TODO add proper heades, will icon and title be set my customer?
+  //recommend using company name as title
+  WebOutBegin;
+  <head>
+  <link rel="icon" href="img/favicon.png" sizes="32x32">
+  <title>Standard Webshop Demo</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="/js/main.js"></script>
+  <link rel="stylesheet" type="text/css" href="/css/main.css">
+  <script src="/js/font-awesome-kit.js" crossorigin="anonymous"></script>
+  </head>
+  EndWebOut;
+
+end;
+
+global
+procedure StandardWebShopMain(record WebNGStructVc WSr,string mpath)
+begin
+  string 255 path,node,lang;
+
+  lang="en"; //TODO pull from db
+  path = mpath;
+  node = removenextnode(path);
+
+  WebOutBegin;
+  <html lang="<?var(lang)?>">
+  EndWebOut;
+
+  StandardWebShopHead;
+  StandardWebShopNavbar;
+
+  WebOutBegin;
+  <body>
+  EndWebOut;
+
+  switch (node) begin
+    case "contact":   StandardWebShopContactUs;
+    case "catalogue": StandardWebShopCatalogue;
+    case "cart":      StandardWebShopShoppingCart;
+    otherwise StandardWebShopIndexPage;
+  end;
+
+  StandardWebShopFooter;
+
+  WebOutBegin;
+  </body>
+  </html>
+  EndWebOut;
+
+end;
+
+
+// ==============================================================
+// Custom: Company 9 product catalog export API (token-authenticated)
+// Code, Name, all Item Texts (Math array), stock per location
+// (skips locations/items with no stock), Price from price list RRP3.
+// ==============================================================
+
+global webpublic procedure WebGetProductsCatalog()
+begin
+  string 60 authtoken;
+  record INVc INr;
+  record ItemStatusVc ISr;
+  record PLVc PLr;
+  row INVc INrw;
+  area resarea;
+  boolean TrHs,hasstock;
+  integer i,rwcnt;
+  val price;
+
+  logtext(0,"WebGetProductsCatalog start");
+
+  authtoken = WebGetArg("token");
+  WebSetContentType("application/json; charset=UTF-8");
+
+  if(authtoken=="kn9-cat-7f3a91c2e6")then begin
+
+    SetCompany(9,false);
+
+    AddTextToArea("{",resarea);
+    AddTextToArea("\"items\":[",resarea);
+
+    while(loopmain(INr,1,true))begin
+      if(INr.Terminated==0)then begin
+
+        // does the item have stock in at least one location?
+        hasstock = false;
+        ISr.Code = INr.Code;
+        TrHs = true;
+        while(LoopKey("Code",ISr,1,TrHs))begin
+          if(ISr.Code!=INr.Code)then begin TrHs = false; end;
+          if(TrHs and ISr.Instock!=0)then begin
+            hasstock = true;
+          end;
+        end;
+        ResetLoop(ISr);
+
+        if(hasstock)then begin
+
+          price = blankval;
+          PLr.PLCode = "RRP3";
+          PLr.ArtCode = INr.Code;
+          if(readfirstmain(PLr,2,true))then begin
+            price = PLr.ExVatPrice;
+          end;
+
+          AddTextToArea("{",resarea);
+          addParamToJSONArea("Code",NormalizeStrToJson(INr.Code),resarea);
+          addParamToJSONArea("Name",NormalizeStrToJson(INr.Name),resarea);
+          addParamToJSONArea("Price",NormalizeStrToJson(price),resarea);
+
+          AddTextToArea("\"Descriptions\":[",resarea);
+          rwcnt = MatRowCnt(INr);
+          for(i=0;i<rwcnt;i=i+1)begin
+            MatRowGet(INr,i,INrw);
+            if(nonblank(INrw.Text))then begin
+              AddTextToArea("{",resarea);
+              addParamToJSONArea("LangCode",NormalizeStrToJson(INrw.LangCode),resarea);
+              addParamToJSONArea("Text",NormalizeStrToJson(INrw.Text),resarea);
+              delLastComaInArea(resarea);
+              AddTextToArea("},",resarea);
+            end;
+          end;
+          delLastComaInArea(resarea);
+          AddTextToArea("],",resarea);
+
+          AddTextToArea("\"Stock\":[",resarea);
+          ISr.Code = INr.Code;
+          TrHs = true;
+          while(LoopKey("Code",ISr,1,TrHs))begin
+            if(ISr.Code!=INr.Code)then begin TrHs = false; end;
+            if(TrHs and ISr.Instock!=0)then begin
+              AddTextToArea("{",resarea);
+              addParamToJSONArea("Location",NormalizeStrToJson(ISr.Location),resarea);
+              addParamToJSONArea("Qty",NormalizeStrToJson(ISr.Instock),resarea);
+              delLastComaInArea(resarea);
+              AddTextToArea("},",resarea);
+            end;
+          end;
+          ResetLoop(ISr);
+          delLastComaInArea(resarea);
+          AddTextToArea("]",resarea);
+
+          AddTextToArea("},",resarea);
+        end;
+      end;
+    end;
+
+    delLastComaInArea(resarea);
+    AddTextToArea("]",resarea);
+    AddTextToArea("}",resarea);
+
+  end else begin
+    logtext(0,"WebGetProductsCatalog unauthorized token");
+    AddTextToArea("{\"result\":\"error\",\"error\":\"unauthorized\"}",resarea);
+  end;
+
+  ADDFILETOAREA("bigblankfile.txt",resarea,false);
+  weboutarea2(resarea);
+
+  logtext(0,"WebGetProductsCatalog end");
+
+return;
+end;
