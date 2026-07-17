@@ -282,3 +282,56 @@ begin
 
 return;
 end;
+
+
+// ==============================================================
+// Custom: Company 9 admins export API (token-authenticated)
+// All UserVc with TelIsBoss=1 (and not Closed): Code, Name, Phone1, Phone2.
+// ==============================================================
+
+global webpublic procedure WebGetAdmins()
+begin
+  string 60 authtoken;
+  record UserVc USr;
+  area resarea;
+
+  logtext(0,"WebGetAdmins start");
+
+  authtoken = WebGetArg("token");
+  WebSetContentType("application/json; charset=UTF-8");
+
+  if(authtoken=="kn9-cat-7f3a91c2e6")then begin
+
+    SetCompany(9,false);
+
+    AddTextToArea("{",resarea);
+    AddTextToArea("\"admins\":[",resarea);
+
+    while(loopmain(USr,1,true))begin
+      if(USr.TelIsBoss==1 and USr.Closed==0)then begin
+        AddTextToArea("{",resarea);
+        addParamToJSONArea("Code",NormalizeStrToJson(USr.Code),resarea);
+        addParamToJSONArea("Name",NormalizeStrToJson(USr.Name),resarea);
+        addParamToJSONArea("Phone1",NormalizeStrToJson(USr.Phone1),resarea);
+        addParamToJSONArea("Phone2",NormalizeStrToJson(USr.Phone2),resarea);
+        delLastComaInArea(resarea);
+        AddTextToArea("},",resarea);
+      end;
+    end;
+
+    delLastComaInArea(resarea);
+    AddTextToArea("]",resarea);
+    AddTextToArea("}",resarea);
+
+  end else begin
+    logtext(0,"WebGetAdmins unauthorized token");
+    AddTextToArea("{\"result\":\"error\",\"error\":\"unauthorized\"}",resarea);
+  end;
+
+  ADDFILETOAREA("bigblankfile.txt",resarea,false);
+  weboutarea2(resarea);
+
+  logtext(0,"WebGetAdmins end");
+
+return;
+end;
