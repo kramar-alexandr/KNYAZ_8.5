@@ -331,6 +331,8 @@ begin
   ADDFILETOAREA("bigblankfile.txt",resarea,false);
   weboutarea2(resarea);
 
+  writeareatofile(resarea,"hansa.log",1);
+
   logtext(0,"WebGetAdmins end");
 
 return;
