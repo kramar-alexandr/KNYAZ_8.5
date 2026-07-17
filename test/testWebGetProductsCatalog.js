@@ -76,6 +76,7 @@ async function testAuthorized() {
 
   const codeSeen = new Set();
   let dupCodes = 0;
+  let noPriceCount = 0;
   let badItems = [];
 
   for (const item of json.items) {
@@ -131,6 +132,7 @@ async function testAuthorized() {
     badItems.length === 0,
     badItems.length > 0 ? `${badItems.length} item(s) failed` : ""
   );
+  console.log(`  (info) items with no RRP3 price entry: ${noPriceCount}`);
 
   if (badItems.length > 0) {
     console.log("\n  First few failing items:");
