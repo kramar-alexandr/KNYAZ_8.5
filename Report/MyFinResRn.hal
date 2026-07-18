@@ -51,6 +51,10 @@ begin
         if(IVr.ToRateB1!=0)then begin
           rate = IVr.FrRate / IVr.ToRateB1;
         end;
+        if(rate==0)then begin
+          GetFullCurncyRate(IVr.CurncyCode,IVr.InvDate,fr,to1,to2,br1,br2);
+          rate = fr / to1;
+        end;
         vKeysLoc[IVr.Location] = true;
         
         rwcnt = matrowcnt(IVr);

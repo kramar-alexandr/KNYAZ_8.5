@@ -417,11 +417,15 @@ begin
             ERr.CurncyCode = "UAH";
             ERr.Date = addDay(CurrentDate,1);
             ERr.FrRate = stringtoval(JSONGet(jsonobj,"value"),m4val);
-            ERr.ToRate1 = 1;
-            recordStore (ERr,true);
+            if(ERr.FrRate!=0)then begin
+              ERr.ToRate1 = 1;
+              recordStore (ERr,true);
+            end;
           end else begin
-            ERr.FrRate = stringtoval(JSONGet(jsonobj,"value"),m4val);
-            recordStore (ERr,true);
+            if(ERr.FrRate!=0)then begin
+              ERr.FrRate = stringtoval(JSONGet(jsonobj,"value"),m4val);
+              recordStore (ERr,true);
+            end;
           end;
 		    end;
 		  end;
