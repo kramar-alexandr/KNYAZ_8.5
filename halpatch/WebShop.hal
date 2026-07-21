@@ -3,6 +3,7 @@ external procedure addParamToJSONArea(string,string,var area);
 external procedure delLastComaInArea(var area);
 external function string 255 NormalizeStrToJson(string);
 external function roundmode SetRoundModeD(Integer);
+external function Boolean ReadFirstItem(string,var record INVc,Boolean,Boolean);
 
 
 procedure ShowStandardWebShopItemList()
@@ -334,6 +335,152 @@ begin
   writeareatofile(resarea,"hansa.log",1);
 
   logtext(0,"WebGetAdmins end");
+
+return;
+end;
+
+
+// ==============================================================
+// Custom: Company 9 pending stock transfers export API (token-authenticated)
+// StockMovVc from location SORTIROVOC, OKFlag=0, PrintedFlag=0, last 3 days.
+// Walked backward (newest first) via the FrLocOK key (FrLocation+OKFlag+
+// TransDate+SerNr) so we can stop as soon as we pass the 3-day window,
+// instead of scanning the whole register.
+// ==============================================================
+
+// Writes one movement's JSON object (incl. trailing comma) into resarea.
+procedure WriteStockMovementJSON(record StockMovVc SMr, var area resarea)
+begin
+  record INVc INr;
+  row StockMovVc SMrw;
+  integer i,rwcnt;
+
+  AddTextToArea("{",resarea);
+  addParamToJSONArea("shipmentNo",NormalizeStrToJson(SMr.SerNr),resarea);
+  addParamToJSONArea("toLocation",NormalizeStrToJson(SMr.ToLocation),resarea);
+
+  AddTextToArea("\"items\":[",resarea);
+  rwcnt = MatRowCnt(SMr);
+  for(i=0;i<rwcnt;i=i+1)begin
+    MatRowGet(SMr,i,SMrw);
+    if(nonblank(SMrw.ArtCode))then begin
+      ReadFirstItem(SMrw.ArtCode,INr,true,false);
+      AddTextToArea("{",resarea);
+      addParamToJSONArea("erpId",NormalizeStrToJson(SMrw.ArtCode),resarea);
+      addParamToJSONArea("name",NormalizeStrToJson(INr.Name),resarea);
+      addParamToJSONArea("qty",NormalizeStrToJson(SMrw.Quant),resarea);
+      delLastComaInArea(resarea);
+      AddTextToArea("},",resarea);
+    end;
+  end;
+  delLastComaInArea(resarea);
+  AddTextToArea("]",resarea);
+
+  AddTextToArea("},",resarea);
+
+  return;
+end;
+
+global webpublic procedure WebGetStockMovements()
+begin
+  string 60 authtoken;
+  record StockMovVc SMr;
+  area resarea;
+  boolean TrHs;
+
+  logtext(0,"WebGetStockMovements start");
+
+  authtoken = WebGetArg("token");
+  WebSetContentType("application/json; charset=UTF-8");
+
+  if(authtoken=="kn9-cat-7f3a91c2e6")then begin
+
+    SetCompany(9,false);
+
+    AddTextToArea("{",resarea);
+    AddTextToArea("\"movements\":[",resarea);
+
+    SMr.FrLocation = "SORTIROVOC";
+    SMr.OKFlag = 0;
+    SMr.TransDate = CurrentDate;
+    TrHs = true;
+    while(LoopBackKey("FrLocOK",SMr,1,TrHs))begin
+      if(SMr.FrLocation!="SORTIROVOC")then begin TrHs = false; end;
+      if(SMr.OKFlag!=0)then begin TrHs = false; end;
+      if(TrHs)then begin
+        if(SMr.TransDate<addDay(CurrentDate,-3))then begin
+          TrHs = false;
+        end else begin
+          if(SMr.PrintedFlag==0)then begin
+            WriteStockMovementJSON(SMr,resarea);
+          end;
+        end;
+      end;
+    end;
+    ResetLoop(SMr);
+
+    delLastComaInArea(resarea);
+    AddTextToArea("]",resarea);
+    AddTextToArea("}",resarea);
+
+  end else begin
+    logtext(0,"WebGetStockMovements unauthorized token");
+    AddTextToArea("{\"result\":\"error\",\"error\":\"unauthorized\"}",resarea);
+  end;
+
+  ADDFILETOAREA("bigblankfile.txt",resarea,false);
+  weboutarea2(resarea);
+
+  logtext(0,"WebGetStockMovements end");
+
+return;
+end;
+
+
+// ==============================================================
+// Custom: mark a stock transfer as sent to the warehouse program.
+// Sets PrintedFlag=1 on the given StockMovVc by SerNr (web arg "sernr").
+// ==============================================================
+
+global webpublic updating procedure WebSetStockMovPrinted()
+begin
+  string 60 authtoken;
+  string 20 sernrstr;
+  record StockMovVc SMr,oldSMr;
+  area resarea;
+
+  logtext(0,"WebSetStockMovPrinted start");
+
+  authtoken = WebGetArg("token");
+  sernrstr = WebGetArg("sernr");
+  WebSetContentType("application/json; charset=UTF-8");
+
+  if(authtoken=="kn9-cat-7f3a91c2e6")then begin
+
+    SetCompany(9,false);
+
+    SMr.SerNr = stringtolongint(sernrstr);
+    if(SMr.SerNr>0 and readfirstmain(SMr,1,true))then begin
+      RecordCopy(oldSMr,SMr);
+      SMr.PrintedFlag = 1;
+      if(RecordUpdate(oldSMr,SMr,true)==0)then begin
+        AddTextToArea("{\"result\":\"ok\"}",resarea);
+      end else begin
+        AddTextToArea("{\"result\":\"error\",\"error\":\"update_failed\"}",resarea);
+      end;
+    end else begin
+      AddTextToArea("{\"result\":\"error\",\"error\":\"not_found\"}",resarea);
+    end;
+
+  end else begin
+    logtext(0,"WebSetStockMovPrinted unauthorized token");
+    AddTextToArea("{\"result\":\"error\",\"error\":\"unauthorized\"}",resarea);
+  end;
+
+  ADDFILETOAREA("bigblankfile.txt",resarea,false);
+  weboutarea2(resarea);
+
+  logtext(0,"WebSetStockMovPrinted end");
 
 return;
 end;

@@ -249,6 +249,91 @@ async function testAdmins() {
   await testAdminsAuthorized(endpoint);
 }
 
+// ================= WebGetStockMovements / WebSetStockMovPrinted =================
+
+async function testStockMovementsUnauthorized(endpoint) {
+  console.log(`\n[Movements 1] Unauthorized request (bad token) -> ${endpoint}?token=WRONG`);
+  const { json, status } = await fetchJson(`${endpoint}?token=WRONG`);
+  ok("HTTP 200 (HAL returns JSON body, not a real 401)", status === 200, `got ${status}`);
+  ok('body.result === "error"', json.result === "error", JSON.stringify(json));
+}
+
+async function testStockMovementsAuthorized(endpoint) {
+  console.log(`\n[Movements 2] Authorized request -> ${endpoint}?token=${TOKEN}`);
+  const { json, ms } = await fetchJson(`${endpoint}?token=${TOKEN}`);
+  console.log(`  (responded in ${ms}ms)`);
+
+  ok("response has movements array", Array.isArray(json.movements), JSON.stringify(json).slice(0, 300));
+  if (!Array.isArray(json.movements)) return [];
+
+  console.log(`  movements count: ${json.movements.length}`);
+
+  let badItems = [];
+  for (const mv of json.movements) {
+    const label = mv.shipmentNo || "<no shipmentNo>";
+    const problems = [];
+
+    if (!isNumericString(String(mv.shipmentNo ?? ""))) problems.push(`shipmentNo not numeric ("${mv.shipmentNo}")`);
+    if (typeof mv.toLocation !== "string" || mv.toLocation.trim() === "") problems.push("missing toLocation");
+
+    if (!Array.isArray(mv.items) || mv.items.length === 0) {
+      problems.push("items is missing/empty");
+    } else {
+      for (const it of mv.items) {
+        if (typeof it.erpId !== "string" || it.erpId.trim() === "") problems.push("item row with blank erpId");
+        if (typeof it.name !== "string" || it.name.trim() === "") problems.push(`item ${it.erpId} has blank name`);
+        if (!isNumericString(it.qty) || Number(it.qty) <= 0) problems.push(`item ${it.erpId} has non-positive qty ("${it.qty}")`);
+      }
+    }
+
+    if (problems.length > 0) badItems.push({ code: label, problems });
+  }
+
+  ok(
+    `all ${json.movements.length} movements pass field checks`,
+    badItems.length === 0,
+    badItems.length > 0 ? `${badItems.length} item(s) failed` : ""
+  );
+  if (badItems.length > 0) {
+    console.log("\n  Failing movements:");
+    for (const b of badItems) {
+      console.log(`   - ${b.code}: ${b.problems.join("; ")}`);
+    }
+  }
+
+  if (json.movements.length > 0) {
+    console.log("\n  Sample movement:");
+    console.log("  " + JSON.stringify(json.movements[0], null, 2).split("\n").join("\n  "));
+  } else {
+    console.log("  (no pending movements — verify there's an un-OK'd StockMovVc from SORTIROVOC in the last 3 days)");
+  }
+
+  return json.movements;
+}
+
+async function testSetStockMovPrinted(endpoint) {
+  console.log(`\n[Movements 3] Unauthorized update (bad token) -> ${endpoint}?token=WRONG&sernr=1`);
+  const { json: unauthJson } = await fetchJson(`${endpoint}?token=WRONG&sernr=1`);
+  ok('body.result === "error" (unauthorized)', unauthJson.result === "error", JSON.stringify(unauthJson));
+
+  // Deliberately NOT calling this with a real shipmentNo from the movements
+  // list above: it flips PrintedFlag=1 on a real pending transfer, which
+  // would make WebGetStockMovements silently drop it for the real warehouse
+  // integration. Only exercising the safe "not found" path here.
+  console.log(`\n[Movements 4] Authorized update, nonexistent sernr -> ${endpoint}?token=${TOKEN}&sernr=999999999`);
+  const { json } = await fetchJson(`${endpoint}?token=${TOKEN}&sernr=999999999`);
+  ok('body.result === "error" (not_found)', json.result === "error" && json.error === "not_found", JSON.stringify(json));
+}
+
+async function testStockMovements() {
+  const getEndpoint = `${BASE_URL}/WebGetStockMovements.hal`;
+  const setEndpoint = `${BASE_URL}/WebSetStockMovPrinted.hal`;
+  console.log(`\n===== WebGetStockMovements / WebSetStockMovPrinted (${BASE_URL}) =====`);
+  await testStockMovementsUnauthorized(getEndpoint);
+  await testStockMovementsAuthorized(getEndpoint);
+  await testSetStockMovPrinted(setEndpoint);
+}
+
 // ================= Runner =================
 
 (async () => {
@@ -256,6 +341,7 @@ async function testAdmins() {
   try {
     await testProductsCatalog();
     await testAdmins();
+    await testStockMovements();
   } catch (e) {
     failures++;
     console.error(`\n\x1b[31mERROR:\x1b[0m ${e.message}`);
