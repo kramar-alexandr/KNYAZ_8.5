@@ -342,7 +342,8 @@ end;
 
 // ==============================================================
 // Custom: Company 9 pending stock transfers export API (token-authenticated)
-// StockMovVc from location SORTIROVOC, OKFlag=0, PrintedFlag=0, last 3 days.
+// StockMovVc from location SORTIROVOC, OKFlag=1 (already confirmed — the
+// warehouse just picks/collects), PrintedFlag=0 (not yet sent), last 3 days.
 // Walked backward (newest first) via the FrLocOK key (FrLocation+OKFlag+
 // TransDate+SerNr) so we can stop as soon as we pass the 3-day window,
 // instead of scanning the whole register.
@@ -401,12 +402,12 @@ begin
     AddTextToArea("\"movements\":[",resarea);
 
     SMr.FrLocation = "SORTIROVOC";
-    SMr.OKFlag = 0;
+    SMr.OKFlag = 1;
     SMr.TransDate = CurrentDate;
     TrHs = true;
     while(LoopBackKey("FrLocOK",SMr,1,TrHs))begin
       if(SMr.FrLocation!="SORTIROVOC")then begin TrHs = false; end;
-      if(SMr.OKFlag!=0)then begin TrHs = false; end;
+      if(SMr.OKFlag!=1)then begin TrHs = false; end;
       if(TrHs)then begin
         if(SMr.TransDate<addDay(CurrentDate,-3))then begin
           TrHs = false;
