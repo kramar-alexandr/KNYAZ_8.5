@@ -405,7 +405,7 @@ begin
     SMr.OKFlag = 1;
     SMr.TransDate = CurrentDate;
     TrHs = true;
-    while(LoopBackKey("FrLocOK",SMr,1,TrHs))begin
+    while(LoopBackKey("FrLocOK",SMr,2,TrHs))begin
       if(SMr.FrLocation!="SORTIROVOC")then begin TrHs = false; end;
       if(SMr.OKFlag!=1)then begin TrHs = false; end;
       if(TrHs)then begin
