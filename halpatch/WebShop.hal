@@ -369,7 +369,7 @@ begin
       AddTextToArea("{",resarea);
       addParamToJSONArea("erpId",NormalizeStrToJson(SMrw.ArtCode),resarea);
       addParamToJSONArea("name",NormalizeStrToJson(INr.Name),resarea);
-      addParamToJSONArea("qty",NormalizeStrToJson(SMrw.Quant),resarea);
+      addParamToJSONArea("qty",NormalizeStrToJson(SMrw.OrdQuant),resarea);
       delLastComaInArea(resarea);
       AddTextToArea("},",resarea);
     end;
@@ -478,7 +478,7 @@ begin
     AddTextToArea("{\"result\":\"error\",\"error\":\"unauthorized\"}",resarea);
   end;
 
-  ADDFILETOAREA("bigblankfile.txt",resarea,false);
+  //ADDFILETOAREA("bigblankfile.txt",resarea,false);
   weboutarea2(resarea);
 
   logtext(0,"WebSetStockMovPrinted end");
