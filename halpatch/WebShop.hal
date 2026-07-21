@@ -364,7 +364,7 @@ begin
   rwcnt = MatRowCnt(SMr);
   for(i=0;i<rwcnt;i=i+1)begin
     MatRowGet(SMr,i,SMrw);
-    if(nonblank(SMrw.ArtCode))then begin
+    if(nonblank(SMrw.ArtCode) and SMrw.OrdQuant>0)then begin
       ReadFirstItem(SMrw.ArtCode,INr,true,false);
       AddTextToArea("{",resarea);
       addParamToJSONArea("erpId",NormalizeStrToJson(SMrw.ArtCode),resarea);
