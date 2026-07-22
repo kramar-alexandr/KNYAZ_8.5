@@ -334,6 +334,72 @@ async function testStockMovements() {
   await testSetStockMovPrinted(setEndpoint);
 }
 
+// ================= WebGetShipments =================
+
+async function testShipmentsUnauthorized(endpoint) {
+  console.log(`\n[Shipments 1] Unauthorized request (bad token) -> ${endpoint}?token=WRONG`);
+  const { json, status } = await fetchJson(`${endpoint}?token=WRONG`);
+  ok("HTTP 200 (HAL returns JSON body, not a real 401)", status === 200, `got ${status}`);
+  ok('body.result === "error"', json.result === "error", JSON.stringify(json));
+}
+
+async function testShipmentsAuthorized(endpoint) {
+  console.log(`\n[Shipments 2] Authorized request -> ${endpoint}?token=${TOKEN}`);
+  const { json, ms } = await fetchJson(`${endpoint}?token=${TOKEN}`);
+  console.log(`  (responded in ${ms}ms)`);
+
+  ok("response has shipments array", Array.isArray(json.shipments), JSON.stringify(json).slice(0, 300));
+  if (!Array.isArray(json.shipments)) return;
+
+  console.log(`  shipments count: ${json.shipments.length}`);
+
+  let badItems = [];
+  for (const sh of json.shipments) {
+    const label = sh.invoiceNo || "<no invoiceNo>";
+    const problems = [];
+
+    if (!isNumericString(String(sh.invoiceNo ?? ""))) problems.push(`invoiceNo not numeric ("${sh.invoiceNo}")`);
+    if (typeof sh.recipient !== "string") problems.push("recipient missing (should at least be empty string)");
+
+    if (!Array.isArray(sh.items)) {
+      problems.push("items is not an array");
+    } else {
+      for (const it of sh.items) {
+        if (typeof it.name !== "string" || it.name.trim() === "") problems.push("item row with blank name");
+        if (!isNumericString(it.qty)) problems.push(`item "${it.name}" has non-numeric qty ("${it.qty}")`);
+      }
+    }
+
+    if (problems.length > 0) badItems.push({ code: label, problems });
+  }
+
+  ok(
+    `all ${json.shipments.length} shipments pass field checks`,
+    badItems.length === 0,
+    badItems.length > 0 ? `${badItems.length} item(s) failed` : ""
+  );
+  if (badItems.length > 0) {
+    console.log("\n  Failing shipments:");
+    for (const b of badItems) {
+      console.log(`   - ${b.code}: ${b.problems.join("; ")}`);
+    }
+  }
+
+  if (json.shipments.length > 0) {
+    console.log("\n  Sample shipment:");
+    console.log("  " + JSON.stringify(json.shipments[0], null, 2).split("\n").join("\n  "));
+  } else {
+    console.log("  (no shipments — verify there's an OK'd IVVc with a real customer in the last 5 days)");
+  }
+}
+
+async function testShipments() {
+  const endpoint = `${BASE_URL}/WebGetShipments.hal`;
+  console.log(`\n===== WebGetShipments (${endpoint}) =====`);
+  await testShipmentsUnauthorized(endpoint);
+  await testShipmentsAuthorized(endpoint);
+}
+
 // ================= Runner =================
 
 (async () => {
@@ -342,6 +408,7 @@ async function testStockMovements() {
     await testProductsCatalog();
     await testAdmins();
     await testStockMovements();
+    await testShipments();
   } catch (e) {
     failures++;
     console.error(`\n\x1b[31mERROR:\x1b[0m ${e.message}`);
