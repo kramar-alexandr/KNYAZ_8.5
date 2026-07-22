@@ -578,3 +578,51 @@ begin
 
 return;
 end;
+
+
+// ==============================================================
+// Custom: mark an invoice as shipped (analogous to WebSetStockMovPrinted).
+// Sets ShipedFlag=1 on the given IVVc by SerNr (web arg "invoiceno").
+// ==============================================================
+
+global webpublic updating procedure WebSetInvoiceShipped()
+begin
+  string 60 authtoken;
+  string 20 invoicenostr;
+  record IVVc IVr,oldIVr;
+  area resarea;
+
+  logtext(0,"WebSetInvoiceShipped start");
+
+  authtoken = WebGetArg("token");
+  invoicenostr = WebGetArg("invoiceno");
+  WebSetContentType("application/json; charset=UTF-8");
+
+  if(authtoken=="kn9-cat-7f3a91c2e6")then begin
+
+    SetCompany(9,false);
+
+    IVr.SerNr = stringtolongint(invoicenostr);
+    if(IVr.SerNr>0 and readfirstmain(IVr,1,true))then begin
+      RecordCopy(oldIVr,IVr);
+      IVr.ShipedFlag = 1;
+      if(RecordUpdate(oldIVr,IVr,true)==0)then begin
+        AddTextToArea("{\"result\":\"ok\"}",resarea);
+      end else begin
+        AddTextToArea("{\"result\":\"error\",\"error\":\"update_failed\"}",resarea);
+      end;
+    end else begin
+      AddTextToArea("{\"result\":\"error\",\"error\":\"not_found\"}",resarea);
+    end;
+
+  end else begin
+    logtext(0,"WebSetInvoiceShipped unauthorized token");
+    AddTextToArea("{\"result\":\"error\",\"error\":\"unauthorized\"}",resarea);
+  end;
+
+  weboutarea2(resarea);
+
+  logtext(0,"WebSetInvoiceShipped end");
+
+return;
+end;

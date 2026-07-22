@@ -441,7 +441,7 @@ begin
 area resarea;
 json jsonobj;
 record UserVc USr;
-record CLOutVc CLOutr;
+record CLOutVc CLOutr,oldCLOutr;
 row CLOutVc CLOutrw;
 area postdata;
 
@@ -473,6 +473,9 @@ area postdata;
 			CLOutr.Objects = USr.PersObjx;
 			
 			if (Recordinsert(CLOutr,true))then begin
+				recordcopy(oldCLOutr,CLOutr);
+				CLOutr.OKFlag = 1;
+				recordupdate(oldCLOutr,CLOutr,true);
 				weboutstring("{\"result\":\"ok\",\"SerNr\":\"" & CLOutr.SerNr & "\"}");
 			end;
 		end else begin

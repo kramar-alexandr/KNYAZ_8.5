@@ -400,6 +400,23 @@ async function testShipments() {
   await testShipmentsAuthorized(endpoint);
 }
 
+async function testSetInvoiceShipped() {
+  const endpoint = `${BASE_URL}/WebSetInvoiceShipped.hal`;
+  console.log(`\n===== WebSetInvoiceShipped (${endpoint}) =====`);
+
+  console.log(`\n[SetShipped 1] Unauthorized update (bad token) -> ${endpoint}?token=WRONG&invoiceno=1`);
+  const { json: unauthJson } = await fetchJson(`${endpoint}?token=WRONG&invoiceno=1`);
+  ok('body.result === "error" (unauthorized)', unauthJson.result === "error", JSON.stringify(unauthJson));
+
+  // Deliberately NOT calling this with a real invoiceno from WebGetShipments:
+  // it flips ShipedFlag=1 on a real invoice, which would make it disappear
+  // from wherever "not yet shipped" is tracked downstream. Only exercising
+  // the safe "not found" path here.
+  console.log(`\n[SetShipped 2] Authorized update, nonexistent invoiceno -> ${endpoint}?token=${TOKEN}&invoiceno=999999999`);
+  const { json } = await fetchJson(`${endpoint}?token=${TOKEN}&invoiceno=999999999`);
+  ok('body.result === "error" (not_found)', json.result === "error" && json.error === "not_found", JSON.stringify(json));
+}
+
 // ================= Runner =================
 
 (async () => {
@@ -409,6 +426,7 @@ async function testShipments() {
     await testAdmins();
     await testStockMovements();
     await testShipments();
+    await testSetInvoiceShipped();
   } catch (e) {
     failures++;
     console.error(`\n\x1b[31mERROR:\x1b[0m ${e.message}`);
