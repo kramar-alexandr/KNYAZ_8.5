@@ -606,11 +606,8 @@ begin
     if(IVr.SerNr>0 and readfirstmain(IVr,1,true))then begin
       RecordCopy(oldIVr,IVr);
       IVr.ShipedFlag = 1;
-      if(RecordUpdate(oldIVr,IVr,true)==0)then begin
-        AddTextToArea("{\"result\":\"ok\"}",resarea);
-      end else begin
-        AddTextToArea("{\"result\":\"error\",\"error\":\"update_failed\"}",resarea);
-      end;
+      recordstore(IVr,true);
+      AddTextToArea("{\"result\":\"ok\"}",resarea);
     end else begin
       AddTextToArea("{\"result\":\"error\",\"error\":\"not_found\"}",resarea);
     end;
