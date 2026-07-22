@@ -595,7 +595,7 @@ begin
   logtext(0,"WebSetInvoiceShipped start");
 
   authtoken = WebGetArg("token");
-  invoicenostr = WebGetArg("invoiceno");
+  invoicenostr = WebGetArg("sernr");
   logtext(0,"WebSetInvoiceShipped invoiceno=" & invoicenostr);
   logtext(0,"WebSetInvoiceShipped token=" & authtoken);
   WebSetContentType("application/json; charset=UTF-8");
