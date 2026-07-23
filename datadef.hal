@@ -8,6 +8,7 @@ SourceFile("halcust\\RAction",0);
 SourceFile("halcust\\Web",0);
 SourceFile("halcust\\Tools",0);
 SourceFile("halcust\\Level3",3);
+Exec_File("halcust\\datadef_old.hal");
 
 
 begin

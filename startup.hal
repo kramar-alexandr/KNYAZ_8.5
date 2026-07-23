@@ -37,8 +37,10 @@ begin
   Import("Импорт остатков",ImportStockRemains2IClass,ImportStockRemains2In,modIN);
   
   Register("Платежи пост.","Платежи пост.",OPVc,modPL);
-  
+  Register("Архив сч/ф (IVOldVc)","Архив сч/ф (IVOldVc)",IVOldVc,modSL);
+
   Maintenance("Удалить все записи",CustomRegisterRemoveVClass,CustomRegisterRemoveMn,modDBMain);
+  Maintenance("Скопировать сч/ф в архив (IVOldVc)",CopyIVVcToIVOldVcVClass,CopyIVVcToIVOldVcMn,modSL);
   Maintenance("Удалить все записи по POS",POSRegistersRemoveVClass,POSRegistersRemoveMn,modDBMain);
   Maintenance("Удалить записи выборочно",RegistersRemoveOptionallyVClass,RegistersRemoveOptionallyMn,modDBMain);
   Maintenance("Прописать ед.измерения в товаре, где её нет",SetUnitTextInItemIfNeededVClass,SetUnitTextInItemIfNeededMn,modIN);

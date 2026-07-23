@@ -405,7 +405,41 @@ begin
   SetWRect(20,80,500,220);
   v = 10; vs = 20; h = 150;
   EditField(h,v+=vs,150,"Номер Поступлений (,)",Normal,f1,false,0);
-  
+
+  EndWindow;
+end;
+
+window CopyIVVcToIVOldVcVClass:1
+  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  real h,v,vm,vs;
+  WindowBegin("Скопировать сч/ф в архив (IVOldVc)",CopyIVVcToIVOldVcVClass,CGMnt,RcType);
+  SetWRect(20,80,500,180);
+  v = 10; vs = 20; h = 40;
+  PeriodField(h,v,"Период (по дате сч/ф, необязательно)");
+  StaticText(h,v+=32,"Скопировать записи IVVc за указанный период в IVOldVc.",false);
+
+  EndWindow;
+end;
+
+window IVOldLClass:1
+  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  WindowBegin("Архив сч/ф (IVOldVc)",IVOldLClass,CGmlist,-);
+  SetWRect(20,80,780,298);
+  Sizeable(-1,-1,0,0);
+  SpawnClass(IVOldDClass);
+  UseView(IVOldVc);
+  RecordList(4,17,-21,-39);
+  RlColKey(4,4,"№",SerNr,false,SerNr);
+  RlColKey(70,70,"OK",OKFlag,false,OKFlag);
+  RlColKey(110,110,"Дата сч/ф",InvDate,false,InvDate);
+  RlColKey(190,190,"Официальный №",OfficialSerNr,false,OfficialSerNr);
+  RlColKey(320,320,"Клиент",CustCode,false,CustCode);
+  RlCol(420,420,"Название",Addr0,false);
+  RlColKey(-100,-100,"Сумма",Sum4,true,Sum4);
+  RlCol(-30,-30,"Вал.",CurncyCode,true);
+  SearchField("Поиск");
   EndWindow;
 end;
 
