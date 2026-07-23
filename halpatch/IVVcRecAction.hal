@@ -1700,12 +1700,12 @@ LkInvoiceTypeCredit:;
         goto LkInvoiceTypeCash;
       case kInvoiceTypeCash:
 LkInvoiceTypeCash:;      
-        if (cashinv==false)  then begin
+        if (cashinv==false and nonblank(currentuser))  then begin
           RecordCheckError(1274,StringFromStringSet(3,"CashInvOK"),-1,"SerNr");      
           res = -1;
           goto L99;
         end;
-        if (cashinv==true) and (norminv==false) then begin
+        if (cashinv==true) and (norminv==false) and nonblank(currentuser) then begin
           RecordCheckError(1274,StringFromStringSet(3,"InvOK"),-1,"SerNr");      
           res = -1;
           goto L99;
