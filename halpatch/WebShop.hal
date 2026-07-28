@@ -309,14 +309,25 @@ begin
     AddTextToArea("\"admins\":[",resarea);
 
     while(loopmain(USr,1,true))begin
-      if(USr.TelIsBoss==1 and USr.Closed==0)then begin
-        AddTextToArea("{",resarea);
-        addParamToJSONArea("Code",NormalizeStrToJson(USr.Code),resarea);
-        addParamToJSONArea("Name",NormalizeStrToJson(USr.Name),resarea);
-        addParamToJSONArea("Phone1",NormalizeStrToJson(USr.Phone1),resarea);
-        addParamToJSONArea("Phone2",NormalizeStrToJson(USr.Phone2),resarea);
-        delLastComaInArea(resarea);
-        AddTextToArea("},",resarea);
+      if(USr.Closed==0 and (nonblank(USr.Phone1) or nonblank(USr.Phone2)))then begin
+        if(USr.TelIsBoss==1 or setinset("MAN",USr.AccessGroup) or setinset("SKLAD",USr.AccessGroup))then begin
+          AddTextToArea("{",resarea);
+          addParamToJSONArea("Code",NormalizeStrToJson(USr.Code),resarea);
+          addParamToJSONArea("Name",NormalizeStrToJson(USr.Name),resarea);
+          addParamToJSONArea("Phone1",NormalizeStrToJson(USr.Phone1),resarea);
+          addParamToJSONArea("Phone2",NormalizeStrToJson(USr.Phone2),resarea);
+          if(USr.TelIsBoss==1)then begin
+            addParamToJSONArea("isAdmin","true",resarea);
+          end;
+          if(setinset("MAN",USr.AccessGroup))then begin
+            addParamToJSONArea("isManager","true",resarea);
+          end;
+          if(setinset("SKLAD",USr.AccessGroup))then begin
+            addParamToJSONArea("isWarehouse","true",resarea);
+          end;
+          delLastComaInArea(resarea);
+          AddTextToArea("},",resarea);
+        end;
       end;
     end;
 
