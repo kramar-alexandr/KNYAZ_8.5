@@ -4,6 +4,7 @@ external procedure delLastComaInArea(var area);
 external function string 255 NormalizeStrToJson(string);
 external function roundmode SetRoundModeD(Integer);
 external function Boolean ReadFirstItem(string,var record INVc,Boolean,Boolean);
+external procedure ExtractObj(string,var Integer,var string);
 
 
 procedure ShowStandardWebShopItemList()
@@ -152,16 +153,46 @@ end;
 // Optional web arg "artcode" restricts the export to a single item.
 // ==============================================================
 
+// Returns the Name of the item's DispGroups entry whose CType matches wantedtype,
+// or "" if the item has no DispGroup of that type. INr.DispGroups is a multi-value
+// M4UStr field (list of DIVc.Code), unpacked here via ExtractObj.
+function string 60 GetItemDispGroupValue(string DispGroups, string wantedtype)
+begin
+  string 255 s;
+  string 60 grp,res;
+  integer pos;
+  record DIVc DIr;
+
+  res = "";
+  s = DispGroups;
+  pos = 0;
+  ExtractObj(s,pos,grp);
+  while(nonblank(grp))begin
+    DIr.Code = grp;
+    if(ReadFirstMain(DIr,1,true))then begin
+      if(DIr.CType==wantedtype)then begin
+        res = DIr.Name;
+      end;
+    end;
+    ExtractObj(s,pos,grp);
+  end;
+
+  GetItemDispGroupValue = res;
+  return;
+end;
+
 // Writes one item's JSON object (incl. trailing comma) into resarea,
 // but only if it has available (instock minus reserved) stock somewhere.
 procedure WriteProductCatalogItem(record INVc INr, var area resarea)
 begin
   record ItemStatusVc ISr;
   record PLVc PLr;
+  record ITVc ITr;
   row INVc INrw;
   boolean TrHs,hasstock;
   integer i,rwcnt;
   val price,avail;
+  string 60 propval;
 
   // does the item have available (instock minus reserved) stock in at least one location?
   hasstock = false;
@@ -192,6 +223,29 @@ begin
     addParamToJSONArea("Code",NormalizeStrToJson(INr.Code),resarea);
     addParamToJSONArea("Name",NormalizeStrToJson(INr.Name),resarea);
     addParamToJSONArea("Price",NormalizeStrToJson(price),resarea);
+
+    if(nonblank(INr.Group))then begin
+      ITr.Code = INr.Group;
+      if(ReadFirstMain(ITr,1,true))then begin
+        addParamToJSONArea("Group",NormalizeStrToJson(ITr.Comment),resarea);
+      end;
+    end;
+
+    AddTextToArea("\"Properties\":{",resarea);
+    propval = GetItemDispGroupValue(INr.DispGroups,"COLOR");
+    if(nonblank(propval))then begin addParamToJSONArea("COLOR",NormalizeStrToJson(propval),resarea); end;
+    propval = GetItemDispGroupValue(INr.DispGroups,"FILTER");
+    if(nonblank(propval))then begin addParamToJSONArea("FILTER",NormalizeStrToJson(propval),resarea); end;
+    propval = GetItemDispGroupValue(INr.DispGroups,"NICOTIN");
+    if(nonblank(propval))then begin addParamToJSONArea("NICOTIN",NormalizeStrToJson(propval),resarea); end;
+    propval = GetItemDispGroupValue(INr.DispGroups,"SIZE");
+    if(nonblank(propval))then begin addParamToJSONArea("SIZE",NormalizeStrToJson(propval),resarea); end;
+    propval = GetItemDispGroupValue(INr.DispGroups,"TAR");
+    if(nonblank(propval))then begin addParamToJSONArea("TAR",NormalizeStrToJson(propval),resarea); end;
+    propval = GetItemDispGroupValue(INr.DispGroups,"TASTE");
+    if(nonblank(propval))then begin addParamToJSONArea("TASTE",NormalizeStrToJson(propval),resarea); end;
+    delLastComaInArea(resarea);
+    AddTextToArea("},",resarea);
 
     AddTextToArea("\"Descriptions\":[",resarea);
     rwcnt = MatRowCnt(INr);
