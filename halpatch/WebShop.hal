@@ -221,7 +221,11 @@ begin
 
     AddTextToArea("{",resarea);
     addParamToJSONArea("Code",NormalizeStrToJson(INr.Code),resarea);
-    addParamToJSONArea("Name",NormalizeStrToJson(INr.Name),resarea);
+    if(nonblank(INr.FullName))then begin
+      addParamToJSONArea("Name",NormalizeStrToJson(INr.FullName),resarea);
+    end else begin
+      addParamToJSONArea("Name",NormalizeStrToJson(INr.Name),resarea);
+    end;
     addParamToJSONArea("Price",NormalizeStrToJson(price),resarea);
 
     if(nonblank(INr.Group))then begin

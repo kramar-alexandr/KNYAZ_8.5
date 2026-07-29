@@ -235,6 +235,9 @@ begin
         if(blank(spec))then begin
           spec = INr.Name;
         end;
+        if(nonblank(INr.FullName))then begin
+          spec = INr.FullName;
+        end;
         class = GetDispGroup(INr.DispGroups,"SIZE");
         //startformat(15);
           price = PLr.ExVatPrice;
@@ -381,6 +384,9 @@ begin
         spec = linetextget(INr,0);
         if(blank(spec))then begin
           spec = INr.Name;
+        end;
+        if(nonblank(INr.FullName))then begin
+          spec = INr.FullName;
         end;
         class = GetDispGroup(INr.DispGroups,"SIZE");
         if(blank(class))then begin
