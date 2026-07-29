@@ -5967,3 +5967,80 @@ begin
   end;
   EndWindow;
 end;
+
+
+window INLClass:3
+  wtag("language","UKR,RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  real pos;
+  Integer rn;
+
+  WindowBegin("Товары",INLClass,CGmlist,-);
+  SpawnClass(INDClass);
+  SetWRect(64,80,909,298);
+  Sizeable(-1,-1,0,0);
+  UseView(INVc);
+  RecordList(4,17,-21,-39);
+  RlColKey(4,4,    "Код",Code,false,Code);
+  pos = 111;
+  if (HasItemGroups) then begin
+    RlColKey(pos,pos,"Группа",Group,false,Group);
+    pos = 181;
+  end;
+  if (HasModIN) then begin
+    RlColKey(pos,pos,"Описание",Name,false,Name);
+  end else begin
+    RlColKey(pos,pos,"Наименование",Name,false,Name);
+  end;
+  RlCol(pos+300,pos+300,"Телег.",FullName,false);
+  if (IsEnterprise) then begin
+    //RlColKey(-150,-150,"Альт. код",AlternativeCode,false,AlternativeCode);
+  end;
+  if (HasModIN) then begin
+    RlCol(-70,-70,"Баз. цена",UPrice1,true);
+  end else begin
+    RlCol(-70,-70,"Цена",UPrice1,true);
+  end;
+  SearchField("Поиск");
+  if (GuiType==kGuiMetro) then begin
+    RowMenuBegin("");
+    if (HasModIN) then begin
+      if (UserCanReport("INInfoRn","",true)) then begin
+        RowMenuItem(0,"Отчёт Статус товара",'I','I',4315,"OKIVLsm");
+      end;
+      RowMenuItem(0,"Статус товара",' ',' ',4315,"ItemStatusINLsm");         
+    end;
+    if (HasModIN) then begin
+      if (UserCanReport("INrsRn","INrsRClass",true)) then begin
+        RowMenuItem(0,"История товара",'h','h',4315,"INHistINLsm");
+      end;
+    end;
+    if (HasJewelleryInterface) then begin
+      RowMenuItem(0,"Статус товара по Альтернативному коду",'I','I',4315,"ItemStatusAltINLsm");
+    end;
+    EndRowMenu;
+    SpecMenuGroup("",kSpecMenuGroupTypeButtonsInBottomBarRight,0);
+    SpecialMenuWithIcon("Поиск",'F',4313,2,"INSearchLsm");
+  end else begin
+    if (HasModIN) then begin
+      if (UserCanReport("INInfoRn","",true)) then begin
+        SpecialMenu("Справка по товару",'i',0,"INStatusINLsm");
+      end;
+      SpecialMenu("Статус товара",'I',1,"ItemStatusINLsm");         
+    end;
+    if (HasModIN) then begin
+      if (UserCanReport("INrsRn","INrsRClass",true)) then begin
+        SpecialMenu("История товара",'h',2,"INHistINLsm");
+      end;
+    end;
+    if (HasAmazonIntegration) then begin
+      SpecialMenu("Update Price on Amazon",' ',0,"AmazonMWSUpdatePriceAllItemsDsm");
+      SpecialMenu("Update Stock Levels on Amazon",' ',0,"AmazonMWSUpdateStockAllItemsDsm"); //!!TRANSLATE
+    end;
+    SpecialMenu("Найти",'F',2,"INSearchLsm");
+    if (HasJewelleryInterface) then begin
+      SpecialMenu("Статус товара по альт. коду",'I',5,"ItemStatusAltINLsm");
+    end;
+  end;
+  EndWindow;
+end;
