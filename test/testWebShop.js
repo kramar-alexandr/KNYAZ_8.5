@@ -517,8 +517,8 @@ async function testUpdateItemFullText() {
     items: [{ Code: "NOSUCHCODE_ZZZ", FullName: "x", Text: "y" }],
   });
   ok('body.result === "ok"', json.result === "ok", JSON.stringify(json));
-  ok("updated === 0", json.updated === 0, JSON.stringify(json));
-  ok("failed === 1", json.failed === 1, JSON.stringify(json));
+  ok("updated === 0", Number(json.updated) === 0, JSON.stringify(json));
+  ok("failed === 1", Number(json.failed) === 1, JSON.stringify(json));
 }
 
 // ================= Runner =================
