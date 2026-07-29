@@ -701,8 +701,9 @@ end;
 // WebGetItemNames        - Code, Name, FullName + item card text (Math2,
 //                          via LineTextCnt/LineTextGet) for every item.
 // WebUpdateItemFullText  - receives back the corrected FullName/Text per
-//                          item (JSON body: {"items":[{"Code","FullName","Text"}]})
-//                          and stores it.
+//                          item (JSON body: {"items":[{"Code","FullName","Text"}]}).
+//                          FullName is a full replace (send "" to clear it);
+//                          Text is only touched when nonblank.
 // ==============================================================
 
 global webpublic procedure WebGetItemNames()
@@ -796,9 +797,7 @@ begin
           RecordCopy(oldINr,INr);
 
           newfullname = JSONGet(jsonobj,"items/[" & i & "]/FullName");
-          if(nonblank(newfullname))then begin
-            INr.FullName = newfullname;
-          end;
+          INr.FullName = newfullname;
 
           newtext = JSONGet(jsonobj,"items/[" & i & "]/Text");
           if(nonblank(newtext))then begin
