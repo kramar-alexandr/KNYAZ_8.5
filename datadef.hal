@@ -197,6 +197,10 @@ RecordAddBegin(CLInVc,"CLInVc_Custom");
   KeySegment(SerNr);  
 EndRecordAdd;
 
+RecordAddBegin(INVc,"INVc_Custom");
+  RecordField(FullName,M4Str,255,0); //Edit***************************Sasha2,16:29 14.12.2016 
+EndRecordAdd;
+
 RecordAddBegin(CLOutVc,"CLOutVc_Custom");
   RecordField(TransDateText,M4Str,20,0); //Edit***************************Sasha2,16:29 14.12.2016
   RecordField(TotalText,M4Str,20,0); //Edit***************************Sasha2,16:29 14.12.2016

@@ -1232,6 +1232,7 @@ begin
   EditField(h,v, 150,"Код товара",Normal,Code,false,0);
   EditField(h2,v,80,"Группа",Normal,Group,false,ITSClass);
   EditField(h,v+=vs,-40,"Наименование",Normal,Name,false,0);
+  EditField(h,v+=vs,-40,"Полное название",Normal,FullName,false,0);
   if (HasJewelleryInterface) then begin
     EditField(h,v+=vs,150,"Альтернативный код",Normal,AlternativeCode,false,0);
   end;
