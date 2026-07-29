@@ -690,3 +690,145 @@ begin
 
 return;
 end;
+
+
+// ==============================================================
+// Custom: item name normalization/translation feed (token-authenticated)
+// WebGetItemNames        - Code, Name, FullName + item card text (Math2,
+//                          via LineTextCnt/LineTextGet) for every item.
+// WebUpdateItemFullText  - receives back the corrected FullName/Text per
+//                          item (JSON body: {"items":[{"Code","FullName","Text"}]})
+//                          and stores it.
+// ==============================================================
+
+global webpublic procedure WebGetItemNames()
+begin
+  string 60 authtoken;
+  record INVc INr;
+  area resarea;
+  integer j,txtcnt;
+  string 255 cardtext;
+
+  logtext(0,"WebGetItemNames start");
+
+  authtoken = WebGetArg("token");
+  WebSetContentType("application/json; charset=UTF-8");
+
+  if(authtoken=="kn9-cat-7f3a91c2e6")then begin
+
+    SetCompany(9,false);
+
+    AddTextToArea("{",resarea);
+    AddTextToArea("\"items\":[",resarea);
+
+    while(loopmain(INr,1,true))begin
+      if(INr.Terminated==0)then begin
+        AddTextToArea("{",resarea);
+        addParamToJSONArea("Code",NormalizeStrToJson(INr.Code),resarea);
+        addParamToJSONArea("Name",NormalizeStrToJson(INr.Name),resarea);
+        addParamToJSONArea("FullName",NormalizeStrToJson(INr.FullName),resarea);
+
+        cardtext = "";
+        txtcnt = LineTextCnt(INr);
+        for(j=0;j<txtcnt;j=j+1)begin
+          cardtext = cardtext & LineTextGet(INr,j);
+          if(j<txtcnt-1)then begin
+            cardtext = cardtext & "\\n";
+          end;
+        end;
+        addParamToJSONArea("Text",NormalizeStrToJson(cardtext),resarea);
+
+        delLastComaInArea(resarea);
+        AddTextToArea("},",resarea);
+      end;
+    end;
+
+    delLastComaInArea(resarea);
+    AddTextToArea("]",resarea);
+    AddTextToArea("}",resarea);
+
+  end else begin
+    logtext(0,"WebGetItemNames unauthorized token");
+    AddTextToArea("{\"result\":\"error\",\"error\":\"unauthorized\"}",resarea);
+  end;
+
+  ADDFILETOAREA("bigblankfile.txt",resarea,false);
+  weboutarea2(resarea);
+
+  logtext(0,"WebGetItemNames end");
+
+return;
+end;
+
+global webpublic updating procedure WebUpdateItemFullText()
+begin
+  string 60 authtoken;
+  area postdata,resarea;
+  json jsonobj;
+  integer i,rwcnt,updated,failed;
+  record INVc INr,oldINr;
+  string 60 code;
+  string 255 newfullname,newtext;
+
+  logtext(0,"WebUpdateItemFullText start");
+
+  authtoken = WebGetArg("token");
+  WebSetContentType("application/json; charset=UTF-8");
+
+  if(authtoken=="kn9-cat-7f3a91c2e6")then begin
+
+    SetCompany(9,false);
+    WebGetRawPostData(postdata);
+    jsonobj = ParseJSONArea(postdata);
+
+    updated = 0;
+    failed = 0;
+    rwcnt = JSONCountChildren(jsonobj,"items");
+    for(i=0;i<rwcnt;i=i+1)begin
+      code = JSONGet(jsonobj,"items/[" & i & "]/Code");
+      if(nonblank(code))then begin
+        INr.Code = code;
+        if(readfirstmain(INr,1,true))then begin
+          RecordCopy(oldINr,INr);
+
+          newfullname = JSONGet(jsonobj,"items/[" & i & "]/FullName");
+          if(nonblank(newfullname))then begin
+            INr.FullName = newfullname;
+          end;
+
+          newtext = JSONGet(jsonobj,"items/[" & i & "]/Text");
+          if(nonblank(newtext))then begin
+            SetTextField(INr,newtext);
+          end;
+
+          if(RecordUpdate(oldINr,INr,true)==0)then begin
+            updated = updated + 1;
+          end else begin
+            logtext(0,"WebUpdateItemFullText update failed for " & code);
+            failed = failed + 1;
+          end;
+        end else begin
+          logtext(0,"WebUpdateItemFullText code not found: " & code);
+          failed = failed + 1;
+        end;
+      end;
+    end;
+
+    AddTextToArea("{",resarea);
+    addParamToJSONArea("result","ok",resarea);
+    addParamToJSONArea("updated",updated,resarea);
+    addParamToJSONArea("failed",failed,resarea);
+    delLastComaInArea(resarea);
+    AddTextToArea("}",resarea);
+
+  end else begin
+    logtext(0,"WebUpdateItemFullText unauthorized token");
+    AddTextToArea("{\"result\":\"error\",\"error\":\"unauthorized\"}",resarea);
+  end;
+
+  weboutarea2(resarea);
+
+  logtext(0,"WebUpdateItemFullText end");
+
+return;
+end;

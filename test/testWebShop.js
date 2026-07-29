@@ -3,6 +3,8 @@
  * Tests for the custom endpoints in halpatch/WebShop.hal:
  *   - WebGetProductsCatalog  (company 9 item export, token auth, optional ?artcode=)
  *   - WebGetAdmins           (company 9 UserVc with TelIsBoss=1, token auth)
+ *   - WebGetItemNames        (Code/Name/FullName + item card text, token auth)
+ *   - WebUpdateItemFullText  (writes back corrected FullName/Text per item)
  *
  * Usage:
  *   node testWebShop.js
@@ -41,6 +43,31 @@ async function fetchJson(url) {
   // (ADDFILETOAREA) before weboutarea2, so the real JSON is followed by
   // trailing filler. The payload never contains a bare '{' or '}' outside
   // the JSON, so slicing to the outermost braces strips the padding.
+  const start = text.indexOf("{");
+  const end = text.lastIndexOf("}");
+  const candidate = start !== -1 && end !== -1 && end > start ? text.slice(start, end + 1) : text;
+
+  let json;
+  try {
+    json = JSON.parse(candidate);
+  } catch (e) {
+    throw new Error(
+      `Response was not valid JSON (status ${res.status}, ${ms}ms).\n` +
+        `First 500 chars:\n${text.slice(0, 500)}`
+    );
+  }
+  return { status: res.status, ms, json, raw: text };
+}
+
+async function postJson(url, body) {
+  const started = Date.now();
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  const ms = Date.now() - started;
+  const text = await res.text();
   const start = text.indexOf("{");
   const end = text.lastIndexOf("}");
   const candidate = start !== -1 && end !== -1 && end > start ? text.slice(start, end + 1) : text;
@@ -417,6 +444,83 @@ async function testSetInvoiceShipped() {
   ok('body.result === "error" (not_found)', json.result === "error" && json.error === "not_found", JSON.stringify(json));
 }
 
+// ================= WebGetItemNames / WebUpdateItemFullText =================
+
+async function testItemNamesUnauthorized(endpoint) {
+  console.log(`\n[ItemNames 1] Unauthorized request (bad token) -> ${endpoint}?token=WRONG`);
+  const { json, status } = await fetchJson(`${endpoint}?token=WRONG`);
+  ok("HTTP 200 (HAL returns JSON body, not a real 401)", status === 200, `got ${status}`);
+  ok('body.result === "error"', json.result === "error", JSON.stringify(json));
+}
+
+async function testItemNamesAuthorized(endpoint) {
+  console.log(`\n[ItemNames 2] Authorized request -> ${endpoint}?token=${TOKEN}`);
+  const { json, ms } = await fetchJson(`${endpoint}?token=${TOKEN}`);
+  console.log(`  (responded in ${ms}ms)`);
+
+  ok("response has items array", Array.isArray(json.items), JSON.stringify(json).slice(0, 300));
+  if (!Array.isArray(json.items)) return [];
+
+  console.log(`  items count: ${json.items.length}`);
+  ok("item list is not empty", json.items.length > 0);
+
+  let badItems = [];
+  for (const item of json.items) {
+    const label = item.Code || "<no code>";
+    const problems = [];
+    if (typeof item.Code !== "string" || item.Code.trim() === "") problems.push("missing Code");
+    if (typeof item.Name !== "string" || item.Name.trim() === "") problems.push("missing Name");
+    if (typeof item.FullName !== "string") problems.push("FullName missing (should at least be empty string)");
+    if (typeof item.Text !== "string") problems.push("Text missing (should at least be empty string)");
+    if (problems.length > 0) badItems.push({ code: label, problems });
+  }
+
+  ok(
+    `all ${json.items.length} items pass field checks`,
+    badItems.length === 0,
+    badItems.length > 0 ? `${badItems.length} item(s) failed` : ""
+  );
+  if (badItems.length > 0) {
+    console.log("\n  First few failing items:");
+    for (const b of badItems.slice(0, 10)) {
+      console.log(`   - ${b.code}: ${b.problems.join("; ")}`);
+    }
+  }
+
+  console.log("\n  Sample item:");
+  console.log("  " + JSON.stringify(json.items[0], null, 2).split("\n").join("\n  "));
+
+  return json.items;
+}
+
+async function testItemNames() {
+  const endpoint = `${BASE_URL}/WebGetItemNames.hal`;
+  console.log(`\n===== WebGetItemNames (${endpoint}) =====`);
+  await testItemNamesUnauthorized(endpoint);
+  await testItemNamesAuthorized(endpoint);
+}
+
+async function testUpdateItemFullText() {
+  const endpoint = `${BASE_URL}/WebUpdateItemFullText.hal`;
+  console.log(`\n===== WebUpdateItemFullText (${endpoint}) =====`);
+
+  console.log(`\n[UpdateFullText 1] Unauthorized update (bad token) -> ${endpoint}?token=WRONG`);
+  const { json: unauthJson } = await postJson(`${endpoint}?token=WRONG`, {
+    items: [{ Code: "NOSUCHCODE_ZZZ", FullName: "x" }],
+  });
+  ok('body.result === "error" (unauthorized)', unauthJson.result === "error", JSON.stringify(unauthJson));
+
+  // Deliberately using an unknown Code only: this exercises the "not found"
+  // counting path without mutating any real item's Name/FullName/Text.
+  console.log(`\n[UpdateFullText 2] Authorized update, nonexistent Code -> ${endpoint}?token=${TOKEN}`);
+  const { json } = await postJson(`${endpoint}?token=${TOKEN}`, {
+    items: [{ Code: "NOSUCHCODE_ZZZ", FullName: "x", Text: "y" }],
+  });
+  ok('body.result === "ok"', json.result === "ok", JSON.stringify(json));
+  ok("updated === 0", json.updated === 0, JSON.stringify(json));
+  ok("failed === 1", json.failed === 1, JSON.stringify(json));
+}
+
 // ================= Runner =================
 
 (async () => {
@@ -427,6 +531,8 @@ async function testSetInvoiceShipped() {
     await testStockMovements();
     await testShipments();
     await testSetInvoiceShipped();
+    await testItemNames();
+    await testUpdateItemFullText();
   } catch (e) {
     failures++;
     console.error(`\n\x1b[31mERROR:\x1b[0m ${e.message}`);
