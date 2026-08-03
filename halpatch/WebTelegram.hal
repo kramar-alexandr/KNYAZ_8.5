@@ -464,6 +464,7 @@ end;
     "name":"Client Name",
     "phone":"+380501234567",
     "orderid":"12345",
+    "login":"SIDOR",
     "items":[
       {"code":"ART001","qty":"2","price":"150.00","discount":"10.00"},
       ...
@@ -472,6 +473,8 @@ end;
   discount is a per-row amount (not a percent) already subtracted from qty*price.
   orderid is the shop admin's order ID - stored in CustOrdNr so re-posting the same
   order is idempotent (returns the existing SerNr instead of duplicating).
+  login is the code of the seller (UserVc) who confirmed the order in Telegram -
+  stored in SalesMan ("Продавец"). If missing/unknown, SalesMan is left blank.
   Customer is always NONAME, Location is always SORTIROVOC - client name/phone are just stored on the order header.
   PayDeal is always "PO" (payment terms are mandatory on this order type).
 */
@@ -480,10 +483,11 @@ begin
   record ORVc ORr,OR2r;
   row ORVc ORrw;
   record INVc INr;
+  record UserVc USr;
   area postdata;
   json jsonobj;
   integer i,rwcnt,rownr;
-  string 255 custname,custphone,custordnr,artcode,inwarning,warning;
+  string 255 custname,custphone,custordnr,sellerlogin,artcode,inwarning,warning;
   val qty,price,discount,rowsum;
   boolean chsum,savedf;
 
@@ -498,6 +502,7 @@ begin
   custname = JSONGet(jsonobj,"name");
   custphone = JSONGet(jsonobj,"phone");
   custordnr = JSONGet(jsonobj,"orderid"); // order ID from the shop admin - kept for sync/dedup
+  sellerlogin = JSONGet(jsonobj,"login"); // seller who confirmed the order in Telegram
 
   if(nonblank(custordnr)) then begin
     OR2r.CustOrdNr = custordnr;
@@ -515,6 +520,15 @@ begin
   ORr.Phone = custphone;
   ORr.CustOrdNr = custordnr;
   ORr.PayDeal = "PO";
+
+  if(nonblank(sellerlogin)) then begin
+    USr.Code = sellerlogin;
+    if(ReadFirstMain(USr,1,true) and USr.Closed==0) then begin
+      ORr.SalesMan = USr.Code;
+    end else begin
+      logtext(0,"WebCreateOrderTelegram: unknown seller login " & sellerlogin);
+    end;
+  end;
 
   rwcnt = JSONCountChildren(jsonobj,"items");
   for(i=0;i<rwcnt;i=i+1) begin
