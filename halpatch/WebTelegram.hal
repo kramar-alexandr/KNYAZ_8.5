@@ -562,6 +562,52 @@ return;
 end;
 
 
+/*
+  Closes a sales order (ORVc) created via WebCreateOrderTelegram.
+  Expected POST JSON:
+  {
+    "SerNr":"93"
+  }
+  SerNr is the order number returned by WebCreateOrderTelegram.
+  Sets Closed=1 via RecordUpdate so the standard save logic releases the reservation.
+  Already-closed orders are treated as success (idempotent).
+*/
+global webpublic updating procedure WebCloseOrderTelegram()
+begin
+  record ORVc ORr,OldORr;
+  area postdata;
+  json jsonobj;
+  boolean savedf;
+
+  logtext(0,"WebCloseOrderTelegram start");
+  WebSetContentType("application/json; charset=UTF-8");
+  SetCompany(9,false);
+
+  WebGetRawPostData(postdata);
+  jsonobj = ParseJSONArea(postdata);
+
+  ORr.SerNr = stringtolongint(JSONGet(jsonobj,"SerNr"));
+  if(ReadFirstMain(ORr,1,true)) then begin
+    if(ORr.Closed==0) then begin
+      RecordCopy(OldORr,ORr);
+      ORr.Closed = 1;
+      savedf = RecordUpdate(OldORr,ORr,true);
+    end else begin
+      savedf = true;
+    end;
+  end;
+
+  if(savedf) then begin
+    weboutstring("{\"result\":\"ok\",\"SerNr\":\"" & ORr.SerNr & "\"}");
+  end else begin
+    weboutstring("{\"result\":\"error\"}");
+  end;
+
+  logtext(0,"WebCloseOrderTelegram end");
+return;
+end;
+
+
 //http://65.109.135.110:1080/WebPostCreatedIncasationTelegram.hal
 
 
