@@ -578,8 +578,6 @@ begin
   area postdata;
   json jsonobj;
   boolean savedf,foundf;
-  string 40 rawsernr;
-  longint parsedsernr;
 
   logtext(0,"WebCloseOrderTelegram start");
   WebSetContentType("application/json; charset=UTF-8");
@@ -588,22 +586,16 @@ begin
   WebGetRawPostData(postdata);
   jsonobj = ParseJSONArea(postdata);
 
-  rawsernr = JSONGet(jsonobj,"SerNr");
-  parsedsernr = stringtolongint(rawsernr);
-  logtext(0,"WebCloseOrderTelegram: raw='" & rawsernr & "' parsed=" & parsedsernr);
-  ORr.SerNr = parsedsernr;
+  ORr.SerNr = stringtolongint(JSONGet(jsonobj,"SerNr"));
   foundf = ReadFirstMain(ORr,1,true);
   if(foundf) then begin
     if(ORr.Closed==0) then begin
       RecordCopy(OldORr,ORr);
       ORr.Closed = 1;
-      savedf = RecordUpdate(OldORr,ORr,true);
-      logtext(0,"WebCloseOrderTelegram: RecordUpdate result " & savedf & " for " & ORr.SerNr);
+      savedf = (RecordUpdate(OldORr,ORr,true)==0);
     end else begin
       savedf = true;
     end;
-  end else begin
-    logtext(0,"WebCloseOrderTelegram: order not found " & parsedsernr);
   end;
 
   if(savedf) then begin
@@ -612,7 +604,7 @@ begin
     if(foundf) then begin
       weboutstring("{\"result\":\"error\",\"reason\":\"update_failed\",\"SerNr\":\"" & ORr.SerNr & "\"}");
     end else begin
-      weboutstring("{\"result\":\"error\",\"reason\":\"not_found\",\"raw\":\"" & rawsernr & "\",\"parsed\":\"" & parsedsernr & "\"}");
+      weboutstring("{\"result\":\"error\",\"reason\":\"not_found\"}");
     end;
   end;
 
