@@ -13,6 +13,21 @@ begin
       end;
     end;
   end;
-  
+
+return;
+end;
+
+global
+updating procedure GitPullHalcustMn(record RcVc RepSpec)
+begin
+  string 255 script;
+
+  logtext(0,"GitPullHalcustMn");
+
+  script = "bash -c '( ";
+  script = script & "cd /usr/local/bin/KNYAZ85/halcust; git pull >> /usr/local/bin/KNYAZ85/hansa.log 2>>/usr/local/bin/KNYAZ85/hansa.log";
+  script = script & " )' ";
+  RunShellScript(script);
+
 return;
 end;

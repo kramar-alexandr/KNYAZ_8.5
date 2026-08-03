@@ -183,6 +183,14 @@ begin
   EndWindow;
 end;
 
+window GitPullHalcustVClass:1
+  wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  WindowBegin("Git pull halcust",GitPullHalcustVClass,CGMnt,RcType);
+  SetWRect(20,80,350,150);
+  EndWindow;
+end;
+
 window ProceedMakingFiscalCheckTClass:1
   wtag("language","RUS"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer,iPad")  
 begin
