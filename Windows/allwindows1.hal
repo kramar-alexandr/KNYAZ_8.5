@@ -614,6 +614,7 @@ begin
   end;
   CheckBox(h4,v=6,0,"Закрыт",Closed);
   CheckBox(h4,v+=16,0,"Зарезервир.",Reserved);
+  EditField(h4,v+=20,75,"Телефон",Normal,Phone,false,0);
   EnterSkip(Math);
   Tile(2,220,true,"2",Math);
 //  CheckBox(20,-20,0,"OK",OKFlag);
@@ -5075,6 +5076,7 @@ begin
   EditField(h1,v+=vs,-20,"Коммент",Normal,Comment,false,0);
   EditField(h3,v=vm,80,"Продавец",Normal,SalesMan,false,UserSClass);
   EditField(h3,v+=vs,80,"Вид счёта",Normal,OrderClass,false,OrderClassSClass);
+  EditField(h4,v=vm,75,"Телефон",Normal,Phone,false,0);
 
   EnterSkip(Math);
   Tile(2,220,true,"2",Math);
