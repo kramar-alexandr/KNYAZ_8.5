@@ -315,7 +315,7 @@ begin
     startformat(15);
       outstring(0,0,"❗️❗️❗️МІНІМАЛЬНЕ ЗАМОВЛЕННЯ   3 Блока❗️❗️❗️",false);
     EndFormat;
-    startformat(15);
+    /*startformat(15);
       outstring(0,0,"Для замовлення звяжіться з менеджером",false);
     endformat;
     startformat(15);
@@ -326,12 +326,12 @@ begin
     startformat(15);
     endformat;
 
-    startformat(15);
+    /*startformat(15);
       outstring(0,0,"😉Ми з задоволенням відповімо Вам на будь-які питання стосовно замовлення",false);
     endformat;
     startformat(15);
       outstring(0,0,"Дзвоніть 📞, або напишіть менеджеру⬇️",false);
-    endformat;
+    endformat;*/
 
 
   endjob;

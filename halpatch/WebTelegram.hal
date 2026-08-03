@@ -3,6 +3,10 @@ external procedure CLOutVc_PasteCorspCode(var record CLOutVc,Integer);
 external procedure CLOutVc_PasteCurncyCode(var record CLOutVc);
 external procedure CLInVc_PasteCurncyCode(var record CLInVc);
 external function string 60 AddObjectToObjectList(string,string);
+remote function Boolean ORVc_PasteArtCode(var record ORVc,Integer,var string,var string,Boolean);
+external procedure ORVc_PasteSum(var record ORVc,Integer,var Boolean);
+external procedure ORDchsum(var record ORVc,Integer);
+external procedure ORSumup(var record ORVc);
 
 SetLangMode(LangRussian,"RUS",2);
 
@@ -449,6 +453,95 @@ record UserVc US2r;
 	
 	logtext(0,"WebConfirmLastExpTelegram end");
 	
+return;
+end;
+
+
+/*
+  Creates and reserves a sales order (ORVc) from the Telegram shop.
+  Expected POST JSON:
+  {
+    "name":"Client Name",
+    "phone":"+380501234567",
+    "items":[
+      {"code":"ART001","qty":"2","price":"150.00","discount":"10.00"},
+      ...
+    ]
+  }
+  discount is a per-row amount (not a percent) already subtracted from qty*price.
+  Customer is always NONAME, Location is always SORTIROVOC - client name/phone are just stored on the order header.
+*/
+global webpublic updating procedure WebCreateOrderTelegram()
+begin
+  record ORVc ORr;
+  row ORVc ORrw;
+  record INVc INr;
+  area postdata;
+  json jsonobj;
+  integer i,rwcnt,rownr;
+  string 255 custname,custphone,artcode,inwarning,warning;
+  val qty,price,discount,rowsum;
+  boolean chsum,savedf;
+
+  logtext(0,"WebCreateOrderTelegram start");
+  WebSetContentType("application/json; charset=UTF-8");
+  SetCompany(9,false);
+
+  WebGetRawPostData(postdata);
+  WriteAreaToFile(postdata,"WebCreateOrderTelegram.txt",1);
+  jsonobj = ParseJSONArea(postdata);
+
+  custname = JSONGet(jsonobj,"name");
+  custphone = JSONGet(jsonobj,"phone");
+
+  RecordNew(ORr);
+  ORr.SerNr = NextSerNr("ORVc",ORr.OrdDate,-1,false,"");
+  ORr.CustCode = "NONAME";
+  ORr.Location = "SORTIROVOC";
+  ORr.Addr0 = custname;
+  ORr.Phone = custphone;
+
+  rwcnt = JSONCountChildren(jsonobj,"items");
+  for(i=0;i<rwcnt;i=i+1) begin
+    artcode = JSONGet(jsonobj,"items/[" & i & "]/code");
+    INr.Code = artcode;
+    if(nonblank(artcode) and ReadFirstMain(INr,1,true)) then begin
+      qty = StringToVal(JSONGet(jsonobj,"items/[" & i & "]/qty"),M4UVal);
+      price = StringToVal(JSONGet(jsonobj,"items/[" & i & "]/price"),M4Val);
+      discount = StringToVal(JSONGet(jsonobj,"items/[" & i & "]/discount"),M4Val);
+      rowsum = (qty*price) - discount;
+
+      rownr = MatRowCnt(ORr);
+      ClearRow(ORr,ORrw,1);
+      ORrw.ArtCode = artcode;
+      MatRowPut(ORr,rownr,ORrw);
+      ORVc_PasteArtCode(ORr,rownr,inwarning,warning,false);
+      MatRowGet(ORr,rownr,ORrw);
+      ORrw.Quant = qty;
+      ORrw.Price = price;
+      ORrw.Sum = rowsum;
+      MatRowPut(ORr,rownr,ORrw);
+      ORVc_PasteSum(ORr,rownr,chsum);
+      ORDchsum(ORr,rownr);
+    end else begin
+      logtext(0,"WebCreateOrderTelegram: unknown item code " & artcode);
+    end;
+  end;
+  ORSumup(ORr);
+
+  ORr.Reserved = 1;
+
+  if(MatRowCnt(ORr)>0) then begin
+    savedf = RecordInsert(ORr,true);
+  end;
+
+  if(savedf) then begin
+    weboutstring("{\"result\":\"ok\",\"SerNr\":\"" & ORr.SerNr & "\"}");
+  end else begin
+    weboutstring("{\"result\":\"error\"}");
+  end;
+
+  logtext(0,"WebCreateOrderTelegram end");
 return;
 end;
 

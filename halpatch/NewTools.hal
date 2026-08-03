@@ -15,6 +15,7 @@ external function roundmode DefaultRoundMode();
 external function Integer GetIntYc(Date);
 remote procedure SyncCurrWithNBUMn();
 remote procedure ReserveRecalcMnTime();
+external updating procedure CalcPriceListsMn(record RcVc);
 
 
 
@@ -480,16 +481,31 @@ end; //Edit***************************Sasha2,16:12 03.03.2017 }
 
 
 
+global
+updating procedure CalcRRP3PriceListMn()
+begin
+  record RcVc RepSpec;
+
+    RepSpec.f1 = "RRP3";
+    CalcPriceListsMn(RepSpec);
+
+return;
+end;
+
 global //Edit***************************Sasha2,17:59 13.03.2017 {
 updating procedure CustTimeTableAction()
 begin
 
     SetCompany(9,false);
-    
+
     if(getminute(currenttime)==5 and gethour(currenttime)<=23 and gethour(currenttime)>=17)then begin
       SyncCurrWithNBUMn;
     end;
-		
+
+    if(gethour(currenttime)==7 and getminute(currenttime)==0)then begin
+      CalcRRP3PriceListMn;
+    end;
+
 return;
 end; //Edit***************************Sasha2,17:59 13.03.2017 }
 
