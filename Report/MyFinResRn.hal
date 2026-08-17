@@ -668,7 +668,9 @@ begin
 
   logtext(0,"location " & location);
   if(user!="INKAS9" and location!="DVRZ")then begin
-    goto lWebGetSalesDataForPeriod;
+    if(user!="INKAS7")then begin
+      goto lWebGetSalesDataForPeriod;
+    end;
   end;
 
   period = WebGetArg("period");
