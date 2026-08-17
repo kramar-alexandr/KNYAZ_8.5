@@ -313,6 +313,7 @@ begin
   Integer named,concurent,bcuser,tkuser,singlefunuser,singlefuncs;
   Integer licnamed,licconcurent,licsinglefuncs;
   record ConfVc Confr;
+  record ObjVc Objr;
 
   BlockLoad(MTb);
   res = 0;
@@ -460,6 +461,20 @@ begin
     Userr.AstPassword = GeneratePassword2(15);
   end;
 LUserVcRecordCheck:;
+  
+  if(blank(Userr.PersObjx))then begin
+    Objr.Code = Userr.Code;
+    if(readfirstmain(Objr,1,true))then begin
+      Userr.PersObjx = Userr.Code;
+    end else begin
+      recordnew(Objr);
+      Objr.Code = Userr.Code;
+      Objr.Comment = Userr.Name;
+      recordstore(Objr,true);
+      Userr.PersObjx = Userr.Code;
+    end;
+  end;
+  
   UserVcRecordCheck = res;
   RETURN;
 END;
