@@ -563,14 +563,18 @@ boolean TrHs,testf;
 		  logtext(0,"USr.PersObjx " & USr.PersObjx);
 
 			AddTextToArea("[",resarea);
-			CLOutr.OKFlag = 0;
+			//CLOutr.OKFlag = 0;
+			CLOutr.TransDate = currentdate;
+			if(currenttime<stringtotime("09:00"))then begin
+			  CLOutr.TransDate = addday(currentdate,-1);
+			end;
 			TrHs = true;
-			while (loopKey("OKFlag",CLOutr,1,TrHs)) begin
+			while (loopKey("TransDate",CLOutr,1,TrHs)) begin
 				
 				testf = true;
-				if (CLOutr.OKFlag!=0) then begin TrHs = false; testf = false; end;
+				//if (CLOutr.OKFlag!=0) then begin TrHs = false; testf = false; end;
 				if (!SetInSet(USr.PersObjx,CLOutr.Objects)) then begin testf = false; end;
-				logtext(0,USr.PersObjx & " - " & CLOutr.Objects & "WebGetCreatedCLOutForCurUs_2 testf " & testf);
+				logtext(0,USr.PersObjx & " - " & CLOutr.Objects & " WebGetCreatedCLOutForCurUs_2 testf " & testf);
 				if (testf) then begin
 					AddTextToArea("{",resarea);
 					addParamToJSONArea("SerNr",NormalizeStrToJson(CLOutr.SerNr),resarea);
