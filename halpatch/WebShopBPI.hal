@@ -566,11 +566,11 @@ boolean TrHs,testf;
 			CLOutr.OKFlag = 0;
 			TrHs = true;
 			while (loopKey("OKFlag",CLOutr,1,TrHs)) begin
-				logtext(0,"WebGetCreatedCLOutForCurUs_2");
+				
 				testf = true;
 				if (CLOutr.OKFlag!=0) then begin TrHs = false; testf = false; end;
 				if (!SetInSet(USr.PersObjx,CLOutr.Objects)) then begin testf = false; end;
-				
+				logtext(0,"WebGetCreatedCLOutForCurUs_2 testf " & testf);
 				if (testf) then begin
 					AddTextToArea("{",resarea);
 					addParamToJSONArea("SerNr",NormalizeStrToJson(CLOutr.SerNr),resarea);
