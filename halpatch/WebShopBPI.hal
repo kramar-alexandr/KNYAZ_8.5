@@ -551,6 +551,8 @@ record CLOutVc CLOutr;
 row CLOutVc CLOutrw;
 area postdata;
 boolean TrHs,testf;
+date fd;
+
   
   logtext(0,"WebGetCreatedCLOutForCurUs start");
   
@@ -564,10 +566,10 @@ boolean TrHs,testf;
 
 			AddTextToArea("[",resarea);
 			//CLOutr.OKFlag = 0;
-			CLOutr.TransDate = currentdate;
-			if(currenttime<stringtotime("09:00"))then begin
-			  CLOutr.TransDate = addday(currentdate,-1);
-			end;
+			fd = currentdate;
+			fd.day = 1;
+			CLOutr.TransDate = fd;
+
 			TrHs = true;
 			while (loopKey("TransDate",CLOutr,1,TrHs)) begin
 				
