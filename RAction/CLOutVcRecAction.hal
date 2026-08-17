@@ -1374,7 +1374,7 @@ LCLOutVcRecordCheck:;
   RETURN;
 end;
 
-global updating procedure WebFixPointObj()
+global webpublic updating procedure WebFixPointObj()
 begin
   record CLOutVc CLOutr,oldCLOutr;
   
