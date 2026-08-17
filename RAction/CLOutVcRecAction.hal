@@ -1374,3 +1374,27 @@ LCLOutVcRecordCheck:;
   RETURN;
 end;
 
+global updating procedure WebFixPointObj()
+begin
+  record CLOutVc CLOutr,oldCLOutr;
+  
+  setcompany(9,false);
+  while(loopmain(CLOutr,1,true) and CLOutr.TransDate>stringtodate("01/08/2026"))begin
+    if(blank(CLOutr.Objects) and nonblank(CLOutr.Person) and CLOutr.CorspCode=="POINT")then begin
+      if(CLOutr.OKFlag==1)then begin
+        recordcopy(oldCLOutr,CLOutr);
+        CLOutr.OKFlag = 0;
+        recordupdate(oldCLOutr,CLOutr,true);
+        recordcopy(oldCLOutr,CLOutr);
+        CLOutr.OKFlag = 1;
+        CLOutr.Objects = CLOutr.Person;
+        recordupdate(oldCLOutr,CLOutr,true);
+      end else begin
+        CLOutr.Objects = CLOutr.Person;
+        recordstore(CLOutr,true);
+      end;
+    end;
+  end;
+
+return;
+end;
