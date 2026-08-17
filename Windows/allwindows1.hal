@@ -4788,6 +4788,7 @@ end;
   EditField(h,v+=vs,-20,"Электронная почта",Normal,emailAddr,false,0);
   //EditField(h,v+=vs,-20,"Спецификация",Normal,Spec,false,0);
   EditField(h,v+=vs,-20,"Комментарий",Normal,Comment,false,0);
+  EditField(h,v+=vs,120,"Объект",Normal,PersObjx,false,ObjSClass);
 //  EditField(h,v+=vs,65,"Expense A/C",Normal,CostAcc,false,AccSClass);
   /*Tile(tilenr,50,false,tilenr,PersAcc);  tilenr = tilenr + 1;
   EditField(h,vm=(v=6),65,"Счет",Normal,PersAcc,false,AccSClass);
