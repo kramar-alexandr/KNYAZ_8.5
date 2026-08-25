@@ -163,3 +163,19 @@ begin
 
 return;
 end;
+
+
+global webpublic updating procedure WebUpdateSMPrintedAndComp()
+begin
+  record StockMovVc SMr;
+  
+  setcompany(9,false);
+  
+  while(loopmain(SMr,1,true))begin
+    SMr.PrintedFlag = 1;
+    SMr.ComplFlag = 1;
+    recordstore(SMr,true);
+  end;
+  
+return;
+end;

@@ -170,6 +170,7 @@ EndBlock;
  RecordAddBegin(StockMovVc,"StockMovVc_Custom");
     RecordField(MoveIncludingReserve,M4Mark,0,0);// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 29 November 2023, 12:05:24
     RecordField(PrintedFlag,M4Mark,0,0);// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 29 November 2023, 12:05:24
+    RecordField(ComplFlag,M4Mark,0,0);// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 25 August 2026 at 20:53:15
     ArrayField(InStock1,M4UVal,0,0); 	//Edit*************************** Ira 18.11.20
     ArrayField(InStock2,M4UVal,0,0); 	//Edit*************************** Ira 18.11.20
 		ArrayField(InvQty,M4UVal,0,0); 	 // _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_- Anton Preisinger 13:48 01.07.2021
