@@ -181,6 +181,38 @@ begin
   return;
 end;
 
+// Writes a barcodes array (incl. trailing comma) into resarea for one item code,
+// under the given JSON key — main barcode first (INVc.BarCode, the "BarCode" key),
+// then every batch/variant barcode registered for it in BarcodeVc (the "Itemcode"
+// key), skipping an exact repeat. Same lookup order as the record-check in
+// INVcRecAction.hal. Defined ahead of its first caller (WriteProductCatalogItem
+// below) since it's marked global but still lives in this same file.
+global procedure AddItemBarcodesArrayToJSON(string itemcode, string mainbarcode, string keyname, var area resarea)
+begin
+  record BarcodeVc BCr;
+  boolean TrHs;
+
+  AddTextToArea("\"" & keyname & "\":[",resarea);
+  if(nonblank(mainbarcode))then begin
+    AddTextToArea("\"" & NormalizeStrToJson(mainbarcode) & "\",",resarea);
+  end;
+  BCr.Itemcode = itemcode;
+  TrHs = true;
+  while(LoopKey("Itemcode",BCr,1,TrHs))begin
+    if(BCr.Itemcode!=itemcode)then begin
+      TrHs = false;
+    end else begin
+      if(nonblank(BCr.Barcode) and BCr.Barcode!=mainbarcode)then begin
+        AddTextToArea("\"" & NormalizeStrToJson(BCr.Barcode) & "\",",resarea);
+      end;
+    end;
+  end;
+  delLastComaInArea(resarea);
+  AddTextToArea("],",resarea);
+
+  return;
+end;
+
 // Writes one item's JSON object (incl. trailing comma) into resarea,
 // but only if it has available (instock minus reserved) stock somewhere.
 procedure WriteProductCatalogItem(record INVc INr, var area resarea)
@@ -227,6 +259,7 @@ begin
       addParamToJSONArea("Name",NormalizeStrToJson(INr.Name),resarea);
     end;
     addParamToJSONArea("Price",NormalizeStrToJson(price),resarea);
+    AddItemBarcodesArrayToJSON(INr.Code,INr.BarCode,"Barcodes",resarea);
 
     if(nonblank(INr.Group))then begin
       ITr.Code = INr.Group;
@@ -344,6 +377,129 @@ end;
 
 
 // ==============================================================
+// Custom: assign a barcode to a product (token-authenticated), Company 9.
+// New barcode goes to INVc.BarCode if the item has no main barcode yet,
+// otherwise it's added to BarcodeVc as an additional batch/variant. Already
+// having exactly this barcode (as the item's own main or its own variant) is
+// treated as success, not an error — the caller doesn't need to check first.
+// Uniqueness itself isn't re-implemented here — RecordUpdate/RecordInsert run
+// the real checks (INVcRecordCheck/BarcodeVcRecordCheck in INVcRecAction.hal/
+// BarcodeVcRecAction.hal) same as any other save, this just surfaces whatever
+// RecordCheckError they raised as JSON instead of a UI dialog.
+// POST body: {"code":"0006203080250","barcode":"4820000009999"}
+// ==============================================================
+
+global webpublic updating procedure WebSetProductBarcode()
+begin
+  string 60 authtoken;
+  area postdata,resarea;
+  json jsonobj;
+  string 60 code,barcode;
+  record INVc INr,oldINr;
+  record BarcodeVc BCr,lBCr;
+  boolean TrHs,alreadyowned,savedf;
+  string 255 vcname,msg,fieldname;
+  LongInt errno;
+  Integer rowno;
+
+  logtext(0,"WebSetProductBarcode start");
+
+  authtoken = WebGetArg("token");
+  WebSetContentType("application/json; charset=UTF-8");
+
+  if(authtoken=="kn9-cat-7f3a91c2e6")then begin
+
+    SetCompany(9,false);
+    WebGetRawPostData(postdata);
+    jsonobj = ParseJSONArea(postdata);
+
+    code = JSONGet(jsonobj,"code");
+    barcode = JSONGet(jsonobj,"barcode");
+
+    if(blank(code) or blank(barcode))then begin
+      AddTextToArea("{\"result\":\"error\",\"error\":\"missing_code_or_barcode\"}",resarea);
+      goto LWebSetProductBarcodeEnd;
+    end;
+
+    INr.Code = code;
+    if(!ReadFirstMain(INr,1,true))then begin
+      AddTextToArea("{\"result\":\"error\",\"error\":\"item_not_found\"}",resarea);
+      goto LWebSetProductBarcodeEnd;
+    end;
+
+    if(INr.BarCode==barcode)then begin
+      AddTextToArea("{\"result\":\"ok\",\"target\":\"item\"}",resarea);
+      goto LWebSetProductBarcodeEnd;
+    end;
+
+    if(blank(INr.BarCode))then begin
+      RecordCopy(oldINr,INr);
+      INr.BarCode = barcode;
+      SetRecordCheckVc("INVc");
+      savedf = (RecordUpdate(oldINr,INr,true)==0);
+      if(savedf)then begin
+        AddTextToArea("{\"result\":\"ok\",\"target\":\"item\"}",resarea);
+      end else begin
+        if(GetRecordCheckError(vcname,errno,msg,rowno,fieldname))then begin
+          AddTextToArea("{\"result\":\"error\",\"error\":\"" & NormalizeStrToJson(msg) & "\"}",resarea);
+        end else begin
+          AddTextToArea("{\"result\":\"error\",\"error\":\"update_failed\"}",resarea);
+        end;
+      end;
+      goto LWebSetProductBarcodeEnd;
+    end;
+
+    // Main barcode already taken by this item — only genuinely new for it if
+    // it's not already one of its own registered variants (idempotent re-assign).
+    alreadyowned = false;
+    lBCr.Barcode = barcode;
+    TrHs = true;
+    while(LoopKey("Barcode",lBCr,1,TrHs))begin
+      if(lBCr.Barcode!=barcode)then begin
+        TrHs = false;
+      end else begin
+        if(lBCr.Itemcode==code)then begin
+          alreadyowned = true;
+          TrHs = false;
+        end;
+      end;
+    end;
+
+    if(alreadyowned)then begin
+      AddTextToArea("{\"result\":\"ok\",\"target\":\"variant\"}",resarea);
+      goto LWebSetProductBarcodeEnd;
+    end;
+
+    RecordNew(BCr);
+    BCr.Itemcode = code;
+    BCr.Barcode = barcode;
+    SetRecordCheckVc("BarcodeVc");
+    savedf = RecordInsert(BCr,true);
+    if(savedf)then begin
+      AddTextToArea("{\"result\":\"ok\",\"target\":\"variant\"}",resarea);
+    end else begin
+      if(GetRecordCheckError(vcname,errno,msg,rowno,fieldname))then begin
+        AddTextToArea("{\"result\":\"error\",\"error\":\"" & NormalizeStrToJson(msg) & "\"}",resarea);
+      end else begin
+        AddTextToArea("{\"result\":\"error\",\"error\":\"insert_failed\"}",resarea);
+      end;
+    end;
+
+  end else begin
+    logtext(0,"WebSetProductBarcode unauthorized token");
+    AddTextToArea("{\"result\":\"error\",\"error\":\"unauthorized\"}",resarea);
+  end;
+
+LWebSetProductBarcodeEnd:;
+  weboutarea2(resarea);
+
+  logtext(0,"WebSetProductBarcode end");
+
+return;
+end;
+
+
+// ==============================================================
 // Custom: Company 9 admins export API (token-authenticated)
 // All UserVc with TelIsBoss=1 (and not Closed): Code, Name, Phone1, Phone2.
 // ==============================================================
@@ -422,36 +578,6 @@ end;
 // 3-day window, instead of scanning the whole register.
 // ==============================================================
 
-// Writes "barcodes":[...] (incl. trailing comma) into resarea for one item code —
-// main barcode first (INVc.BarCode, the "BarCode" key), then every batch/variant
-// barcode registered for it in BarcodeVc (the "Itemcode" key), skipping an exact
-// repeat. Same lookup order as the record-check in RAction/INVcRecAction.hal.
-global procedure AddItemBarcodesArrayToJSON(string itemcode, string mainbarcode, var area resarea)
-begin
-  record BarcodeVc BCr;
-  boolean TrHs;
-
-  AddTextToArea("\"barcodes\":[",resarea);
-  if(nonblank(mainbarcode))then begin
-    AddTextToArea("\"" & NormalizeStrToJson(mainbarcode) & "\",",resarea);
-  end;
-  BCr.Itemcode = itemcode;
-  TrHs = true;
-  while(LoopKey("Itemcode",BCr,1,TrHs))begin
-    if(BCr.Itemcode!=itemcode)then begin
-      TrHs = false;
-    end else begin
-      if(nonblank(BCr.Barcode) and BCr.Barcode!=mainbarcode)then begin
-        AddTextToArea("\"" & NormalizeStrToJson(BCr.Barcode) & "\",",resarea);
-      end;
-    end;
-  end;
-  delLastComaInArea(resarea);
-  AddTextToArea("],",resarea);
-
-  return;
-end;
-
 // Writes one movement's JSON object (incl. trailing comma) into resarea.
 procedure WriteStockMovementJSON(record StockMovVc SMr, var area resarea)
 begin
@@ -474,7 +600,7 @@ begin
       addParamToJSONArea("erpId",NormalizeStrToJson(SMrw.ArtCode),resarea);
       addParamToJSONArea("name",NormalizeStrToJson(INr.Name),resarea);
       addParamToJSONArea("qty",NormalizeStrToJson(SMrw.OrdQuant),resarea);
-      AddItemBarcodesArrayToJSON(SMrw.ArtCode,INr.BarCode,resarea);
+      AddItemBarcodesArrayToJSON(SMrw.ArtCode,INr.BarCode,"barcodes",resarea);
       delLastComaInArea(resarea);
       AddTextToArea("},",resarea);
     end;
