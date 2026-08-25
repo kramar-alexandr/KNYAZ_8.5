@@ -560,7 +560,9 @@ end;
 // Custom: Company 9 shipments export API (token-authenticated)
 // Same selection logic as the IVToShipRn report (Report/IVToShipRт.hal):
 // confirmed (OKFlag=1) invoices from the last 5 days, seeded/backward via
-// the "InvDate" key, excluding walk-in sales (CustCode="NONAME").
+// the "InvDate" key, excluding walk-in sales (CustCode="NONAME"), restricted
+// to the sorting warehouse (Location="SORTIROVOC") — matches WebGetStockMovements'
+// FrLocation filter; other locations' shipments aren't this warehouse's job.
 // Header: invoice number + Addr0 (recipient). Items: Spec (name) + Quant.
 // ==============================================================
 
@@ -621,6 +623,7 @@ begin
       testf = true;
       if(IVr.InvDate<addDay(CurrentDate,-5))then begin TrHs = false; testf = false; end;
       if(IVr.OKFlag==0)then begin testf = false; end;
+      if(IVr.Location!="SORTIROVOC")then begin testf = false; end;
       CUr.Code = IVr.CustCode;
       readfirstmain(CUr,1,true);
       if(CUr.Code=="NONAME")then begin testf = false; end;
