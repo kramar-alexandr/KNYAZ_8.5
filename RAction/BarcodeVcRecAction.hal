@@ -1,0 +1,38 @@
+// ==============================================================
+// Custom: unique-barcode enforcement, BarcodeVc side.
+// Mirrors the check in RAction/INVcRecAction.hal — see that file for the
+// full rationale. A new barcode variant must not collide with another
+// item's main barcode (INVc.BarCode) or another item's variant. Colliding
+// with your OWN item's main barcode / other variants is fine (that's the
+// normal "several batches, same item" case this register exists for).
+// ==============================================================
+
+external function Boolean FindItemByBarCode(string,string,var record INVc);
+external function Boolean FindBarcodeVcByBarcode(string,string,var record BarcodeVc);
+
+global
+function LongInt BarcodeVcRecordCheck(var record BarcodeVc Barcoder,record BarcodeVc Barcode2r,LongInt stat,LongInt long4)
+begin
+  LongInt res;
+  record INVc dupINr;
+  record BarcodeVc dupBCr;
+
+  res = inner.BarcodeVcRecordCheck(Barcoder,Barcode2r,stat,long4);
+
+  if(res==0 and nonblank(Barcoder.Barcode))then begin
+    if(FindItemByBarCode(Barcoder.Barcode,Barcoder.Itemcode,dupINr))then begin
+      RecordCheckError(0,"Штрихкод " & Barcoder.Barcode & " уже используется как основной у товара " & dupINr.Code & " (" & dupINr.Name & ")",-1,"Barcode");
+      res = -1;
+      goto LBarcodeVcRecordCheckCustom;
+    end;
+    if(FindBarcodeVcByBarcode(Barcoder.Barcode,Barcoder.Itemcode,dupBCr))then begin
+      RecordCheckError(0,"Штрихкод " & Barcoder.Barcode & " уже присвоен товару " & dupBCr.Itemcode,-1,"Barcode");
+      res = -1;
+      goto LBarcodeVcRecordCheckCustom;
+    end;
+  end;
+
+LBarcodeVcRecordCheckCustom:;
+  BarcodeVcRecordCheck = res;
+  return;
+end;

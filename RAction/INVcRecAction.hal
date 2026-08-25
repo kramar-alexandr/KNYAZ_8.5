@@ -1,0 +1,94 @@
+// ==============================================================
+// Custom: unique-barcode enforcement.
+// INVc.BarCode is the item's main barcode (fast lookup via the "BarCode" key).
+// BarcodeVc holds additional barcode variants for the same item (different
+// batches assigned to the same item code) — that's expected and not a
+// conflict. What must never happen is the SAME barcode value resolving to
+// TWO DIFFERENT items (via either register) — that breaks barcode-scan
+// lookup (which item does this scan mean?). This file blocks it going
+// forward; WebFindDuplicateBarcodes (halpatch/WebBarcodeAudit.hal) finds
+// what already collided before this check existed.
+//
+// Scan lookup order for any future barcode-scanning integration should be:
+// 1) INVc via the "BarCode" key (the main/most common case)
+// 2) BarcodeVc via its "Barcode" key (variant/batch barcodes) — only if (1)
+//    found nothing, since multiple BarcodeVc rows can share an item on
+//    purpose and don't need disambiguating the way a cross-item hit would.
+// ==============================================================
+
+global
+function Boolean FindItemByBarCode(string barcode,string excludecode,var record INVc foundINr)
+begin
+  record INVc lINr;
+  Boolean found,TrHs;
+
+  found = false;
+  lINr.BarCode = barcode;
+  TrHs = true;
+  while(LoopKey("BarCode",lINr,1,TrHs))begin
+    if(lINr.BarCode!=barcode)then begin
+      TrHs = false;
+    end else begin
+      if(lINr.Code!=excludecode and lINr.Terminated==0)then begin
+        found = true;
+        RecordCopy(foundINr,lINr);
+        TrHs = false;
+      end;
+    end;
+  end;
+
+  FindItemByBarCode = found;
+  return;
+end;
+
+global
+function Boolean FindBarcodeVcByBarcode(string barcode,string excludeitemcode,var record BarcodeVc foundBCr)
+begin
+  record BarcodeVc lBCr;
+  Boolean found,TrHs;
+
+  found = false;
+  lBCr.Barcode = barcode;
+  TrHs = true;
+  while(LoopKey("Barcode",lBCr,1,TrHs))begin
+    if(lBCr.Barcode!=barcode)then begin
+      TrHs = false;
+    end else begin
+      if(lBCr.Itemcode!=excludeitemcode)then begin
+        found = true;
+        RecordCopy(foundBCr,lBCr);
+        TrHs = false;
+      end;
+    end;
+  end;
+
+  FindBarcodeVcByBarcode = found;
+  return;
+end;
+
+global
+function LongInt INVcRecordCheck(var record INVc INr,record INVc IN2r,LongInt stat,LongInt long4)
+begin
+  LongInt res;
+  record INVc dupINr;
+  record BarcodeVc dupBCr;
+
+  res = inner.INVcRecordCheck(INr,IN2r,stat,long4);
+
+  if(res==0 and nonblank(INr.BarCode))then begin
+    if(FindItemByBarCode(INr.BarCode,INr.Code,dupINr))then begin
+      RecordCheckError(0,"Штрихкод " & INr.BarCode & " уже используется товаром " & dupINr.Code & " (" & dupINr.Name & ")",-1,"BarCode");
+      res = -1;
+      goto LINVcRecordCheckCustom;
+    end;
+    if(FindBarcodeVcByBarcode(INr.BarCode,INr.Code,dupBCr))then begin
+      RecordCheckError(0,"Штрихкод " & INr.BarCode & " уже присвоен как дополнительный товару " & dupBCr.Itemcode,-1,"BarCode");
+      res = -1;
+      goto LINVcRecordCheckCustom;
+    end;
+  end;
+
+LINVcRecordCheckCustom:;
+  INVcRecordCheck = res;
+  return;
+end;

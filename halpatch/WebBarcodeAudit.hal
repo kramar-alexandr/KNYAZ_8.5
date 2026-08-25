@@ -1,0 +1,165 @@
+external procedure addParamToJSONArea(string,string,var area);
+external procedure delLastComaInArea(var area);
+external function string 255 NormalizeStrToJson(string);
+external function Boolean FindBarcodeVcByBarcode(string,string,var record BarcodeVc);
+
+// ==============================================================
+// Custom: one-time duplicate-barcode audit (token-authenticated), Company 9.
+// Finds pre-existing barcode collisions across INVc.BarCode (main barcode) and
+// BarcodeVc.Barcode (batch/variant barcodes) that predate the uniqueness check
+// added in RAction/INVcRecAction.hal + RAction/BarcodeVcRecAction.hal — that
+// check only blocks NEW saves, it doesn't touch what's already in the database.
+// Run once, fix what it lists (repoint/blank one side of each collision), done —
+// not meant to run on a schedule.
+//
+// Three kinds of collision, each meaning the same barcode value currently
+// resolves to more than one item (breaks barcode-scan lookup):
+//   item_vs_item       - two different items both have this as their main BarCode
+//   variant_vs_variant - two different items each have a BarcodeVc entry with it
+//   item_vs_variant    - one item's main BarCode equals another item's variant
+// ==============================================================
+
+global webpublic procedure WebFindDuplicateBarcodes()
+begin
+  string 60 authtoken;
+  record INVc INr;
+  record BarcodeVc BCr,dupBCr;
+  area resarea;
+  Integer cnt;
+  string 255 curbarcode,curcodes,curnames;
+  Integer curn;
+  Boolean TrHs;
+
+  logtext(0,"WebFindDuplicateBarcodes start");
+
+  authtoken = WebGetArg("token");
+  WebSetContentType("application/json; charset=UTF-8");
+
+  if(authtoken=="kn9-cat-7f3a91c2e6")then begin
+
+    SetCompany(9,false);
+    cnt = 0;
+
+    AddTextToArea("{\"duplicates\":[",resarea);
+
+    // --- item_vs_item: walk INVc sorted by its "BarCode" key, group consecutive
+    // rows sharing the same nonblank BarCode (the key sorts by BarCode then Code,
+    // so a shared value is always contiguous — no need to load everything at once).
+    INr.BarCode = "";
+    curbarcode = "";
+    curcodes = "";
+    curnames = "";
+    curn = 0;
+    TrHs = true;
+    while(LoopKey("BarCode",INr,1,TrHs))begin
+      if(INr.Terminated==0 and nonblank(INr.BarCode))then begin
+        if(INr.BarCode!=curbarcode)then begin
+          if(curn>=2)then begin
+            AddTextToArea("{",resarea);
+            addParamToJSONArea("barcode",NormalizeStrToJson(curbarcode),resarea);
+            addParamToJSONArea("kind","item_vs_item",resarea);
+            addParamToJSONArea("items",NormalizeStrToJson(curcodes),resarea);
+            addParamToJSONArea("names",NormalizeStrToJson(curnames),resarea);
+            delLastComaInArea(resarea);
+            AddTextToArea("},",resarea);
+            cnt = cnt + 1;
+          end;
+          curbarcode = INr.BarCode;
+          curcodes = INr.Code;
+          curnames = INr.Name;
+          curn = 1;
+        end else begin
+          curcodes = curcodes & ";" & INr.Code;
+          curnames = curnames & ";" & INr.Name;
+          curn = curn + 1;
+        end;
+      end;
+    end;
+    if(curn>=2)then begin
+      AddTextToArea("{",resarea);
+      addParamToJSONArea("barcode",NormalizeStrToJson(curbarcode),resarea);
+      addParamToJSONArea("kind","item_vs_item",resarea);
+      addParamToJSONArea("items",NormalizeStrToJson(curcodes),resarea);
+      addParamToJSONArea("names",NormalizeStrToJson(curnames),resarea);
+      delLastComaInArea(resarea);
+      AddTextToArea("},",resarea);
+      cnt = cnt + 1;
+    end;
+
+    // --- variant_vs_variant: same idea, walk BarcodeVc sorted by its "Barcode" key.
+    ResetLoop(BCr);
+    BCr.Barcode = "";
+    curbarcode = "";
+    curcodes = "";
+    curn = 0;
+    TrHs = true;
+    while(LoopKey("Barcode",BCr,1,TrHs))begin
+      if(nonblank(BCr.Barcode) and nonblank(BCr.Itemcode))then begin
+        if(BCr.Barcode!=curbarcode)then begin
+          if(curn>=2)then begin
+            AddTextToArea("{",resarea);
+            addParamToJSONArea("barcode",NormalizeStrToJson(curbarcode),resarea);
+            addParamToJSONArea("kind","variant_vs_variant",resarea);
+            addParamToJSONArea("items",NormalizeStrToJson(curcodes),resarea);
+            delLastComaInArea(resarea);
+            AddTextToArea("},",resarea);
+            cnt = cnt + 1;
+          end;
+          curbarcode = BCr.Barcode;
+          curcodes = BCr.Itemcode;
+          curn = 1;
+        end else begin
+          if(!setinset(BCr.Itemcode,curcodes))then begin
+            curcodes = curcodes & ";" & BCr.Itemcode;
+            curn = curn + 1;
+          end;
+        end;
+      end;
+    end;
+    if(curn>=2)then begin
+      AddTextToArea("{",resarea);
+      addParamToJSONArea("barcode",NormalizeStrToJson(curbarcode),resarea);
+      addParamToJSONArea("kind","variant_vs_variant",resarea);
+      addParamToJSONArea("items",NormalizeStrToJson(curcodes),resarea);
+      delLastComaInArea(resarea);
+      AddTextToArea("},",resarea);
+      cnt = cnt + 1;
+    end;
+
+    // --- item_vs_variant: for every active item's main barcode, a single keyed
+    // lookup into BarcodeVc (via FindBarcodeVcByBarcode, same helper the live
+    // record check uses) is enough — no grouping needed, each item is its own row.
+    ResetLoop(INr);
+    while(loopmain(INr,1,true))begin
+      if(INr.Terminated==0 and nonblank(INr.BarCode))then begin
+        if(FindBarcodeVcByBarcode(INr.BarCode,INr.Code,dupBCr))then begin
+          AddTextToArea("{",resarea);
+          addParamToJSONArea("barcode",NormalizeStrToJson(INr.BarCode),resarea);
+          addParamToJSONArea("kind","item_vs_variant",resarea);
+          addParamToJSONArea("item",NormalizeStrToJson(INr.Code),resarea);
+          addParamToJSONArea("item_name",NormalizeStrToJson(INr.Name),resarea);
+          addParamToJSONArea("variant_item",NormalizeStrToJson(dupBCr.Itemcode),resarea);
+          delLastComaInArea(resarea);
+          AddTextToArea("},",resarea);
+          cnt = cnt + 1;
+        end;
+      end;
+    end;
+
+    delLastComaInArea(resarea);
+    AddTextToArea("],",resarea);
+    addParamToJSONArea("count",cnt,resarea);
+    delLastComaInArea(resarea);
+    AddTextToArea("}",resarea);
+
+  end else begin
+    logtext(0,"WebFindDuplicateBarcodes unauthorized token");
+    AddTextToArea("{\"result\":\"error\",\"error\":\"unauthorized\"}",resarea);
+  end;
+
+  weboutarea2(resarea);
+
+  logtext(0,"WebFindDuplicateBarcodes end");
+
+return;
+end;
