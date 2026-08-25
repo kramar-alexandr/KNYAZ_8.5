@@ -410,13 +410,16 @@ end;
 
 
 // ==============================================================
-// Custom: Company 9 pending stock transfers export API (token-authenticated)
+// Custom: Company 9 stock transfers export API (token-authenticated)
 // StockMovVc from location SORTIROVOC, OKFlag=1 (already confirmed — the
-// warehouse just picks/collects), ComplFlag=0 (not yet assembled/confirmed
-// done — see WebSetStockMovPrinted below), last 3 days. Walked backward
-// (newest first) via the FrLocOK key (FrLocation+OKFlag+TransDate+SerNr) so
-// we can stop as soon as we pass the 3-day window, instead of scanning the
-// whole register.
+// warehouse just picks/collects), last 3 days — both pending AND already
+// assembled/confirmed (ComplFlag=0 or 1, see WebSetStockMovPrinted below),
+// with "complFlag" in each movement's JSON so a client can tell them apart
+// and reconcile its own local state against the ERP (e.g. a ComplFlag reset
+// or manual change made outside the client) instead of only ever seeing
+// brand-new ids. Walked backward (newest first) via the FrLocOK key
+// (FrLocation+OKFlag+TransDate+SerNr) so we can stop as soon as we pass the
+// 3-day window, instead of scanning the whole register.
 // ==============================================================
 
 // Writes "barcodes":[...] (incl. trailing comma) into resarea for one item code —
@@ -459,6 +462,7 @@ begin
   AddTextToArea("{",resarea);
   addParamToJSONArea("shipmentNo",NormalizeStrToJson(SMr.SerNr),resarea);
   addParamToJSONArea("toLocation",NormalizeStrToJson(SMr.ToLocation),resarea);
+  addParamToJSONArea("complFlag",SMr.ComplFlag,resarea);
 
   AddTextToArea("\"items\":[",resarea);
   rwcnt = MatRowCnt(SMr);
@@ -513,9 +517,7 @@ begin
         if(SMr.TransDate<addDay(CurrentDate,-3))then begin
           TrHs = false;
         end else begin
-          if(SMr.ComplFlag==0)then begin
-            WriteStockMovementJSON(SMr,resarea);
-          end;
+          WriteStockMovementJSON(SMr,resarea);
         end;
       end;
     end;
@@ -598,7 +600,10 @@ end;
 // the "InvDate" key, excluding walk-in sales (CustCode="NONAME"), restricted
 // to the sorting warehouse (Location="SORTIROVOC") — matches WebGetStockMovements'
 // FrLocation filter; other locations' shipments aren't this warehouse's job.
-// Header: invoice number + Addr0 (recipient). Items: Spec (name) + Quant.
+// Both pending and already-shipped invoices are included (never gated on
+// ShipedFlag) — "shipedFlag" is in each shipment's JSON so a client can tell
+// them apart, same reconciliation purpose as WebGetStockMovements' complFlag.
+// Header: invoice number + Addr0 (recipient) + shipedFlag. Items: Spec (name) + Quant.
 // ==============================================================
 
 // Writes one invoice's shipment JSON object (incl. trailing comma) into resarea.
@@ -610,6 +615,7 @@ begin
   AddTextToArea("{",resarea);
   addParamToJSONArea("invoiceNo",NormalizeStrToJson(IVr.SerNr),resarea);
   addParamToJSONArea("recipient",NormalizeStrToJson(IVr.Addr0),resarea);
+  addParamToJSONArea("shipedFlag",IVr.ShipedFlag,resarea);
 
   AddTextToArea("\"items\":[",resarea);
   rwcnt = MatRowCnt(IVr);
