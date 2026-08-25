@@ -22,7 +22,8 @@ begin
     testf = true;
     if(blank(SHr.TransportNumber))then begin testf = false; end;
     if(SHr.OKFlag==1)then begin testf = false; end;
-    
+    if(SHr.Location!="SORTIROVOC")then begin testf = false; end;
+
     if(testf)then begin
       addtexttoarea("{",response);
       addParamToJSONArea("shipment_no",NormalizeStrToJson(SHr.SerNr),response);
