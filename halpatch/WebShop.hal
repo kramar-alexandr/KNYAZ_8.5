@@ -419,6 +419,36 @@ end;
 // whole register.
 // ==============================================================
 
+// Writes "barcodes":[...] (incl. trailing comma) into resarea for one item code —
+// main barcode first (INVc.BarCode, the "BarCode" key), then every batch/variant
+// barcode registered for it in BarcodeVc (the "Itemcode" key), skipping an exact
+// repeat. Same lookup order as the record-check in RAction/INVcRecAction.hal.
+global procedure AddItemBarcodesArrayToJSON(string itemcode, string mainbarcode, var area resarea)
+begin
+  record BarcodeVc BCr;
+  boolean TrHs;
+
+  AddTextToArea("\"barcodes\":[",resarea);
+  if(nonblank(mainbarcode))then begin
+    AddTextToArea("\"" & NormalizeStrToJson(mainbarcode) & "\",",resarea);
+  end;
+  BCr.Itemcode = itemcode;
+  TrHs = true;
+  while(LoopKey("Itemcode",BCr,1,TrHs))begin
+    if(BCr.Itemcode!=itemcode)then begin
+      TrHs = false;
+    end else begin
+      if(nonblank(BCr.Barcode) and BCr.Barcode!=mainbarcode)then begin
+        AddTextToArea("\"" & NormalizeStrToJson(BCr.Barcode) & "\",",resarea);
+      end;
+    end;
+  end;
+  delLastComaInArea(resarea);
+  AddTextToArea("],",resarea);
+
+  return;
+end;
+
 // Writes one movement's JSON object (incl. trailing comma) into resarea.
 procedure WriteStockMovementJSON(record StockMovVc SMr, var area resarea)
 begin
@@ -440,6 +470,7 @@ begin
       addParamToJSONArea("erpId",NormalizeStrToJson(SMrw.ArtCode),resarea);
       addParamToJSONArea("name",NormalizeStrToJson(INr.Name),resarea);
       addParamToJSONArea("qty",NormalizeStrToJson(SMrw.OrdQuant),resarea);
+      AddItemBarcodesArrayToJSON(SMrw.ArtCode,INr.BarCode,resarea);
       delLastComaInArea(resarea);
       AddTextToArea("},",resarea);
     end;
