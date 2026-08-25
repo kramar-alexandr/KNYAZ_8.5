@@ -3671,7 +3671,7 @@ begin
   EditField(h,v,80, "Номер",Normal,SerNr,false,TSerSClass);
   CheckBox(h2,v,0,"Зарезервировано",Reserved);
   CheckBox(h2+200,v,0,"Напечатано",PrintedFlag);
-  CheckBox(h2+200,v,0,"Собрано",ComplFlag);
+  CheckBox(h2+200,v+vs,0,"Собрано",ComplFlag);
   CheckBox(h2,v=v+vs,0,"Перемещать включая резерв",MoveIncludingReserve);//Edit----------------------Dima  18.06.2015
 
   //EditField(h3,v,80,"Причина",Normal,Reason,false,StandProblemsSClass);
