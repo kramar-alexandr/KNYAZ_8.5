@@ -412,10 +412,11 @@ end;
 // ==============================================================
 // Custom: Company 9 pending stock transfers export API (token-authenticated)
 // StockMovVc from location SORTIROVOC, OKFlag=1 (already confirmed — the
-// warehouse just picks/collects), PrintedFlag=0 (not yet sent), last 3 days.
-// Walked backward (newest first) via the FrLocOK key (FrLocation+OKFlag+
-// TransDate+SerNr) so we can stop as soon as we pass the 3-day window,
-// instead of scanning the whole register.
+// warehouse just picks/collects), ComplFlag=0 (not yet assembled/confirmed
+// done — see WebSetStockMovPrinted below), last 3 days. Walked backward
+// (newest first) via the FrLocOK key (FrLocation+OKFlag+TransDate+SerNr) so
+// we can stop as soon as we pass the 3-day window, instead of scanning the
+// whole register.
 // ==============================================================
 
 // Writes one movement's JSON object (incl. trailing comma) into resarea.
@@ -481,7 +482,7 @@ begin
         if(SMr.TransDate<addDay(CurrentDate,-3))then begin
           TrHs = false;
         end else begin
-          if(SMr.PrintedFlag==0)then begin
+          if(SMr.ComplFlag==0)then begin
             WriteStockMovementJSON(SMr,resarea);
           end;
         end;
@@ -508,8 +509,10 @@ end;
 
 
 // ==============================================================
-// Custom: mark a stock transfer as sent to the warehouse program.
-// Sets PrintedFlag=1 on the given StockMovVc by SerNr (web arg "sernr").
+// Custom: confirm a stock transfer as sent/assembled.
+// Sets PrintedFlag=1 (sent to the warehouse program) and ComplFlag=1
+// (assembly confirmed done — this is what WebGetStockMovements' ComplFlag=0
+// filter above checks) on the given StockMovVc by SerNr (web arg "sernr").
 // ==============================================================
 
 global webpublic updating procedure WebSetStockMovPrinted()
@@ -533,6 +536,7 @@ begin
     if(SMr.SerNr>0 and readfirstmain(SMr,1,true))then begin
       RecordCopy(oldSMr,SMr);
       SMr.PrintedFlag = 1;
+      SMr.ComplFlag = 1;
       if(RecordUpdate(oldSMr,SMr,true)==0)then begin
         AddTextToArea("{\"result\":\"ok\"}",resarea);
       end else begin
