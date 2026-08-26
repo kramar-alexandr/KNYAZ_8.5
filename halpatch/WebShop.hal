@@ -502,6 +502,7 @@ begin
     RecordNew(BCr);
     BCr.Itemcode = code;
     BCr.Barcode = barcode;
+    BCr.Comment = INr.Name;
     savedf = RecordInsert(BCr,true);
     if(savedf)then begin
       AddTextToArea("{\"result\":\"ok\",\"target\":\"variant\"}",resarea);
