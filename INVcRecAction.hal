@@ -29,6 +29,19 @@
 // populated through RecordCopy across the call boundary in practice (found
 // live: the collision was correctly detected, but Code/Name read back
 // blank at the call site) — string out-params sidestep that entirely.
+//
+// SECOND BUG (found live, 2026-08-26, regression from the fix above): when
+// the sought barcode sorts AFTER every existing value in the key (so there's
+// no next record to position on — the common case, since most assignments
+// are brand new, non-colliding barcodes), LoopKey's first call still
+// returns true but leaves the loop record holding whatever was seeded
+// before the call (BarCode = the search value itself, Code/Itemcode blank)
+// instead of a real row or a clean "not found". That made BarCode==barcode
+// trivially true and Code/Itemcode!=exclude trivially true too (blank
+// never equals a real code) — a phantom match on every brand-new barcode,
+// rejecting every legitimate assignment. Guarded below by additionally
+// requiring the "found" row to have a real (nonblank) primary key — no
+// genuine INVc/BarcodeVc row ever has a blank Code/Itemcode.
 // ==============================================================
 
 global
@@ -41,7 +54,7 @@ begin
   lINr.BarCode = barcode;
   TrHs = true;
   while(LoopKey("BarCode",lINr,1,TrHs))begin
-    if(lINr.BarCode!=barcode)then begin
+    if(lINr.BarCode!=barcode or blank(lINr.Code))then begin
       TrHs = false;
     end else begin
       if(lINr.Code!=excludecode and lINr.Terminated==0)then begin
@@ -67,7 +80,7 @@ begin
   lBCr.Barcode = barcode;
   TrHs = true;
   while(LoopKey("Barcode",lBCr,1,TrHs))begin
-    if(lBCr.Barcode!=barcode)then begin
+    if(lBCr.Barcode!=barcode or blank(lBCr.Itemcode))then begin
       TrHs = false;
     end else begin
       if(lBCr.Itemcode!=excludeitemcode)then begin

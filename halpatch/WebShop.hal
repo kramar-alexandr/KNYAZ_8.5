@@ -467,11 +467,14 @@ begin
 
     // Main barcode already taken by this item — only genuinely new for it if
     // it's not already one of its own registered variants (idempotent re-assign).
+    // Same LoopKey-past-end guard as FindItemByBarCode/FindBarcodeVcByBarcode
+    // (INVcRecAction.hal) — a nonexistent seek target can return a phantom
+    // row with blank Itemcode instead of cleanly ending the loop.
     alreadyowned = false;
     lBCr.Barcode = barcode;
     TrHs = true;
     while(LoopKey("Barcode",lBCr,1,TrHs))begin
-      if(lBCr.Barcode!=barcode)then begin
+      if(lBCr.Barcode!=barcode or blank(lBCr.Itemcode))then begin
         TrHs = false;
       end else begin
         if(lBCr.Itemcode==code)then begin
