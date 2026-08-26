@@ -411,10 +411,6 @@ begin
   record INVc INr,oldINr;
   record BarcodeVc BCr,lBCr;
   boolean TrHs,alreadyowned,savedf,collided;
-  record INVc diagINr;
-  boolean diagTrHs;
-  integer diagcnt;
-  string 500 diagseen;
 
   logtext(0,"WebSetProductBarcode start");
 
@@ -446,40 +442,24 @@ begin
       goto LWebSetProductBarcodeEnd;
     end;
 
-    // TEMPORARY diagnostic path — raw local LoopKey walk on INVc's "BarCode"
-    // key, no call into INVcRecAction.hal at all, to isolate whether LoopKey
-    // itself sees the colliding row from whether the cross-file call does.
-    // Triggered only by {"debug":"1"} in the body; remove once diagnosed.
-    if(JSONGet(jsonobj,"debug")=="1")then begin
-      diagINr.BarCode = barcode;
-      diagTrHs = true;
-      diagcnt = 0;
-      diagseen = "";
-      while(LoopKey("BarCode",diagINr,1,diagTrHs))begin
-        diagcnt = diagcnt + 1;
-        diagseen = diagseen & "[" & diagcnt & ":BarCode=" & diagINr.BarCode & ",Code=" & diagINr.Code & ",Name=" & diagINr.Name & ",Term=" & diagINr.Terminated & "]";
-        if(diagINr.BarCode!=barcode or diagcnt>5)then begin
-          diagTrHs = false;
-        end;
-      end;
-      AddTextToArea("{\"result\":\"debug\",\"seed\":\"" & NormalizeStrToJson(barcode) & "\",\"iterations\":" & diagcnt & ",\"seen\":\"" & NormalizeStrToJson(diagseen) & "\"}",resarea);
-      goto LWebSetProductBarcodeEnd;
-    end;
-
     // Explicit uniqueness check, own item excluded — this is the actual
     // enforcement now, not the record-check hook (see note above). Called as
     // its own assignment statement, NOT inline inside `if(...)` — calling a
     // function with trailing `var` out-params directly in an if-condition
     // was found live to leave those out-params blank at the call site, even
-    // for a genuine match (see INVcRecAction.hal header comment).
+    // for a genuine match (see INVcRecAction.hal header comment). FindItemByBarCode/
+    // FindBarcodeVcByBarcode live at the halcust root (level 3, "outer" relative
+    // to halpatch's level 0, see the "external outer" declarations at the top of
+    // this file) — declaring them as plain external or external inner both
+    // resolved to garbage (found=true, blank output) regardless of input.
     collided = FindItemByBarCode(barcode,code,dupcode,dupname);
     if(collided)then begin
-      AddTextToArea("{\"result\":\"error\",\"error\":\"" & NormalizeStrToJson("[v-fe94830] Штрихкод " & barcode & " уже используется товаром " & dupcode & " (" & dupname & ")") & "\"}",resarea);
+      AddTextToArea("{\"result\":\"error\",\"error\":\"" & NormalizeStrToJson("Штрихкод " & barcode & " уже используется товаром " & dupcode & " (" & dupname & ")") & "\"}",resarea);
       goto LWebSetProductBarcodeEnd;
     end;
     collided = FindBarcodeVcByBarcode(barcode,code,dupitemcode);
     if(collided)then begin
-      AddTextToArea("{\"result\":\"error\",\"error\":\"" & NormalizeStrToJson("[v-fe94830] Штрихкод " & barcode & " уже присвоен товару " & dupitemcode) & "\"}",resarea);
+      AddTextToArea("{\"result\":\"error\",\"error\":\"" & NormalizeStrToJson("Штрихкод " & barcode & " уже присвоен товару " & dupitemcode) & "\"}",resarea);
       goto LWebSetProductBarcodeEnd;
     end;
 
@@ -488,7 +468,7 @@ begin
       INr.BarCode = barcode;
       savedf = (RecordUpdate(oldINr,INr,true)==0);
       if(savedf)then begin
-        AddTextToArea("{\"result\":\"ok\",\"target\":\"item\",\"v\":\"fe94830\"}",resarea);
+        AddTextToArea("{\"result\":\"ok\",\"target\":\"item\"}",resarea);
       end else begin
         AddTextToArea("{\"result\":\"error\",\"error\":\"update_failed\"}",resarea);
       end;
