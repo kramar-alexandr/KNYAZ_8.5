@@ -14,10 +14,38 @@
 // 2) BarcodeVc via its "Barcode" key (variant/batch barcodes) — only if (1)
 //    found nothing, since multiple BarcodeVc rows can share an item on
 //    purpose and don't need disambiguating the way a cross-item hit would.
+//
+// IMPORTANT — zero-padding gotcha (found live, 2026-08-26): the base
+// INVcRecordCheck/BarcodeVcRecordCheck (via inner.) left-pads a barcode
+// shorter than ItemSettingBlock.BarCodeLength with "0" BEFORE our checks
+// below ever run, but that padding was never retroactively applied to
+// existing short/legacy values already in the database (e.g. a 5-digit test
+// barcode next to real 13-digit EAN codes). Searching only the post-padding
+// value misses a collision against such a legacy unpadded row entirely — a
+// real conflict slipped through exactly this way in a live test (see
+// WebSetProductBarcode.hal usage log around that date). Both checks below
+// now try the value AS SUBMITTED (pre-inner, pre-padding) in addition to the
+// post-inner value, so a match is found regardless of which form the
+// colliding row happens to be stored in.
 // ==============================================================
 
 global
-function Boolean FindItemByBarCode(string barcode,string excludecode,var record INVc foundINr)
+function string 60 NormalizeBarcodeForCompare(string barcode)
+begin
+  record ItemSettingBlock ISb;
+  string 60 tstr;
+
+  tstr = barcode;
+  BlockLoad(ISb);
+  if(ISb.BarCodeLength>0 and nonblank(tstr) and len(tstr)<ISb.BarCodeLength)then begin
+    AddCharsToString(tstr,"0",ISb.BarCodeLength-len(tstr));
+  end;
+
+  NormalizeBarcodeForCompare = tstr;
+  return;
+end;
+
+function Boolean FindItemByBarCodeExact(string barcode,string excludecode,var record INVc foundINr)
 begin
   record INVc lINr;
   Boolean found,TrHs;
@@ -37,12 +65,31 @@ begin
     end;
   end;
 
+  FindItemByBarCodeExact = found;
+  return;
+end;
+
+// Tries the value as given, then (if different) its zero-padded form — see the
+// file header comment on why both forms need checking.
+global
+function Boolean FindItemByBarCode(string barcode,string excludecode,var record INVc foundINr)
+begin
+  Boolean found;
+  string 60 normalized;
+
+  found = FindItemByBarCodeExact(barcode,excludecode,foundINr);
+  if(!found)then begin
+    normalized = NormalizeBarcodeForCompare(barcode);
+    if(normalized!=barcode)then begin
+      found = FindItemByBarCodeExact(normalized,excludecode,foundINr);
+    end;
+  end;
+
   FindItemByBarCode = found;
   return;
 end;
 
-global
-function Boolean FindBarcodeVcByBarcode(string barcode,string excludeitemcode,var record BarcodeVc foundBCr)
+function Boolean FindBarcodeVcByBarcodeExact(string barcode,string excludeitemcode,var record BarcodeVc foundBCr)
 begin
   record BarcodeVc lBCr;
   Boolean found,TrHs;
@@ -62,7 +109,49 @@ begin
     end;
   end;
 
+  FindBarcodeVcByBarcodeExact = found;
+  return;
+end;
+
+global
+function Boolean FindBarcodeVcByBarcode(string barcode,string excludeitemcode,var record BarcodeVc foundBCr)
+begin
+  Boolean found;
+  string 60 normalized;
+
+  found = FindBarcodeVcByBarcodeExact(barcode,excludeitemcode,foundBCr);
+  if(!found)then begin
+    normalized = NormalizeBarcodeForCompare(barcode);
+    if(normalized!=barcode)then begin
+      found = FindBarcodeVcByBarcodeExact(normalized,excludeitemcode,foundBCr);
+    end;
+  end;
+
   FindBarcodeVcByBarcode = found;
+  return;
+end;
+
+// Checks one candidate barcode value against both registers; sets isvariant to
+// say which one hit (so the caller can phrase the right error message).
+global
+function Boolean BarcodeCollides(string barcode,string excludecode,var record INVc dupINr,var record BarcodeVc dupBCr,var Boolean isvariant)
+begin
+  Boolean res;
+
+  res = false;
+  if(nonblank(barcode))then begin
+    if(FindItemByBarCode(barcode,excludecode,dupINr))then begin
+      res = true;
+      isvariant = false;
+    end else begin
+      if(FindBarcodeVcByBarcode(barcode,excludecode,dupBCr))then begin
+        res = true;
+        isvariant = true;
+      end;
+    end;
+  end;
+
+  BarcodeCollides = res;
   return;
 end;
 
@@ -72,23 +161,27 @@ begin
   LongInt res;
   record INVc dupINr;
   record BarcodeVc dupBCr;
+  string 60 rawbarcode;
+  Boolean isvariant,collided;
 
+  rawbarcode = INr.BarCode;
   res = inner.INVcRecordCheck(INr,IN2r,stat,long4);
 
   if(res==0 and nonblank(INr.BarCode))then begin
-    if(FindItemByBarCode(INr.BarCode,INr.Code,dupINr))then begin
-      RecordCheckError(0,"Штрихкод " & INr.BarCode & " уже используется товаром " & dupINr.Code & " (" & dupINr.Name & ")",-1,"BarCode");
-      res = -1;
-      goto LINVcRecordCheckCustom;
+    collided = BarcodeCollides(INr.BarCode,INr.Code,dupINr,dupBCr,isvariant);
+    if(!collided and nonblank(rawbarcode) and rawbarcode!=INr.BarCode)then begin
+      collided = BarcodeCollides(rawbarcode,INr.Code,dupINr,dupBCr,isvariant);
     end;
-    if(FindBarcodeVcByBarcode(INr.BarCode,INr.Code,dupBCr))then begin
-      RecordCheckError(0,"Штрихкод " & INr.BarCode & " уже присвоен как дополнительный товару " & dupBCr.Itemcode,-1,"BarCode");
+    if(collided)then begin
+      if(isvariant)then begin
+        RecordCheckError(0,"Штрихкод " & INr.BarCode & " уже присвоен как дополнительный товару " & dupBCr.Itemcode,-1,"BarCode");
+      end else begin
+        RecordCheckError(0,"Штрихкод " & INr.BarCode & " уже используется товаром " & dupINr.Code & " (" & dupINr.Name & ")",-1,"BarCode");
+      end;
       res = -1;
-      goto LINVcRecordCheckCustom;
     end;
   end;
 
-LINVcRecordCheckCustom:;
   INVcRecordCheck = res;
   return;
 end;
