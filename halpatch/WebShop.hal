@@ -398,6 +398,10 @@ end;
 // collision itself, explicitly, BEFORE writing anything — it does not rely
 // on the record-check hook for that at all anymore. FindItemByBarCode/
 // FindBarcodeVcByBarcode (INVcRecAction.hal) are reused here directly.
+
+SetLangMode(LangRussian,"RUS",2);
+
+
 global webpublic updating procedure WebSetProductBarcode()
 begin
   string 60 authtoken;

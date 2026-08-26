@@ -2,7 +2,7 @@ external procedure addParamToJSONArea(string, string, var area);
 external procedure delLastComaInArea(var area);
 external function string 255 NormalizeStrToJson(string);
 
-SetLangMode(LangRussian,"RUS",0);
+SetLangMode(LangRussian,"RUS",2);
 
 global webpublic procedure WebGetShipments()
 begin
