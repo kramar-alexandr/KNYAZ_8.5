@@ -1,7 +1,7 @@
 external procedure addParamToJSONArea(string,string,var area);
 external procedure delLastComaInArea(var area);
 external function string 255 NormalizeStrToJson(string);
-external function Boolean FindBarcodeVcByBarcode(string,string,var string);
+external inner function Boolean FindBarcodeVcByBarcode(string,string,var string);
 
 // ==============================================================
 // Custom: one-time duplicate-barcode audit (token-authenticated), Company 9.

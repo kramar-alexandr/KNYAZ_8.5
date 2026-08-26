@@ -5,8 +5,8 @@ external function string 255 NormalizeStrToJson(string);
 external function roundmode SetRoundModeD(Integer);
 external function Boolean ReadFirstItem(string,var record INVc,Boolean,Boolean);
 external procedure ExtractObj(string,var Integer,var string);
-external function Boolean FindItemByBarCode(string,string,var string,var string);
-external function Boolean FindBarcodeVcByBarcode(string,string,var string);
+external inner function Boolean FindItemByBarCode(string,string,var string,var string);
+external inner function Boolean FindBarcodeVcByBarcode(string,string,var string);
 
 
 procedure ShowStandardWebShopItemList()
