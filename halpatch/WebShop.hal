@@ -668,10 +668,90 @@ end;
 
 
 // ==============================================================
+// Custom: lightweight "what's new" poll for movements (token-authenticated).
+// Same selection as WebGetStockMovements above (SORTIROVOC, OKFlag=1, last 3
+// days) but only SerNr>sinceId (web arg "sinceId", 0/blank = everything in the
+// window), and only enough fields to notify + advance the cursor — no items,
+// no barcodes. Built for frequent polling (~15-30s) without re-shipping the
+// whole window's payload every time. "maxId" is always the right sinceId to
+// pass on the next call, even when "movements" comes back empty — computed
+// here instead of left to the caller, since the walk order isn't SerNr order
+// (the FrLocOK key sorts by TransDate before SerNr, so a plain "last item
+// seen" isn't reliably the max).
+// ==============================================================
+
+global webpublic procedure WebGetNewStockMovements()
+begin
+  string 60 authtoken,sinceidstr;
+  record StockMovVc SMr;
+  area resarea;
+  boolean TrHs;
+  LongInt sinceid,maxid;
+
+  logtext(0,"WebGetNewStockMovements start");
+
+  authtoken = WebGetArg("token");
+  sinceidstr = WebGetArg("sinceId");
+  WebSetContentType("application/json; charset=UTF-8");
+
+  if(authtoken=="kn9-cat-7f3a91c2e6")then begin
+
+    SetCompany(9,false);
+    sinceid = stringtolongint(sinceidstr);
+    maxid = sinceid;
+
+    AddTextToArea("{",resarea);
+    AddTextToArea("\"movements\":[",resarea);
+
+    SMr.FrLocation = "SORTIROVOC";
+    SMr.OKFlag = 1;
+    SMr.TransDate = CurrentDate;
+    TrHs = true;
+    while(LoopBackKey("FrLocOK",SMr,3,TrHs))begin
+      if(SMr.FrLocation!="SORTIROVOC")then begin TrHs = false; end;
+      if(SMr.OKFlag!=1)then begin TrHs = false; end;
+      if(TrHs)then begin
+        if(SMr.TransDate<addDay(CurrentDate,-3))then begin
+          TrHs = false;
+        end else begin
+          if(SMr.SerNr>sinceid)then begin
+            AddTextToArea("{",resarea);
+            addParamToJSONArea("shipmentNo",NormalizeStrToJson(SMr.SerNr),resarea);
+            addParamToJSONArea("toLocation",NormalizeStrToJson(SMr.ToLocation),resarea);
+            delLastComaInArea(resarea);
+            AddTextToArea("},",resarea);
+            if(SMr.SerNr>maxid)then begin maxid = SMr.SerNr; end;
+          end;
+        end;
+      end;
+    end;
+    ResetLoop(SMr);
+
+    delLastComaInArea(resarea);
+    AddTextToArea("],",resarea);
+    addParamToJSONArea("maxId",NormalizeStrToJson(maxid),resarea);
+    delLastComaInArea(resarea);
+    AddTextToArea("}",resarea);
+
+  end else begin
+    logtext(0,"WebGetNewStockMovements unauthorized token");
+    AddTextToArea("{\"result\":\"error\",\"error\":\"unauthorized\"}",resarea);
+  end;
+
+  weboutarea2(resarea);
+
+  logtext(0,"WebGetNewStockMovements end");
+
+return;
+end;
+
+
+// ==============================================================
 // Custom: confirm a stock transfer as sent/assembled.
 // Sets PrintedFlag=1 (sent to the warehouse program) and ComplFlag=1
-// (assembly confirmed done — this is what WebGetStockMovements' ComplFlag=0
-// filter above checks) on the given StockMovVc by SerNr (web arg "sernr").
+// (assembly confirmed done — WebGetStockMovements/WebGetNewStockMovements
+// above both key off it, the latter via each movement's SerNr cursor
+// unaffected by this flag) on the given StockMovVc by SerNr (web arg "sernr").
 // ==============================================================
 
 global webpublic updating procedure WebSetStockMovPrinted()
@@ -814,6 +894,82 @@ begin
   weboutarea2(resarea);
 
   logtext(0,"WebGetShipments end");
+
+return;
+end;
+
+
+// ==============================================================
+// Custom: lightweight "what's new" poll for shipments (token-authenticated).
+// Same selection as WebGetShipments above (SORTIROVOC, OKFlag=1, last 5 days,
+// excludes CustCode="NONAME") but only SerNr>sinceId (web arg "sinceId",
+// 0/blank = everything in the window), and only enough fields to notify +
+// advance the cursor. See WebGetNewStockMovements above for why "maxId" is
+// computed here rather than left to the caller.
+// ==============================================================
+
+global webpublic procedure WebGetNewShipments()
+begin
+  string 60 authtoken,sinceidstr;
+  record IVVc IVr;
+  record CUVc CUr;
+  area resarea;
+  boolean TrHs,testf;
+  LongInt sinceid,maxid;
+
+  logtext(0,"WebGetNewShipments start");
+
+  authtoken = WebGetArg("token");
+  sinceidstr = WebGetArg("sinceId");
+  WebSetContentType("application/json; charset=UTF-8");
+
+  if(authtoken=="kn9-cat-7f3a91c2e6")then begin
+
+    SetCompany(9,false);
+    sinceid = stringtolongint(sinceidstr);
+    maxid = sinceid;
+
+    AddTextToArea("{",resarea);
+    AddTextToArea("\"shipments\":[",resarea);
+
+    IVr.InvDate = CurrentDate;
+    IVr.SerNr = 9999999999;
+    TrHs = true;
+    while(LoopBackKey("InvDate",IVr,2,TrHs))begin
+      testf = true;
+      if(IVr.InvDate<addDay(CurrentDate,-5))then begin TrHs = false; testf = false; end;
+      if(IVr.OKFlag==0)then begin testf = false; end;
+      if(IVr.Location!="SORTIROVOC")then begin testf = false; end;
+      if(IVr.SerNr<=sinceid)then begin testf = false; end;
+      if(testf)then begin
+        CUr.Code = IVr.CustCode;
+        readfirstmain(CUr,1,true);
+        if(CUr.Code!="NONAME")then begin
+          AddTextToArea("{",resarea);
+          addParamToJSONArea("invoiceNo",NormalizeStrToJson(IVr.SerNr),resarea);
+          addParamToJSONArea("recipient",NormalizeStrToJson(IVr.Addr0),resarea);
+          delLastComaInArea(resarea);
+          AddTextToArea("},",resarea);
+          if(IVr.SerNr>maxid)then begin maxid = IVr.SerNr; end;
+        end;
+      end;
+    end;
+    ResetLoop(IVr);
+
+    delLastComaInArea(resarea);
+    AddTextToArea("],",resarea);
+    addParamToJSONArea("maxId",NormalizeStrToJson(maxid),resarea);
+    delLastComaInArea(resarea);
+    AddTextToArea("}",resarea);
+
+  end else begin
+    logtext(0,"WebGetNewShipments unauthorized token");
+    AddTextToArea("{\"result\":\"error\",\"error\":\"unauthorized\"}",resarea);
+  end;
+
+  weboutarea2(resarea);
+
+  logtext(0,"WebGetNewShipments end");
 
 return;
 end;
