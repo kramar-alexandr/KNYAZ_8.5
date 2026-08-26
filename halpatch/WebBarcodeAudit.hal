@@ -29,7 +29,7 @@ begin
   Integer cnt;
   string 255 curbarcode,curcodes,curnames;
   Integer curn;
-  Boolean TrHs;
+  Boolean TrHs,collided;
 
   logtext(0,"WebFindDuplicateBarcodes start");
 
@@ -133,7 +133,8 @@ begin
     ResetLoop(INr);
     while(loopmain(INr,1,true))begin
       if(INr.Terminated==0 and nonblank(INr.BarCode))then begin
-        if(FindBarcodeVcByBarcode(INr.BarCode,INr.Code,dupitemcode))then begin
+        collided = FindBarcodeVcByBarcode(INr.BarCode,INr.Code,dupitemcode);
+        if(collided)then begin
           AddTextToArea("{",resarea);
           addParamToJSONArea("barcode",NormalizeStrToJson(INr.BarCode),resarea);
           addParamToJSONArea("kind","item_vs_variant",resarea);

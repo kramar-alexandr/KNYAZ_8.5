@@ -18,30 +18,25 @@
 // NOTE (found live, 2026-08-26): the RecordCheck hooks below are NOT
 // reliably invoked outside the GUI save path — a real conflict slipped
 // through RecordUpdate/RecordInsert called from WebSetProductBarcode.hal
-// twice in live testing. That endpoint now checks for a collision itself,
+// in live testing. That endpoint now checks for a collision itself,
 // explicitly, using the two Find* functions below directly — it does not
 // depend on these RecordCheck overrides firing at all. Keep this file for
 // the GUI path (editing an item/barcode by hand in the ERP client), but
 // don't assume it covers webpublic writes.
 //
-// Find* functions return the match's fields as plain string out-params
-// rather than a whole `var record` — a `record` out-param didn't come back
-// populated through RecordCopy across the call boundary in practice (found
-// live: the collision was correctly detected, but Code/Name read back
-// blank at the call site) — string out-params sidestep that entirely.
-//
-// SECOND BUG (found live, 2026-08-26, regression from the fix above): when
-// the sought barcode sorts AFTER every existing value in the key (so there's
-// no next record to position on — the common case, since most assignments
-// are brand new, non-colliding barcodes), LoopKey's first call still
-// returns true but leaves the loop record holding whatever was seeded
-// before the call (BarCode = the search value itself, Code/Itemcode blank)
-// instead of a real row or a clean "not found". That made BarCode==barcode
-// trivially true and Code/Itemcode!=exclude trivially true too (blank
-// never equals a real code) — a phantom match on every brand-new barcode,
-// rejecting every legitimate assignment. Guarded below by additionally
-// requiring the "found" row to have a real (nonblank) primary key — no
-// genuine INVc/BarcodeVc row ever has a blank Code/Itemcode.
+// CALLING CONVENTION (found live, 2026-08-26, root cause of two earlier
+// "fixes" that didn't actually work): a function with trailing `var`
+// out-parameters called INLINE inside an `if(...)` condition did not
+// reliably have those out-parameters populated by the time the `then`
+// branch read them — Code/Name/Itemcode kept coming back blank regardless
+// of whether the out-param was a whole record or a plain string, even for
+// a genuine, real collision (not just the seek-past-end edge case). Base
+// HAL master code never does this — it always assigns the call's result to
+// a local variable as its own statement first (e.g. ORVcRecAction.hal's
+// `errcode = CheckObjs(...); if(errcode!=0)then...`), then checks that
+// variable in a separate `if`. Both Find* calls below now follow that same
+// two-step form; do NOT change them back to `if(FindX(...))then` — that's
+// exactly the form that silently produced blank output params here.
 // ==============================================================
 
 global
@@ -100,16 +95,19 @@ function LongInt INVcRecordCheck(var record INVc INr,record INVc IN2r,LongInt st
 begin
   LongInt res;
   string 60 dupcode,dupname,dupitemcode;
+  Boolean collided;
 
   res = inner.INVcRecordCheck(INr,IN2r,stat,long4);
 
   if(res==0 and nonblank(INr.BarCode))then begin
-    if(FindItemByBarCode(INr.BarCode,INr.Code,dupcode,dupname))then begin
+    collided = FindItemByBarCode(INr.BarCode,INr.Code,dupcode,dupname);
+    if(collided)then begin
       RecordCheckError(0,"Штрихкод " & INr.BarCode & " уже используется товаром " & dupcode & " (" & dupname & ")",-1,"BarCode");
       res = -1;
       goto LINVcRecordCheckCustom;
     end;
-    if(FindBarcodeVcByBarcode(INr.BarCode,INr.Code,dupitemcode))then begin
+    collided = FindBarcodeVcByBarcode(INr.BarCode,INr.Code,dupitemcode);
+    if(collided)then begin
       RecordCheckError(0,"Штрихкод " & INr.BarCode & " уже присвоен как дополнительный товару " & dupitemcode,-1,"BarCode");
       res = -1;
       goto LINVcRecordCheckCustom;

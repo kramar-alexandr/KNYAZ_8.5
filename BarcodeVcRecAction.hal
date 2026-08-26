@@ -2,7 +2,9 @@
 // Custom: unique-barcode enforcement, BarcodeVc side.
 // Mirrors the check in INVcRecAction.hal — see that file for the full
 // rationale, including why it can't be relied on for webpublic writes
-// (RecordCheck hooks aren't reliably invoked outside the GUI save path).
+// (RecordCheck hooks aren't reliably invoked outside the GUI save path) and
+// the calling-convention gotcha (assign the Find* result to a local
+// variable as its own statement, never inline inside `if(...)`).
 // A new barcode variant must not collide with another item's main barcode
 // (INVc.BarCode) or another item's variant. Colliding with your OWN item's
 // main barcode / other variants is fine (that's the normal "several
@@ -17,16 +19,19 @@ function LongInt BarcodeVcRecordCheck(var record BarcodeVc Barcoder,record Barco
 begin
   LongInt res;
   string 60 dupcode,dupname,dupitemcode;
+  Boolean collided;
 
   res = inner.BarcodeVcRecordCheck(Barcoder,Barcode2r,stat,long4);
 
   if(res==0 and nonblank(Barcoder.Barcode))then begin
-    if(FindItemByBarCode(Barcoder.Barcode,Barcoder.Itemcode,dupcode,dupname))then begin
+    collided = FindItemByBarCode(Barcoder.Barcode,Barcoder.Itemcode,dupcode,dupname);
+    if(collided)then begin
       RecordCheckError(0,"Штрихкод " & Barcoder.Barcode & " уже используется как основной у товара " & dupcode & " (" & dupname & ")",-1,"Barcode");
       res = -1;
       goto LBarcodeVcRecordCheckCustom;
     end;
-    if(FindBarcodeVcByBarcode(Barcoder.Barcode,Barcoder.Itemcode,dupitemcode))then begin
+    collided = FindBarcodeVcByBarcode(Barcoder.Barcode,Barcoder.Itemcode,dupitemcode);
+    if(collided)then begin
       RecordCheckError(0,"Штрихкод " & Barcoder.Barcode & " уже присвоен товару " & dupitemcode,-1,"Barcode");
       res = -1;
       goto LBarcodeVcRecordCheckCustom;

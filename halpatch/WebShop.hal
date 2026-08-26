@@ -410,7 +410,7 @@ begin
   string 60 code,barcode,dupcode,dupname,dupitemcode;
   record INVc INr,oldINr;
   record BarcodeVc BCr,lBCr;
-  boolean TrHs,alreadyowned,savedf;
+  boolean TrHs,alreadyowned,savedf,collided;
 
   logtext(0,"WebSetProductBarcode start");
 
@@ -443,12 +443,18 @@ begin
     end;
 
     // Explicit uniqueness check, own item excluded — this is the actual
-    // enforcement now, not the record-check hook (see note above).
-    if(FindItemByBarCode(barcode,code,dupcode,dupname))then begin
+    // enforcement now, not the record-check hook (see note above). Called as
+    // its own assignment statement, NOT inline inside `if(...)` — calling a
+    // function with trailing `var` out-params directly in an if-condition
+    // was found live to leave those out-params blank at the call site, even
+    // for a genuine match (see INVcRecAction.hal header comment).
+    collided = FindItemByBarCode(barcode,code,dupcode,dupname);
+    if(collided)then begin
       AddTextToArea("{\"result\":\"error\",\"error\":\"" & NormalizeStrToJson("Штрихкод " & barcode & " уже используется товаром " & dupcode & " (" & dupname & ")") & "\"}",resarea);
       goto LWebSetProductBarcodeEnd;
     end;
-    if(FindBarcodeVcByBarcode(barcode,code,dupitemcode))then begin
+    collided = FindBarcodeVcByBarcode(barcode,code,dupitemcode);
+    if(collided)then begin
       AddTextToArea("{\"result\":\"error\",\"error\":\"" & NormalizeStrToJson("Штрихкод " & barcode & " уже присвоен товару " & dupitemcode) & "\"}",resarea);
       goto LWebSetProductBarcodeEnd;
     end;
