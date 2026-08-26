@@ -411,6 +411,10 @@ begin
   record INVc INr,oldINr;
   record BarcodeVc BCr,lBCr;
   boolean TrHs,alreadyowned,savedf,collided;
+  record INVc diagINr;
+  boolean diagTrHs;
+  integer diagcnt;
+  string 500 diagseen;
 
   logtext(0,"WebSetProductBarcode start");
 
@@ -439,6 +443,26 @@ begin
 
     if(INr.BarCode==barcode)then begin
       AddTextToArea("{\"result\":\"ok\",\"target\":\"item\"}",resarea);
+      goto LWebSetProductBarcodeEnd;
+    end;
+
+    // TEMPORARY diagnostic path — raw local LoopKey walk on INVc's "BarCode"
+    // key, no call into INVcRecAction.hal at all, to isolate whether LoopKey
+    // itself sees the colliding row from whether the cross-file call does.
+    // Triggered only by {"debug":"1"} in the body; remove once diagnosed.
+    if(JSONGet(jsonobj,"debug")=="1")then begin
+      diagINr.BarCode = barcode;
+      diagTrHs = true;
+      diagcnt = 0;
+      diagseen = "";
+      while(LoopKey("BarCode",diagINr,1,diagTrHs))begin
+        diagcnt = diagcnt + 1;
+        diagseen = diagseen & "[" & diagcnt & ":BarCode=" & diagINr.BarCode & ",Code=" & diagINr.Code & ",Name=" & diagINr.Name & ",Term=" & diagINr.Terminated & "]";
+        if(diagINr.BarCode!=barcode or diagcnt>5)then begin
+          diagTrHs = false;
+        end;
+      end;
+      AddTextToArea("{\"result\":\"debug\",\"seed\":\"" & NormalizeStrToJson(barcode) & "\",\"iterations\":" & diagcnt & ",\"seen\":\"" & NormalizeStrToJson(diagseen) & "\"}",resarea);
       goto LWebSetProductBarcodeEnd;
     end;
 
