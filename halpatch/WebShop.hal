@@ -450,12 +450,12 @@ begin
     // for a genuine match (see INVcRecAction.hal header comment).
     collided = FindItemByBarCode(barcode,code,dupcode,dupname);
     if(collided)then begin
-      AddTextToArea("{\"result\":\"error\",\"error\":\"" & NormalizeStrToJson("Штрихкод " & barcode & " уже используется товаром " & dupcode & " (" & dupname & ")") & "\"}",resarea);
+      AddTextToArea("{\"result\":\"error\",\"error\":\"" & NormalizeStrToJson("[v-fe94830] Штрихкод " & barcode & " уже используется товаром " & dupcode & " (" & dupname & ")") & "\"}",resarea);
       goto LWebSetProductBarcodeEnd;
     end;
     collided = FindBarcodeVcByBarcode(barcode,code,dupitemcode);
     if(collided)then begin
-      AddTextToArea("{\"result\":\"error\",\"error\":\"" & NormalizeStrToJson("Штрихкод " & barcode & " уже присвоен товару " & dupitemcode) & "\"}",resarea);
+      AddTextToArea("{\"result\":\"error\",\"error\":\"" & NormalizeStrToJson("[v-fe94830] Штрихкод " & barcode & " уже присвоен товару " & dupitemcode) & "\"}",resarea);
       goto LWebSetProductBarcodeEnd;
     end;
 
@@ -464,7 +464,7 @@ begin
       INr.BarCode = barcode;
       savedf = (RecordUpdate(oldINr,INr,true)==0);
       if(savedf)then begin
-        AddTextToArea("{\"result\":\"ok\",\"target\":\"item\"}",resarea);
+        AddTextToArea("{\"result\":\"ok\",\"target\":\"item\",\"v\":\"fe94830\"}",resarea);
       end else begin
         AddTextToArea("{\"result\":\"error\",\"error\":\"update_failed\"}",resarea);
       end;
