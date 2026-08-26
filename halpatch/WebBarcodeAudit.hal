@@ -1,13 +1,13 @@
 external procedure addParamToJSONArea(string,string,var area);
 external procedure delLastComaInArea(var area);
 external function string 255 NormalizeStrToJson(string);
-external function Boolean FindBarcodeVcByBarcode(string,string,var record BarcodeVc);
+external function Boolean FindBarcodeVcByBarcode(string,string,var string);
 
 // ==============================================================
 // Custom: one-time duplicate-barcode audit (token-authenticated), Company 9.
 // Finds pre-existing barcode collisions across INVc.BarCode (main barcode) and
 // BarcodeVc.Barcode (batch/variant barcodes) that predate the uniqueness check
-// added in RAction/INVcRecAction.hal + RAction/BarcodeVcRecAction.hal — that
+// added in INVcRecAction.hal + BarcodeVcRecAction.hal — that
 // check only blocks NEW saves, it doesn't touch what's already in the database.
 // Run once, fix what it lists (repoint/blank one side of each collision), done —
 // not meant to run on a schedule.
@@ -23,7 +23,8 @@ global webpublic procedure WebFindDuplicateBarcodes()
 begin
   string 60 authtoken;
   record INVc INr;
-  record BarcodeVc BCr,dupBCr;
+  record BarcodeVc BCr;
+  string 60 dupitemcode;
   area resarea;
   Integer cnt;
   string 255 curbarcode,curcodes,curnames;
@@ -132,13 +133,13 @@ begin
     ResetLoop(INr);
     while(loopmain(INr,1,true))begin
       if(INr.Terminated==0 and nonblank(INr.BarCode))then begin
-        if(FindBarcodeVcByBarcode(INr.BarCode,INr.Code,dupBCr))then begin
+        if(FindBarcodeVcByBarcode(INr.BarCode,INr.Code,dupitemcode))then begin
           AddTextToArea("{",resarea);
           addParamToJSONArea("barcode",NormalizeStrToJson(INr.BarCode),resarea);
           addParamToJSONArea("kind","item_vs_variant",resarea);
           addParamToJSONArea("item",NormalizeStrToJson(INr.Code),resarea);
           addParamToJSONArea("item_name",NormalizeStrToJson(INr.Name),resarea);
-          addParamToJSONArea("variant_item",NormalizeStrToJson(dupBCr.Itemcode),resarea);
+          addParamToJSONArea("variant_item",NormalizeStrToJson(dupitemcode),resarea);
           delLastComaInArea(resarea);
           AddTextToArea("},",resarea);
           cnt = cnt + 1;

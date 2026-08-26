@@ -5,8 +5,8 @@ external function string 255 NormalizeStrToJson(string);
 external function roundmode SetRoundModeD(Integer);
 external function Boolean ReadFirstItem(string,var record INVc,Boolean,Boolean);
 external procedure ExtractObj(string,var Integer,var string);
-external function Boolean FindItemByBarCode(string,string,var record INVc);
-external function Boolean FindBarcodeVcByBarcode(string,string,var record BarcodeVc);
+external function Boolean FindItemByBarCode(string,string,var string,var string);
+external function Boolean FindBarcodeVcByBarcode(string,string,var string);
 
 
 procedure ShowStandardWebShopItemList()
@@ -403,9 +403,9 @@ begin
   string 60 authtoken;
   area postdata,resarea;
   json jsonobj;
-  string 60 code,barcode;
-  record INVc INr,oldINr,dupINr;
-  record BarcodeVc BCr,lBCr,dupBCr;
+  string 60 code,barcode,dupcode,dupname,dupitemcode;
+  record INVc INr,oldINr;
+  record BarcodeVc BCr,lBCr;
   boolean TrHs,alreadyowned,savedf;
 
   logtext(0,"WebSetProductBarcode start");
@@ -440,12 +440,12 @@ begin
 
     // Explicit uniqueness check, own item excluded — this is the actual
     // enforcement now, not the record-check hook (see note above).
-    if(FindItemByBarCode(barcode,code,dupINr))then begin
-      AddTextToArea("{\"result\":\"error\",\"error\":\"" & NormalizeStrToJson("Штрихкод " & barcode & " уже используется товаром " & dupINr.Code & " (" & dupINr.Name & ")") & "\"}",resarea);
+    if(FindItemByBarCode(barcode,code,dupcode,dupname))then begin
+      AddTextToArea("{\"result\":\"error\",\"error\":\"" & NormalizeStrToJson("Штрихкод " & barcode & " уже используется товаром " & dupcode & " (" & dupname & ")") & "\"}",resarea);
       goto LWebSetProductBarcodeEnd;
     end;
-    if(FindBarcodeVcByBarcode(barcode,code,dupBCr))then begin
-      AddTextToArea("{\"result\":\"error\",\"error\":\"" & NormalizeStrToJson("Штрихкод " & barcode & " уже присвоен товару " & dupBCr.Itemcode) & "\"}",resarea);
+    if(FindBarcodeVcByBarcode(barcode,code,dupitemcode))then begin
+      AddTextToArea("{\"result\":\"error\",\"error\":\"" & NormalizeStrToJson("Штрихкод " & barcode & " уже присвоен товару " & dupitemcode) & "\"}",resarea);
       goto LWebSetProductBarcodeEnd;
     end;
 
