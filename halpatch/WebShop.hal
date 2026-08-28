@@ -756,7 +756,7 @@ begin
       testf = true;
       if(SMr.FrLocation!="SORTIROVOC")then begin TrHs = false; testf = false; end;
       if(SMr.OKFlag!=1)then begin TrHs = false; testf = false; end;
-      if(SMr.PrintedFlag==1)then begin testf = false; end;
+      if(SMr.ComplFlag==1)then begin testf = false; end;
       
       if(testf)then begin
         if(SMr.TransDate<addDay(CurrentDate,-3))then begin

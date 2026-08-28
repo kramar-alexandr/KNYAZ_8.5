@@ -170,10 +170,15 @@ end;
 global webpublic updating procedure WebUpdateSMPrintedAndComp()
 begin
   record StockMovVc SMr;
+  boolean TrHs;
   
   setcompany(9,false);
   
-  while(loopmain(SMr,1,true))begin
+  SMr.SerNr = 99999999;
+  while(loopbackkey("SerNr",SMr,1,TrHs))begin
+    if(SMr.PrintedFlag==1)then begin
+      TrHs = false;
+    end;
     SMr.PrintedFlag = 1;
     SMr.ComplFlag = 1;
     recordstore(SMr,true);
