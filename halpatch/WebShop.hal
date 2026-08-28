@@ -986,6 +986,8 @@ begin
       testf = true;
       if(IVr.InvDate<addDay(CurrentDate,-5))then begin TrHs = false; testf = false; end;
       if(IVr.OKFlag==0)then begin testf = false; end;
+      if(IVr.ShipedFlag==1)then begin testf = false; end;
+      
       if(IVr.Location!="SORTIROVOC")then begin testf = false; end;
       CUr.Code = IVr.CustCode;
       readfirstmain(CUr,1,true);
