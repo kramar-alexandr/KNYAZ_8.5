@@ -738,6 +738,7 @@ begin
   record StockMovVc SMr;
   area resarea;
   boolean TrHs,testf;
+  integer counter;
 
   logtext(0,"WebGetStockMovements start");
 
@@ -761,6 +762,7 @@ begin
       if(SMr.OKFlag!=1)then begin TrHs = false; testf = false; end;
       if(SMr.ComplFlag==1)then begin testf = false; end;
       
+      counter = counter + 1;
       if(testf)then begin
         if(SMr.TransDate<addDay(CurrentDate,-3))then begin
           TrHs = false;
@@ -783,7 +785,7 @@ begin
   ADDFILETOAREA("bigblankfile.txt",resarea,false);
   weboutarea2(resarea);
 
-  logtext(0,"WebGetStockMovements end");
+  logtext(0,"WebGetStockMovements end " & counter);
 
 return;
 end;
