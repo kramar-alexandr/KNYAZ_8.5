@@ -734,7 +734,7 @@ begin
   string 60 authtoken;
   record StockMovVc SMr;
   area resarea;
-  boolean TrHs;
+  boolean TrHs,testf;
 
   logtext(0,"WebGetStockMovements start");
 
@@ -753,9 +753,12 @@ begin
     SMr.TransDate = CurrentDate;
     TrHs = true;
     while(LoopBackKey("FrLocOK",SMr,3,TrHs))begin
-      if(SMr.FrLocation!="SORTIROVOC")then begin TrHs = false; end;
-      if(SMr.OKFlag!=1)then begin TrHs = false; end;
-      if(TrHs)then begin
+      testf = true;
+      if(SMr.FrLocation!="SORTIROVOC")then begin TrHs = false; testf = false; end;
+      if(SMr.OKFlag!=1)then begin TrHs = false; testf = false; end;
+      if(SMr.PrintedFlag==1)then begin testf = false; end;
+      
+      if(testf)then begin
         if(SMr.TransDate<addDay(CurrentDate,-3))then begin
           TrHs = false;
         end else begin
