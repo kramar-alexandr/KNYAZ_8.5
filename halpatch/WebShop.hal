@@ -691,7 +691,9 @@ end;
 // or manual change made outside the client) instead of only ever seeing
 // brand-new ids. Walked backward (newest first) via the FrLocOK key
 // (FrLocation+OKFlag+TransDate+SerNr) so we can stop as soon as we pass the
-// 3-day window, instead of scanning the whole register.
+// 3-day window, instead of scanning the whole register. Also includes
+// "documentDate" (SMr.TransDate, "YYYY-MM-DD") — printed on the movement
+// label next to the destination warehouse, requested by POS.
 // ==============================================================
 
 // Writes one movement's JSON object (incl. trailing comma) into resarea.
@@ -705,6 +707,7 @@ begin
   addParamToJSONArea("shipmentNo",NormalizeStrToJson(SMr.SerNr),resarea);
   addParamToJSONArea("toLocation",NormalizeStrToJson(SMr.ToLocation),resarea);
   addParamToJSONArea("complFlag",SMr.ComplFlag,resarea);
+  addParamToJSONArea("documentDate",DateToString(SMr.TransDate,"YYYY-MM-DD"),resarea);
 
   AddTextToArea("\"items\":[",resarea);
   rwcnt = MatRowCnt(SMr);
@@ -928,7 +931,8 @@ end;
 // Both pending and already-shipped invoices are included (never gated on
 // ShipedFlag) — "shipedFlag" is in each shipment's JSON so a client can tell
 // them apart, same reconciliation purpose as WebGetStockMovements' complFlag.
-// Header: invoice number + Addr0 (recipient) + shipedFlag. Items: Spec (name) + Quant.
+// Header: invoice number + Addr0 (recipient) + shipedFlag + documentDate (IVr.InvDate,
+// "YYYY-MM-DD" — printed on the shipment label, requested by POS). Items: Spec (name) + Quant.
 // ==============================================================
 
 // Writes one invoice's shipment JSON object (incl. trailing comma) into resarea.
@@ -941,6 +945,7 @@ begin
   addParamToJSONArea("invoiceNo",NormalizeStrToJson(IVr.SerNr),resarea);
   addParamToJSONArea("recipient",NormalizeStrToJson(IVr.Addr0),resarea);
   addParamToJSONArea("shipedFlag",IVr.ShipedFlag,resarea);
+  addParamToJSONArea("documentDate",DateToString(IVr.InvDate,"YYYY-MM-DD"),resarea);
 
   AddTextToArea("\"items\":[",resarea);
   rwcnt = MatRowCnt(IVr);
