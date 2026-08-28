@@ -764,7 +764,7 @@ begin
       
       counter = counter + 1;
       if(testf)then begin
-        if(SMr.TransDate<addDay(CurrentDate,-3))then begin
+        if(SMr.TransDate<addDay(CurrentDate,-1))then begin
           TrHs = false;
         end else begin
           WriteStockMovementJSON(SMr,resarea);
