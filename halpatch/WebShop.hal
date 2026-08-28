@@ -761,14 +761,14 @@ begin
       if(SMr.FrLocation!="SORTIROVOC")then begin TrHs = false; testf = false; end;
       if(SMr.OKFlag!=1)then begin TrHs = false; testf = false; end;
       if(SMr.ComplFlag==1)then begin testf = false; end;
+      if(SMr.TransDate<addDay(CurrentDate,-1))then begin
+        TrHs = false;
+        testf = false;
+      end;
       
       counter = counter + 1;
       if(testf)then begin
-        if(SMr.TransDate<addDay(CurrentDate,-1))then begin
-          TrHs = false;
-        end else begin
-          WriteStockMovementJSON(SMr,resarea);
-        end;
+        WriteStockMovementJSON(SMr,resarea);
       end;
     end;
     ResetLoop(SMr);
