@@ -2146,6 +2146,9 @@ begin
   if(SMp.SentOKFlag==1 and blankdate(SMp.TransDate))then begin
     SMp.TransDate = currentdate;
   end;
+  if(SMp.OKFlag==1 and blankdate(SMp.TransDate))then begin
+    SMp.TransDate = currentdate;
+  end;
   if (CheckStockMovRecord(SMp,SM2p,stat,check,true,error,errorstr,rownr,fieldstr,UnOKedCheckSerialf)!=0) then begin
     res = -1;
     RecordCheckError(error,errorstr,rownr,fieldstr);
