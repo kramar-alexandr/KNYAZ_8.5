@@ -149,6 +149,8 @@ BEGIN
     StockMovr.InvOfficialSerNr2 = "";
     StockMovr.InvOfficialSerNr2Serie = "";
   end;  
+  StockMovr.PrintedFlag = 0;
+  StockMovr.ComplFlag = 0;
   StockMovVcRecordDuplicate = res; 
   RETURN;
 END;
