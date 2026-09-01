@@ -930,9 +930,11 @@ end;
 // the "InvDate" key, excluding walk-in sales (CustCode="NONAME"), restricted
 // to the sorting warehouse (Location="SORTIROVOC") — matches WebGetStockMovements'
 // FrLocation filter; other locations' shipments aren't this warehouse's job.
-// Both pending and already-shipped invoices are included (never gated on
-// ShipedFlag) — "shipedFlag" is in each shipment's JSON so a client can tell
-// them apart, same reconciliation purpose as WebGetStockMovements' complFlag.
+// Pending invoices get the full 5-day window; already-shipped ones (ShipedFlag=1)
+// are trimmed to a 2-day trailing window — no point shipping the whole backlog of
+// old shipped invoices, just enough for a client to see shipedFlag=1 on a recent
+// one and reconcile/stop reminding (e.g. a shipment confirmed outside store-pwa) —
+// same reconciliation purpose as WebGetStockMovements' complFlag, just bounded.
 // Header: invoice number + Addr0 (recipient) + shipedFlag + documentDate (IVr.InvDate,
 // "YYYY-MM-DD" — printed on the shipment label, requested by POS). Items: Spec (name) + Quant.
 // ==============================================================
@@ -996,8 +998,10 @@ begin
       testf = true;
       if(IVr.InvDate<addDay(CurrentDate,-5))then begin TrHs = false; testf = false; end;
       if(IVr.OKFlag==0)then begin testf = false; end;
-      if(IVr.ShipedFlag==1)then begin testf = false; end;
-      
+      // Already-shipped invoices are only worth sending for a short trailing window (2 days) —
+      // just enough for a client to reconcile shipedFlag against its own local state (e.g. a
+      // shipment confirmed outside store-pwa) and stop reminding, not the full pending window.
+      if(IVr.ShipedFlag==1 and IVr.InvDate<addDay(CurrentDate,-2))then begin testf = false; end;
       if(IVr.Location!="SORTIROVOC")then begin testf = false; end;
       CUr.Code = IVr.CustCode;
       readfirstmain(CUr,1,true);
