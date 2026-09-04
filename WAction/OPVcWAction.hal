@@ -455,7 +455,7 @@ BEGIN
     case "BankFeeVal": res = OPDClassBankFeeValEFAfter(wn,rownr,changed!=0);
     case "VATCode": res = OPDClassVATCodeEFAfter(wn,rownr,changed!=0);
     case "ChequeNr": res = OPDClassChequeNrEFAfter(wn,rownr,changed!=0);
-    case "PrepayNr": res = OPDClassPrepayNrEFAfter(wn,rownr,changed!=0);
+//    case "PrepayNr": res = OPDClassPrepayNrEFAfter(wn,rownr,changed!=0);//Mladen aint like it
     case "OrderNr": res = OPDClassOrderNrEFAfter(wn,rownr,changed!=0);
     case "FrRateBankVal": res = OPDClassToRateB1BankValEFAfter(wn,rownr,changed!=0);
     case "ToRateB1BankVal": res = OPDClassToRateB1BankValEFAfter(wn,rownr,changed!=0);
@@ -517,9 +517,7 @@ BEGIN
   end;
 //if (OPButActSpec(OPp,OP2p,WindowState(wn),*(Integer*)ap2)==false) then res = false;//I think it is not needed
 LOPDClassDoneFlagButtonAction:;
-  //if(currentuser=="SA")then begin
-    res = true;
-  //end;
+  res = true;
   OPDClassDoneFlagButtonAction = res;
   RETURN;
 END;
@@ -541,21 +539,20 @@ BEGIN
     res = false;
     goto LOPDClassOrderedFlagButtonAction;
   end;
-  // Approved by Karl 2025-02-28 via Skype
-  // if (WindowState(wn)==normalmode) then begin
-  //   if (OPr.OrderedFlag!=0) then begin
-  //     res = false;
-  //     if (OPr.DoneFlag==0) then begin
-  //       res = UserCanAction("UnOKAll",false);
-  //     end;
-  //   end;
-  // end;  
-  // if (WindowState(wn)==Rs_update) then begin
-  //   GetPrevWindowRecord(wn,OPr);
-  //   if (OPr.OrderedFlag!=0) then begin
-  //     res = false;
-  //   end;
-  // end;  
+  if (WindowState(wn)==normalmode) then begin
+    if (OPr.OrderedFlag!=0) then begin
+      res = false;
+      if (OPr.DoneFlag==0) then begin
+        res = UserCanAction("UnOKAll",false);
+      end;
+    end;
+  end;  
+  if (WindowState(wn)==Rs_update) then begin
+    GetPrevWindowRecord(wn,OPr);
+    if (OPr.OrderedFlag!=0) then begin
+      res = false;
+    end;
+  end;  
 //if (OPButActSpec(OPp,OP2p,WindowState(wn),*(Integer*)ap2)==false) then res = false;//I think it is not needed
 LOPDClassOrderedFlagButtonAction:;
   OPDClassOrderedFlagButtonAction = res;
@@ -567,12 +564,11 @@ function Boolean OPDClassUpdateTest(Integer wn)
 BEGIN
   Boolean res;
   record OPVc OPr;
-
+  
   res = true;
   GetWindowRecord(wn,OPr);
   if (OPr.DoneFlag!=0) then begin
-   // res = UserCanAction("UnOKAll",false);  
-   res = false;
+    res = UserCanAction("UnOKAll",false);  
   end;
   OPDClassUpdateTest = res;
   RETURN;
@@ -722,7 +718,7 @@ BEGIN
   Integer i,rwcnt;
   record CYBlock CYb;
   Integer nwn;
-
+  
   res = true;
   nwn = FindWindow("SelectApproverWClass");
   if (nwn>0) then begin
@@ -730,8 +726,7 @@ BEGIN
       res = false;
       goto LOPDClassActiveEditField;
     end;
-  end; 
-
+  end;
   GetWindowRecord(wn,OPr);    
   if (HasLocalization("ARG")) then begin
     rwcnt = MatRowCnt(OPr);
@@ -769,10 +764,9 @@ BEGIN
         end;
     end;
   end;
-
   GetPrevWindowRecord(wn,OP2r);    
   switch (WindowState(wn)) begin
-    case Rs_insert: 
+    case Rs_insert:
       if (rownr>=0) then begin
         switch (fieldname) begin
           case "BankVal": 
@@ -801,7 +795,7 @@ BEGIN
             end;
         end;
       end;
-    case Rs_update:
+    case Rs_update: 
       testf = false;
       if (OP2r.DoneFlag!=0) then begin
         res = false;
@@ -895,7 +889,7 @@ LOPDClassActiveEditField:;
     case "LangCode": res = true;
   end;
   
-  if (WindowState(wn)==Rs_update)  then begin
+  if (WindowState(wn)==Rs_update) then begin
     GetPrevWindowRecord(wn,OPr);
     if (OPr.OrderedFlag!=0) then begin
       switch (fieldname) begin
@@ -1076,7 +1070,9 @@ global
 function Integer OPDClassSelectSetToPaste(Integer wn,string fieldname)
 begin
   Integer res;
+  record OPVc OPr;
   
+  GetWindowRecord(wn,OPr);
   switch (fieldname) begin
     case "PayChannel":
       if (HasLocalization("SWE")) then begin res = 729; end;

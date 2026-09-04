@@ -254,8 +254,7 @@ BEGIN
       end;
     end;
   end;
-LIsUnOKAllowed_OPVc:; 
-  res = true; 
+LIsUnOKAllowed_OPVc:;  
   IsUnOKAllowed_OPVc = res;
   RETURN;
 END;
