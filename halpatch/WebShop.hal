@@ -792,6 +792,72 @@ end;
 
 
 // ==============================================================
+// Custom: ALL today's stock transfers, regardless of ComplFlag (token-
+// authenticated) — a comparison feed for a client to reconcile against its
+// own local state, same purpose as WebGetShipments' 2-day trailing window
+// for ShipedFlag=1 invoices, but for movements: WebGetStockMovements above
+// deliberately excludes ComplFlag=1 (Денис's call, kept as-is), so a client
+// has no way to see "this movement is actually done" for one it doesn't
+// already know about. This endpoint doesn't filter on ComplFlag at all —
+// same SORTIROVOC/OKFlag=1 restriction, but TransDate must be today.
+// ==============================================================
+
+global webpublic procedure WebGetAllStockMovementsToday()
+begin
+  string 60 authtoken;
+  record StockMovVc SMr;
+  area resarea;
+  boolean TrHs,testf;
+
+  logtext(0,"WebGetAllStockMovementsToday start");
+
+  authtoken = WebGetArg("token");
+  WebSetContentType("application/json; charset=UTF-8");
+
+  if(authtoken=="kn9-cat-7f3a91c2e6")then begin
+
+    SetCompany(9,false);
+
+    AddTextToArea("{",resarea);
+    AddTextToArea("\"movements\":[",resarea);
+
+    SMr.FrLocation = "SORTIROVOC";
+    SMr.OKFlag = 1;
+    SMr.TransDate = CurrentDate;
+    TrHs = true;
+    while(LoopBackKey("FrLocOK",SMr,3,TrHs))begin
+      testf = true;
+      if(SMr.FrLocation!="SORTIROVOC")then begin TrHs = false; testf = false; end;
+      if(SMr.OKFlag!=1)then begin TrHs = false; testf = false; end;
+      if(SMr.TransDate!=CurrentDate)then begin
+        TrHs = false;
+        testf = false;
+      end;
+
+      if(testf)then begin
+        WriteStockMovementJSON(SMr,resarea);
+      end;
+    end;
+    ResetLoop(SMr);
+
+    delLastComaInArea(resarea);
+    AddTextToArea("]",resarea);
+    AddTextToArea("}",resarea);
+
+  end else begin
+    logtext(0,"WebGetAllStockMovementsToday unauthorized token");
+    AddTextToArea("{\"result\":\"error\",\"error\":\"unauthorized\"}",resarea);
+  end;
+
+  weboutarea2(resarea);
+
+  logtext(0,"WebGetAllStockMovementsToday end");
+
+return;
+end;
+
+
+// ==============================================================
 // Custom: lightweight "what's new" poll for movements (token-authenticated).
 // Same selection as WebGetStockMovements above (SORTIROVOC, OKFlag=1, last 3
 // days) but only SerNr>sinceId (web arg "sinceId", 0/blank = everything in the
