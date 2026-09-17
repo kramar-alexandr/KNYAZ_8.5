@@ -175,6 +175,7 @@ begin
   setcompany(9,false); 
   
   SMr.SerNr = 99999999;
+  TrHs = true;
   while(loopbackkey("SerNr",SMr,1,TrHs))begin
     if(SMr.TransDate==stringtodate("16/9/2026"))then begin
       SMr.PrintedFlag = 1;
