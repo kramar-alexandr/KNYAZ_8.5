@@ -186,7 +186,7 @@ begin
       logtext(0,"updated");
 
     end;
-    if(SMr.TransDate<stringtodate("16/9/2026"))then begin
+    if(SMr.TransDate<stringtodate("16/9/2026") and nonblankdate(SMr.TransDate))then begin
       TrHs = false;
     end;
     
