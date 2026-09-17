@@ -176,12 +176,12 @@ begin
   
   SMr.SerNr = 99999999;
   while(loopbackkey("SerNr",SMr,1,TrHs))begin
-    if(SMr.TransDate==stringtodate("16/09/2026"))then begin
+    if(SMr.TransDate==stringtodate("16/9/2026"))then begin
       SMr.PrintedFlag = 1;
       SMr.ComplFlag = 1;
       recordstore(SMr,true);
     end;
-    if(SMr.TransDate<stringtodate("16/09/2026"))then begin
+    if(SMr.TransDate<stringtodate("16/9/2026"))then begin
       TrHs = false;
     end;
     
