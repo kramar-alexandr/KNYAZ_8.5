@@ -172,7 +172,7 @@ begin
   record StockMovVc SMr;
   boolean TrHs;
   
-  setcompany(9,false);
+  setcompany(9,false); 
   
   SMr.SerNr = 99999999;
   while(loopbackkey("SerNr",SMr,1,TrHs))begin
