@@ -177,10 +177,14 @@ begin
   SMr.SerNr = 99999999;
   TrHs = true;
   while(loopbackkey("SerNr",SMr,1,TrHs))begin
+    logtext(0,SMr.SerNr & " WebUpdateSMPrintedAndComp " & SMr.TransDate);
+
     if(SMr.TransDate==stringtodate("16/9/2026"))then begin
       SMr.PrintedFlag = 1;
       SMr.ComplFlag = 1;
       recordstore(SMr,true);
+      logtext(0,"updated");
+
     end;
     if(SMr.TransDate<stringtodate("16/9/2026"))then begin
       TrHs = false;
