@@ -765,6 +765,7 @@ begin
   record CLInVc CLInr;
   record CLOutVc CLOutr;
   record IVVc IVr;
+  record IVOldVc IVOldr;
   boolean TrHs,testf;
   val sum,rashod;
   record Uservc USr;
@@ -786,6 +787,18 @@ begin
       if(point==IVr.Location)then begin
         vBalance[IVr.Location] = vBalance[IVr.Location] + IVr.Sum4;
         weboutstring("IVVc+" & IVr.Sum4 & " ===  " & vBalance[IVr.Location] & "<BR>");
+      end;
+    end;
+  end;
+  
+  IVOldr.SerNr = -1;
+  while(loopmain(IVOldr,1,true))begin
+    if(blank(point))then begin
+      vBalance[IVOldr.Location] = vBalance[IVOldr.Location] + IVOldr.Sum4;
+    end else begin
+      if(point==IVOldr.Location)then begin
+        vBalance[IVOldr.Location] = vBalance[IVOldr.Location] + IVOldr.Sum4;
+        weboutstring("IVVc+" & IVOldr.Sum4 & " ===  " & vBalance[IVOldr.Location] & "<BR>");
       end;
     end;
   end;
