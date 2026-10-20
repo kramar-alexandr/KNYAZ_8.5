@@ -1,8 +1,11 @@
 
 
-global function integer EmailValidationStatusWithStdID()
+global function Integer EmailValidationStatusWithStdID(string email, LongInt nr, string tag)
 begin		
+  logtext(0,"STACKDEPTH EmailValidationStatusWithStdID start " & StackDepth); // STACKDEPTH diag (temp)
 	EmailValidationStatusWithStdID = 2;
+  logtext(0,"STACKDEPTH EmailValidationStatusWithStdID end " & StackDepth); // STACKDEPTH diag (temp)
+  return;
 end;
 
 global procedure UpdateDatabaseRestrictions()
