@@ -6,6 +6,76 @@ external function string 255 NormalizeStrToJson(string);
 
 SetLangMode(LangRussian,"RUS",2);
 
+// Себестоимость единицы по последней закупке на дату: история товара (закупки PUVc),
+// если её нет - карточка товара (LastPurchPrice, затем InPrice). В базовой валюте (USD).
+function val MyFinResLastPurchCost(string artcode,Date ondate)
+begin
+  val res;
+  record ItemHistVc IHr;
+  record INVc INr;
+  Boolean found;
+
+  res = blankval;
+  IHr.FileName = "PUVc";
+  IHr.ArtCode = artcode;
+  IHr.TransDate = AddDay(ondate,1);
+  found = true;
+  while (LoopBackKey("FNArtCode",IHr,3,found)) begin
+    if (IHr.FileName!="PUVc") then begin found = false; end;
+    if (IHr.ArtCode!=artcode) then begin found = false; end;
+    if (found) then begin
+      if ((IHr.TransDate<=ondate) and (IHr.Invalid==0) and (IHr.Qty>0) and (IHr.TotCostPrice>0)) then begin
+        res = IHr.TotCostPrice / IHr.Qty;
+        found = false;
+      end;
+    end;
+  end;
+  if (res==0) then begin
+    INr.Code = artcode;
+    if (ReadFirstMain(INr,1,true)) then begin
+      res = INr.LastPurchPrice;
+      if (res==0) then begin
+        res = INr.InPrice;
+      end;
+    end;
+  end;
+  MyFinResLastPurchCost = res;
+  return;
+end;
+
+// Себестоимость строки счёта (без знака, как FIFORowVal). Если система её не рассчитала -
+// берётся последняя закупка, estf = true. vLPCost - кэш цен по товару и дате (-1 = не найдена).
+function val MyFinResRowCost(record IVVc IVr,row IVVc IVrw,var vector val vLPCost,var Boolean estf)
+begin
+  val res,unitcost,qty;
+  string 255 ckey;
+
+  estf = false;
+  res = IVrw.FIFORowVal;
+  if (res==0) then begin
+    estf = true;
+    ckey = IVrw.ArtCode & ":" & IVr.InvDate;
+    unitcost = vLPCost[ckey];
+    if (unitcost==0) then begin
+      unitcost = MyFinResLastPurchCost(IVrw.ArtCode,IVr.InvDate);
+      if (unitcost==0) then begin
+        unitcost = -1;
+      end;
+      vLPCost[ckey] = unitcost;
+    end;
+    if (unitcost<0) then begin
+      unitcost = 0;
+    end;
+    qty = IVrw.Quant;
+    if (qty<0) then begin
+      qty = -qty;
+    end;
+    res = qty * unitcost;
+  end;
+  MyFinResRowCost = res;
+  return;
+end;
+
 global procedure MyFinResRn(record RcVc RepSpec)
 begin
   record IVVc IVr;
@@ -35,7 +105,11 @@ begin
   val UAH3,USD3,USDTOT3;
   val UAH4,USD4,USDTOT4;
   val UAH5,USD5,USDTOT5;
-  
+  val rowcost;
+  boolean estf;
+  vector val vLPCost;
+  LongInt estloccnt,estdolgcnt,nocostcnt;
+
   startreportnoheaderjob("Финансовый отчет");
     
     IVr.InvDate = RepSpec.sStartDate;
@@ -64,30 +138,44 @@ begin
           if(IVrw.Quant<0)then begin
             cred = -1;
           end;
-          if(IVrw.stp==1 and nonblank(IVrw.ArtCode) and IVrw.Quant!=0)then begin   
-            if(IVr.CustCode!="ОТ_АНАТОЛИЧА")then begin         
+          if(IVrw.stp==1 and nonblank(IVrw.ArtCode) and IVrw.Quant!=0)then begin
+            rowcost = MyFinResRowCost(IVr,IVrw,vLPCost,estf);
+            if(estf and rowcost==0)then begin
+              nocostcnt = nocostcnt + 1;
+            end;
+            if(IVr.CustCode!="ОТ_АНАТОЛИЧА")then begin
               if(IVr.PayDeal!="O")then begin
                 vKeysCust[IVr.CustCode] = true;
                 vFinData[IVr.CustCode & ":DOLG:" & IVr.CurncyCode & ":SUM"] = vFinData[IVr.CustCode & ":DOLG:" & IVr.CurncyCode & ":SUM"] + IVrw.Sum;
-                vFinData[IVr.CustCode & ":DOLG:FIFO"] = vFinData[IVr.CustCode & ":DOLG:FIFO"] + IVrw.FIFORowVal*cred;
+                vFinData[IVr.CustCode & ":DOLG:FIFO"] = vFinData[IVr.CustCode & ":DOLG:FIFO"] + rowcost*cred;
                 vFinData[IVr.CustCode & ":DOLG:BSUM"] = vFinData[IVr.CustCode & ":DOLG:BSUM"] + IVrw.Sum/rate;
+                if(estf)then begin
+                  vFinData[IVr.CustCode & ":DOLG:EST"] = vFinData[IVr.CustCode & ":DOLG:EST"] + 1;
+                  estdolgcnt = estdolgcnt + 1;
+                  vFinData["EST:DOLG:FIFO"] = vFinData["EST:DOLG:FIFO"] + rowcost*cred;
+                end;
               end else begin
                 vFinData[IVr.Location & ":" & IVr.CurncyCode & ":SUM"] = vFinData[IVr.Location & ":" & IVr.CurncyCode & ":SUM"] + IVrw.Sum;
-                vFinData[IVr.Location & ":FIFO"] = vFinData[IVr.Location & ":FIFO"] + IVrw.FIFORowVal*cred;
+                vFinData[IVr.Location & ":FIFO"] = vFinData[IVr.Location & ":FIFO"] + rowcost*cred;
                 vFinData[IVr.Location & ":BSUM"] = vFinData[IVr.Location & ":BSUM"] + IVrw.Sum/rate;
+                if(estf)then begin
+                  vFinData[IVr.Location & ":EST"] = vFinData[IVr.Location & ":EST"] + 1;
+                  estloccnt = estloccnt + 1;
+                  vFinData["EST:LOC:FIFO"] = vFinData["EST:LOC:FIFO"] + rowcost*cred;
+                end;
               end;
             end else begin
               vFinData["ОТ_АНАТОЛИЧА:" & IVr.CurncyCode] = vFinData["ОТ_АНАТОЛИЧА:" & IVr.CurncyCode] + IVrw.Sum;
               fr = IVr.FrRate;
               if(IVr.CurncyCode=="UAH")then begin
-                vFinData["FIFO:ОТ_АНАТОЛИЧА:" & IVr.CurncyCode] = vFinData["FIFO:ОТ_АНАТОЛИЧА:" & IVr.CurncyCode] + IVrw.FIFORowVal*cred*fr;
+                vFinData["FIFO:ОТ_АНАТОЛИЧА:" & IVr.CurncyCode] = vFinData["FIFO:ОТ_АНАТОЛИЧА:" & IVr.CurncyCode] + rowcost*cred*fr;
               end else begin
                 curcode = "UAH";
                 GetFullCurncyRate(curcode,IVr.InvDate,fr,to1,to2,br1,br2);
                 if(fr==0)then begin
                   fr = 1;
                 end;
-                vFinData["FIFO:ОТ_АНАТОЛИЧА:" & IVr.CurncyCode] = vFinData["FIFO:ОТ_АНАТОЛИЧА:" & IVr.CurncyCode] + IVrw.FIFORowVal*cred*fr;
+                vFinData["FIFO:ОТ_АНАТОЛИЧА:" & IVr.CurncyCode] = vFinData["FIFO:ОТ_АНАТОЛИЧА:" & IVr.CurncyCode] + rowcost*cred*fr;
               end;
             end;
             
@@ -178,7 +266,11 @@ begin
       Locr.Code = akeysLoc[i];
       if(readfirstmain(Locr,1,true) and round(vFinData[Locr.Code & ":BSUM"],DEFAULTCURROUNDOFF)!=0)then begin
         startformat(15);
-          outstring(0,0,Locr.Name,false);
+          if(vFinData[Locr.Code & ":EST"]!=0)then begin
+            outstring(0,0,Locr.Name & " *",false);
+          end else begin
+            outstring(0,0,Locr.Name,false);
+          end;
           outval(130,0,round(vFinData[Locr.Code & ":BSUM"],DEFAULTCURROUNDOFF),m4val,true);
           outval(180,0,vFinData[Locr.Code & ":UAH:SUM"],m4val,true);
           outval(220,0,vFinData[Locr.Code & ":USD:SUM"],m4val,true);
@@ -219,7 +311,18 @@ begin
       outstring(420,0,total6,true);
       outstring(1,0,total7,true);
     endformat;
-    
+    if(estloccnt!=0)then begin
+      startformat(15);
+        outstring(0,0,"* Строк без себестоимости в системе: " & estloccnt & " - взята по последней закупке",false);
+        outval(310,0,vFinData["EST:LOC:FIFO"],m4val,true);
+      endformat;
+    end;
+    if(nocostcnt!=0)then begin
+      startformat(15);
+        outstring(0,0,"!!! Строк без себестоимости и без закупок: " & nocostcnt & " - прибыль по ним завышена",false);
+      endformat;
+    end;
+
     UAH1 = total2;
     USD1 = total3;
     USDTOT1 = total1;
@@ -323,7 +426,11 @@ begin
         CUr.Code = akeysCust[j];
         readfirstmain(CUr,1,true);
         startformat(15);
-          outstring(0,0,CUr.Name,false);
+          if(vFinData[CUr.Code & ":DOLG:EST"]!=0)then begin
+            outstring(0,0,CUr.Name & " *",false);
+          end else begin
+            outstring(0,0,CUr.Name,false);
+          end;
           outval(130,0,round(vFinData[CUr.Code & ":DOLG:BSUM"],DEFAULTCURROUNDOFF),m4val,true);
           outval(180,0,vFinData[CUr.Code & ":DOLG:UAH:SUM"],m4val,true);
           outval(220,0,vFinData[CUr.Code & ":DOLG:USD:SUM"],m4val,true);
@@ -368,8 +475,14 @@ begin
       UAH2 = total6;
       USD2 = total5;
       USDTOT2 = total8;
-      
+
     endformat;
+    if(estdolgcnt!=0)then begin
+      startformat(15);
+        outstring(0,0,"* Строк без себестоимости в системе: " & estdolgcnt & " - взята по последней закупке",false);
+        outval(290,0,vFinData["EST:DOLG:FIFO"],m4val,true);
+      endformat;
+    end;
     
     black_divider(0,1);
       startformat(15);
@@ -658,6 +771,9 @@ begin
   integer i,rwcnt,cred;
   val rate;
   vector val totsales,cost,gp,expenses;
+  val rowcost;
+  boolean estf;
+  vector val vLPCost;
   area resarea;
 
 
@@ -726,9 +842,10 @@ begin
               cred = -1;
             end;
             if(IVrw.stp==1 and nonblank(IVrw.ArtCode) and IVrw.Quant!=0)then begin   
+              rowcost = MyFinResRowCost(IVr,IVrw,vLPCost,estf);
               totsales[IVr.InvDate] = totsales[IVr.InvDate] + IVrw.Sum;
-              cost[IVr.InvDate] = cost[IVr.InvDate] + IVrw.FIFORowVal*cred*rate;
-              gp[IVr.InvDate] = gp[IVr.InvDate] + (IVrw.Sum - IVrw.FIFORowVal*cred*rate);
+              cost[IVr.InvDate] = cost[IVr.InvDate] + rowcost*cred*rate;
+              gp[IVr.InvDate] = gp[IVr.InvDate] + (IVrw.Sum - rowcost*cred*rate);
             end;
           end;
         end;

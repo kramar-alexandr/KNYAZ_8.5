@@ -694,6 +694,11 @@ end;
 // 3-day window, instead of scanning the whole register. Also includes
 // "documentDate" (SMr.TransDate, "YYYY-MM-DD") — printed on the movement
 // label next to the destination warehouse, requested by POS.
+// Since 2026-10-30 all three movement feeds (WebGetStockMovements,
+// WebGetAllStockMovementsToday, WebGetNewStockMovements) also list transfers
+// TO SORTIROVOC (ToLocOK key) - the sorting warehouse prints them and checks
+// the delivery; the app is unchanged, it just prints and ticks PrintedFlag/
+// ComplFlag via WebSetStockMovPrinted (see StartSortStockMovLoop).
 // ==============================================================
 
 // Writes one movement's JSON object (incl. trailing comma) into resarea.
@@ -732,13 +737,50 @@ begin
   return;
 end;
 
+// Two passes over StockMovVc for the warehouse feeds below:
+// dir 0 - transfers FROM SORTIROVOC (picking for shops), key FrLocOK;
+// dir 1 - transfers TO SORTIROVOC (delivery from OSN, returns from shops) -
+// the sorting warehouse prints them and checks what arrived, key ToLocOK.
+// Same JSON for both; toLocation="SORTIROVOC" tells them apart.
+procedure StartSortStockMovLoop(Integer dir,var record StockMovVc SMr,var string keyname)
+begin
+  RecordClear(SMr);
+  if(dir==0)then begin
+    keyname = "FrLocOK";
+    SMr.FrLocation = "SORTIROVOC";
+  end else begin
+    keyname = "ToLocOK";
+    SMr.ToLocation = "SORTIROVOC";
+  end;
+  SMr.OKFlag = 1;
+  SMr.TransDate = CurrentDate;
+  return;
+end;
+
+// false = the backward walk left this direction's SORTIROVOC range.
+function Boolean SortStockMovInRange(Integer dir,record StockMovVc SMr)
+begin
+  Boolean res;
+
+  res = false;
+  if(dir==0)then begin
+    if(SMr.FrLocation=="SORTIROVOC")then begin res = true; end;
+  end else begin
+    if(SMr.ToLocation=="SORTIROVOC")then begin res = true; end;
+  end;
+  if(SMr.OKFlag!=1)then begin res = false; end;
+  SortStockMovInRange = res;
+  return;
+end;
+
 global webpublic procedure WebGetStockMovements()
 begin
   string 60 authtoken;
   record StockMovVc SMr;
   area resarea;
   boolean TrHs,testf;
-  integer counter;
+  integer counter,dir;
+  string 20 keyname;
 
   logtext(0,"WebGetStockMovements start");
 
@@ -752,26 +794,25 @@ begin
     AddTextToArea("{",resarea);
     AddTextToArea("\"movements\":[",resarea);
 
-    SMr.FrLocation = "SORTIROVOC";
-    SMr.OKFlag = 1;
-    SMr.TransDate = CurrentDate;
-    TrHs = true;
-    while(LoopBackKey("FrLocOK",SMr,3,TrHs))begin
-      testf = true;
-      if(SMr.FrLocation!="SORTIROVOC")then begin TrHs = false; testf = false; end;
-      if(SMr.OKFlag!=1)then begin TrHs = false; testf = false; end;
-      if(SMr.ComplFlag==1)then begin testf = false; end;
-      if(SMr.TransDate<addDay(CurrentDate,-1))then begin
-        TrHs = false;
-        testf = false;
+    for(dir=0;dir<2;dir=dir+1)begin
+      StartSortStockMovLoop(dir,SMr,keyname);
+      TrHs = true;
+      while(LoopBackKey(keyname,SMr,3,TrHs))begin
+        testf = true;
+        if(SortStockMovInRange(dir,SMr)==false)then begin TrHs = false; testf = false; end;
+        if(SMr.ComplFlag==1)then begin testf = false; end;
+        if(SMr.TransDate<addDay(CurrentDate,-1))then begin
+          TrHs = false;
+          testf = false;
+        end;
+
+        counter = counter + 1;
+        if(testf)then begin
+          WriteStockMovementJSON(SMr,resarea);
+        end;
       end;
-      
-      counter = counter + 1;
-      if(testf)then begin
-        WriteStockMovementJSON(SMr,resarea);
-      end;
+      ResetLoop(SMr);
     end;
-    ResetLoop(SMr);
 
     delLastComaInArea(resarea);
     AddTextToArea("]",resarea);
@@ -808,6 +849,8 @@ begin
   record StockMovVc SMr;
   area resarea;
   boolean TrHs,testf;
+  integer dir;
+  string 20 keyname;
 
   logtext(0,"WebGetAllStockMovementsToday start");
 
@@ -821,24 +864,23 @@ begin
     AddTextToArea("{",resarea);
     AddTextToArea("\"movements\":[",resarea);
 
-    SMr.FrLocation = "SORTIROVOC";
-    SMr.OKFlag = 1;
-    SMr.TransDate = CurrentDate;
-    TrHs = true;
-    while(LoopBackKey("FrLocOK",SMr,3,TrHs))begin
-      testf = true;
-      if(SMr.FrLocation!="SORTIROVOC")then begin TrHs = false; testf = false; end;
-      if(SMr.OKFlag!=1)then begin TrHs = false; testf = false; end;
-      if(SMr.TransDate!=CurrentDate)then begin
-        TrHs = false;
-        testf = false;
-      end;
+    for(dir=0;dir<2;dir=dir+1)begin
+      StartSortStockMovLoop(dir,SMr,keyname);
+      TrHs = true;
+      while(LoopBackKey(keyname,SMr,3,TrHs))begin
+        testf = true;
+        if(SortStockMovInRange(dir,SMr)==false)then begin TrHs = false; testf = false; end;
+        if(SMr.TransDate!=CurrentDate)then begin
+          TrHs = false;
+          testf = false;
+        end;
 
-      if(testf)then begin
-        WriteStockMovementJSON(SMr,resarea);
+        if(testf)then begin
+          WriteStockMovementJSON(SMr,resarea);
+        end;
       end;
+      ResetLoop(SMr);
     end;
-    ResetLoop(SMr);
 
     delLastComaInArea(resarea);
     AddTextToArea("]",resarea);
@@ -877,6 +919,8 @@ begin
   area resarea;
   boolean TrHs;
   LongInt sinceid,maxid;
+  integer dir;
+  string 20 keyname;
 
   logtext(0,"WebGetNewStockMovements start");
 
@@ -893,29 +937,28 @@ begin
     AddTextToArea("{",resarea);
     AddTextToArea("\"movements\":[",resarea);
 
-    SMr.FrLocation = "SORTIROVOC";
-    SMr.OKFlag = 1;
-    SMr.TransDate = CurrentDate;
-    TrHs = true;
-    while(LoopBackKey("FrLocOK",SMr,3,TrHs))begin
-      if(SMr.FrLocation!="SORTIROVOC")then begin TrHs = false; end;
-      if(SMr.OKFlag!=1)then begin TrHs = false; end;
-      if(TrHs)then begin
-        if(SMr.TransDate<addDay(CurrentDate,-3))then begin
-          TrHs = false;
-        end else begin
-          if(SMr.SerNr>sinceid)then begin
-            AddTextToArea("{",resarea);
-            addParamToJSONArea("shipmentNo",NormalizeStrToJson(SMr.SerNr),resarea);
-            addParamToJSONArea("toLocation",NormalizeStrToJson(SMr.ToLocation),resarea);
-            delLastComaInArea(resarea);
-            AddTextToArea("},",resarea);
-            if(SMr.SerNr>maxid)then begin maxid = SMr.SerNr; end;
+    for(dir=0;dir<2;dir=dir+1)begin
+      StartSortStockMovLoop(dir,SMr,keyname);
+      TrHs = true;
+      while(LoopBackKey(keyname,SMr,3,TrHs))begin
+        if(SortStockMovInRange(dir,SMr)==false)then begin TrHs = false; end;
+        if(TrHs)then begin
+          if(SMr.TransDate<addDay(CurrentDate,-3))then begin
+            TrHs = false;
+          end else begin
+            if(SMr.SerNr>sinceid)then begin
+              AddTextToArea("{",resarea);
+              addParamToJSONArea("shipmentNo",NormalizeStrToJson(SMr.SerNr),resarea);
+              addParamToJSONArea("toLocation",NormalizeStrToJson(SMr.ToLocation),resarea);
+              delLastComaInArea(resarea);
+              AddTextToArea("},",resarea);
+              if(SMr.SerNr>maxid)then begin maxid = SMr.SerNr; end;
+            end;
           end;
         end;
       end;
+      ResetLoop(SMr);
     end;
-    ResetLoop(SMr);
 
     delLastComaInArea(resarea);
     AddTextToArea("],",resarea);
